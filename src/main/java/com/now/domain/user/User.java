@@ -1,5 +1,6 @@
 package com.now.domain.user;
 
+import com.now.domain.permission.AccessPermission;
 import com.now.validation.UserValidationGroup;
 import lombok.*;
 
@@ -22,7 +23,7 @@ import javax.validation.constraints.Size;
 @Getter
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class User {
+public class User implements AccessPermission {
     
     /**
      * 비밀번호 정규식
@@ -67,5 +68,16 @@ public class User {
      */
     public boolean isSameUserId(String userId) {
         return this.id.equals(userId);
+    }
+
+    /**
+     * 전달된 문자열을 확인해서 동일하다면 true 반환, 그렇지 않다면 false 반환
+     *
+     * @param userId 사용자 아이디
+     * @return 전달된 문자열을 확인해서 동일하다면 true 반환, 그렇지 않다면 false 반환
+     */
+    @Override
+    public boolean hasAccess(String userId) {
+        return this.isSameUserId(userId);
     }
 }

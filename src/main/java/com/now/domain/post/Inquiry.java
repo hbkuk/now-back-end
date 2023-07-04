@@ -1,7 +1,6 @@
 package com.now.domain.post;
 
-import com.now.domain.manager.Manager;
-import com.now.domain.user.User;
+import com.now.domain.permission.AccessPermission;
 import com.now.exception.CannotViewInquiryException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -60,12 +59,12 @@ public class Inquiry extends Post {
     /**
      * 게시글을 조회할 수 있다면 true를 반환, 그렇지 않다면 예외를 던짐
      *
-     * @param object    객체
-     * @return          게시글을 조회할 수 있다면 true를 반환, 그렇지 않다면 예외를 던짐
+     * @param accessPermission 접근 권한을 확인하기 위한 AccessPermission 객체
+     * @return 게시글을 조회할 수 있다면 true를 반환, 그렇지 않다면 예외를 던짐
      */
-    public boolean canView(Object object) {
+    public boolean canView(AccessPermission accessPermission) {
         if (isSecret) {
-            return isAccessSecretBy(object);
+            return isAccessSecretBy(accessPermission);
         }
         return true;
     }
@@ -73,18 +72,13 @@ public class Inquiry extends Post {
     /**
      * 비밀글에 접근할 수 있다면 true 반환, 그렇지 않다면 예외를 던짐
      *
-     * @param object    객체
-     * @return          비밀글에 접근할 수 있다면 true 반환, 그렇지 않다면 예외를 던짐
+     * @param accessPermission 접근 권한을 확인하기 위한 AccessPermission 객체
+     * @return 비밀글에 접근할 수 있다면 true 반환, 그렇지 않다면 예외를 던짐
      */
-    public boolean isAccessSecretBy(Object object) {
-        if (object instanceof Manager) {
-            return true;
+    public boolean isAccessSecretBy(AccessPermission accessPermission) {
+        if (!accessPermission.hasAccess(this.getUserId())) {
+            throw new CannotViewInquiryException("다른 사용자가 작성한 문의글을 볼 수 없습니다.");
         }
-
-        if (this.isSameUserId((User) object)) {
-            return true;
-        }
-
-        throw new CannotViewInquiryException("다른 사용자가 작성한 문의글을 볼 수 없습니다.");
+        return true;
     }
 }
