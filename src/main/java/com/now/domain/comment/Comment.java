@@ -57,6 +57,6 @@ public class Comment {
      * @return      댓글을 삭제할 수 있다면 true 반환, 그렇지 않다면 false 반환
      */
     public boolean canDelete(User user) {
-        return user.sameUserId(this.userId);
+        return user.isSameUserId(this.userId);
     }
 }

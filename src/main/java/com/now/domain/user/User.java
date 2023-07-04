@@ -65,7 +65,7 @@ public class User {
      * @param userId 사용자 식별자
      * @return 문자열이 현재 객체 필드의 id와 동일한다면 true 반환, 그렇지 않다면 false 반환
      */
-    public boolean sameUserId(String userId) {
+    public boolean isSameUserId(String userId) {
         return this.id.equals(userId);
     }
 }
