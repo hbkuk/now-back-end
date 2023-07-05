@@ -44,12 +44,12 @@ public class Comment {
      * 댓글의 내용
      */
     @Size(max = 2000, message = "댓글 내용은 최대 2000자까지 입력 가능합니다.")
-    private String content;
+    private final String content;
 
     /**
      * 게시글의 고유 식별자
      */
-    private Long postIdx;
+    private final Long postIdx;
 
     /**
      * 댓글을 삭제할 수 있다면 true 반환, 그렇지 않다면 false 반환

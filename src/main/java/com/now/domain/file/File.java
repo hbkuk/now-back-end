@@ -27,31 +27,31 @@ public class File {
     /**
      * 파일의 고유 식별자
      */
-    private Long fileIdx;
+    private final Long fileIdx;
 
     /**
      * 서버 디렉토리에 저장된 파일 이름(JSON 직렬화 시 숨김 처리)
      */
     @JsonIgnore
-    private String savedFileName;
+    private final String savedFileName;
 
     /**
      * 사용자가 알고 있는 실제 파일 이름
      */
-    private OriginalFileName originalFileName;
+    private final OriginalFileName originalFileName;
 
     /**
      * 파일의 확장자명
      */
-    private String fileExtension;
+    private final String fileExtension;
 
     /**
      * 파일의 크기
      */
-    private FileSize fileSize;
+    private final FileSize fileSize;
 
     /**
      *  게시글의 고유 식별자
      */
-    private Long postIdx;
+    private final Long postIdx;
 }
