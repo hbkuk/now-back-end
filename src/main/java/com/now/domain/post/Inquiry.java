@@ -1,5 +1,6 @@
 package com.now.domain.post;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.domain.permission.AccessPermission;
 import com.now.exception.CannotViewInquiryException;
 import lombok.AllArgsConstructor;
@@ -44,6 +45,7 @@ public class Inquiry extends Post {
     /**
      * 비밀글의 비밀번호
      */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private final String password;
 
     /**
