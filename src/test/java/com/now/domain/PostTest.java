@@ -1,6 +1,7 @@
 package com.now.domain;
 
 import com.now.domain.comment.Comment;
+import com.now.domain.manager.Manager;
 import com.now.domain.post.Post;
 import com.now.domain.user.User;
 import com.now.exception.CannotDeletePostException;
@@ -42,6 +43,17 @@ public class PostTest {
     class CanUpdate_of {
 
         @Test
+        @DisplayName("만약 관리자라면 true를 반환한다.")
+        void return_true_when_manager() {
+            // given
+            Manager manager = ManagerTest.newManager("manager1");
+            Post post = newPost("tester1");
+
+            // when, then
+            assertThat(post.canUpdate(manager)).isTrue();
+        }
+
+        @Test
         @DisplayName("만약 동일한 사용자라면 true를 반환한다.")
         void return_true_when_same_user() {
             // given
@@ -71,6 +83,19 @@ public class PostTest {
     @Nested
     @DisplayName("canDelete 메서드는")
     class CanDelete_of {
+
+        @Test
+        @DisplayName("만약 관리자라면 항상 true를 반환한다.")
+        void return_true_when_manager() {
+            // given
+            Manager manager = ManagerTest.newManager("manager1");
+            Post post = newPost("tester1");
+            List<Comment> comments = Arrays.asList(newComment("tester1"));
+
+            // when, then
+            assertThat(post.canDelete(manager, new ArrayList<Comment>())).isTrue();
+            assertThat(post.canDelete(manager, comments)).isTrue();
+        }
 
         @Nested
         @DisplayName("만약 동일한 사용자이면서")
