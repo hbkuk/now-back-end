@@ -32,7 +32,7 @@ public class Comment {
     /**
      * 게시글을 작성자한 작성자의 고유 식별자
      */
-    private final String userId;
+    private final String authorId;
 
     /**
      * 댓글의 등록일자
@@ -57,6 +57,16 @@ public class Comment {
      * @return      댓글을 삭제할 수 있다면 true 반환, 그렇지 않다면 false 반환
      */
     public boolean canDelete(User user) {
-        return user.isSameUserId(this.userId);
+        return user.isSameUserId(this.authorId);
+    }
+
+    /**
+     * 댓글을 수정할 수 있다면 true 반환, 그렇지 않다면 false 반환
+     *
+     * @param user  유저 정보가 담긴 객체
+     * @return      댓글을 수정할 수 있다면 true 반환, 그렇지 않다면 false 반환
+     */
+    public boolean canUpdate(User user) {
+        return user.isSameUserId(this.authorId);
     }
 }

@@ -76,7 +76,7 @@ public class Inquiry extends Post {
      * @return 비밀글에 접근할 수 있다면 true 반환, 그렇지 않다면 예외를 던짐
      */
     public boolean isAccessSecretBy(AccessPermission accessPermission) {
-        if (!accessPermission.hasAccess(this.getUserId())) {
+        if (!accessPermission.hasAccess(this.getAuthorId())) {
             throw new CannotViewInquiryException("다른 사용자가 작성한 문의글을 볼 수 없습니다.");
         }
         return true;

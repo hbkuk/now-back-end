@@ -2,10 +2,14 @@ package com.now.domain.post;
 
 import com.now.domain.comment.Comment;
 import com.now.domain.file.File;
+import com.now.domain.manager.Manager;
 import com.now.domain.user.User;
 import com.now.exception.CannotDeletePostException;
 import com.now.exception.CannotUpdatePostException;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
@@ -54,9 +58,9 @@ public class Post {
     private final String title;
 
     /**
-     * 게시글을 작성한 작성자의 아이디(FROM 유저 테이블)
+     * 게시글을 작성한 작성자의 아이디 혹은 관리자의 아이디(FROM 유저 테이블, 관리자 테이블)
      */
-    private final String userId;
+    private final String authorId;
 
     /**
      * 게시글 등록일자
@@ -112,10 +116,10 @@ public class Post {
      * @return 게시글을 삭제할 수 있다면 true 반환, 그렇지 않다면 false 반환
      */
     public boolean canDelete(User user, List<Comment> comments) {
-        if (!user.isSameUserId(this.userId)) {
+        if (!user.isSameUserId(this.authorId)) {
             throw new CannotDeletePostException("다른 사용자가 작성한 게시글을 삭제할 수 없습니다.");
         }
-        
+
         for (Comment comment : comments) {
             if(!comment.canDelete(user)) {
                 throw new CannotDeletePostException("다른 사용자가 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다.");
@@ -127,12 +131,12 @@ public class Post {
 
     /**
      * 게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 예외를 던짐
-     * 
+     *
      * @param user      유저 정보가 담긴 객체
      * @return          게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 예외를 던짐
      */
     public boolean canUpdate(User user) {
-        if (!user.isSameUserId(this.userId)) {
+        if (!user.isSameUserId(this.authorId)) {
             throw new CannotUpdatePostException("다른 사용자가 작성한 게시글을 수정할 수 없습니다.");
         }
         return true;
@@ -141,10 +145,10 @@ public class Post {
     /**
      * 전달된 유저 객체의 메서드를 호출해 현재 객체 필드의 userId와 동일하다면 true 반환, 그렇지 않다면 false 반환
      *
-     * @param user      유저 정보가 담긴 객체
-     * @return          현재 객체 필드의 userId와 동일하다면 true 반환, 그렇지 않다면 false 반환
+     * @param user 유저 정보가 담긴 객체
+     * @return 현재 객체 필드의 userId와 동일하다면 true 반환, 그렇지 않다면 false 반환
      */
     public boolean isSameUserId(User user) {
-        return user.isSameUserId(this.userId);
+        return user.isSameUserId(this.authorId);
     }
 }

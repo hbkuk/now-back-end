@@ -16,13 +16,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class InquiryTest {
-    public static Inquiry newSecretInquiry(String userId) {
+    public static Inquiry newSecretInquiry(String authorId) {
         return Inquiry.builder()
                 .postIdx(1L)
                 .subCodeIdx(3)
                 .subCodeName(3)
                 .title("제목")
-                .userId(userId)
+                .authorId(authorId)
                 .regDate(LocalDateTime.now())
                 .modDate(LocalDateTime.now())
                 .content("내용")
@@ -35,13 +35,13 @@ public class InquiryTest {
                 .build();
     }
 
-    public static Inquiry newNonSecretInquiry(String userId) {
+    public static Inquiry newNonSecretInquiry(String authorId) {
         return Inquiry.builder()
                 .postIdx(1L)
                 .subCodeIdx(3)
                 .subCodeName(3)
                 .title("제목")
-                .userId(userId)
+                .authorId(authorId)
                 .regDate(LocalDateTime.now())
                 .modDate(LocalDateTime.now())
                 .content("내용")

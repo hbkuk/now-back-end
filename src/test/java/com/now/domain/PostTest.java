@@ -20,13 +20,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class PostTest {
-    public static Post newPost(String userId) {
+    public static Post newPost(String authorId) {
         return Post.builder()
                 .postIdx(1L)
                 .subCodeIdx(3)
                 .subCodeName(3)
                 .title("제목")
-                .userId(userId)
+                .authorId(authorId)
                 .regDate(LocalDateTime.now())
                 .modDate(LocalDateTime.now())
                 .content("내용")
