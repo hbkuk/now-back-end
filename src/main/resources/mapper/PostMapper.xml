@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.now.mapper.PostMapper">
+
+    <select id="findAllNotices" resultMap="notice" useCache="false" flushCache="true">
+        <include refid="selectNotice"/>
+        WHERE n.sub_code_idx = 1 OR n.sub_code_idx = 2;
+    </select>
+
+    <select id="findAllCommunity" resultMap="community" useCache="false" flushCache="true">
+        <include refid="selectCommunity"/>
+        WHERE c.sub_code_idx = 3 OR c.sub_code_idx = 4;
+    </select>
+
+    <select id="findAllPhotos" resultMap="photo" useCache="false" flushCache="true">
+        <include refid="selectPhoto"/>
+        WHERE ph.sub_code_idx = 5 OR ph.sub_code_idx = 6;
+    </select>
+
+    <select id="findAllInquries" resultMap="inquiry" useCache="false" flushCache="true">
+        <include refid="selectInquiry"/>
+        WHERE i.sub_code_idx = 7 OR i.sub_code_idx = 8;
+    </select>
+
+    <sql id="selectNotice">
+        SELECT
+            n.notice_idx AS n_notice_idx,
+            n.sub_code_idx AS n_sub_code_idx,
+            n.title AS n_title,
+            n.manager_idx AS n_manager_idx,
+            n.reg_date AS n_reg_date,
+            n.mod_date AS n_mod_date,
+            n.content AS n_content,
+            n.view_count AS n_view_count,
+            n.like_count AS n_like_count,
+            n.dislike_count AS n_dislike_count
+        FROM tb_notice n
+                 LEFT OUTER JOIN tb_sub_code sc ON n.sub_code_idx = sc.sub_code_idx
+    </sql>
+
+    <sql id="selectCommunity">
+        SELECT
+            c.post_idx AS c_post_idx,
+            c.sub_code_idx AS c_sub_code_idx,
+            c.title AS c_title,
+            c.user_idx AS c_user_idx,
+            c.reg_date AS c_reg_date,
+            c.mod_date AS c_mod_date,
+            c.content AS c_content,
+            c.view_count AS c_view_count,
+            c.like_count AS c_like_count,
+            c.dislike_count AS c_dislike_count,
+
+            f.file_idx AS f_file_idx,
+            f.original_file_name AS f_original_file_name,
+            f.file_extension AS f_file_extension,
+            f.file_size AS f_file_size,
+            f.file_extension AS f_post_idx,
+
+            co.comment_idx AS co_comment_idx,
+            co.user_idx AS co_user_idx,
+            co.reg_date AS co_reg_date,
+            co.content AS co_content,
+            co.post_idx AS co_post_idx
+        FROM tb_post c
+                 LEFT OUTER JOIN tb_sub_code sc ON c.sub_code_idx = sc.sub_code_idx
+                 LEFT OUTER JOIN tb_file f ON c.post_idx = f.post_idx
+                 LEFT OUTER JOIN tb_comment co ON c.post_idx = co.post_idx
+    </sql>
+
+    <sql id="selectPhoto">
+        SELECT
+            ph.post_idx AS ph_post_idx,
+            ph.sub_code_idx AS ph_sub_code_idx,
+            ph.title AS ph_title,
+            ph.user_idx AS ph_user_idx,
+            ph.reg_date AS ph_reg_date,
+            ph.mod_date AS ph_mod_date,
+            ph.content AS ph_content,
+            ph.view_count AS ph_view_count,
+            ph.like_count AS ph_like_count,
+            ph.dislike_count AS ph_dislike_count,
+
+            f.file_idx AS f_file_idx,
+            f.original_file_name AS f_original_file_name,
+            f.file_extension AS f_file_extension,
+            f.file_size AS f_file_size,
+            f.file_extension AS f_post_idx,
+
+            co.comment_idx AS co_comment_idx,
+            co.user_idx AS co_user_idx,
+            co.reg_date AS co_reg_date,
+            co.content AS co_content,
+            co.post_idx AS co_post_idx
+        FROM tb_post ph
+                 LEFT OUTER JOIN tb_sub_code sc ON ph.sub_code_idx = sc.sub_code_idx
+                 LEFT OUTER JOIN tb_file f ON ph.post_idx = f.post_idx
+                 LEFT OUTER JOIN tb_comment co ON ph.post_idx = co.post_idx
+    </sql>
+
+    <sql id="selectInquiry">
+        SELECT
+            i.post_idx AS i_post_idx,
+            i.sub_code_idx AS i_sub_code_idx,
+            i.title AS i_title,
+            i.user_idx AS i_user_idx,
+            i.reg_date AS i_reg_date,
+            i.mod_date AS i_mod_date,
+            i.content AS i_content,
+            i.view_count AS i_view_count,
+            i.like_count AS i_like_count,
+            i.dislike_count AS i_dislike_count
+        FROM tb_post i
+                 LEFT OUTER JOIN tb_sub_code sc ON i.sub_code_idx = sc.sub_code_idx
+    </sql>
+
+    <resultMap id="notice" type="Notice">
+        <id property="postIdx" column="n_notice_idx"/>
+        <result property="subCodeIdx" column="n_sub_code_idx"/>
+        <result property="title" column="n_title"/>
+        <result property="authorId" column="n_manager_idx"/>
+        <result property="regDate" column="n_reg_date"/>
+        <result property="modDate" column="n_mod_date"/>
+        <result property="content" column="n_content"/>
+        <result property="viewCount" column="n_view_count"/>
+        <result property="likeCount" column="n_like_count"/>
+        <result property="dislikeCount" column="n_dislike_count"/>
+    </resultMap>
+
+    <resultMap id="community" type="Community">
+        <id property="postIdx" column="c_post_idx"/>
+        <result property="subCodeIdx" column="c_sub_code_idx"/>
+        <result property="title" column="c_title"/>
+        <result property="authorId" column="c_user_idx"/>
+        <result property="regDate" column="c_reg_date"/>
+        <result property="modDate" column="c_mod_date"/>
+        <result property="content" column="c_content"/>
+        <result property="viewCount" column="c_view_count"/>
+        <result property="likeCount" column="c_like_count"/>
+        <result property="dislikeCount" column="c_dislike_count"/>
+
+        <!-- Files 컬렉션 매핑 -->
+        <collection property="files" ofType="File">
+            <id property="fileIdx" column="f_file_idx"/>
+            <result column="f_original_file_name" property="originalFileName.originalFileName"/>
+            <result property="fileExtension" column="f_file_extension"/>
+            <result property="fileSize.fileSize" column="f_file_size"/>
+            <result property="postIdx" column="f_post_idx"/>
+        </collection>
+
+        <!-- Comments 컬렉션 매핑 -->
+        <collection property="comments" ofType="Comment">
+            <id property="commentIdx" column="co_comment_idx"/>
+            <result property="authorId" column="co_user_idx"/>
+            <result property="regDate" column="co_reg_date"/>
+            <result property="content" column="co_content"/>
+            <result property="postIdx" column="co_post_idx"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="photo" type="Photo">
+        <id property="postIdx" column="ph_post_idx"/>
+        <result property="subCodeIdx" column="ph_sub_code_idx"/>
+        <result property="title" column="ph_title"/>
+        <result property="authorId" column="ph_user_idx"/>
+        <result property="regDate" column="ph_reg_date"/>
+        <result property="modDate" column="ph_mod_date"/>
+        <result property="content" column="ph_content"/>
+        <result property="viewCount" column="ph_view_count"/>
+        <result property="likeCount" column="ph_like_count"/>
+        <result property="dislikeCount" column="ph_dislike_count"/>
+
+        <!-- Files 컬렉션 매핑 -->
+        <collection property="files" ofType="File">
+            <id property="fileIdx" column="f_file_idx"/>
+            <result column="f_original_file_name" property="originalFileName.originalFileName"/>
+            <result property="fileExtension" column="f_file_extension"/>
+            <result property="fileSize.fileSize" column="f_file_size"/>
+            <result property="postIdx" column="f_post_idx"/>
+        </collection>
+
+        <!-- Comments 컬렉션 매핑 -->
+        <collection property="comments" ofType="Comment">
+            <id property="commentIdx" column="co_comment_idx"/>
+            <result property="authorId" column="co_user_idx"/>
+            <result property="regDate" column="co_reg_date"/>
+            <result property="content" column="co_content"/>
+            <result property="postIdx" column="co_post_idx"/>
+        </collection>
+    </resultMap>
+
+    <resultMap id="inquiry" type="Inquiry">
+        <id property="postIdx" column="i_post_idx"/>
+        <result property="subCodeIdx" column="i_sub_code_idx"/>
+        <result property="title" column="i_title"/>
+        <result property="authorId" column="i_user_idx"/>
+        <result property="regDate" column="i_reg_date"/>
+        <result property="modDate" column="i_mod_date"/>
+        <result property="content" column="i_content"/>
+        <result property="viewCount" column="i_view_count"/>
+        <result property="likeCount" column="i_like_count"/>
+        <result property="dislikeCount" column="i_dislike_count"/>
+    </resultMap>
+
+</mapper>
