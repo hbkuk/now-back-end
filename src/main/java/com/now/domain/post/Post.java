@@ -111,35 +111,51 @@ public class Post {
     /**
      * 게시글을 삭제할 수 있다면 true 반환, 그렇지 않다면 예외를 던짐
      *
-     * @param user     유저 정보가 담긴 객체
+     * @param object    객체
      * @param comments 댓글 정보가 담긴 객체
      * @return 게시글을 삭제할 수 있다면 true 반환, 그렇지 않다면 false 반환
      */
-    public boolean canDelete(User user, List<Comment> comments) {
-        if (!user.isSameUserId(this.authorId)) {
-            throw new CannotDeletePostException("다른 사용자가 작성한 게시글을 삭제할 수 없습니다.");
+    public boolean canDelete(Object object, List<Comment> comments) {
+        if (object instanceof Manager) {
+            return true;
         }
 
-        for (Comment comment : comments) {
-            if(!comment.canDelete(user)) {
-                throw new CannotDeletePostException("다른 사용자가 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다.");
+        User user = (User) object;
+        if(user != null) {
+
+            if (!user.isSameUserId(this.authorId)) {
+                throw new CannotDeletePostException("다른 사용자가 작성한 게시글을 삭제할 수 없습니다.");
             }
-        }
 
-        return true;
+            for (Comment comment : comments) {
+                if (!comment.canDelete(user)) {
+                    throw new CannotDeletePostException("다른 사용자가 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다.");
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
      * 게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 예외를 던짐
      *
-     * @param user      유저 정보가 담긴 객체
-     * @return          게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 예외를 던짐
+     * @param object   객체
+     * @return 게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 예외를 던짐
      */
-    public boolean canUpdate(User user) {
-        if (!user.isSameUserId(this.authorId)) {
-            throw new CannotUpdatePostException("다른 사용자가 작성한 게시글을 수정할 수 없습니다.");
+    public boolean canUpdate(Object object) {
+        if (object instanceof Manager) {
+            return true;
         }
-        return true;
+
+        User user = (User) object;
+        if(user != null) {
+            if (!user.isSameUserId(this.authorId)) {
+                throw new CannotUpdatePostException("다른 사용자가 작성한 게시글을 수정할 수 없습니다.");
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
