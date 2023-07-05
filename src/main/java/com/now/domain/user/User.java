@@ -71,10 +71,10 @@ public class User implements AccessPermission {
     }
 
     /**
-     * 전달된 문자열을 확인해서 동일하다면 true 반환, 그렇지 않다면 false 반환
+     * 전달된 사용자 아이디를 확인해서 동일하다면 true 반환, 그렇지 않다면 false 반환
      *
      * @param userId 사용자 아이디
-     * @return 전달된 문자열을 확인해서 동일하다면 true 반환, 그렇지 않다면 false 반환
+     * @return 사용자 아이디를 확인해서 동일하다면 true 반환, 그렇지 않다면 false 반환
      */
     @Override
     public boolean hasAccess(String userId) {

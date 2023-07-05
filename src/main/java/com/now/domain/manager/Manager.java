@@ -22,33 +22,33 @@ import lombok.*;
 public class Manager implements AccessPermission {
 
     /**
-     * 유저의 고유 식별자
+     * 관리자의 고유 식별자
      */
     private final Long managerIdx;
 
     /**
-     * 유저의 아이디
+     * 관리자의 아이디
      */
     private final String id;
 
     /**
-     * 유저의 비밀번호
+     * 관리자의 비밀번호
      */
     private final String password;
 
     /**
-     * 유저의 닉네임
+     * 관리자의 닉네임
      */
     private final String nickname;
 
     /**
      * 접근권한을 있다면 true 반환, 그렇지 않다면 false 반환
      *
-     * @param userId 사용자 아이디
+     * @param value 문자열
      * @return 접근권한을 있다면 true 반환, 그렇지 않다면 false 반환
      */
     @Override
-    public boolean hasAccess(String userId) {
+    public boolean hasAccess(String value) {
         return true;
     }
 }

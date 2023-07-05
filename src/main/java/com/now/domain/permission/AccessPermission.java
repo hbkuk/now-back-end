@@ -7,10 +7,10 @@ package com.now.domain.permission;
 public interface AccessPermission {
 
     /**
-     * 주어진 사용자 ID가 리소스에 액세스할 수 있는지 여부를 확인합니다.
+     * 주어진 문자열이 리소스에 액세스할 수 있다면 true 반환, 그렇지 않다면 false 반환
      *
-     * @param userId 사용자 ID
-     * @return 사용자가 액세스할 수 있는 경우 true, 그렇지 않은 경우 false
+     * @param value 문자열
+     * @return 리소스에 액세스할 수 있다면 true 반환, 그렇지 않다면 false 반환
      */
-    boolean hasAccess(String userId);
+    boolean hasAccess(String value);
 }
