@@ -1,5 +1,6 @@
 package com.now.domain.comment;
 
+import com.now.domain.permission.AccessPermission;
 import com.now.domain.user.User;
 import lombok.*;
 
@@ -53,11 +54,11 @@ public class Comment {
     /**
      * 댓글을 삭제할 수 있다면 true 반환, 그렇지 않다면 false 반환
      *
-     * @param user  유저 정보가 담긴 객체
-     * @return      댓글을 삭제할 수 있다면 true 반환, 그렇지 않다면 false 반환
+     * @param accessPermission 접근 권한을 확인하기 위한 AccessPermission 객체
+     * @return 댓글을 삭제할 수 있다면 true 반환, 그렇지 않다면 false 반환
      */
-    public boolean canDelete(User user) {
-        return user.isSameUserId(this.authorId);
+    public boolean canDelete(AccessPermission accessPermission) {
+        return accessPermission.hasAccess(this.authorId);
     }
 
     /**

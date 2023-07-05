@@ -3,6 +3,7 @@ package com.now.domain.post;
 import com.now.domain.comment.Comment;
 import com.now.domain.file.File;
 import com.now.domain.manager.Manager;
+import com.now.domain.permission.AccessPermission;
 import com.now.domain.user.User;
 import com.now.exception.CannotDeletePostException;
 import com.now.exception.CannotUpdatePostException;
@@ -111,51 +112,34 @@ public class Post {
     /**
      * 게시글을 삭제할 수 있다면 true 반환, 그렇지 않다면 예외를 던짐
      *
-     * @param object    객체
+     * @param accessPermission 접근 권한을 확인하기 위한 AccessPermission 객체
      * @param comments 댓글 정보가 담긴 객체
      * @return 게시글을 삭제할 수 있다면 true 반환, 그렇지 않다면 false 반환
      */
-    public boolean canDelete(Object object, List<Comment> comments) {
-        if (object instanceof Manager) {
-            return true;
+    public boolean canDelete(AccessPermission accessPermission, List<Comment> comments) {
+        if (!accessPermission.hasAccess(this.authorId)) {
+            throw new CannotDeletePostException("다른 사용자가 작성한 게시글을 삭제할 수 없습니다.");
         }
 
-        User user = (User) object;
-        if(user != null) {
-
-            if (!user.isSameUserId(this.authorId)) {
-                throw new CannotDeletePostException("다른 사용자가 작성한 게시글을 삭제할 수 없습니다.");
+        for (Comment comment : comments) {
+            if (!comment.canDelete(accessPermission)) {
+                throw new CannotDeletePostException("다른 사용자가 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다.");
             }
-
-            for (Comment comment : comments) {
-                if (!comment.canDelete(user)) {
-                    throw new CannotDeletePostException("다른 사용자가 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다.");
-                }
-            }
-            return true;
         }
-        return false;
+        return true;
     }
 
     /**
      * 게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 예외를 던짐
      *
-     * @param object   객체
+     * @param accessPermission 접근 권한을 확인하기 위한 AccessPermission 객체
      * @return 게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 예외를 던짐
      */
-    public boolean canUpdate(Object object) {
-        if (object instanceof Manager) {
-            return true;
+    public boolean canUpdate(AccessPermission accessPermission) {
+        if (!accessPermission.hasAccess(this.authorId)) {
+            throw new CannotUpdatePostException("다른 사용자가 작성한 게시글을 수정할 수 없습니다.");
         }
-
-        User user = (User) object;
-        if(user != null) {
-            if (!user.isSameUserId(this.authorId)) {
-                throw new CannotUpdatePostException("다른 사용자가 작성한 게시글을 수정할 수 없습니다.");
-            }
-            return true;
-        }
-        return false;
+        return true;
     }
 
     /**
