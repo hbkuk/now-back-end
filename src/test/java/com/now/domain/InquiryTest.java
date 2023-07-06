@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 
-import static com.now.domain.ManagerTest.newManager;
-import static com.now.domain.UserTest.newUser;
+import static com.now.domain.ManagerTest.createManagerByManagerId;
+import static com.now.domain.UserTest.createUserByUserId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class InquiryTest {
-    public static Inquiry newSecretInquiry(String authorId) {
+    public static Inquiry createSecretInquiryByAuthorId(String authorId) {
         return Inquiry.builder()
                 .postIdx(1L)
                 .subCodeIdx(3)
@@ -35,7 +35,7 @@ public class InquiryTest {
                 .build();
     }
 
-    public static Inquiry newNonSecretInquiry(String authorId) {
+    public static Inquiry createNonSecretInquiryByAuthorId(String authorId) {
         return Inquiry.builder()
                 .postIdx(1L)
                 .subCodeIdx(3)
@@ -66,8 +66,8 @@ public class InquiryTest {
             @DisplayName("동일한 사용자라면 true를 반환한다.")
             void return_true_when_same_user() {
                 // given
-                Inquiry inquiry = newSecretInquiry("tester1");
-                User user = newUser("tester1");
+                Inquiry inquiry = createSecretInquiryByAuthorId("tester1");
+                User user = createUserByUserId("tester1");
 
                 // when, then
                 assertThat(inquiry.canView(user)).isTrue();
@@ -77,8 +77,8 @@ public class InquiryTest {
             @DisplayName("다른 사용자라면 CannotViewInquiryException을 던진다.")
             void throw_exception_when_not_same_user() {
                 // given
-                Inquiry inquiry = newSecretInquiry("tester1");
-                User user = newUser("tester2");
+                Inquiry inquiry = createSecretInquiryByAuthorId("tester1");
+                User user = createUserByUserId("tester2");
 
                 // when, then
                 assertThatExceptionOfType(CannotViewInquiryException.class)
@@ -92,8 +92,8 @@ public class InquiryTest {
             @DisplayName("관리자라면 true를 반환한다.")
             void return_true_when_manager() {
                 // given
-                Inquiry inquiry = newSecretInquiry("tester1");
-                Manager manager = newManager("manager1");
+                Inquiry inquiry = createSecretInquiryByAuthorId("tester1");
+                Manager manager = createManagerByManagerId("manager1");
 
                 // when, then
                 assertThat(inquiry.canView(manager)).isTrue();
@@ -108,8 +108,8 @@ public class InquiryTest {
             @DisplayName("동일한 사용자라면 true를 반환한다.")
             void return_true_when_same_user() {
                 // given
-                Inquiry inquiry = newNonSecretInquiry("tester1");
-                User user = newUser("tester1");
+                Inquiry inquiry = createNonSecretInquiryByAuthorId("tester1");
+                User user = createUserByUserId("tester1");
 
                 // when, then
                 assertThat(inquiry.canView(user)).isTrue();
@@ -119,8 +119,8 @@ public class InquiryTest {
             @DisplayName("다른 사용자라면 ture를 반환한다.")
             void throw_exception_when_not_same_user() {
                 // given
-                Inquiry inquiry = newNonSecretInquiry("tester1");
-                User user = newUser("tester2");
+                Inquiry inquiry = createNonSecretInquiryByAuthorId("tester1");
+                User user = createUserByUserId("tester2");
 
                 // when, then
                 assertThat(inquiry.canView(user)).isTrue();
@@ -130,8 +130,8 @@ public class InquiryTest {
             @DisplayName("관리자라면 true를 반환한다.")
             void return_true_when_manager() {
                 // given
-                Inquiry inquiry = newNonSecretInquiry("tester1");
-                Manager manager = newManager("manager1");
+                Inquiry inquiry = createNonSecretInquiryByAuthorId("tester1");
+                Manager manager = createManagerByManagerId("manager1");
 
                 // when, then
                 assertThat(inquiry.canView(manager)).isTrue();

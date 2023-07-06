@@ -15,13 +15,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.now.domain.CommentTest.newComment;
-import static com.now.domain.UserTest.newUser;
+import static com.now.domain.CommentTest.createCommentByAuthorId;
+import static com.now.domain.UserTest.createUserByUserId;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class PostTest {
-    public static Post newPost(String authorId) {
+    public static Post createPostByAuthorId(String authorId) {
         return Post.builder()
                 .postIdx(1L)
                 .subCodeIdx(3)
@@ -46,8 +46,8 @@ public class PostTest {
         @DisplayName("만약 관리자라면 true를 반환한다.")
         void return_true_when_manager() {
             // given
-            Manager manager = ManagerTest.newManager("manager1");
-            Post post = newPost("tester1");
+            Manager manager = ManagerTest.createManagerByManagerId("manager1");
+            Post post = createPostByAuthorId("tester1");
 
             // when, then
             assertThat(post.canUpdate(manager)).isTrue();
@@ -57,8 +57,8 @@ public class PostTest {
         @DisplayName("만약 동일한 사용자라면 true를 반환한다.")
         void return_true_when_same_user() {
             // given
-            User user = newUser("tester1");
-            Post post = newPost("tester1");
+            User user = createUserByUserId("tester1");
+            Post post = createPostByAuthorId("tester1");
 
             // when, then
             assertThat(post.canUpdate(user)).isTrue();
@@ -68,8 +68,8 @@ public class PostTest {
         @DisplayName("만약 다른 사용자라면 CannotUpdatePostException을 던진다.")
         void throw_exception_when_not_same_user() {
             // given
-            User user = newUser("tester1");
-            Post post = newPost("tester2");
+            User user = createUserByUserId("tester1");
+            Post post = createPostByAuthorId("tester2");
 
             // when, then
             assertThatExceptionOfType(CannotUpdatePostException.class)
@@ -88,9 +88,9 @@ public class PostTest {
         @DisplayName("만약 관리자라면 항상 true를 반환한다.")
         void return_true_when_manager() {
             // given
-            Manager manager = ManagerTest.newManager("manager1");
-            Post post = newPost("tester1");
-            List<Comment> comments = Arrays.asList(newComment("tester1"));
+            Manager manager = ManagerTest.createManagerByManagerId("manager1");
+            Post post = createPostByAuthorId("tester1");
+            List<Comment> comments = Arrays.asList(createCommentByAuthorId("tester1"));
 
             // when, then
             assertThat(post.canDelete(manager, new ArrayList<Comment>())).isTrue();
@@ -105,8 +105,8 @@ public class PostTest {
             @DisplayName("댓글이 하나도 없을 경우 true를 반환한다.")
             void return_true_when_nothing_comment() {
                 // given
-                User user = newUser("tester1");
-                Post post = newPost("tester1");
+                User user = createUserByUserId("tester1");
+                Post post = createPostByAuthorId("tester1");
 
                 // when, then
                 assertThat(post.canDelete(user, new ArrayList<Comment>())).isTrue();
@@ -117,9 +117,9 @@ public class PostTest {
             @DisplayName("댓글 작성자도 같다면 true를 반환한다.")
             void return_true_when_same_comment_author() {
                 // given
-                User user = newUser("tester1");
-                Post post = newPost("tester1");
-                List<Comment> comments = Arrays.asList(newComment("tester1"));
+                User user = createUserByUserId("tester1");
+                Post post = createPostByAuthorId("tester1");
+                List<Comment> comments = Arrays.asList(createCommentByAuthorId("tester1"));
 
                 // when, then
                 assertThat(post.canDelete(user, comments)).isTrue();
@@ -130,9 +130,9 @@ public class PostTest {
             @DisplayName("댓글 작성자가 다르다면 CanDeletePostException을 던진다.")
             void throw_exception_when_not_same_comment_author() {
                 // given
-                User user = newUser("tester1");
-                Post post = newPost("tester1");
-                List<Comment> comments = Arrays.asList(newComment("tester2"));
+                User user = createUserByUserId("tester1");
+                Post post = createPostByAuthorId("tester1");
+                List<Comment> comments = Arrays.asList(createCommentByAuthorId("tester2"));
 
                 // when, then
                 assertThatExceptionOfType(CannotDeletePostException.class)
@@ -151,8 +151,8 @@ public class PostTest {
             @DisplayName("댓글이 하나도 없을 경우 CanDeletePostException을 던진다.")
             void throw_exception_when_nothing_comment() {
                 // given
-                User user = newUser("tester1");
-                Post post = newPost("tester2");
+                User user = createUserByUserId("tester1");
+                Post post = createPostByAuthorId("tester2");
 
                 // when, then
                 assertThatExceptionOfType(CannotDeletePostException.class)
@@ -166,9 +166,9 @@ public class PostTest {
             @DisplayName("댓글이 있을 경우 CanDeletePostException을 던진다.")
             void throw_exception_when_exist_comment() {
                 // given
-                User user = newUser("tester1");
-                Post post = newPost("tester2");
-                List<Comment> comments = Arrays.asList(newComment("tester2"));
+                User user = createUserByUserId("tester1");
+                Post post = createPostByAuthorId("tester2");
+                List<Comment> comments = Arrays.asList(createCommentByAuthorId("tester2"));
 
                 // when, then
                 assertThatExceptionOfType(CannotDeletePostException.class)
@@ -182,9 +182,9 @@ public class PostTest {
             @DisplayName("댓글이 같은 사용자일 경우 CanDeletePostException을 던진다.")
             void throw_exception_when_same_comment_author() {
                 // given
-                User user = newUser("tester1");
-                Post post = newPost("tester2");
-                List<Comment> comments = Arrays.asList(newComment("tester1"));
+                User user = createUserByUserId("tester1");
+                Post post = createPostByAuthorId("tester2");
+                List<Comment> comments = Arrays.asList(createCommentByAuthorId("tester1"));
 
                 // when, then
                 assertThatExceptionOfType(CannotDeletePostException.class)
