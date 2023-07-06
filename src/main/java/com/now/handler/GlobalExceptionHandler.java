@@ -23,6 +23,14 @@ import java.util.stream.Collectors;
 @RestController
 public class GlobalExceptionHandler {
 
+    /**
+     * DuplicateUserException을 처리하는 예외 핸들러
+     * 중복 사용자 오류를 처리
+     *
+     * @param e 중복 사용자 예외 인스턴스
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     * @throws JsonProcessingException JSON 처리 오류가 발생할 경우 예외를 던집니다.
+     */
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateUserException(DuplicateUserException e) throws JsonProcessingException {
         log.error(e.getMessages().stream().toString());
