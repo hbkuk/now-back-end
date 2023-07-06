@@ -67,6 +67,7 @@ public class GlobalExceptionHandler {
         log.error("JSON 처리 오류: {}", e.getMessage());
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.SERVER_INTERNAL_ERROR);
+        errorResponse.setDetail(null);
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -84,12 +85,7 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage());
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_DATA);
-
-        List<String> fieldErrors = e.getAllErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.toList());
-
-        errorResponse.setDetail(objectMapper.writeValueAsString(fieldErrors));
+        errorResponse.setDetail(objectMapper.writeValueAsString(extractFieldErrors(e)));
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -107,14 +103,21 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage());
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_PARAM);
-
-        List<String> fieldErrors = e.getAllErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .collect(Collectors.toList());
-
-        errorResponse.setDetail(objectMapper.writeValueAsString(fieldErrors));
+        errorResponse.setDetail(objectMapper.writeValueAsString(extractFieldErrors(e)));
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * BindException에서 필드 오류 메시지를 추출 후 리스트로 반환
+     *
+     * @param e BindException 인스턴스
+     * @return 필드 오류 메시지 리스트
+     */
+    private List<String> extractFieldErrors(BindException e) {
+        return e.getAllErrors().stream()
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .collect(Collectors.toList());
     }
 }
 
