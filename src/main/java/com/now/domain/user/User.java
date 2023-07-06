@@ -61,6 +61,21 @@ public class User implements AccessPermission {
     private final String nickname;
 
     /**
+     * 전달된 비밀번호로 현재 객체를 수정 후 반환
+     *
+     * @param password 변경할 비밀번호
+     * @return User 도메인 객체
+     */
+    public User updateByPassword(String password) {
+        return User.builder()
+                .id(this.id)
+                .password(password)
+                .name(this.name)
+                .nickname(this.nickname)
+                .build();
+    }
+
+    /**
      * 전달된 문자열이 현재 객체 필드의 id와 동일한다면 true 반환, 그렇지 않다면 false 반환
      *
      * @param userId 사용자 식별자
