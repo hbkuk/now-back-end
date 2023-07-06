@@ -5,6 +5,8 @@ import com.now.dto.UserDuplicateInfo;
 import com.now.exception.DuplicateUserException;
 import com.now.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,10 +16,15 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
+    private String appSalt;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       @Value("${now.password.salt}") String appSalt) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.appSalt = appSalt;
     }
 
     /**
@@ -33,7 +40,7 @@ public class UserService {
             throw new DuplicateUserException(duplicateUserInfo.generateDuplicateFieldMessages());
         }
 
-        userRepository.insert(user);
+        userRepository.insert(user.updateByPassword(passwordEncoder.encode(user.getPassword() + appSalt)));
     }
 
     /**
@@ -44,8 +51,8 @@ public class UserService {
      */
     private UserDuplicateInfo duplicateUserCheck(User user) {
         return UserDuplicateInfo.builder()
-                        .duplicateId(userRepository.existsById(user.getId()))
-                        .duplicateNickname(userRepository.existsByNickname(user.getNickname()))
-                        .build();
+                .duplicateId(userRepository.existsById(user.getId()))
+                .duplicateNickname(userRepository.existsByNickname(user.getNickname()))
+                .build();
     }
 }
