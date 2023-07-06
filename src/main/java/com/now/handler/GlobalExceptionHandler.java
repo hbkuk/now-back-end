@@ -6,6 +6,7 @@ import com.now.exception.DuplicateUserException;
 import com.now.exception.ErrorCode;
 import com.now.exception.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,18 @@ import java.util.stream.Collectors;
 @RestController
 public class GlobalExceptionHandler {
 
+    // TODO: Blog 정리
+    /**
+     * 빈(Bean)으로 등록된 객체들은 싱글톤(Singleton) 스코프로 관리하나,
+     * ObjectMapper는 스레드 안전(thread-safe)한 구현을 가지고 있어서 여러 쓰레드에서 동시에 사용해도 안전
+     */
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    public GlobalExceptionHandler(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     /**
      * DuplicateUserException을 처리하는 예외 핸들러
      * 중복 사용자 오류를 처리
@@ -33,13 +46,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateUserException(DuplicateUserException e) throws JsonProcessingException {
-        log.error(e.getMessages().stream().toString());
+        log.error(e.getMessages().toString());
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.DUPLICATE_USER);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        String fieldErrorsJson = objectMapper.writeValueAsString(e.getMessages());
-        errorResponse.setDetail(fieldErrorsJson);
+        errorResponse.setDetail(objectMapper.writeValueAsString(e.getMessages()));
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -55,8 +65,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JsonProcessingException.class)
     public ResponseEntity<ErrorResponse> handleJsonProcessingException(JsonProcessingException e) {
         log.error("JSON 처리 오류: {}", e.getMessage());
+
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.SERVER_INTERNAL_ERROR);
-        errorResponse.setDetail(e.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -72,15 +82,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException e) throws JsonProcessingException {
         log.error(e.getMessage());
+
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_DATA);
 
         List<String> fieldErrors = e.getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String fieldErrorsJson = objectMapper.writeValueAsString(fieldErrors);
-        errorResponse.setDetail(fieldErrorsJson);
+        errorResponse.setDetail(objectMapper.writeValueAsString(fieldErrors));
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -96,15 +105,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorResponse> handleBindException(BindException e) throws JsonProcessingException {
         log.error(e.getMessage());
+
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_PARAM);
 
         List<String> fieldErrors = e.getAllErrors().stream()
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        String fieldErrorsJson = objectMapper.writeValueAsString(fieldErrors);
-        errorResponse.setDetail(fieldErrorsJson);
+        errorResponse.setDetail(objectMapper.writeValueAsString(fieldErrors));
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
