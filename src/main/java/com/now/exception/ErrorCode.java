@@ -11,6 +11,8 @@ public enum ErrorCode {
 
     DUPLICATE_USER("USER-001", "중복된 유저 정보"),
 
+    AUTHENTICATION_FAILED("AUTH-001", "인증 실패"),
+
     SERVER_INTERNAL_ERROR("SERVER-001", "서버 내부 오류");
 
     private final String code;
