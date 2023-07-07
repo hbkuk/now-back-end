@@ -22,6 +22,16 @@ public class UserRepository {
     }
 
     /**
+     * 전달받은 아이디에 해당하는 사용자 정보를 조회 후 반환
+     *
+     * @param id 조회할 사용자의 아이디
+     * @return 조회된 사용자 정보 (해당 아이디에 해당하는 사용자가 없으면 null)
+     */
+    public User findById(String id) {
+        return userMapper.findByUser(id);
+    }
+
+    /**
      * 사용자 정보를 삽입
      *
      * @param user 삽입할 사용자 정보

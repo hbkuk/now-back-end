@@ -10,6 +10,13 @@
     </insert>
 
 
+    <!-- 사용자 확인 -->
+    <select id="findByUser" parameterType="java.lang.String" resultType="User">
+        SELECT *
+        FROM tb_user
+        WHERE id = #{id}
+    </select>
+
 
     <!-- 중복된 아이디 체크 쿼리 -->
     <select id="existsById" parameterType="java.lang.String" resultType="boolean">
@@ -17,7 +24,6 @@
         FROM tb_user
         WHERE id = #{id}
     </select>
-
 
 
     <!-- 중복된 닉네임 체크 쿼리 -->
