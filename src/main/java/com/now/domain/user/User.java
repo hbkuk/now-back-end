@@ -1,9 +1,11 @@
 package com.now.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.domain.permission.AccessPermission;
 import com.now.validation.UserValidationGroup;
 import lombok.*;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -39,6 +41,7 @@ public class User implements AccessPermission {
      * 유저의 아이디
      */
     @Size(groups = {UserValidationGroup.signup.class}, max = 50, message = "ID는 최대 50자까지 입력 가능합니다.")
+    @NotBlank(groups = UserValidationGroup.login.class, message = "아이디를 입력하셔야 합니다.")
     private final String id;
 
     /**
@@ -46,6 +49,8 @@ public class User implements AccessPermission {
      */
     @Size(groups = {UserValidationGroup.signup.class}, min = 4, max = 15, message = "패스워드는 4글자 이상, 15글자 이하여야 합니다")
     @Pattern(groups = {UserValidationGroup.signup.class}, regexp = passwordRegex, message = "패스워드는 영문, 숫자, 특수문자를 포함해야 합니다")
+    @NotBlank(groups = UserValidationGroup.login.class, message = "비밀번호를 입력하셔야 합니다.")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private final String password;
 
     /**
