@@ -6,6 +6,10 @@ import com.now.exception.DuplicateUserException;
 import com.now.exception.ErrorCode;
 import com.now.exception.ErrorResponse;
 import com.now.exception.AuthenticationFailedException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -35,6 +39,36 @@ public class GlobalExceptionHandler {
     @Autowired
     public GlobalExceptionHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    /**
+     * ExpiredJwtException 처리하는 예외 핸들러
+     *
+     * @param e ExpiredJwtException 인스턴스
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     */
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException e) {
+        log.error(e.getMessage());
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.EXPIRED_TOKEN);
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * JWT 예외 처리 핸들러
+     *
+     * @param e 발생한 예외 객체
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     */
+    @ExceptionHandler({UnsupportedJwtException.class, MalformedJwtException.class, SignatureException.class})
+    public ResponseEntity<ErrorResponse> handleJwtExceptions(Exception e) {
+        log.error(e.getMessage());
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_TOKEN);
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     /**
