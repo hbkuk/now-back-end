@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.now.exception.DuplicateUserException;
 import com.now.exception.ErrorCode;
 import com.now.exception.ErrorResponse;
+import com.now.exception.AuthenticationFailedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
@@ -34,6 +35,23 @@ public class GlobalExceptionHandler {
     @Autowired
     public GlobalExceptionHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    /**
+     * AuthenticationFailedException 처리하는 예외 핸들러
+     * 인증에 실패했을 때 발생하는 오류를 처리
+     *
+     * @param e AuthenticationFailedException 인스턴스
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     */
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationFailedException(AuthenticationFailedException e) {
+        log.error(e.getMessage());
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.AUTHENTICATION_FAILED);
+        errorResponse.setDetail(e.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     /**
