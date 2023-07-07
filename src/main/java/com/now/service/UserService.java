@@ -67,7 +67,7 @@ public class UserService {
             throw new AuthenticationFailedException("아이디 또는 비밀번호가 틀렸습니다.");
         }
 
-        return tokenProvider.create("id", user.getId());
+        return tokenProvider.create("userId", user.getId());
     }
 
     /**
