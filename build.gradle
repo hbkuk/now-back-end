@@ -59,6 +59,7 @@ dependencies {
 
     implementation 'org.springframework.security:spring-security-crypto:5.7.1'
 
+    implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
 }
 
 test {
