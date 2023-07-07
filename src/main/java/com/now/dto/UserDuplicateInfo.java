@@ -28,8 +28,8 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class UserDuplicateInfo {
 
-    private boolean duplicateId;
-    private boolean duplicateNickname;
+    private final boolean duplicateId;
+    private final boolean duplicateNickname;
 
     /**
      * 중복된 필드에 대한 메시지 목록을 생성 후 반환
