@@ -2,6 +2,7 @@ package com.now.controller;
 
 import com.now.domain.post.Community;
 import com.now.domain.post.Notice;
+import com.now.dto.Posts;
 import com.now.security.Authority;
 import com.now.service.PostService;
 import com.now.validation.PostValidationGroup;
@@ -31,19 +32,20 @@ public class PostController {
     /**
      * 모든 게시글 정보를 조회하는 핸들러 메서드
      *
-     * @param response 게시글 정보를 담을 Map 객체
      * @return 모든 게시글 정보와 함께 OK 응답을 반환
      */
-    //TODO: 일급컬렉션으로 리팩토링
     @GetMapping("/api/post")
-    public ResponseEntity<Map<String, Object>> retrieveAllPosts(Map<String, Object> response) {
-        log.debug("getAllPosts 호출");
+    public ResponseEntity<Posts> retrievePosts() {
+        log.debug("retrievePosts 호출");
 
-        response.put("notices", postService.retrieveAllNotices());
-        response.put("community", postService.retrieveAllCommunity());
-        response.put("photos", postService.retrieveAllPhotos());
-        response.put("inquiries", postService.retrieveAllInquiries());
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        Posts posts = Posts.create(Map.of(
+                "notices", postService.retrieveAllNotices(),
+                "community", postService.retrieveAllCommunity(),
+                "photos", postService.retrieveAllPhotos(),
+                "inquiries", postService.retrieveAllInquiries()
+        ));
+
+        return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     /**
@@ -54,7 +56,7 @@ public class PostController {
      * @return 생성된 게시글에 대한 CREATED 응답을 반환
      */
     @PostMapping("/api/notice")
-    public ResponseEntity<Object> registerNoticePost(@RequestAttribute("id") String managerId,
+    public ResponseEntity<Void> registerNoticePost(@RequestAttribute("id") String managerId,
                                                      @RequestAttribute("role") String authority,
                                                      @RequestBody @Validated(PostValidationGroup.register.class) Notice notice) {
         log.debug("registerNoticePost 호출, managerId : {}, authority : {}", managerId, authority);
@@ -72,7 +74,7 @@ public class PostController {
      * @return 생성된 게시글에 대한 CREATED 응답을 반환
      */
     @PostMapping("/api/community")
-    public ResponseEntity<Object> registerCommunityPost(@RequestAttribute("id") String userId,
+    public ResponseEntity<Void> registerCommunityPost(@RequestAttribute("id") String userId,
                                                         @RequestAttribute("role") String authority,
                                                         @RequestBody @Validated(PostValidationGroup.register.class) Community community) {
         log.debug("registerCommunityPost 호출, userId : {}, authority : {}", userId, authority);
