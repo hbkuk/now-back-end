@@ -1,7 +1,6 @@
 package com.now.controller;
 
 import com.now.domain.user.User;
-import com.now.security.JwtTokenService;
 import com.now.service.UserService;
 import com.now.validation.UserValidationGroup;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +48,7 @@ public class UserController {
      * @return ResponseEntity 객체 (HTTP 응답)
      */
     @PostMapping("/api/login")
-    public ResponseEntity<HttpHeaders> loginUser(@Validated(UserValidationGroup.login.class) @RequestBody User user) {
+    public ResponseEntity<HttpHeaders> loginUser(@RequestBody User user) {
         log.debug("/api/login, loginUser 핸들러 메서드 호출, User : {}", user);
 
         HttpHeaders httpHeaders = new HttpHeaders();
