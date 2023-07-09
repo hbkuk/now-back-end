@@ -1,5 +1,6 @@
 package com.now.security;
 
+import com.now.dto.TokenClaims;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,8 +30,8 @@ public class JwtTokenService {
      * @param claims 토큰에 담을 클레임 정보를 포함한 Map 객체
      * @return JWT 토큰을 생성 후 반환
      */
-    public String create(Map<String, Object> claims) {
-        return buildToken(claims);
+    public String create(TokenClaims claims) {
+        return buildToken(claims.getClaims());
     }
 
     /**
