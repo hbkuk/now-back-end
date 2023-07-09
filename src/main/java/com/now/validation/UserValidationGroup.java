@@ -14,9 +14,4 @@ public interface UserValidationGroup {
      * 회원 가입을 위한 유효성 검증 그룹
      */
     interface signup {}
-
-    /**
-     * 로그인을 위한 유효성 검증 그룹
-     */
-    interface login {}
 }
