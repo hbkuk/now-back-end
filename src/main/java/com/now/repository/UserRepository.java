@@ -28,7 +28,7 @@ public class UserRepository {
      * @return 조회된 사용자 정보 (해당 아이디에 해당하는 사용자가 없으면 null)
      */
     public User findById(String id) {
-        return userMapper.findByUser(id);
+        return userMapper.findById(id);
     }
 
     /**
