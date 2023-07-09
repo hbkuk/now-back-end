@@ -2,10 +2,7 @@ package com.now.handler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.now.exception.DuplicateUserException;
-import com.now.exception.ErrorCode;
-import com.now.exception.ErrorResponse;
-import com.now.exception.AuthenticationFailedException;
+import com.now.exception.*;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureException;
@@ -39,6 +36,22 @@ public class GlobalExceptionHandler {
     @Autowired
     public GlobalExceptionHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    /**
+     * PermissionDeniedException 처리하는 예외 핸들러
+     *
+     * @param e PermissionDeniedException 인스턴스
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     */
+    @ExceptionHandler(PermissionDeniedException.class)
+    public ResponseEntity<ErrorResponse> handlePermissionDeniedException(PermissionDeniedException e) {
+        log.error(e.getMessage());
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.PERMISSION_DENIED);
+        errorResponse.setDetail(e.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -112,7 +125,6 @@ public class GlobalExceptionHandler {
      *
      * @param e JsonProcessingException 인스턴스
      * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
-     * @throws JsonProcessingException JSON 처리 오류가 발생할 경우 예외를 던집니다.
      */
     @ExceptionHandler(JsonProcessingException.class)
     public ResponseEntity<ErrorResponse> handleJsonProcessingException(JsonProcessingException e) {
