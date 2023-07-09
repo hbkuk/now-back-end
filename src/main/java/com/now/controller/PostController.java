@@ -1,6 +1,8 @@
 package com.now.controller;
 
 import com.now.domain.post.Community;
+import com.now.domain.post.Notice;
+import com.now.security.Authority;
 import com.now.service.PostService;
 import com.now.validation.PostValidationGroup;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +28,6 @@ public class PostController {
         this.postService = postService;
     }
 
-
     /**
      * 모든 게시글 정보를 조회하는 핸들러 메서드
      *
@@ -46,6 +47,24 @@ public class PostController {
     }
 
     /**
+     * 공지 게시글을 등록
+     *
+     * @param managerId 작성자의 관리자 ID
+     * @param notice    등록할 공지 게시글 정보
+     * @return 생성된 게시글에 대한 CREATED 응답을 반환
+     */
+    @PostMapping("/api/notice")
+    public ResponseEntity<Object> registerNoticePost(@RequestAttribute("id") String managerId,
+                                                     @RequestAttribute("role") String authority,
+                                                     @RequestBody @Validated(PostValidationGroup.register.class) Notice notice) {
+        log.debug("registerNoticePost 호출, managerId : {}, authority : {}", managerId, authority);
+
+        postService.registerNoticePost(notice.updateAuthorId(managerId), Authority.valueOf(authority));
+
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+    }
+
+    /**
      * 커뮤니티 게시글을 등록
      *
      * @param userId    작성자의 사용자 ID
@@ -53,11 +72,12 @@ public class PostController {
      * @return 생성된 게시글에 대한 CREATED 응답을 반환
      */
     @PostMapping("/api/community")
-    public ResponseEntity<Object> registerCommunityPost(@RequestAttribute("userId") String userId,
+    public ResponseEntity<Object> registerCommunityPost(@RequestAttribute("id") String userId,
+                                                        @RequestAttribute("role") String authority,
                                                         @RequestBody @Validated(PostValidationGroup.register.class) Community community) {
-        log.debug("registerCommunityPost 호출");
+        log.debug("registerCommunityPost 호출, userId : {}, authority : {}", userId, authority);
 
-        postService.registerPost(community.updateAuthorId(userId));
+        postService.registerCommunityPost(community.updateAuthorId(userId), Authority.valueOf(authority));
 
         return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
     }
