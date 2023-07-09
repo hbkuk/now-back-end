@@ -31,7 +31,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/api/user/**"); // 토큰 검증을 수행할 URL 패턴 지정
+                .addPathPatterns("/api/community");
     }
 }
 
