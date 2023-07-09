@@ -1,16 +1,20 @@
 package com.now.service;
 
 import com.now.domain.user.User;
+import com.now.dto.TokenClaims;
 import com.now.dto.UserDuplicateInfo;
-import com.now.exception.DuplicateUserException;
 import com.now.exception.AuthenticationFailedException;
+import com.now.exception.DuplicateUserException;
 import com.now.repository.UserRepository;
+import com.now.security.Authority;
 import com.now.security.JwtTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 /**
  * 사용자 관련 비즈니스 로직을 처리하는 서비스
@@ -59,15 +63,16 @@ public class UserService {
     public String generateAuthToken(User user) {
         User savedUser = userRepository.findById(user.getId());
 
-        if(savedUser == null) {
+        if (savedUser == null) {
             throw new AuthenticationFailedException("아이디 또는 비밀번호가 틀렸습니다.");
         }
 
-        if(!passwordEncoder.matches(appendSalt(user.getPassword()), savedUser.getPassword())) {
+        if (!passwordEncoder.matches(appendSalt(user.getPassword()), savedUser.getPassword())) {
             throw new AuthenticationFailedException("아이디 또는 비밀번호가 틀렸습니다.");
         }
 
-        return tokenProvider.create("userId", user.getId());
+        return tokenProvider.create(TokenClaims.create(Map.of(
+                "id", user.getId(), "role", Authority.USER.getValue())));
     }
 
     /**
@@ -77,7 +82,11 @@ public class UserService {
      * @return 사용자를 조회 후 {@link User}를 반환
      */
     public User findUserById(String authorId) {
-        return userRepository.findById(authorId);
+        User user = userRepository.findById(authorId);
+        if(user == null) {
+            throw new AuthenticationFailedException("사용자 정보를 찾을 수 없습니다.");
+        }
+        return user;
     }
 
     /**
