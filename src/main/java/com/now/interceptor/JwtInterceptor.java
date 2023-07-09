@@ -17,6 +17,7 @@ public class JwtInterceptor implements HandlerInterceptor {
     private final JwtTokenService jwtTokenService;
 
     public JwtInterceptor(JwtTokenService jwtTokenService) {
+
         this.jwtTokenService = jwtTokenService;
     }
 
@@ -32,7 +33,8 @@ public class JwtInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        request.setAttribute("userId", jwtTokenService.getClaim(request.getHeader("Authorization"), "userId"));
+        request.setAttribute("id", jwtTokenService.getClaim(request.getHeader("Authorization"), "id"));
+        request.setAttribute("role", jwtTokenService.getClaim(request.getHeader("Authorization"), "role"));
         return true;
     }
 }
