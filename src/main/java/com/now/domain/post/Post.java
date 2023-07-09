@@ -2,18 +2,18 @@ package com.now.domain.post;
 
 import com.now.domain.comment.Comment;
 import com.now.domain.file.File;
-import com.now.domain.manager.Manager;
 import com.now.domain.permission.AccessPermission;
 import com.now.domain.user.User;
 import com.now.exception.CannotDeletePostException;
 import com.now.exception.CannotUpdatePostException;
+import com.now.validation.PostValidationGroup;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -44,19 +44,24 @@ public class Post {
     /**
      * 하위 코드 번호
      */
-    @NotBlank(message = "카테고리 선택 필수")
-    private final int subCodeIdx;
+    @NotNull(groups = {PostValidationGroup.register.class}, message = "카테고리 선택 필수")
+    private final Integer subCodeIdx;
 
     /**
      * 하위 코드명 (FROM 하위 코드 테이블)
      */
-    private final int subCodeName;
+    private final Integer subCodeName;
 
     /**
      * 게시글의 제목
      */
-    @Size(min = 1, max = 100, message = "게시글의 제목은 1글자 이상, 100글자 이하")
+    @Size(groups = {PostValidationGroup.register.class}, min = 1, max = 100, message = "게시글의 제목은 1글자 이상, 100글자 이하")
     private final String title;
+
+    /**
+     * 게시글을 작성한 작성자의 고유 식별자 혹은 관리자의 고유 식별자(FROM 유저 테이블, 관리자 테이블)
+     */
+    private final Long authorIdx;
 
     /**
      * 게시글을 작성한 작성자의 아이디 혹은 관리자의 아이디(FROM 유저 테이블, 관리자 테이블)
@@ -76,28 +81,23 @@ public class Post {
     /**
      * 게시글의 내용
      */
-    @Size(min = 1, max = 100, message = "공지사항의 내용은 1글자 이상, 4000글자 이하")
+    @Size(groups = {PostValidationGroup.register.class}, min = 1, max = 100, message = "공지사항의 내용은 1글자 이상, 4000글자 이하")
     private final String content;
 
     /**
      * 게시글의 조회수
      */
-    private final int viewCount;
+    private final Integer viewCount;
 
     /**
      * 게시글의 좋아요 수
      */
-    private final int likeCount;
+    private final Integer likeCount;
 
     /**
      * 게시글 싫어요 수
      */
-    private final int dislikeCount;
-
-    /**
-     * 현재 사용자가 작성한 글인지 여부 (true: 현재 사용자의 글)
-     */
-    private final boolean isCurrentUserPost;
+    private final Integer dislikeCount;
 
     /**
      * 파일 (file 테이블에서 가져옴)
@@ -108,6 +108,37 @@ public class Post {
      * 댓글 (comment 테이블에서 가져옴)
      */
     private final List<Comment> comments;
+
+    /**
+     * 작성자 아이디를 업데이트한 새로운 {@link Post} 객체를 반환
+     *
+     * @param authorId 작성자 아이디
+     * @return 작성자 아이디를 업데이트한 새로운 {@link Post} 객체
+     */
+    public Post updateAuthorId(String authorId) {
+        return Post.builder()
+                .subCodeIdx(this.getSubCodeIdx())
+                .title(this.getTitle())
+                .authorId(authorId)
+                .content(this.getContent())
+                .build();
+    }
+
+    /**
+     * 작성자 인덱스를 업데이트한 새로운 {@link Post} 객체를 반환합니다.
+     *
+     * @param authorIdx 작성자 인덱스
+     * @return 작성자 인덱스를 업데이트한 새로운 {@link Post} 객체
+     */
+    public Post updateAuthorIdx(Long authorIdx) {
+        return Post.builder()
+                .subCodeIdx(this.getSubCodeIdx())
+                .title(this.getTitle())
+                .authorId(this.getAuthorId())
+                .authorIdx(authorIdx)
+                .content(this.getContent())
+                .build();
+    }
 
     /**
      * 게시글을 삭제할 수 있다면 true 반환, 그렇지 않다면 예외를 던짐
