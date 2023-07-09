@@ -14,6 +14,7 @@ public enum ErrorCode {
     AUTHENTICATION_FAILED("AUTH-001", "인증 실패"),
     INVALID_TOKEN("AUTH-002", "잘못된 토큰 전달"),
     EXPIRED_TOKEN("AUTH-003", "유효기간 만료된 토큰 전달"),
+    PERMISSION_DENIED("AUTH-004", "권한 거부"),
 
     SERVER_INTERNAL_ERROR("SERVER-001", "서버 내부 오류");
 
