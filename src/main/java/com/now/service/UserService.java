@@ -71,6 +71,16 @@ public class UserService {
     }
 
     /**
+     * 사용자 아이디(authorId)에 해당하는 사용자를 조회 후 {@link User}를 반환
+     *
+     * @param authorId 조회할 사용자의 아이디
+     * @return 사용자를 조회 후 {@link User}를 반환
+     */
+    public User findUserById(String authorId) {
+        return userRepository.findById(authorId);
+    }
+
+    /**
      * 중복된 사용자 정보를 체크해서 {@link UserDuplicateInfo}를 반환
      *
      * @param user 체크할 사용자 정보

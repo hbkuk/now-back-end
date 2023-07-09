@@ -23,6 +23,12 @@
         WHERE i.sub_code_idx = 7 OR i.sub_code_idx = 8;
     </select>
 
+    <insert id="insert" parameterType="Post">
+        INSERT INTO tb_post (sub_code_idx, title, user_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
+        VALUES (#{subCodeIdx}, #{title}, #{authorIdx}, now(), null, #{content}, 0, 0, 0)
+    </insert>
+
+
     <sql id="selectNotice">
         SELECT
             n.notice_idx AS n_notice_idx,
