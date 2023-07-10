@@ -8,6 +8,7 @@ import com.now.repository.PostRepository;
 import com.now.security.Authority;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,13 +23,15 @@ public class PostService {
     private PostRepository postRepository;
     private UserService userService;
     private ManagerService managerService;
+    private MessageSourceAccessor messageSource;
 
     @Autowired
     public PostService(PostRepository postRepository, UserService userService,
-                       ManagerService managerService) {
+                       ManagerService managerService, MessageSourceAccessor messageSource) {
         this.postRepository = postRepository;
         this.userService = userService;
         this.managerService = managerService;
+        this.messageSource = messageSource;
     }
 
     /**
@@ -78,7 +81,7 @@ public class PostService {
         User user = userService.findUserById(post.getAuthorId());
 
         if(authority != Authority.USER) {
-            throw new PermissionDeniedException("게시글을 작성할 권한이 없습니다.");
+            throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
         }
 
         postRepository.insert(post.updateAuthorIdx(user.getUserIdx()));
@@ -95,7 +98,7 @@ public class PostService {
         Manager manager = managerService.findManagerById(post.getAuthorId());
 
         if(authority != Authority.MANAGER) {
-            throw new PermissionDeniedException("게시글을 작성할 권한이 없습니다.");
+            throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
         }
 
         postRepository.insert(post.updateAuthorIdx(manager.getManagerIdx()));

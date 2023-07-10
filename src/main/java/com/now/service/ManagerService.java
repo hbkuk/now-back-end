@@ -1,7 +1,6 @@
 package com.now.service;
 
 import com.now.domain.manager.Manager;
-import com.now.domain.user.User;
 import com.now.dto.TokenClaims;
 import com.now.exception.AuthenticationFailedException;
 import com.now.repository.ManagerRepository;
@@ -10,10 +9,14 @@ import com.now.security.JwtTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * 매니저 관련 비즈니스 로직을 처리하는 서비스
@@ -26,14 +29,17 @@ public class ManagerService {
     private PasswordEncoder passwordEncoder;
     private String appSalt;
     private JwtTokenService tokenProvider;
+    private MessageSourceAccessor messageSource;
 
     @Autowired
     public ManagerService(ManagerRepository managerRepository, PasswordEncoder passwordEncoder,
-                          @Value("${now.password.salt}") String appSalt, JwtTokenService tokenProvider) {
+                          @Value("${now.password.salt}") String appSalt, JwtTokenService tokenProvider,
+                          MessageSourceAccessor messageSource) {
         this.managerRepository = managerRepository;
         this.passwordEncoder = passwordEncoder;
         this.appSalt = appSalt;
         this.tokenProvider = tokenProvider;
+        this.messageSource = messageSource;
     }
 
     /**
@@ -47,11 +53,11 @@ public class ManagerService {
         Manager savedManager = managerRepository.findById(manager.getId());
 
         if (savedManager == null) {
-            throw new AuthenticationFailedException("아이디 또는 비밀번호가 틀렸습니다.");
+            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.failed"));
         }
 
         if (!passwordEncoder.matches(appendSalt(manager.getPassword()), savedManager.getPassword())) {
-            throw new AuthenticationFailedException("아이디 또는 비밀번호가 틀렸습니다.");
+            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.failed"));
         }
 
         return tokenProvider.create(TokenClaims.create(Map.of(
@@ -66,8 +72,8 @@ public class ManagerService {
      */
     public Manager findManagerById(String managerId) {
         Manager manager = managerRepository.findById(managerId);
-        if(manager == null) {
-            throw new AuthenticationFailedException("사용자 정보를 찾을 수 없습니다.");
+        if (manager == null) {
+            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.managerNotFound"));
         }
         return managerRepository.findById(managerId);
     }

@@ -11,6 +11,7 @@ import com.now.security.JwtTokenService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +28,17 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     private String appSalt;
     private JwtTokenService tokenProvider;
+    private MessageSourceAccessor messageSource;
 
     @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       @Value("${now.password.salt}") String appSalt, JwtTokenService tokenProvider) {
+                       @Value("${now.password.salt}") String appSalt, JwtTokenService tokenProvider,
+                       MessageSourceAccessor messageSource) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.appSalt = appSalt;
         this.tokenProvider = tokenProvider;
+        this.messageSource = messageSource;
     }
 
     /**
@@ -64,11 +68,11 @@ public class UserService {
         User savedUser = userRepository.findById(user.getId());
 
         if (savedUser == null) {
-            throw new AuthenticationFailedException("아이디 또는 비밀번호가 틀렸습니다.");
+            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.failed"));
         }
 
         if (!passwordEncoder.matches(appendSalt(user.getPassword()), savedUser.getPassword())) {
-            throw new AuthenticationFailedException("아이디 또는 비밀번호가 틀렸습니다.");
+            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.failed"));
         }
 
         return tokenProvider.create(TokenClaims.create(Map.of(
@@ -84,7 +88,7 @@ public class UserService {
     public User findUserById(String authorId) {
         User user = userRepository.findById(authorId);
         if(user == null) {
-            throw new AuthenticationFailedException("사용자 정보를 찾을 수 없습니다.");
+            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.userNotFound"));
         }
         return user;
     }
