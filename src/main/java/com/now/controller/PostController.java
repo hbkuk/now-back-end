@@ -1,9 +1,12 @@
 package com.now.controller;
 
+import com.now.domain.file.FileExtensionType;
+import com.now.domain.file.FileSizeType;
 import com.now.domain.post.Community;
 import com.now.domain.post.Notice;
 import com.now.dto.Posts;
 import com.now.security.Authority;
+import com.now.service.FileService;
 import com.now.service.PostService;
 import com.now.validation.PostValidationGroup;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -23,10 +27,12 @@ import java.util.Map;
 public class PostController {
 
     private final PostService postService;
+    private final FileService fileService;
 
     @Autowired
-    public PostController(PostService postService) {
+    public PostController(PostService postService, FileService fileService) {
         this.postService = postService;
+        this.fileService = fileService;
     }
 
     /**
@@ -74,12 +80,13 @@ public class PostController {
      * @return 생성된 게시글에 대한 CREATED 응답을 반환
      */
     @PostMapping("/api/community")
-    public ResponseEntity<Void> registerCommunityPost(@RequestAttribute("id") String userId,
-                                                        @RequestAttribute("role") String authority,
-                                                        @RequestBody @Validated(PostValidationGroup.register.class) Community community) {
-        log.debug("registerCommunityPost 호출, userId : {}, authority : {}", userId, authority);
+    public ResponseEntity<Void> registerCommunityPost(@RequestAttribute("id") String userId, @RequestAttribute("role") String authority,
+                                                      @RequestPart(value = "post") @Validated(PostValidationGroup.register.class) Community community,
+                                                      @RequestPart(value = "file", required = false) MultipartFile[] multipartFiles) {
+        log.debug("registerCommunityPost 호출, userId : {}, authority : {}, Community : {}, Multipart : {}", userId, authority, community, (multipartFiles != null ? multipartFiles.length : "null"));
 
         postService.registerCommunityPost(community.updateAuthorId(userId), Authority.valueOf(authority));
+        fileService.insert(multipartFiles, community.getPostIdx(), FileSizeType.FILE, FileExtensionType.FILE);
 
         return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
     }

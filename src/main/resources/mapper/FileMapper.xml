@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.now.mapper.FileMapper">
+
+    <insert id="insert" parameterType="File" useGeneratedKeys="true" keyProperty="fileIdx">
+        INSERT INTO tb_file (saved_file_name, original_file_name, file_extension, file_size, post_idx)
+        VALUES (#{savedFileName}, #{originalFileName.originalFileName}, #{fileExtension.fileExtension}, #{fileSize.fileSize}, #{postIdx});
+    </insert>
+
+</mapper>
