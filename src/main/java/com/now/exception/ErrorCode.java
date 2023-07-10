@@ -1,7 +1,5 @@
 package com.now.exception;
 
-import org.springframework.context.support.MessageSourceAccessor;
-
 /**
  * API 예외 코드를 정의한 enum
  */

@@ -42,6 +42,22 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * FileInsertionException 처리하는 예외 핸들러
+     *
+     * @param e FileInsertionException 인스턴스
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     */
+    @ExceptionHandler(FileInsertionException.class)
+    public ResponseEntity<ErrorResponse> handleFileInsertionException(FileInsertionException e) {
+        log.error(e.getMessage(), e);
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.SERVER_INTERNAL_ERROR, messageSource);
+        errorResponse.setDetail(e.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    /**
      * PermissionDeniedException 처리하는 예외 핸들러
      *
      * @param e PermissionDeniedException 인스턴스
@@ -49,7 +65,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(PermissionDeniedException.class)
     public ResponseEntity<ErrorResponse> handlePermissionDeniedException(PermissionDeniedException e) {
-        log.error(e.getMessage());
+        log.error(e.getMessage(), e);
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.PERMISSION_DENIED, messageSource);
         errorResponse.setDetail(e.getMessage());
@@ -65,7 +81,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException e) {
-        log.error(e.getMessage());
+        log.error(e.getMessage(), e);
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.EXPIRED_TOKEN, messageSource);
 
@@ -80,7 +96,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler({UnsupportedJwtException.class, MalformedJwtException.class, SignatureException.class})
     public ResponseEntity<ErrorResponse> handleJwtExceptions(Exception e) {
-        log.error(e.getMessage());
+        log.error(e.getMessage(), e);
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_TOKEN, messageSource);
 
@@ -96,7 +112,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(AuthenticationFailedException.class)
     public ResponseEntity<ErrorResponse> handleAuthenticationFailedException(AuthenticationFailedException e) {
-        log.error(e.getMessage());
+        log.error(e.getMessage(), e);
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.AUTHENTICATION_FAILED, messageSource);
         errorResponse.setDetail(e.getMessage());
@@ -114,7 +130,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(DuplicateUserException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateUserException(DuplicateUserException e) throws JsonProcessingException {
-        log.error(e.getMessages().toString());
+        log.error(e.getMessage(), e);
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.DUPLICATE_USER, messageSource);
         errorResponse.setDetail(objectMapper.writeValueAsString(e.getMessages()));
@@ -131,7 +147,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(JsonProcessingException.class)
     public ResponseEntity<ErrorResponse> handleJsonProcessingException(JsonProcessingException e) {
-        log.error("JSON 처리 오류: {}", e.getMessage());
+        log.error(e.getMessage(), e);
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.SERVER_INTERNAL_ERROR, messageSource);
 
@@ -148,7 +164,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException e) throws JsonProcessingException {
-        log.error(e.getMessage());
+        log.error(e.getMessage(), e);
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_DATA, messageSource);
         errorResponse.setDetail(objectMapper.writeValueAsString(extractFieldErrors(e)));
@@ -166,7 +182,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ErrorResponse> handleBindException(BindException e) throws JsonProcessingException {
-        log.error(e.getMessage());
+        log.error(e.getMessage(), e);
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_PARAM, messageSource);
         errorResponse.setDetail(objectMapper.writeValueAsString(extractFieldErrors(e)));
