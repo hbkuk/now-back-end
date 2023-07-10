@@ -29,7 +29,6 @@ public class InquiryTest {
                 .viewCount(0)
                 .likeCount(0)
                 .dislikeCount(0)
-                .isCurrentUserPost(false)
                 .isSecret(true)
                 .isAnswerCompleted(false)
                 .build();
@@ -48,7 +47,6 @@ public class InquiryTest {
                 .viewCount(0)
                 .likeCount(0)
                 .dislikeCount(0)
-                .isCurrentUserPost(false)
                 .isSecret(false)
                 .isAnswerCompleted(false)
                 .build();

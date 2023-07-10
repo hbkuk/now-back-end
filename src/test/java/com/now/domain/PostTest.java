@@ -34,7 +34,6 @@ public class PostTest {
                 .viewCount(0)
                 .likeCount(0)
                 .dislikeCount(0)
-                .isCurrentUserPost(false)
                 .build();
     }
 
