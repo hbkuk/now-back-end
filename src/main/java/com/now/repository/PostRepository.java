@@ -53,8 +53,8 @@ public class PostRepository {
      *
      * @return 문의 게시글 정보 리스트
      */
-    public List<Inquiry> findAllInquries() {
-        return postMapper.findAllInquries();
+    public List<Inquiry> findAllInquiries() {
+        return postMapper.findAllInquiries();
     }
 
     /**

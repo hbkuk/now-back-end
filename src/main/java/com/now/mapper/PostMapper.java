@@ -40,7 +40,7 @@ public interface PostMapper {
      *
      * @return 문의 게시글 정보 리스트
      */
-    List<Inquiry> findAllInquries();
+    List<Inquiry> findAllInquiries();
 
     /**
      * 게시글 등록

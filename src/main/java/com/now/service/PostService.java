@@ -67,7 +67,7 @@ public class PostService {
      * @return 문의 게시글 정보 리스트
      */
     public List<Inquiry> retrieveAllInquiries() {
-        return postRepository.findAllInquries();
+        return postRepository.findAllInquiries();
     }
 
     /**
