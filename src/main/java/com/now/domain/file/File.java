@@ -43,7 +43,7 @@ public class File {
     /**
      * 파일의 확장자명
      */
-    private final String fileExtension;
+    private final FileExtension fileExtension;
 
     /**
      * 파일의 크기
@@ -53,5 +53,15 @@ public class File {
     /**
      *  게시글의 고유 식별자
      */
-    private final Long postIdx;
+    private Long postIdx;
+
+    /**
+     * 게시글 번호가 업데이트 된 File 객체를 리턴합니다.
+     *
+     * @param postIdx 게시글 번호
+     */
+    public File updatePostIdx(Long postIdx) {
+        this.postIdx = postIdx;
+        return this;
+    }
 }
