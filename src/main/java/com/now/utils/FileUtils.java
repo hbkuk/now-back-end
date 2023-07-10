@@ -1,6 +1,9 @@
 package com.now.utils;
 
+import com.now.dto.UploadedFile;
+import com.now.exception.FileInsertionException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -143,5 +146,43 @@ public class FileUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * 서버에 파일을 업로드하고 {@link UploadedFile} 객체를 반환
+     *
+     * @param multipartFile 업로드할 {@link MultipartFile} 객체
+     * @return 업로드된 {@link UploadedFile} 객체 또는 null (업로드할 파일이 없는 경우)
+     * @throws FileInsertionException 파일 업로드 중에 에러가 발생한 경우
+     */
+    public static UploadedFile processServerUploadFile(MultipartFile multipartFile) {
+        if (multipartFile.isEmpty()) {
+            return null;
+        }
+
+        UploadedFile uploadedFile = createUploadedFileFromMultipartFile(multipartFile);
+
+        try {
+            multipartFile.transferTo(FileUtils.createAbsolutePath(uploadedFile.getSystemName()));
+            return uploadedFile;
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+            FileUtils.deleteUploadedFile(uploadedFile.getSystemName());
+            throw new FileInsertionException("파일 업로드 중 에러가 발생했습니다.");
+        }
+    }
+
+    /**
+     * {@link MultipartFile} 객체를 기반으로 {@link UploadedFile} 객체를 생성
+     *
+     * @param multipartFile 업로드할 {@link MultipartFile} 객체
+     * @return 생성된 {@link UploadedFile} 객체
+     */
+    private static UploadedFile createUploadedFileFromMultipartFile(MultipartFile multipartFile) {
+        return UploadedFile.builder()
+                .originalFileName(multipartFile.getOriginalFilename())
+                .systemName(FileUtils.generateSystemName(multipartFile.getOriginalFilename()))
+                .fileSize((int) multipartFile.getSize())
+                .build();
     }
 }
