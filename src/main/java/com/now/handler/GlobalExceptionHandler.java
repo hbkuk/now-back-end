@@ -10,6 +10,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -31,11 +32,13 @@ public class GlobalExceptionHandler {
      * 빈(Bean)으로 등록된 객체들은 싱글톤(Singleton) 스코프로 관리하나,
      * ObjectMapper는 스레드 안전(thread-safe)한 구현을 가지고 있어서 여러 쓰레드에서 동시에 사용해도 안전
      */
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+    private final MessageSourceAccessor messageSource;
 
     @Autowired
-    public GlobalExceptionHandler(ObjectMapper objectMapper) {
+    public GlobalExceptionHandler(ObjectMapper objectMapper, MessageSourceAccessor messageSource) {
         this.objectMapper = objectMapper;
+        this.messageSource = messageSource;
     }
 
     /**
@@ -48,7 +51,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handlePermissionDeniedException(PermissionDeniedException e) {
         log.error(e.getMessage());
 
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.PERMISSION_DENIED);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.PERMISSION_DENIED, messageSource);
         errorResponse.setDetail(e.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -64,7 +67,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException e) {
         log.error(e.getMessage());
 
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.EXPIRED_TOKEN);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.EXPIRED_TOKEN, messageSource);
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -79,7 +82,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleJwtExceptions(Exception e) {
         log.error(e.getMessage());
 
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_TOKEN);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_TOKEN, messageSource);
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -95,7 +98,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAuthenticationFailedException(AuthenticationFailedException e) {
         log.error(e.getMessage());
 
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.AUTHENTICATION_FAILED);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.AUTHENTICATION_FAILED, messageSource);
         errorResponse.setDetail(e.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -113,7 +116,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDuplicateUserException(DuplicateUserException e) throws JsonProcessingException {
         log.error(e.getMessages().toString());
 
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.DUPLICATE_USER);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.DUPLICATE_USER, messageSource);
         errorResponse.setDetail(objectMapper.writeValueAsString(e.getMessages()));
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -130,8 +133,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleJsonProcessingException(JsonProcessingException e) {
         log.error("JSON 처리 오류: {}", e.getMessage());
 
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.SERVER_INTERNAL_ERROR);
-        errorResponse.setDetail(null);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.SERVER_INTERNAL_ERROR, messageSource);
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
@@ -148,7 +150,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(MethodArgumentNotValidException e) throws JsonProcessingException {
         log.error(e.getMessage());
 
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_DATA);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_DATA, messageSource);
         errorResponse.setDetail(objectMapper.writeValueAsString(extractFieldErrors(e)));
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -166,7 +168,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBindException(BindException e) throws JsonProcessingException {
         log.error(e.getMessage());
 
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_PARAM);
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_PARAM, messageSource);
         errorResponse.setDetail(objectMapper.writeValueAsString(extractFieldErrors(e)));
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

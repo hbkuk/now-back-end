@@ -1,7 +1,7 @@
 package com.now.exception;
 
 /**
- * 권한이 없는 상황일 때 던져지는 Unchecked Exception.
+ * 권한이 없는 상황에서 던져지는 Unchecked Exception.
  */
 public class PermissionDeniedException extends RuntimeException {
     /**

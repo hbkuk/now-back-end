@@ -1,35 +1,30 @@
 package com.now.exception;
 
+import org.springframework.context.support.MessageSourceAccessor;
+
 /**
  * API 예외 코드를 정의한 enum
  */
 public enum ErrorCode {
-    INVALID_PARAM("PARAM-001", "형식에 맞지 않는 파라미터 전달"),
-
-    INVALID_REQUEST("REQUEST-001", "잘못된 요청"),
-    INVALID_DATA("REQUEST-002", "형식에 맞지 않는 데이터 전달"),
-
-    DUPLICATE_USER("USER-001", "중복된 유저 정보"),
-
-    AUTHENTICATION_FAILED("AUTH-001", "인증 실패"),
-    INVALID_TOKEN("AUTH-002", "잘못된 토큰 전달"),
-    EXPIRED_TOKEN("AUTH-003", "유효기간 만료된 토큰 전달"),
-    PERMISSION_DENIED("AUTH-004", "권한 거부"),
-
-    SERVER_INTERNAL_ERROR("SERVER-001", "서버 내부 오류");
+    INVALID_PARAM("PARAM-001"),
+    INVALID_REQUEST("REQUEST-001"),
+    INVALID_DATA("REQUEST-002"),
+    DUPLICATE_USER("USER-001"),
+    AUTHENTICATION_FAILED("AUTH-001"),
+    INVALID_TOKEN("AUTH-002"),
+    EXPIRED_TOKEN("AUTH-003"),
+    PERMISSION_DENIED("AUTH-004"),
+    SERVER_INTERNAL_ERROR("SERVER-001");
 
     private final String code;
-    private final String message;
 
     /**
      * ErrorCode 생성자
      *
      * @param code    예외 코드
-     * @param message 예외 메시지
      */
-    ErrorCode(String code, String message) {
+    ErrorCode(String code) {
         this.code = code;
-        this.message = message;
     }
 
     /**
@@ -39,14 +34,5 @@ public enum ErrorCode {
      */
     public String getCode() {
         return code;
-    }
-
-    /**
-     * 예외 메시지를 반환
-     *
-     * @return 예외 메시지
-     */
-    public String getMessage() {
-        return message;
     }
 }
