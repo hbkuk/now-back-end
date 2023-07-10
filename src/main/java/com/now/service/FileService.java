@@ -53,12 +53,11 @@ public class FileService {
      *
      * @param multipartFiles    multipartFile[] 객체
      * @param postIdx           게시글 번호
-     * @param fileSizeType      파일 사이즈 타입
-     * @param fileExtensionType 파일 확장자 타입
+     * @param uploadType        파일 업로드 타입
      */
-    public void insert(MultipartFile[] multipartFiles, Long postIdx, FileSizeType fileSizeType, FileExtensionType fileExtensionType) {
+    public void insert(MultipartFile[] multipartFiles, Long postIdx, UploadType uploadType) {
         if (hasExistUploadFile(multipartFiles)) {
-            List<File> files = processServerUploadedFiles(multipartFiles, fileSizeType, fileExtensionType);
+            List<File> files = processServerUploadedFiles(multipartFiles, uploadType);
             files.forEach(file -> insert(file.updatePostIdx(postIdx)));
         }
     }
@@ -69,9 +68,10 @@ public class FileService {
      * @param multipartFiles 업로드할 {@link MultipartFile} 배열
      * @return {@link File} 목록
      */
-    public List<File> processServerUploadedFiles(MultipartFile[] multipartFiles, FileSizeType fileSizeType, FileExtensionType fileExtensionType) {
+    public List<File> processServerUploadedFiles(MultipartFile[] multipartFiles, UploadType uploadType) {
         return Arrays.stream(multipartFiles)
-                .map(multipartFile -> processServerUploadFile(multipartFile, fileSizeType, fileExtensionType))
+                .limit(uploadType.getMaxUploadCount())
+                .map(multipartFile -> processServerUploadFile(multipartFile, uploadType))
                 .takeWhile(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -80,12 +80,11 @@ public class FileService {
      * 서버에 디렉토리에 업로드 후 {@link File} 객체 반환
      *
      * @param multipartFile   업로드할 {@link MultipartFile} 객체
-     * @param fileSizeType    파일 크기 타입 (SMALL, MEDIUM, LARGE 등)
-     * @param fileExtensionType 파일 확장자 타입 (IMAGE, DOCUMENT, 등)
+     * @param uploadType    파일 크기 타입와 확장자 타입 정보를 가지고있는 enum
      * @return 업로드된 {@link File} 객체 (File) 또는 null (업로드할 파일이 없는 경우)
      * @throws FileInsertionException 파일 업로드 중에 에러가 발생한 경우
      */
-    private File processServerUploadFile(MultipartFile multipartFile, FileSizeType fileSizeType, FileExtensionType fileExtensionType) {
+    private File processServerUploadFile(MultipartFile multipartFile, UploadType uploadType) {
         if (multipartFile.isEmpty()) {
             return null;
         }
@@ -99,8 +98,8 @@ public class FileService {
             file = File.builder()
                     .savedFileName(systemName)
                     .originalFileName(new OriginalFileName(fileName))
-                    .fileExtension(new FileExtension(FileUtils.extractFileExtension(fileName), fileExtensionType))
-                    .fileSize(new FileSize((int) multipartFile.getSize(), fileSizeType))
+                    .fileExtension(new FileExtension(FileUtils.extractFileExtension(fileName), uploadType.getAllowedExtensions()))
+                    .fileSize(new FileSize((int) multipartFile.getSize(), uploadType.getMaxUploadSize()))
                     .build();
         } catch (IllegalArgumentException e) {
             log.error(e.getMessage(), e);

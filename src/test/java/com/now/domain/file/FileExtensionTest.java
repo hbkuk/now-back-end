@@ -16,7 +16,7 @@ public class FileExtensionTest {
         @ParameterizedTest
         @ValueSource(strings = {"jpg", "gif", "png", "zip"})
         void return_true_when_file_extension(String value) {
-            FileExtension extension = new FileExtension(value, FileExtensionType.FILE);
+            FileExtension extension = new FileExtension(value, UploadType.FILE.getAllowedExtensions());
         }
 
         @DisplayName("파일로 분류한 확장자가 아닐 경우 예외를 던진다.")
@@ -25,7 +25,7 @@ public class FileExtensionTest {
         void return_true_when_not_file_extension(String value) {
             assertThatExceptionOfType(IllegalArgumentException.class)
                     .isThrownBy(() -> {
-                        new FileExtension(value, FileExtensionType.FILE);
+                        new FileExtension(value, UploadType.FILE.getAllowedExtensions());
                     })
                     .withMessage("허용하지 않는 확장자입니다.");
         }
@@ -39,7 +39,7 @@ public class FileExtensionTest {
         @ParameterizedTest
         @ValueSource(strings = {"jpg", "gif", "png"})
         void return_true_when_image_extension(String value) {
-            FileExtension extension = new FileExtension(value, FileExtensionType.IMAGE);
+            FileExtension extension = new FileExtension(value, UploadType.IMAGE.getAllowedExtensions());
         }
 
         @DisplayName("이미지로 분류한 확장자가 아닐 경우 예외를 던진다.")
@@ -48,7 +48,7 @@ public class FileExtensionTest {
         void return_true_when_not_image_extension(String value) {
             assertThatExceptionOfType(IllegalArgumentException.class)
                     .isThrownBy(() -> {
-                        new FileExtension(value, FileExtensionType.IMAGE);
+                        new FileExtension(value, UploadType.IMAGE.getAllowedExtensions());
                     })
                     .withMessage("허용하지 않는 확장자입니다.");
         }

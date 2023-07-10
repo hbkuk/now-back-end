@@ -1,7 +1,6 @@
 package com.now.controller;
 
-import com.now.domain.file.FileExtensionType;
-import com.now.domain.file.FileSizeType;
+import com.now.domain.file.UploadType;
 import com.now.domain.post.Community;
 import com.now.domain.post.Notice;
 import com.now.dto.Posts;
@@ -62,9 +61,8 @@ public class PostController {
      * @return 생성된 게시글에 대한 CREATED 응답을 반환
      */
     @PostMapping("/api/notice")
-    public ResponseEntity<Void> registerNoticePost(@RequestAttribute("id") String managerId,
-                                                     @RequestAttribute("role") String authority,
-                                                     @RequestBody @Validated(PostValidationGroup.register.class) Notice notice) {
+    public ResponseEntity<Void> registerNoticePost(@RequestAttribute("id") String managerId, @RequestAttribute("role") String authority,
+                                                   @RequestBody @Validated(PostValidationGroup.register.class) Notice notice) {
         log.debug("registerNoticePost 호출, managerId : {}, authority : {}", managerId, authority);
 
         postService.registerNoticePost(notice.updateAuthorId(managerId), Authority.valueOf(authority));
@@ -81,12 +79,12 @@ public class PostController {
      */
     @PostMapping("/api/community")
     public ResponseEntity<Void> registerCommunityPost(@RequestAttribute("id") String userId, @RequestAttribute("role") String authority,
-                                                      @RequestPart(value = "post") @Validated(PostValidationGroup.register.class) Community community,
+                                                      @RequestPart(value = "community") @Validated(PostValidationGroup.register.class) Community community,
                                                       @RequestPart(value = "file", required = false) MultipartFile[] multipartFiles) {
         log.debug("registerCommunityPost 호출, userId : {}, authority : {}, Community : {}, Multipart : {}", userId, authority, community, (multipartFiles != null ? multipartFiles.length : "null"));
 
         postService.registerCommunityPost(community.updateAuthorId(userId), Authority.valueOf(authority));
-        fileService.insert(multipartFiles, community.getPostIdx(), FileSizeType.FILE, FileExtensionType.FILE);
+        fileService.insert(multipartFiles, community.getPostIdx(), UploadType.FILE);
 
         return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
     }

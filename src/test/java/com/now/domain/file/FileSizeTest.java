@@ -19,7 +19,7 @@ public class FileSizeTest {
             @Test
             @DisplayName("2MB 이하일 경우에만 객체가 생성된다.")
             void must_be_within_2MB() {
-                FileSize fileSize = new FileSize(2048000, FileSizeType.FILE);
+                FileSize fileSize = new FileSize(2048000, UploadType.FILE.getMaxUploadSize());
             }
 
             @Test
@@ -27,7 +27,7 @@ public class FileSizeTest {
             void throw_exception_when_exceeds_2MB() {
                 assertThatExceptionOfType(IllegalArgumentException.class)
                         .isThrownBy(() -> {
-                            new FileSize(2048001, FileSizeType.FILE);
+                            new FileSize(2048001, UploadType.FILE.getMaxUploadSize());
                         })
                         .withMessage("허용하지 않는 파일 크기입니다.");
 
@@ -41,7 +41,7 @@ public class FileSizeTest {
             @Test
             @DisplayName("1MB 이하일 경우에만 객체가 생성된다.")
             void must_be_within_1MB() {
-                FileSize fileSize = new FileSize(1024000, FileSizeType.IMAGE);
+                FileSize fileSize = new FileSize(1024000, UploadType.IMAGE.getMaxUploadSize());
             }
 
             @Test
@@ -49,7 +49,7 @@ public class FileSizeTest {
             void throw_exception_when_exceeds_1MB() {
                 assertThatExceptionOfType(IllegalArgumentException.class)
                         .isThrownBy(() -> {
-                            new FileSize(1024001, FileSizeType.IMAGE);
+                            new FileSize(1024001, UploadType.IMAGE.getMaxUploadSize());
                         })
                         .withMessage("허용하지 않는 파일 크기입니다.");
             }
