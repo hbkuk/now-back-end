@@ -23,7 +23,7 @@
         WHERE i.sub_code_idx = 7 OR i.sub_code_idx = 8;
     </select>
 
-    <insert id="insert" parameterType="Post">
+    <insert id="insert" parameterType="Post" useGeneratedKeys="true" keyProperty="postIdx">
         INSERT INTO tb_post (sub_code_idx, title, user_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
         VALUES (#{subCodeIdx}, #{title}, #{authorIdx}, now(), null, #{content}, 0, 0, 0)
     </insert>
@@ -149,8 +149,8 @@
         <!-- Files 컬렉션 매핑 -->
         <collection property="files" ofType="File">
             <id property="fileIdx" column="f_file_idx"/>
-            <result column="f_original_file_name" property="originalFileName.originalFileName"/>
-            <result property="fileExtension" column="f_file_extension"/>
+            <result property="originalFileName.originalFileName" column="f_original_file_name"/>
+            <result property="fileExtension.fileExtension" column="f_file_extension"/>
             <result property="fileSize.fileSize" column="f_file_size"/>
             <result property="postIdx" column="f_post_idx"/>
         </collection>
@@ -180,8 +180,8 @@
         <!-- Files 컬렉션 매핑 -->
         <collection property="files" ofType="File">
             <id property="fileIdx" column="f_file_idx"/>
-            <result column="f_original_file_name" property="originalFileName.originalFileName"/>
-            <result property="fileExtension" column="f_file_extension"/>
+            <result property="originalFileName.originalFileName" column="f_original_file_name"/>
+            <result property="fileExtension.fileExtension" column="f_file_extension"/>
             <result property="fileSize.fileSize" column="f_file_size"/>
             <result property="postIdx" column="f_post_idx"/>
         </collection>
