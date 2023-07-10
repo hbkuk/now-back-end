@@ -4,7 +4,7 @@ package com.now.domain.file;
  * 파일 확장자를 나타내는 원시값 포장 객체
  */
 public class FileExtension {
-    private final String extension;
+    private final String fileExtension;
 
     /**
      * Extension 객체 생성
@@ -18,6 +18,6 @@ public class FileExtension {
         if(!extensionType.getExtensions().contains(value)) {
             throw new IllegalArgumentException("허용하지 않는 확장자입니다.");
         }
-        this.extension = value;
+        this.fileExtension = value;
     }
 }
