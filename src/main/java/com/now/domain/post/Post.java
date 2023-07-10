@@ -39,7 +39,7 @@ public class Post {
     /**
      * 게시글의 고유 식별자
      */
-    private final Long postIdx;
+    private Long postIdx;
 
     /**
      * 하위 코드 번호
@@ -61,12 +61,12 @@ public class Post {
     /**
      * 게시글을 작성한 작성자의 고유 식별자 혹은 관리자의 고유 식별자(FROM 유저 테이블, 관리자 테이블)
      */
-    private final Long authorIdx;
+    private Long authorIdx;
 
     /**
      * 게시글을 작성한 작성자의 아이디 혹은 관리자의 아이디(FROM 유저 테이블, 관리자 테이블)
      */
-    private final String authorId;
+    private String authorId;
 
     /**
      * 게시글 등록일자
@@ -110,34 +110,25 @@ public class Post {
     private final List<Comment> comments;
 
     /**
-     * 작성자 아이디를 업데이트한 새로운 {@link Post} 객체를 반환
+     * 작성자 아이디를 업데이트한 해당 {@link Post} 객체를 반환
      *
      * @param authorId 작성자 아이디
-     * @return 작성자 아이디를 업데이트한 새로운 {@link Post} 객체
+     * @return 작성자 인덱스를 업데이트한 현재 {@link Post} 객체
      */
     public Post updateAuthorId(String authorId) {
-        return Post.builder()
-                .subCodeIdx(this.getSubCodeIdx())
-                .title(this.getTitle())
-                .authorId(authorId)
-                .content(this.getContent())
-                .build();
+        this.authorId = authorId;
+        return this;
     }
 
     /**
      * 작성자 인덱스를 업데이트한 새로운 {@link Post} 객체를 반환합니다.
      *
      * @param authorIdx 작성자 인덱스
-     * @return 작성자 인덱스를 업데이트한 새로운 {@link Post} 객체
+     * @return 작성자 인덱스를 업데이트한 현재 {@link Post} 객체
      */
     public Post updateAuthorIdx(Long authorIdx) {
-        return Post.builder()
-                .subCodeIdx(this.getSubCodeIdx())
-                .title(this.getTitle())
-                .authorId(this.getAuthorId())
-                .authorIdx(authorIdx)
-                .content(this.getContent())
-                .build();
+        this.authorIdx = authorIdx;
+        return this;
     }
 
     /**
