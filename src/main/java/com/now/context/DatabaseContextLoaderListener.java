@@ -3,6 +3,7 @@ package com.now.context;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
@@ -17,15 +18,35 @@ import javax.sql.DataSource;
 public class DatabaseContextLoaderListener {
 
     /**
-     * 데이터베이스 초기화를 위한 DataSourceInitializer를 생성하여 반환합니다.
+     * 데이터베이스 초기화를 위한 DataSourceInitializer를 생성하여 반환
      *
      * @param dataSource DataSource 객체
      * @return DataSourceInitializer 객체
      */
     @Bean
+    @Profile("!test")  // test 프로파일이 아닌 경우에만 dataSourceInitializer() 메서드가 실행
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("initdb.sql"));
+
+        DataSourceInitializer initializer = new DataSourceInitializer();
+        initializer.setDataSource(dataSource);
+        initializer.setDatabasePopulator(populator);
+
+        return initializer;
+    }
+
+    /**
+     * 데이터베이스 초기화를 위한 testDataSourceInitializer 생성하여 반환
+     *
+     * @param dataSource DataSource 객체
+     * @return DataSourceInitializer 객체
+     */
+    @Bean
+    @Profile("test")    // test 프로파일인 경우에만 dataSourceInitializer() 메서드가 실행
+    public DataSourceInitializer testDataSourceInitializer(DataSource dataSource) {
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("testdb.sql"));
 
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
