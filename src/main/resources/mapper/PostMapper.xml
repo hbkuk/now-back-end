@@ -18,7 +18,7 @@
         WHERE ph.sub_code_idx = 5 OR ph.sub_code_idx = 6;
     </select>
 
-    <select id="findAllInquries" resultMap="inquiry" useCache="false" flushCache="true">
+    <select id="findAllInquiries" resultMap="inquiry" useCache="false" flushCache="true">
         <include refid="selectInquiry"/>
         WHERE i.sub_code_idx = 7 OR i.sub_code_idx = 8;
     </select>
@@ -62,7 +62,7 @@
             f.original_file_name AS f_original_file_name,
             f.file_extension AS f_file_extension,
             f.file_size AS f_file_size,
-            f.file_extension AS f_post_idx,
+            f.file_idx AS f_post_idx,
 
             co.comment_idx AS co_comment_idx,
             co.user_idx AS co_user_idx,
@@ -92,7 +92,7 @@
             f.original_file_name AS f_original_file_name,
             f.file_extension AS f_file_extension,
             f.file_size AS f_file_size,
-            f.file_extension AS f_post_idx,
+            f.file_idx AS f_post_idx,
 
             co.comment_idx AS co_comment_idx,
             co.user_idx AS co_user_idx,
