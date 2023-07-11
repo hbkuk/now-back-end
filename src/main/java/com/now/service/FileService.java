@@ -4,8 +4,8 @@ import com.now.domain.file.*;
 import com.now.dto.UploadedFile;
 import com.now.repository.FileRepository;
 import com.now.utils.FileUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,14 +19,10 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class FileService {
 
     private final FileRepository fileRepository;
-
-    @Autowired
-    public FileService(FileRepository fileRepository) {
-        this.fileRepository = fileRepository;
-    }
 
     /**
      * 데이터베이스에 파일 저장

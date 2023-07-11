@@ -2,8 +2,8 @@ package com.now.controller;
 
 import com.now.domain.manager.Manager;
 import com.now.service.ManagerService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,14 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class ManagerController {
 
     private final ManagerService managerService;
-
-    @Autowired
-    public ManagerController(ManagerService managerService) {
-        this.managerService = managerService;
-    }
 
     /**
      * 매니저 정보를 조회 후 로그인 처리하는 핸들러 메서드

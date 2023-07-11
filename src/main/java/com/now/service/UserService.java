@@ -26,8 +26,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtTokenService jwtTokenManager;
-    private final MessageSourceAccessor messageSource;
     private final PasswordSecurityManager passwordSecurityManager;
+    private final MessageSourceAccessor messageSource;
 
     /**
      * 사용자 정보를 등록하는 메서드

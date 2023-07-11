@@ -8,8 +8,8 @@ import com.now.security.Authority;
 import com.now.service.FileService;
 import com.now.service.PostService;
 import com.now.validation.PostValidationGroup;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -23,16 +23,12 @@ import java.util.Map;
  */
 @Slf4j
 @RestController
+@RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
     private final FileService fileService;
 
-    @Autowired
-    public PostController(PostService postService, FileService fileService) {
-        this.postService = postService;
-        this.fileService = fileService;
-    }
 
     /**
      * 모든 게시글 정보를 조회하는 핸들러 메서드

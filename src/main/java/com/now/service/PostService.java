@@ -6,8 +6,8 @@ import com.now.domain.user.User;
 import com.now.exception.PermissionDeniedException;
 import com.now.repository.PostRepository;
 import com.now.security.Authority;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
@@ -18,21 +18,13 @@ import java.util.List;
  */
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
-    private PostRepository postRepository;
-    private UserService userService;
-    private ManagerService managerService;
-    private MessageSourceAccessor messageSource;
-
-    @Autowired
-    public PostService(PostRepository postRepository, UserService userService,
-                       ManagerService managerService, MessageSourceAccessor messageSource) {
-        this.postRepository = postRepository;
-        this.userService = userService;
-        this.managerService = managerService;
-        this.messageSource = messageSource;
-    }
+    private final PostRepository postRepository;
+    private final UserService userService;
+    private final ManagerService managerService;
+    private final MessageSourceAccessor messageSource;
 
     /**
      * 모든 공지사항 게시글 정보를 조회 후 반환
