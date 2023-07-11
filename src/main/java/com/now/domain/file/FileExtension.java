@@ -11,15 +11,15 @@ public class FileExtension {
     /**
      * Extension 객체 생성
      *
-     * @param value     파일 확장자
+     * @param extension     파일 확장자
      * @param allowedExtensions 허용되는 확장자 그룹
      * @throws IllegalArgumentException 허용되지 않는 확장자일 경우 예외를 발생시킴
      */
-    public FileExtension(String value, List<String> allowedExtensions) {
+    public FileExtension(String extension, List<String> allowedExtensions) {
 
-        if(!allowedExtensions.contains(value)) {
+        if(!allowedExtensions.contains(extension)) {
             throw new IllegalArgumentException("허용하지 않는 확장자입니다.");
         }
-        this.fileExtension = value;
+        this.fileExtension = extension;
     }
 }

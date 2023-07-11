@@ -9,14 +9,14 @@ public class FileSize {
     /**
      * FileSize 객체를 생성
      *
-     * @param value       파일 크기 값
+     * @param fileSize       파일 크기 값
      * @param maxFileSize  허용되는 최대 파일 크기
      * @throws IllegalArgumentException 파일 크기가 허용된 크기를 초과할 경우 발생하는 예외
      */
-    public FileSize(int value, int maxFileSize) {
-        if (value > maxFileSize) {
+    public FileSize(int fileSize, int maxFileSize) {
+        if (fileSize > maxFileSize) {
             throw new IllegalArgumentException("허용하지 않는 파일 크기입니다.");
         }
-        this.fileSize = value;
+        this.fileSize = fileSize;
     }
 }
