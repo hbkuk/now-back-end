@@ -1,5 +1,6 @@
 package com.now.service;
 
+import com.now.security.PasswordSecurityManager;
 import com.now.domain.user.User;
 import com.now.dto.TokenClaims;
 import com.now.dto.UserDuplicateInfo;
@@ -8,11 +9,9 @@ import com.now.exception.DuplicateUserException;
 import com.now.repository.UserRepository;
 import com.now.security.Authority;
 import com.now.security.JwtTokenService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.MessageSourceAccessor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -22,24 +21,13 @@ import java.util.Map;
  */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
 
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private String appSalt;
-    private JwtTokenService tokenProvider;
-    private MessageSourceAccessor messageSource;
-
-    @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                       @Value("${now.password.salt}") String appSalt, JwtTokenService tokenProvider,
-                       MessageSourceAccessor messageSource) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.appSalt = appSalt;
-        this.tokenProvider = tokenProvider;
-        this.messageSource = messageSource;
-    }
+    private final UserRepository userRepository;
+    private final JwtTokenService jwtTokenManager;
+    private final MessageSourceAccessor messageSource;
+    private final PasswordSecurityManager passwordSecurityManager;
 
     /**
      * 사용자 정보를 등록하는 메서드
@@ -54,7 +42,7 @@ public class UserService {
             throw new DuplicateUserException(duplicateUserInfo.generateDuplicateFieldMessages());
         }
 
-        userRepository.insert(user.updateByPassword(passwordEncoder.encode(appendSalt(user.getPassword()))));
+        userRepository.insert(user.updateByPassword(passwordSecurityManager.encodeWithSalt(user.getPassword())));
     }
 
     /**
@@ -71,11 +59,11 @@ public class UserService {
             throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.failed"));
         }
 
-        if (!passwordEncoder.matches(appendSalt(user.getPassword()), savedUser.getPassword())) {
+        if (!passwordSecurityManager.matchesWithSalt(user.getPassword(), savedUser.getPassword())) {
             throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.failed"));
         }
 
-        return tokenProvider.create(TokenClaims.create(Map.of(
+        return jwtTokenManager.create(TokenClaims.create(Map.of(
                 "id", user.getId(), "role", Authority.USER.getValue())));
     }
 
@@ -99,20 +87,10 @@ public class UserService {
      * @param user 체크할 사용자 정보
      * @return 중복된 사용자 정보 결과
      */
-    private UserDuplicateInfo duplicateUserCheck(User user) {
+    public UserDuplicateInfo duplicateUserCheck(User user) {
         return UserDuplicateInfo.builder()
                 .duplicateId(userRepository.existsById(user.getId()))
                 .duplicateNickname(userRepository.existsByNickname(user.getNickname()))
                 .build();
-    }
-
-    /**
-     * 주어진 값에 암호화 솔트를 결합 후 문자열을 반환
-     *
-     * @param value 암호화 솔트를 추가할 값
-     * @return 암호화 솔트가 추가된 값
-     */
-    private String appendSalt(String value) {
-        return String.join("", appSalt, value);
     }
 }
