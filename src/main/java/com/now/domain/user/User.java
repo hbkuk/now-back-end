@@ -48,7 +48,7 @@ public class User implements AccessPermission {
     @Size(groups = {UserValidationGroup.signup.class}, min = 4, max = 15, message = "패스워드는 4글자 이상, 15글자 이하여야 합니다")
     @Pattern(groups = {UserValidationGroup.signup.class}, regexp = passwordRegex, message = "패스워드는 영문, 숫자, 특수문자를 포함해야 합니다")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private final String password;
+    private String password;
 
     /**
      * 유저의 이름
@@ -69,12 +69,8 @@ public class User implements AccessPermission {
      * @return User 도메인 객체
      */
     public User updateByPassword(String password) {
-        return User.builder()
-                .id(this.id)
-                .password(password)
-                .name(this.name)
-                .nickname(this.nickname)
-                .build();
+        this.password = password;
+        return this;
     }
 
     /**
