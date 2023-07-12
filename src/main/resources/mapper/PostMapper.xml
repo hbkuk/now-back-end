@@ -20,19 +20,19 @@
     </select>
 
     <insert id="insertPostByUser" parameterType="Post" useGeneratedKeys="true" keyProperty="postIdx">
-        INSERT INTO tb_post (category, title, user_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
-        VALUES (#{category.title}, #{title}, #{authorIdx}, now(), null, #{content}, 0, 0, 0)
+        INSERT INTO tb_user_post (category, title, user_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
+        VALUES (#{category.name}, #{title}, #{authorIdx}, now(), null, #{content}, 0, 0, 0)
     </insert>
 
     <insert id="insertPostByManager" parameterType="Post" useGeneratedKeys="true" keyProperty="postIdx">
-        INSERT INTO tb_notice (category, title, manager_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
-        VALUES (#{category.title}, #{title}, #{authorIdx}, now(), null, #{content}, 0, 0, 0)
+        INSERT INTO tb_manager_post (category, title, manager_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
+        VALUES (#{category.name}, #{title}, #{authorIdx}, now(), null, #{content}, 0, 0, 0)
     </insert>
 
 
     <sql id="selectNotice">
         SELECT
-            n.notice_idx AS n_notice_idx,
+            n.post_idx AS n_post_idx,
             n.category AS n_category,
             n.title AS n_title,
             n.manager_idx AS n_manager_idx,
@@ -42,7 +42,7 @@
             n.view_count AS n_view_count,
             n.like_count AS n_like_count,
             n.dislike_count AS n_dislike_count
-        FROM tb_notice n
+        FROM tb_manager_post n
     </sql>
 
     <sql id="selectCommunity">
@@ -62,16 +62,16 @@
             f.original_file_name AS f_original_file_name,
             f.file_extension AS f_file_extension,
             f.file_size AS f_file_size,
-            f.file_idx AS f_post_idx,
+            f.user_post_idx AS f_user_post_idx,
 
             co.comment_idx AS co_comment_idx,
             co.user_idx AS co_user_idx,
             co.reg_date AS co_reg_date,
             co.content AS co_content,
-            co.post_idx AS co_post_idx
-        FROM tb_post c
-                 LEFT OUTER JOIN tb_file f ON c.post_idx = f.post_idx
-                 LEFT OUTER JOIN tb_comment co ON c.post_idx = co.post_idx
+            co.user_post_idx AS co_user_post_idx
+        FROM tb_user_post c
+                 LEFT OUTER JOIN tb_file f ON c.post_idx = f.user_post_idx
+                 LEFT OUTER JOIN tb_comment co ON c.post_idx = co.user_post_idx
     </sql>
 
     <sql id="selectPhoto">
@@ -91,16 +91,16 @@
             f.original_file_name AS f_original_file_name,
             f.file_extension AS f_file_extension,
             f.file_size AS f_file_size,
-            f.file_idx AS f_post_idx,
+            f.user_post_idx AS f_user_post_idx,
 
             co.comment_idx AS co_comment_idx,
             co.user_idx AS co_user_idx,
             co.reg_date AS co_reg_date,
             co.content AS co_content,
-            co.post_idx AS co_post_idx
-        FROM tb_post ph
-                 LEFT OUTER JOIN tb_file f ON ph.post_idx = f.post_idx
-                 LEFT OUTER JOIN tb_comment co ON ph.post_idx = co.post_idx
+            co.user_post_idx AS co_user_post_idx
+        FROM tb_user_post ph
+                 LEFT OUTER JOIN tb_file f ON ph.post_idx = f.user_post_idx
+                 LEFT OUTER JOIN tb_comment co ON ph.post_idx = co.user_post_idx
     </sql>
 
     <sql id="selectInquiry">
@@ -115,13 +115,12 @@
             i.view_count AS i_view_count,
             i.like_count AS i_like_count,
             i.dislike_count AS i_dislike_count
-        FROM tb_post i
-                 LEFT OUTER JOIN tb_sub_code sc ON i.sub_code_idx = sc.sub_code_idx
+        FROM tb_user_post i
     </sql>
 
     <resultMap id="notice" type="Notice">
-        <id property="postIdx" column="n_notice_idx"/>
-        <result property="category.title" column="n_category"/>
+        <id property="postIdx" column="n_post_idx"/>
+        <result property="category" column="n_category" javaType="com.now.domain.post.Category"/>
         <result property="title" column="n_title"/>
         <result property="authorId" column="n_manager_idx"/>
         <result property="regDate" column="n_reg_date"/>
@@ -134,7 +133,7 @@
 
     <resultMap id="community" type="Community">
         <id property="postIdx" column="c_post_idx"/>
-        <result property="category.title" column="c_n_category"/>
+        <result property="category" column="n_category" javaType="com.now.domain.post.Category"/>
         <result property="title" column="c_title"/>
         <result property="authorId" column="c_user_idx"/>
         <result property="regDate" column="c_reg_date"/>
@@ -150,7 +149,7 @@
             <result property="originalFileName.originalFileName" column="f_original_file_name"/>
             <result property="fileExtension.fileExtension" column="f_file_extension"/>
             <result property="fileSize.fileSize" column="f_file_size"/>
-            <result property="postIdx" column="f_post_idx"/>
+            <result property="userPostIdx" column="f_user_post_idx"/>
         </collection>
 
         <!-- Comments 컬렉션 매핑 -->
@@ -159,13 +158,13 @@
             <result property="authorId" column="co_user_idx"/>
             <result property="regDate" column="co_reg_date"/>
             <result property="content" column="co_content"/>
-            <result property="postIdx" column="co_post_idx"/>
+            <result property="userPostIdx" column="co_user_post_idx"/>
         </collection>
     </resultMap>
 
     <resultMap id="photo" type="Photo">
         <id property="postIdx" column="ph_post_idx"/>
-        <result property="category.title" column="ph_category"/>
+        <result property="category" column="n_category" javaType="com.now.domain.post.Category"/>
         <result property="title" column="ph_title"/>
         <result property="authorId" column="ph_user_idx"/>
         <result property="regDate" column="ph_reg_date"/>
@@ -181,7 +180,7 @@
             <result property="originalFileName.originalFileName" column="f_original_file_name"/>
             <result property="fileExtension.fileExtension" column="f_file_extension"/>
             <result property="fileSize.fileSize" column="f_file_size"/>
-            <result property="postIdx" column="f_post_idx"/>
+            <result property="userPostIdx" column="f_user_post_idx"/>
         </collection>
 
         <!-- Comments 컬렉션 매핑 -->
@@ -190,13 +189,13 @@
             <result property="authorId" column="co_user_idx"/>
             <result property="regDate" column="co_reg_date"/>
             <result property="content" column="co_content"/>
-            <result property="postIdx" column="co_post_idx"/>
+            <result property="userPostIdx" column="co_user_post_idx"/>
         </collection>
     </resultMap>
 
     <resultMap id="inquiry" type="Inquiry">
         <id property="postIdx" column="i_post_idx"/>
-        <result property="category.title" column="i_category"/>
+        <result property="category" column="n_category" javaType="com.now.domain.post.Category"/>
         <result property="title" column="i_title"/>
         <result property="authorId" column="i_user_idx"/>
         <result property="regDate" column="i_reg_date"/>

@@ -58,11 +58,20 @@ public class PostRepository {
     }
 
     /**
-     * 게시글 등록
+     * 사용자로부터 게시글 등록
      *
      * @param post 등록할 게시글 정보
      */
-    public void insert(Post post) {
-        postMapper.insert(post);
+    public void insertPostByUser(Post post) {
+        postMapper.insertPostByUser(post);
+    }
+
+    /**
+     * 매니저로부터 게시글 등록
+     *
+     * @param post 등록할 게시글 정보
+     */
+    public void insertPostByManager(Post post) {
+        postMapper.insertPostByManager(post);
     }
 }

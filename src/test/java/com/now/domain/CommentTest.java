@@ -7,7 +7,7 @@ public class CommentTest {
         return Comment.builder()
                 .authorId(authorId)
                 .content("contents")
-                .postIdx(1L)
+                .userPostIdx(1L)
                 .build();
     }
 }

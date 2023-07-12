@@ -43,9 +43,17 @@ public interface PostMapper {
     List<Inquiry> findAllInquiries();
 
     /**
-     * 게시글 등록
+     * 사용자로부터 게시글 등록
      *
      * @param post 등록할 게시글 정보
      */
-    void insert(Post post);
+    void insertPostByUser(Post post);
+
+    // TODO: 제한된 타입만 매개변수롤 받도록 인터페이스 고려..
+    /**
+     * 매니저로부터 게시글 등록
+     *
+     * @param post 등록할 게시글 정보
+     */
+    void insertPostByManager(Post post);
 }

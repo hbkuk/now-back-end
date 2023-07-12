@@ -49,7 +49,7 @@ public class Comment {
     /**
      * 게시글의 고유 식별자
      */
-    private final Long postIdx;
+    private final Long userPostIdx;
 
     /**
      * 댓글을 삭제할 수 있다면 true 반환, 그렇지 않다면 false 반환

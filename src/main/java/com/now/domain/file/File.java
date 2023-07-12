@@ -53,15 +53,15 @@ public class File {
     /**
      *  게시글의 고유 식별자
      */
-    private Long postIdx;
+    private Long userPostIdx;
 
     /**
-     * 게시글 번호가 업데이트 된 File 객체를 리턴합니다.
+     * 게시글 번호가 업데이트 된 File 객체를 리턴
      *
-     * @param postIdx 게시글 번호
+     * @param userPostIdx 게시글 번호
      */
-    public File updatePostIdx(Long postIdx) {
-        this.postIdx = postIdx;
+    public File updatePostIdx(Long userPostIdx) {
+        this.userPostIdx = userPostIdx;
         return this;
     }
 }
