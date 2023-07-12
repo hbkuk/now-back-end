@@ -24,8 +24,6 @@ public class PostTest {
     public static Post createPostByAuthorId(String authorId) {
         return Post.builder()
                 .postIdx(1L)
-                .subCodeIdx(3)
-                .subCodeName(3)
                 .title("제목")
                 .authorId(authorId)
                 .regDate(LocalDateTime.now())

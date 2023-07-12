@@ -19,8 +19,6 @@ public class InquiryTest {
     public static Inquiry createSecretInquiryByAuthorId(String authorId) {
         return Inquiry.builder()
                 .postIdx(1L)
-                .subCodeIdx(3)
-                .subCodeName(3)
                 .title("제목")
                 .authorId(authorId)
                 .regDate(LocalDateTime.now())
@@ -37,8 +35,6 @@ public class InquiryTest {
     public static Inquiry createNonSecretInquiryByAuthorId(String authorId) {
         return Inquiry.builder()
                 .postIdx(1L)
-                .subCodeIdx(3)
-                .subCodeName(3)
                 .title("제목")
                 .authorId(authorId)
                 .regDate(LocalDateTime.now())
