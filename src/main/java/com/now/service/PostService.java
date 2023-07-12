@@ -3,6 +3,7 @@ package com.now.service;
 import com.now.domain.manager.Manager;
 import com.now.domain.post.*;
 import com.now.domain.user.User;
+import com.now.exception.CannotWritePostException;
 import com.now.exception.PermissionDeniedException;
 import com.now.repository.PostRepository;
 import com.now.security.Authority;
@@ -65,7 +66,7 @@ public class PostService {
     /**
      * 공지 게시글 등록
      *
-     * @param post      등록할 게시글 정보
+     * @param post      등록할 공지 게시글 정보
      * @param authority 권한 정보
      * @throws PermissionDeniedException 게시글을 작성할 권한이 없는 경우 발생하는 예외
      */
@@ -74,9 +75,13 @@ public class PostService {
             throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
         }
 
+        if(!PostGroup.isCategoryInGroup(post.getCategory(), PostGroup.NOTICE)) {
+            throw new CannotWritePostException(messageSource.getMessage("error.write.failed"));
+        }
+
         Manager manager = managerService.findManagerById(post.getAuthorId());
 
-        postRepository.insert(post.updateAuthorIdx(manager.getManagerIdx()));
+        postRepository.insertPostByManager(post.updateAuthorIdx(manager.getManagerIdx()));
     }
 
     /**
@@ -91,9 +96,13 @@ public class PostService {
             throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
         }
 
+        if(!PostGroup.isCategoryInGroup(post.getCategory(), PostGroup.COMMUNITY)) {
+            throw new CannotWritePostException(messageSource.getMessage("error.write.failed"));
+        }
+
         User user = userService.findUserById(post.getAuthorId());
 
-        postRepository.insert(post.updateAuthorIdx(user.getUserIdx()));
+        postRepository.insertPostByUser(post.updateAuthorIdx(user.getUserIdx()));
     }
 
     /**
@@ -108,9 +117,13 @@ public class PostService {
             throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
         }
 
+        if(!PostGroup.isCategoryInGroup(post.getCategory(), PostGroup.PHOTO)) {
+            throw new CannotWritePostException(messageSource.getMessage("error.write.failed"));
+        }
+
         User user = userService.findUserById(post.getAuthorId());
 
-        postRepository.insert(post.updateAuthorIdx(user.getUserIdx()));
+        postRepository.insertPostByUser(post.updateAuthorIdx(user.getUserIdx()));
     }
 
     /**
@@ -125,9 +138,13 @@ public class PostService {
             throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
         }
 
+        if(!PostGroup.isCategoryInGroup(post.getCategory(), PostGroup.INQUIRY)) {
+            throw new CannotWritePostException(messageSource.getMessage("error.write.failed"));
+        }
+
         User user = userService.findUserById(post.getAuthorId());
 
-        postRepository.insert(post.updateAuthorIdx(user.getUserIdx()));
+        postRepository.insertPostByUser(post.updateAuthorIdx(user.getUserIdx()));
     }
 }
 
