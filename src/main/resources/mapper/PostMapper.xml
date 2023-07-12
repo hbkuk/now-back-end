@@ -5,34 +5,35 @@
 
     <select id="findAllNotices" resultMap="notice" useCache="false" flushCache="true">
         <include refid="selectNotice"/>
-        WHERE n.sub_code_idx = 1 OR n.sub_code_idx = 2;
     </select>
 
     <select id="findAllCommunity" resultMap="community" useCache="false" flushCache="true">
         <include refid="selectCommunity"/>
-        WHERE c.sub_code_idx = 3 OR c.sub_code_idx = 4;
     </select>
 
     <select id="findAllPhotos" resultMap="photo" useCache="false" flushCache="true">
         <include refid="selectPhoto"/>
-        WHERE ph.sub_code_idx = 5 OR ph.sub_code_idx = 6;
     </select>
 
     <select id="findAllInquiries" resultMap="inquiry" useCache="false" flushCache="true">
         <include refid="selectInquiry"/>
-        WHERE i.sub_code_idx = 7 OR i.sub_code_idx = 8;
     </select>
 
-    <insert id="insert" parameterType="Post" useGeneratedKeys="true" keyProperty="postIdx">
-        INSERT INTO tb_post (sub_code_idx, title, user_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
-        VALUES (#{subCodeIdx}, #{title}, #{authorIdx}, now(), null, #{content}, 0, 0, 0)
+    <insert id="insertPostByUser" parameterType="Post" useGeneratedKeys="true" keyProperty="postIdx">
+        INSERT INTO tb_post (category, title, user_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
+        VALUES (#{category.title}, #{title}, #{authorIdx}, now(), null, #{content}, 0, 0, 0)
+    </insert>
+
+    <insert id="insertPostByManager" parameterType="Post" useGeneratedKeys="true" keyProperty="postIdx">
+        INSERT INTO tb_notice (category, title, manager_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
+        VALUES (#{category.title}, #{title}, #{authorIdx}, now(), null, #{content}, 0, 0, 0)
     </insert>
 
 
     <sql id="selectNotice">
         SELECT
             n.notice_idx AS n_notice_idx,
-            n.sub_code_idx AS n_sub_code_idx,
+            n.category AS n_category,
             n.title AS n_title,
             n.manager_idx AS n_manager_idx,
             n.reg_date AS n_reg_date,
@@ -42,13 +43,12 @@
             n.like_count AS n_like_count,
             n.dislike_count AS n_dislike_count
         FROM tb_notice n
-                 LEFT OUTER JOIN tb_sub_code sc ON n.sub_code_idx = sc.sub_code_idx
     </sql>
 
     <sql id="selectCommunity">
         SELECT
             c.post_idx AS c_post_idx,
-            c.sub_code_idx AS c_sub_code_idx,
+            c.category AS c_category,
             c.title AS c_title,
             c.user_idx AS c_user_idx,
             c.reg_date AS c_reg_date,
@@ -70,7 +70,6 @@
             co.content AS co_content,
             co.post_idx AS co_post_idx
         FROM tb_post c
-                 LEFT OUTER JOIN tb_sub_code sc ON c.sub_code_idx = sc.sub_code_idx
                  LEFT OUTER JOIN tb_file f ON c.post_idx = f.post_idx
                  LEFT OUTER JOIN tb_comment co ON c.post_idx = co.post_idx
     </sql>
@@ -78,7 +77,7 @@
     <sql id="selectPhoto">
         SELECT
             ph.post_idx AS ph_post_idx,
-            ph.sub_code_idx AS ph_sub_code_idx,
+            ph.category AS ph_category,
             ph.title AS ph_title,
             ph.user_idx AS ph_user_idx,
             ph.reg_date AS ph_reg_date,
@@ -100,7 +99,6 @@
             co.content AS co_content,
             co.post_idx AS co_post_idx
         FROM tb_post ph
-                 LEFT OUTER JOIN tb_sub_code sc ON ph.sub_code_idx = sc.sub_code_idx
                  LEFT OUTER JOIN tb_file f ON ph.post_idx = f.post_idx
                  LEFT OUTER JOIN tb_comment co ON ph.post_idx = co.post_idx
     </sql>
@@ -108,7 +106,7 @@
     <sql id="selectInquiry">
         SELECT
             i.post_idx AS i_post_idx,
-            i.sub_code_idx AS i_sub_code_idx,
+            i.category AS i_category,
             i.title AS i_title,
             i.user_idx AS i_user_idx,
             i.reg_date AS i_reg_date,
@@ -123,7 +121,7 @@
 
     <resultMap id="notice" type="Notice">
         <id property="postIdx" column="n_notice_idx"/>
-        <result property="subCodeIdx" column="n_sub_code_idx"/>
+        <result property="category.title" column="n_category"/>
         <result property="title" column="n_title"/>
         <result property="authorId" column="n_manager_idx"/>
         <result property="regDate" column="n_reg_date"/>
@@ -136,7 +134,7 @@
 
     <resultMap id="community" type="Community">
         <id property="postIdx" column="c_post_idx"/>
-        <result property="subCodeIdx" column="c_sub_code_idx"/>
+        <result property="category.title" column="c_n_category"/>
         <result property="title" column="c_title"/>
         <result property="authorId" column="c_user_idx"/>
         <result property="regDate" column="c_reg_date"/>
@@ -167,7 +165,7 @@
 
     <resultMap id="photo" type="Photo">
         <id property="postIdx" column="ph_post_idx"/>
-        <result property="subCodeIdx" column="ph_sub_code_idx"/>
+        <result property="category.title" column="ph_category"/>
         <result property="title" column="ph_title"/>
         <result property="authorId" column="ph_user_idx"/>
         <result property="regDate" column="ph_reg_date"/>
@@ -198,7 +196,7 @@
 
     <resultMap id="inquiry" type="Inquiry">
         <id property="postIdx" column="i_post_idx"/>
-        <result property="subCodeIdx" column="i_sub_code_idx"/>
+        <result property="category.title" column="i_category"/>
         <result property="title" column="i_title"/>
         <result property="authorId" column="i_user_idx"/>
         <result property="regDate" column="i_reg_date"/>

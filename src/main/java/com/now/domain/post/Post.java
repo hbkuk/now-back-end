@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,15 +41,9 @@ public class Post {
     private Long postIdx;
 
     /**
-     * 하위 코드 번호
+     * 카테고리
      */
-    @NotNull(groups = {PostValidationGroup.register.class}, message = "카테고리 선택 필수")
-    private final Integer subCodeIdx;
-
-    /**
-     * 하위 코드명 (FROM 하위 코드 테이블)
-     */
-    private final Integer subCodeName;
+    private final Category category;
 
     /**
      * 게시글의 제목
