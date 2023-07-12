@@ -1,6 +1,6 @@
 package com.now.domain.post;
 
-import com.now.code.EnumMapperType;
+import com.now.core.EnumMapperType;
 import com.now.exception.InvalidCategoryException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.now.domain;
 
-import com.now.code.EnumMapperValue;
+import com.now.core.EnumMapperValue;
 import com.now.domain.post.Category;
 import com.now.domain.post.PostGroup;
 import org.junit.jupiter.api.DisplayName;

@@ -2,7 +2,7 @@ package com.now.domain.post;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.now.code.EnumMapperType;
+import com.now.core.EnumMapperType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
