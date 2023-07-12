@@ -63,23 +63,6 @@ public class PostService {
     }
 
     /**
-     * 커뮤니티 게시글 등록
-     *
-     * @param post      등록할 게시글 정보
-     * @param authority 권한 정보
-     * @throws PermissionDeniedException 게시글을 작성할 권한이 없는 경우 발생하는 예외
-     */
-    public void registerCommunityPost(Post post, Authority authority) {
-        User user = userService.findUserById(post.getAuthorId());
-
-        if(authority != Authority.USER) {
-            throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
-        }
-
-        postRepository.insert(post.updateAuthorIdx(user.getUserIdx()));
-    }
-
-    /**
      * 공지 게시글 등록
      *
      * @param post      등록할 게시글 정보
@@ -87,13 +70,64 @@ public class PostService {
      * @throws PermissionDeniedException 게시글을 작성할 권한이 없는 경우 발생하는 예외
      */
     public void registerNoticePost(Post post, Authority authority) {
-        Manager manager = managerService.findManagerById(post.getAuthorId());
-
         if(authority != Authority.MANAGER) {
             throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
         }
 
+        Manager manager = managerService.findManagerById(post.getAuthorId());
+
         postRepository.insert(post.updateAuthorIdx(manager.getManagerIdx()));
+    }
+
+    /**
+     * 커뮤니티 게시글 등록
+     *
+     * @param post      등록할 게시글 정보
+     * @param authority 권한 정보
+     * @throws PermissionDeniedException 게시글을 작성할 권한이 없는 경우 발생하는 예외
+     */
+    public void registerCommunityPost(Post post, Authority authority) {
+        if(authority != Authority.USER) {
+            throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
+        }
+
+        User user = userService.findUserById(post.getAuthorId());
+
+        postRepository.insert(post.updateAuthorIdx(user.getUserIdx()));
+    }
+
+    /**
+     * 사진 게시글 등록
+     *
+     * @param post      등록할 게시글 정보
+     * @param authority 권한 정보
+     * @throws PermissionDeniedException 게시글을 작성할 권한이 없는 경우 발생하는 예외
+     */
+    public void registerPhotoPost(Post post, Authority authority) {
+        if(authority != Authority.USER) {
+            throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
+        }
+
+        User user = userService.findUserById(post.getAuthorId());
+
+        postRepository.insert(post.updateAuthorIdx(user.getUserIdx()));
+    }
+
+    /**
+     * 문의 게시글 등록
+     *
+     * @param post      등록할 게시글 정보
+     * @param authority 권한 정보
+     * @throws PermissionDeniedException 게시글을 작성할 권한이 없는 경우 발생하는 예외
+     */
+    public void registerInquiryPost(Post post, Authority authority) {
+        if(authority != Authority.USER) {
+            throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
+        }
+
+        User user = userService.findUserById(post.getAuthorId());
+
+        postRepository.insert(post.updateAuthorIdx(user.getUserIdx()));
     }
 }
 

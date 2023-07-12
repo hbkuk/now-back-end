@@ -2,7 +2,9 @@ package com.now.controller;
 
 import com.now.domain.file.UploadType;
 import com.now.domain.post.Community;
+import com.now.domain.post.Inquiry;
 import com.now.domain.post.Notice;
+import com.now.domain.post.Photo;
 import com.now.dto.Posts;
 import com.now.security.Authority;
 import com.now.service.FileService;
@@ -59,7 +61,7 @@ public class PostController {
     @PostMapping("/api/notice")
     public ResponseEntity<Void> registerNoticePost(@RequestAttribute("id") String managerId, @RequestAttribute("role") String authority,
                                                    @RequestBody @Validated(PostValidationGroup.register.class) Notice notice) {
-        log.debug("registerNoticePost 호출, managerId : {}, authority : {}", managerId, authority);
+        log.debug("registerNoticePost 호출, managerId : {}, authority : {}, notice : {}", managerId, authority, notice);
 
         postService.registerNoticePost(notice.updateAuthorId(managerId), Authority.valueOf(authority));
 
@@ -81,6 +83,42 @@ public class PostController {
 
         postService.registerCommunityPost(community.updateAuthorId(userId), Authority.valueOf(authority));
         fileService.insert(multipartFiles, community.getPostIdx(), UploadType.FILE);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+    }
+
+    /**
+     * 사진 게시글을 등록
+     *
+     * @param userId 작성자의 사용자 ID
+     * @param photo  등록할 사진 게시글 정보
+     * @return 생성된 게시글에 대한 CREATED 응답을 반환
+     */
+    @PostMapping("/api/photo")
+    public ResponseEntity<Void> registerPhotoPost(@RequestAttribute("id") String userId, @RequestAttribute("role") String authority,
+                                                  @RequestPart(value = "photo") @Validated(PostValidationGroup.register.class) Photo photo,
+                                                  @RequestPart(value = "file", required = false) MultipartFile[] multipartFiles) {
+        log.debug("registerPhotoPost 호출, userId : {}, authority : {}, Community : {}, Multipart : {}", userId, authority, photo, (multipartFiles != null ? multipartFiles.length : "null"));
+
+        postService.registerPhotoPost(photo.updateAuthorId(userId), Authority.valueOf(authority));
+        fileService.insert(multipartFiles, photo.getPostIdx(), UploadType.IMAGE);
+
+        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+    }
+
+    /**
+     * 문의 게시글을 등록
+     *
+     * @param userId 작성자의 사용자 ID
+     * @param inquiry  등록할 문의 게시글 정보
+     * @return 생성된 게시글에 대한 CREATED 응답을 반환
+     */
+    @PostMapping("/api/inquiry")
+    public ResponseEntity<Void> registerInquiryPost(@RequestAttribute("id") String userId, @RequestAttribute("role") String authority,
+                                                    @RequestBody @Validated(PostValidationGroup.register.class) Inquiry inquiry) {
+        log.debug("registerInquiryPost 호출, userId : {}, authority : {}, inquiry : {}", userId, authority, inquiry);
+
+        postService.registerInquiryPost(inquiry.updateAuthorId(userId), Authority.valueOf(authority));
 
         return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
     }
