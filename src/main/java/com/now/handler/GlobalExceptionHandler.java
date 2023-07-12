@@ -42,6 +42,38 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * InvalidCategoryException 처리하는 예외 핸들러
+     *
+     * @param e InvalidCategoryException 인스턴스
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     */
+    @ExceptionHandler(InvalidCategoryException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidCategoryException(InvalidCategoryException e) {
+        log.error(e.getMessage(), e);
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_DATA, messageSource);
+        errorResponse.setDetail(e.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * CannotWritePostException 처리하는 예외 핸들러
+     *
+     * @param e CannotWritePostException 인스턴스
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     */
+    @ExceptionHandler(CannotWritePostException.class)
+    public ResponseEntity<ErrorResponse> handleCannotWritePostException(CannotWritePostException e) {
+        log.error(e.getMessage(), e);
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_DATA, messageSource);
+        errorResponse.setDetail(e.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
      * FileInsertionException 처리하는 예외 핸들러
      *
      * @param e FileInsertionException 인스턴스
@@ -54,7 +86,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.SERVER_INTERNAL_ERROR, messageSource);
         errorResponse.setDetail(e.getMessage());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.UNPROCESSABLE_ENTITY);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     /**
