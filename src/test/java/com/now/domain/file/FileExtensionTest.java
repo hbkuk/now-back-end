@@ -1,5 +1,7 @@
 package com.now.domain.file;
 
+import com.now.core.file.domain.constants.UploadType;
+import com.now.core.file.domain.wrapped.FileExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;

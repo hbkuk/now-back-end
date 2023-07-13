@@ -1,13 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.now.mapper.ManagerMapper">
+<mapper namespace="com.now.core.manager.domain.ManagerMapper">
 
     <!-- 사용자 확인 -->
-    <select id="findById" parameterType="java.lang.String" resultType="Manager">
+    <select id="findById" parameterType="java.lang.String" resultMap="Manager">
         SELECT *
         FROM tb_manager
         WHERE id = #{id}
     </select>
+
+    <resultMap id="Manager" type="Manager">
+        <id property="managerIdx" column="manager_idx"/>
+        <result property="id" column="id"/>
+        <result property="password" column="password"/>
+        <result property="nickname" column="nickname"/>
+    </resultMap>
 
 </mapper>

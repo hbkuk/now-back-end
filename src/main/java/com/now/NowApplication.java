@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.now.mapper")
+@MapperScan("com.now.core")
 public class NowApplication {
 
     public static void main(String[] args) {

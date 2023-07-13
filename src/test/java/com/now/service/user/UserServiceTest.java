@@ -1,13 +1,13 @@
 package com.now.service.user;
 
 import com.now.NowApplication;
-import com.now.domain.user.User;
-import com.now.exception.AuthenticationFailedException;
-import com.now.exception.DuplicateUserException;
-import com.now.repository.UserRepository;
-import com.now.security.JwtTokenService;
-import com.now.security.PasswordSecurityManager;
-import com.now.service.UserService;
+import com.now.core.member.domain.Member;
+import com.now.core.authentication.exception.AuthenticationFailedException;
+import com.now.core.member.exception.DuplicateMemberException;
+import com.now.core.member.domain.MemberRepository;
+import com.now.core.authentication.application.JwtTokenService;
+import com.now.common.security.PasswordSecurityManager;
+import com.now.core.member.application.MemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -18,23 +18,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.support.MessageSourceAccessor;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = NowApplication.class)
 public class UserServiceTest {
 
-    @Autowired private UserService userService;
-    @MockBean private UserRepository userRepository;
+    @Autowired private MemberService userService;
+    @MockBean private MemberRepository userRepository;
     @MockBean private PasswordSecurityManager passwordSecurityManager;
     @MockBean private JwtTokenService jwtTokenService;
     @MockBean private MessageSourceAccessor messageSource;
 
-    User userA = null;
+    Member userA = null;
 
     @BeforeEach
     void createUser() {
-        userA = User.builder()
+        userA = Member.builder()
                 .id("testerA")
                 .password("testPasswordA")
                 .name("testNameA")
@@ -52,9 +53,9 @@ public class UserServiceTest {
             when(userRepository.existsById(anyString())).thenReturn(true);
             when(userRepository.existsByNickname(anyString())).thenReturn(true);
 
-            assertThatExceptionOfType(DuplicateUserException.class)
+            assertThatExceptionOfType(DuplicateMemberException.class)
                     .isThrownBy(() -> {
-                        userService.registerUser(userA);
+                        userService.registerMember(userA);
                     });
         }
 
@@ -64,9 +65,9 @@ public class UserServiceTest {
             when(userRepository.existsById(anyString())).thenReturn(false);
             when(userRepository.existsByNickname(anyString())).thenReturn(false);
 
-            userService.registerUser(userA);
+            userService.registerMember(userA);
 
-            verify(userRepository, times(1)).insert(userA);
+            verify(userRepository, times(1)).saveMember(userA);
         }
     }
 
