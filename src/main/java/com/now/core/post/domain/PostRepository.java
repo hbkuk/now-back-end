@@ -2,6 +2,7 @@ package com.now.core.post.domain;
 
 import com.now.core.post.domain.abstractions.ManagerPost;
 import com.now.core.post.domain.abstractions.MemberPost;
+import com.now.core.post.presentation.dto.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -26,8 +27,8 @@ public class PostRepository {
      *
      * @return 공지사항 게시글 정보 리스트
      */
-    public List<Notice> findAllNotices() {
-        return postMapper.findAllNotices();
+    public List<Notice> findAllNotices(Condition condition) {
+        return postMapper.findAllNotices(condition);
     }
 
     /**
@@ -35,8 +36,8 @@ public class PostRepository {
      *
      * @return 커뮤니티 게시글 정보 리스트
      */
-    public List<Community> findAllCommunity() {
-        return postMapper.findAllCommunity();
+    public List<Community> findAllCommunity(Condition condition) {
+        return postMapper.findAllCommunity(condition);
     }
 
     /**
@@ -44,8 +45,8 @@ public class PostRepository {
      *
      * @return 사진 게시글 정보 리스트
      */
-    public List<Photo> findAllPhotos() {
-        return postMapper.findAllPhotos();
+    public List<Photo> findAllPhotos(Condition condition) {
+        return postMapper.findAllPhotos(condition);
     }
 
     /**
@@ -53,8 +54,8 @@ public class PostRepository {
      *
      * @return 문의 게시글 정보 리스트
      */
-    public List<Inquiry> findAllInquiries() {
-        return postMapper.findAllInquiries();
+    public List<Inquiry> findAllInquiries(Condition condition) {
+        return postMapper.findAllInquiries(condition);
     }
 
     /**

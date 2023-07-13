@@ -1,5 +1,6 @@
 package com.now.core.post.domain.abstractions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.comment.domain.Comment;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.member.domain.Member;
@@ -23,9 +24,13 @@ import java.util.List;
 @AllArgsConstructor
 public abstract class MemberPost extends Post {
 
-    private PostGroup postGroup;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long memberIdx;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String memberId;
+
+    private String memberNickname;
 
     /**
      * 회원의 식별자를 업데이트

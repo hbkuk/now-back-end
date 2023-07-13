@@ -13,40 +13,56 @@
         VALUES (#{postGroup}, #{category.name}, #{title}, #{memberIdx}, now(), null, #{content}, 0, 0, 0)
     </insert>
 
-    <select id="findAllNotices" resultMap="notice" useCache="false" flushCache="true">
+    <select id="findAllNotices" parameterType="Condition" resultMap="notice" useCache="false" flushCache="true">
         SELECT
-        <include refid="selectManagerPostTableColumn"/>
+        <include refid="selectManagerPostTableColumn"/>,
+        <include refid="selectManagerTableColumn"/>
         FROM tb_manager_post manager_p
+        LEFT OUTER JOIN tb_manager m ON manager_p.manager_idx = m.manager_idx
         WHERE manager_p.post_group = 'NOTICE'
+        ORDER BY manager_p.post_idx DESC
+        <include refid="condition"/>
     </select>
 
-    <select id="findAllCommunity" resultMap="community" useCache="false" flushCache="true">
+    <select id="findAllCommunity" parameterType="Condition" resultMap="community" useCache="false" flushCache="true">
         SELECT
         <include refid="selectMemberPostTableColumn"/>,
         <include refid="selectFileTableColumn"/>,
-        <include refid="selectCommentTableColumn"/>
+        <include refid="selectCommentTableColumn"/>,
+        <include refid="selectMemberTableColumn"/>
         FROM tb_member_post member_p
         LEFT OUTER JOIN tb_file f ON member_p.post_idx = f.member_post_idx
         LEFT OUTER JOIN tb_comment co ON member_p.post_idx = co.member_post_idx
+        LEFT OUTER JOIN tb_member m ON member_p.member_idx = m.member_idx
         WHERE member_P.post_group = 'COMMUNITY'
+        ORDER BY member_p.post_idx DESC
+        <include refid="condition"/>
     </select>
 
-    <select id="findAllPhotos" resultMap="photo" useCache="false" flushCache="true">
+    <select id="findAllPhotos" parameterType="Condition" resultMap="photo" useCache="false" flushCache="true">
         SELECT
         <include refid="selectMemberPostTableColumn"/>,
         <include refid="selectFileTableColumn"/>,
-        <include refid="selectCommentTableColumn"/>
+        <include refid="selectCommentTableColumn"/>,
+        <include refid="selectMemberTableColumn"/>
         FROM tb_member_post member_p
         LEFT OUTER JOIN tb_file f ON member_p.post_idx = f.member_post_idx
         LEFT OUTER JOIN tb_comment co ON member_p.post_idx = co.member_post_idx
+        LEFT OUTER JOIN tb_member m ON member_p.member_idx = m.member_idx
         WHERE member_P.post_group = 'PHOTO'
+        ORDER BY member_p.post_idx DESC
+        <include refid="condition"/>
     </select>
 
-    <select id="findAllInquiries" resultMap="inquiry" useCache="false" flushCache="true">
+    <select id="findAllInquiries" parameterType="Condition" resultMap="inquiry" useCache="false" flushCache="true">
         SELECT
-        <include refid="selectMemberPostTableColumn"/>
+        <include refid="selectMemberPostTableColumn"/>,
+        <include refid="selectMemberTableColumn"/>
         FROM tb_member_post member_p
+        LEFT OUTER JOIN tb_member m ON member_p.member_idx = m.member_idx
         WHERE member_P.post_group = 'INQUIRY'
+        ORDER BY member_p.post_idx DESC
+        <include refid="condition"/>
     </select>
 
     <sql id="selectManagerPostTableColumn">
@@ -91,6 +107,13 @@
         co.member_post_idx AS co_member_post_idx
     </sql>
 
+    <sql id="selectManagerTableColumn">
+        m.nickname AS m_nickname
+    </sql>
+
+    <sql id="selectMemberTableColumn">
+        m.nickname AS m_nickname
+    </sql>
 
     <resultMap id="fileTableCollectionMapping" type="File">
         <id property="fileIdx" column="f_file_idx"/>
@@ -108,11 +131,11 @@
         <result property="memberPostIdx" column="co_member_post_idx"/>
     </resultMap>
 
-    <resultMap id="notice" type="Notice">
+    <resultMap id="baseManagerPostResultMap" type="ManagerPost">
         <id property="postIdx" column="manager_p_post_idx"/>
-        <result column="manager_p_category" javaType="com.now.core.category.domain.constants.Category"/>
+        <result property="category" column="manager_p_category" javaType="com.now.core.category.domain.constants.Category"/>
         <result property="title" column="manager_p_title"/>
-        <result property="managerIdx" column="manager_p_manager_idx"/>
+        <result property="managerNickname" column="m_nickname"/>
         <result property="regDate" column="manager_p_reg_date"/>
         <result property="modDate" column="manager_p_mod_date"/>
         <result property="content" column="manager_p_content"/>
@@ -121,49 +144,41 @@
         <result property="dislikeCount" column="manager_p_dislike_count"/>
     </resultMap>
 
-    <resultMap id="community" type="Community">
+    <resultMap id="baseMemberPostResultMap" type="MemberPost">
         <id property="postIdx" column="member_p_post_idx"/>
-        <result column="member_p_category" javaType="com.now.core.category.domain.constants.Category"/>
+        <result property="category" column="member_p_category" javaType="com.now.core.category.domain.constants.Category"/>
         <result property="title" column="member_p_title"/>
-        <result property="memberIdx" column="member_p_member_idx"/>
+        <result property="memberNickname" column="m_nickname"/>
         <result property="regDate" column="member_p_reg_date"/>
         <result property="modDate" column="member_p_mod_date"/>
         <result property="content" column="member_p_content"/>
         <result property="viewCount" column="member_p_view_count"/>
         <result property="likeCount" column="member_p_like_count"/>
         <result property="dislikeCount" column="member_p_dislike_count"/>
+    </resultMap>
+
+    <resultMap id="notice" type="Notice" extends="baseManagerPostResultMap">
+    </resultMap>
+
+    <resultMap id="community" type="Community" extends="baseMemberPostResultMap">
         <!-- 공통 컬렉션 매핑 -->
         <collection property="files" resultMap="fileTableCollectionMapping" />
         <collection property="comments" resultMap="commentTableCollectionMapping" />
     </resultMap>
 
-    <resultMap id="photo" type="Photo">
-        <id property="postIdx" column="member_p_post_idx"/>
-        <result column="member_p_category" javaType="com.now.core.category.domain.constants.Category"/>
-        <result property="title" column="member_p_title"/>
-        <result property="memberIdx" column="member_p_member_idx"/>
-        <result property="regDate" column="member_p_reg_date"/>
-        <result property="modDate" column="member_p_mod_date"/>
-        <result property="content" column="member_p_content"/>
-        <result property="viewCount" column="member_p_view_count"/>
-        <result property="likeCount" column="member_p_like_count"/>
-        <result property="dislikeCount" column="member_p_dislike_count"/>
+    <resultMap id="photo" type="Photo" extends="baseMemberPostResultMap">
         <!-- 공통 컬렉션 매핑 -->
         <collection property="files" resultMap="fileTableCollectionMapping" />
         <collection property="comments" resultMap="commentTableCollectionMapping" />
     </resultMap>
 
-    <resultMap id="inquiry" type="Inquiry">
-        <id property="postIdx" column="member_p_post_idx"/>
-        <result javaType="com.now.core.category.domain.constants.Category" column="member_p_category"/>
-        <result property="title" column="member_p_title"/>
-        <result property="memberIdx" column="member_p_member_idx"/>
-        <result property="regDate" column="member_p_reg_date"/>
-        <result property="modDate" column="member_p_mod_date"/>
-        <result property="content" column="member_p_content"/>
-        <result property="viewCount" column="member_p_view_count"/>
-        <result property="likeCount" column="member_p_like_count"/>
-        <result property="dislikeCount" column="member_p_dislike_count"/>
+    <resultMap id="inquiry" type="Inquiry" extends="baseMemberPostResultMap">
     </resultMap>
 
+    <!-- 검색 조건에 따른 WHERE 절 SQL -->
+    <sql id="condition">
+        <if test="limit != 0">
+            LIMIT 0, #{limit}
+        </if>
+    </sql>
 </mapper>

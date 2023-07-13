@@ -1,5 +1,6 @@
 package com.now.core.post.domain.abstractions;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.manager.domain.Manager;
 import lombok.AllArgsConstructor;
@@ -18,8 +19,13 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public abstract class ManagerPost extends Post {
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long managerIdx;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String managerId;
+
+    private String managerNickname;
 
     /**
      * 매니저의 식별자를 업데이트

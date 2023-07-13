@@ -2,6 +2,7 @@ package com.now.core.post.domain;
 
 import com.now.core.post.domain.abstractions.ManagerPost;
 import com.now.core.post.domain.abstractions.MemberPost;
+import com.now.core.post.presentation.dto.Condition;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -17,28 +18,28 @@ public interface PostMapper {
      *
      * @return 공지사항 게시글 정보 리스트
      */
-    List<Notice> findAllNotices();
+    List<Notice> findAllNotices(Condition condition);
 
     /**
      * 모든 커뮤니티 게시글 정보를 조회 후 반환
      *
      * @return 커뮤니티 게시글 정보 리스트
      */
-    List<Community> findAllCommunity();
+    List<Community> findAllCommunity(Condition condition);
 
     /**
      * 모든 사진 게시글 정보를 조회 후 반환
      *
      * @return 사진 게시글 정보 리스트
      */
-    List<Photo> findAllPhotos();
+    List<Photo> findAllPhotos(Condition condition);
 
     /**
      * 모든 문의 게시글 정보를 조회 후 반환
      *
      * @return 문의 게시글 정보 리스트
      */
-    List<Inquiry> findAllInquiries();
+    List<Inquiry> findAllInquiries(Condition condition);
 
     /**
      * 매니저가 작성한 게시글을 저장

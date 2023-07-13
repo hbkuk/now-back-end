@@ -15,6 +15,7 @@ import com.now.core.post.exception.CannotWritePostException;
 import com.now.core.post.exception.PermissionDeniedException;
 import com.now.core.post.domain.PostRepository;
 import com.now.core.authentication.constants.Authority;
+import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.MessageSourceAccessor;
@@ -40,8 +41,8 @@ public class PostService {
      *
      * @return 공지사항 게시글 정보 리스트
      */
-    public List<Notice> retrieveAllNotices() {
-        return postRepository.findAllNotices();
+    public List<Notice> retrieveAllNotices(Condition condition) {
+        return postRepository.findAllNotices(condition);
     }
 
     /**
@@ -49,8 +50,8 @@ public class PostService {
      *
      * @return 커뮤니티 게시글 정보 리스트
      */
-    public List<Community> retrieveAllCommunity() {
-        return postRepository.findAllCommunity();
+    public List<Community> retrieveAllCommunity(Condition condition) {
+        return postRepository.findAllCommunity(condition);
     }
 
     /**
@@ -58,8 +59,8 @@ public class PostService {
      *
      * @return 사진 게시글 정보 리스트
      */
-    public List<Photo> retrieveAllPhotos() {
-        return postRepository.findAllPhotos();
+    public List<Photo> retrieveAllPhotos(Condition condition) {
+        return postRepository.findAllPhotos(condition);
     }
 
     /**
@@ -67,8 +68,8 @@ public class PostService {
      *
      * @return 문의 게시글 정보 리스트
      */
-    public List<Inquiry> retrieveAllInquiries() {
-        return postRepository.findAllInquiries();
+    public List<Inquiry> retrieveAllInquiries(Condition condition) {
+        return postRepository.findAllInquiries(condition);
     }
 
     /**

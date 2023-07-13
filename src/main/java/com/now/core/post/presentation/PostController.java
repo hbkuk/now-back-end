@@ -5,6 +5,7 @@ import com.now.core.post.domain.Community;
 import com.now.core.post.domain.Inquiry;
 import com.now.core.post.domain.Notice;
 import com.now.core.post.domain.Photo;
+import com.now.core.post.presentation.dto.Condition;
 import com.now.core.post.presentation.dto.Posts;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.file.application.FileService;
@@ -18,6 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 /**
@@ -38,14 +40,12 @@ public class PostController {
      * @return 모든 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/posts")
-    public ResponseEntity<Posts> retrievePosts() {
-        log.debug("retrievePosts 호출");
+    public ResponseEntity<Posts> retrievePosts(@Valid @ModelAttribute Condition condition) {
+        log.debug("retrievePosts 호출, condition : {}", condition);
 
         Posts posts = Posts.create(Map.of(
-                "notices", postService.retrieveAllNotices(),
-                "community", postService.retrieveAllCommunity(),
-                "photos", postService.retrieveAllPhotos(),
-                "inquiries", postService.retrieveAllInquiries()
+                "notices", postService.retrieveAllNotices(condition), "community", postService.retrieveAllCommunity(condition),
+                "photos", postService.retrieveAllPhotos(condition), "inquiries", postService.retrieveAllInquiries(condition)
         ));
 
         return new ResponseEntity<>(posts, HttpStatus.OK);
