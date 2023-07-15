@@ -1,7 +1,7 @@
 package com.now.domain.file;
 
-import com.now.core.file.domain.constants.UploadType;
-import com.now.core.file.domain.wrapped.FileExtension;
+import com.now.core.attachment.domain.constants.AttachmentType;
+import com.now.core.attachment.domain.wrapped.AttachmentExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,7 +18,7 @@ public class FileExtensionTest {
         @ParameterizedTest
         @ValueSource(strings = {"jpg", "gif", "png", "zip"})
         void return_true_when_file_extension(String value) {
-            FileExtension extension = new FileExtension(value, UploadType.FILE.getAllowedExtensions());
+            AttachmentExtension extension = new AttachmentExtension(value, AttachmentType.FILE.getAllowedExtensions());
         }
 
         @DisplayName("파일로 분류한 확장자가 아닐 경우 예외를 던진다.")
@@ -27,7 +27,7 @@ public class FileExtensionTest {
         void return_true_when_not_file_extension(String value) {
             assertThatExceptionOfType(IllegalArgumentException.class)
                     .isThrownBy(() -> {
-                        new FileExtension(value, UploadType.FILE.getAllowedExtensions());
+                        new AttachmentExtension(value, AttachmentType.FILE.getAllowedExtensions());
                     })
                     .withMessage("허용하지 않는 확장자입니다.");
         }
@@ -41,7 +41,7 @@ public class FileExtensionTest {
         @ParameterizedTest
         @ValueSource(strings = {"jpg", "gif", "png"})
         void return_true_when_image_extension(String value) {
-            FileExtension extension = new FileExtension(value, UploadType.IMAGE.getAllowedExtensions());
+            AttachmentExtension extension = new AttachmentExtension(value, AttachmentType.IMAGE.getAllowedExtensions());
         }
 
         @DisplayName("이미지로 분류한 확장자가 아닐 경우 예외를 던진다.")
@@ -50,7 +50,7 @@ public class FileExtensionTest {
         void return_true_when_not_image_extension(String value) {
             assertThatExceptionOfType(IllegalArgumentException.class)
                     .isThrownBy(() -> {
-                        new FileExtension(value, UploadType.IMAGE.getAllowedExtensions());
+                        new AttachmentExtension(value, AttachmentType.IMAGE.getAllowedExtensions());
                     })
                     .withMessage("허용하지 않는 확장자입니다.");
         }

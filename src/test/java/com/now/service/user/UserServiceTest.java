@@ -1,6 +1,5 @@
 package com.now.service.user;
 
-import com.now.NowApplication;
 import com.now.core.member.domain.Member;
 import com.now.core.authentication.exception.AuthenticationFailedException;
 import com.now.core.member.exception.DuplicateMemberException;

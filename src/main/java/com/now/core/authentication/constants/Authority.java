@@ -29,6 +29,14 @@ public enum Authority {
     public String getValue() {
         return value;
     }
+
+    public static boolean hasAccess(Authority authority) {
+        if (authority == MANAGER) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 

@@ -3,16 +3,46 @@
 
 <mapper namespace="com.now.core.post.domain.PostMapper">
 
-    <insert id="saveManagerPost" parameterType="ManagerPost" useGeneratedKeys="true" keyProperty="postIdx">
-        INSERT INTO tb_manager_post (post_group, category, title, manager_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
-        VALUES (#{postGroup}, #{category.name}, #{title}, #{managerIdx}, now(), null, #{content}, 0, 0, 0)
+    <!-- Notice 저장 쿼리 (Manager Post 재활용) -->
+    <insert id="saveNotice" parameterType="Notice" useGeneratedKeys="true" keyProperty="postIdx">
+        INSERT INTO tb_manager_post (post_group, category, title, manager_idx, reg_date, mod_date, content, view_count, like_count, dislike_count, pinned)
+        VALUES (#{postGroup}, #{category.name}, #{title}, #{managerIdx}, now(), null, #{content}, 0, 0, 0, #{pinned})
     </insert>
 
-    <insert id="saveMemberPost" parameterType="MemberPost" useGeneratedKeys="true" keyProperty="postIdx">
+    <!-- Community 저장 쿼리 (Member Post 재활용) -->
+    <insert id="saveCommunity" parameterType="Community" useGeneratedKeys="true" keyProperty="postIdx">
         INSERT INTO tb_member_post (post_group, category, title, member_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
         VALUES (#{postGroup}, #{category.name}, #{title}, #{memberIdx}, now(), null, #{content}, 0, 0, 0)
     </insert>
 
+    <!-- Photo 저장 쿼리 (Member Post 재활용) -->
+    <insert id="savePhoto" parameterType="Photo" useGeneratedKeys="true" keyProperty="postIdx">
+        INSERT INTO tb_member_post (post_group, category, title, member_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
+        VALUES (#{postGroup}, #{category.name}, #{title}, #{memberIdx}, now(), null, #{content}, 0, 0, 0)
+    </insert>
+
+    <!-- Inquiry 저장 쿼리 (Member Post 재활용) -->
+    <insert id="saveInquiry" parameterType="Inquiry" useGeneratedKeys="true" keyProperty="postIdx">
+        INSERT INTO tb_member_post (post_group, category, title, member_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
+        VALUES (#{postGroup}, #{category.name}, #{title}, #{memberIdx}, now(), null, #{content}, 0, 0, 0)
+    </insert>
+
+    <!-- Inquiry의 비밀글 설정 저장 쿼리 -->
+    <insert id="saveInquirySecretSetting" parameterType="Inquiry" useGeneratedKeys="true" keyProperty="inquiryIdx">
+        INSERT INTO tb_inquiry (member_post_idx, secret, password)
+        VALUES (#{postIdx}, #{secret}, password)
+    </insert>
+
+    <!-- Inquiry에 대한 답변 저장 쿼리 -->
+    <update id="saveAnswer" parameterType="Answer">
+        UPDATE tb_inquiry
+        SET answer_manager_idx = #{answerManagerIdx},
+            answer_content     = #{answerContent},
+            answer_reg_date    = NOW()
+        WHERE member_post_idx = #{postIdx}
+    </update>
+
+    <!-- 모든 공지사항 조회 쿼리 -->
     <select id="findAllNotices" parameterType="Condition" resultMap="notice" useCache="false" flushCache="true">
         SELECT
         <include refid="selectManagerPostTableColumn"/>,
@@ -24,47 +54,105 @@
         <include refid="condition"/>
     </select>
 
+    <!-- 모든 커뮤니티 게시글 조회 쿼리 -->
     <select id="findAllCommunity" parameterType="Condition" resultMap="community" useCache="false" flushCache="true">
         SELECT
         <include refid="selectMemberPostTableColumn"/>,
-        <include refid="selectFileTableColumn"/>,
+        <include refid="selectAttachmentTableColumn"/>,
         <include refid="selectCommentTableColumn"/>,
         <include refid="selectMemberTableColumn"/>
         FROM tb_member_post member_p
-        LEFT OUTER JOIN tb_file f ON member_p.post_idx = f.member_post_idx
+        LEFT OUTER JOIN tb_attachment f ON member_p.post_idx = f.member_post_idx
         LEFT OUTER JOIN tb_comment co ON member_p.post_idx = co.member_post_idx
         LEFT OUTER JOIN tb_member m ON member_p.member_idx = m.member_idx
-        WHERE member_P.post_group = 'COMMUNITY'
+        WHERE member_p.post_group = 'COMMUNITY'
         ORDER BY member_p.post_idx DESC
         <include refid="condition"/>
     </select>
 
+    <!-- 모든 사진 게시글 조회 쿼리 -->
     <select id="findAllPhotos" parameterType="Condition" resultMap="photo" useCache="false" flushCache="true">
         SELECT
         <include refid="selectMemberPostTableColumn"/>,
-        <include refid="selectFileTableColumn"/>,
+        <include refid="selectAttachmentTableColumn"/>,
         <include refid="selectCommentTableColumn"/>,
         <include refid="selectMemberTableColumn"/>
         FROM tb_member_post member_p
-        LEFT OUTER JOIN tb_file f ON member_p.post_idx = f.member_post_idx
+        LEFT OUTER JOIN tb_attachment f ON member_p.post_idx = f.member_post_idx
         LEFT OUTER JOIN tb_comment co ON member_p.post_idx = co.member_post_idx
         LEFT OUTER JOIN tb_member m ON member_p.member_idx = m.member_idx
-        WHERE member_P.post_group = 'PHOTO'
+        WHERE member_p.post_group = 'PHOTO'
         ORDER BY member_p.post_idx DESC
         <include refid="condition"/>
     </select>
 
+    <!-- 모든 문의 게시글 조회 쿼리 -->
     <select id="findAllInquiries" parameterType="Condition" resultMap="inquiry" useCache="false" flushCache="true">
         SELECT
         <include refid="selectMemberPostTableColumn"/>,
-        <include refid="selectMemberTableColumn"/>
+        <include refid="selectMemberTableColumn"/>,
+        <include refid="selectInquiryTableColumn"/>
         FROM tb_member_post member_p
         LEFT OUTER JOIN tb_member m ON member_p.member_idx = m.member_idx
-        WHERE member_P.post_group = 'INQUIRY'
+        LEFT OUTER JOIN tb_inquiry i ON i.member_post_idx = member_p.post_idx
+        LEFT OUTER JOIN tb_manager ma ON ma.manager_idx = i.answer_manager_idx
+        WHERE member_p.post_group = 'INQUIRY'
         ORDER BY member_p.post_idx DESC
         <include refid="condition"/>
     </select>
 
+    <!-- 단일 공지사항 조회 쿼리 -->
+    <select id="findNotice" parameterType="Long" resultMap="notice" useCache="false" flushCache="true">
+        SELECT
+        <include refid="selectManagerPostTableColumn"/>,
+        <include refid="selectManagerTableColumn"/>
+        FROM tb_manager_post manager_p
+        LEFT OUTER JOIN tb_manager m ON manager_p.manager_idx = m.manager_idx
+        WHERE manager_p.post_group = 'NOTICE' AND manager_p.post_idx = #{postIdx}
+    </select>
+
+    <!-- 단일 커뮤니티 게시글 조회 쿼리 -->
+    <select id="findCommunity" parameterType="Long" resultMap="community" useCache="false" flushCache="true">
+        SELECT
+        <include refid="selectMemberPostTableColumn"/>,
+        <include refid="selectAttachmentTableColumn"/>,
+        <include refid="selectCommentTableColumn"/>,
+        <include refid="selectMemberTableColumn"/>
+        FROM tb_member_post member_p
+        LEFT OUTER JOIN tb_attachment f ON member_p.post_idx = f.member_post_idx
+        LEFT OUTER JOIN tb_comment co ON member_p.post_idx = co.member_post_idx
+        LEFT OUTER JOIN tb_member m ON member_p.member_idx = m.member_idx
+        WHERE member_p.post_group = 'COMMUNITY' AND member_p.post_idx = #{postIdx}
+    </select>
+
+    <!-- 단일 사진 게시글 조회 쿼리 -->
+    <select id="findPhoto" parameterType="Long" resultMap="photo" useCache="false" flushCache="true">
+        SELECT
+        <include refid="selectMemberPostTableColumn"/>,
+        <include refid="selectAttachmentTableColumn"/>,
+        <include refid="selectCommentTableColumn"/>,
+        <include refid="selectMemberTableColumn"/>
+        FROM tb_member_post member_p
+        LEFT OUTER JOIN tb_attachment f ON member_p.post_idx = f.member_post_idx
+        LEFT OUTER JOIN tb_comment co ON member_p.post_idx = co.member_post_idx
+        LEFT OUTER JOIN tb_member m ON member_p.member_idx = m.member_idx
+        WHERE member_p.post_group = 'PHOTO' AND member_p.post_idx = #{postIdx}
+    </select>
+
+    <!-- 단일 문의 게시글 조회 쿼리 -->
+    <select id="findInquiry" parameterType="Long" resultMap="inquiry" useCache="false" flushCache="true">
+        SELECT
+        <include refid="selectMemberPostTableColumn"/>,
+        <include refid="selectMemberTableColumn"/>,
+        <include refid="selectInquiryTableColumn"/>
+        FROM tb_member_post member_p
+        LEFT OUTER JOIN tb_member m ON member_p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.member_post_idx = member_p.post_idx
+        LEFT OUTER JOIN tb_manager ma ON ma.manager_idx = i.answer_manager_idx
+        WHERE member_p.post_group = 'INQUIRY' AND member_p.post_idx = #{postIdx}
+    </select>
+
+    <!-- Manager Post 테이블의 컬럼 매핑 -->
     <sql id="selectManagerPostTableColumn">
         manager_p.post_idx AS manager_p_post_idx,
         manager_p.category AS manager_p_category,
@@ -75,9 +163,11 @@
         manager_p.content AS manager_p_content,
         manager_p.view_count AS manager_p_view_count,
         manager_p.like_count AS manager_p_like_count,
-        manager_p.dislike_count AS manager_p_dislike_count
+        manager_p.dislike_count AS manager_p_dislike_count,
+        manager_p.pinned AS manager_p_pinned
     </sql>
 
+    <!-- Member Post 테이블의 컬럼 매핑 -->
     <sql id="selectMemberPostTableColumn">
         member_p.post_idx AS member_p_post_idx,
         member_p.category AS member_p_category,
@@ -91,14 +181,16 @@
         member_p.dislike_count AS member_p_dislike_count
     </sql>
 
-    <sql id="selectFileTableColumn">
-        f.file_idx AS f_file_idx,
-        f.original_file_name AS f_original_file_name,
-        f.file_extension AS f_file_extension,
-        f.file_size AS f_file_size,
+    <!-- Attachment 테이블의 컬럼 매핑 -->
+    <sql id="selectAttachmentTableColumn">
+        f.attachment_idx AS f_attachment_idx,
+        f.original_attachment_name AS f_original_attachment_name,
+        f.attachment_extension AS f_attachment_extension,
+        f.attachment_size AS f_attachment_size,
         f.member_post_idx AS f_member_post_idx
     </sql>
 
+    <!-- Comment 테이블의 컬럼 매핑 -->
     <sql id="selectCommentTableColumn">
         co.comment_idx AS co_comment_idx,
         co.member_idx AS co_member_idx,
@@ -107,22 +199,34 @@
         co.member_post_idx AS co_member_post_idx
     </sql>
 
+    <!-- Inquiry 테이블의 컬럼 매핑 -->
+    <sql id="selectInquiryTableColumn">
+        i.secret AS i_secret,
+        i.answer_content AS i_answer_manager_nickname,
+        i.answer_reg_date AS i_answer_content
+    </sql>
+
+    <!-- Manager 테이블의 컬럼 매핑 -->
     <sql id="selectManagerTableColumn">
         m.nickname AS m_nickname
     </sql>
 
+    <!-- Member 테이블의 컬럼 매핑 -->
     <sql id="selectMemberTableColumn">
-        m.nickname AS m_nickname
+        m.nickname AS m_nickname,
+        m.id AS m_id
     </sql>
 
-    <resultMap id="fileTableCollectionMapping" type="File">
-        <id property="fileIdx" column="f_file_idx"/>
-        <result property="originalFileName.originalFileName" column="f_original_file_name"/>
-        <result property="fileExtension.fileExtension" column="f_file_extension"/>
-        <result property="fileSize.fileSize" column="f_file_size"/>
+    <!-- Attachment 컬렉션 매핑 -->
+    <resultMap id="attachmentTableCollectionMapping" type="Attachment">
+        <id property="attachmentIdx" column="f_attachment_idx"/>
+        <result property="originalAttachmentName.originalAttachmentName" column="f_original_attachment_name"/>
+        <result property="attachmentExtension.attachmentExtension" column="f_attachment_extension"/>
+        <result property="attachmentSize.attachmentSize" column="f_attachment_size"/>
         <result property="memberPostIdx" column="f_member_post_idx"/>
     </resultMap>
 
+    <!-- Comment 컬렉션 매핑 -->
     <resultMap id="commentTableCollectionMapping" type="Comment">
         <id property="commentIdx" column="co_comment_idx"/>
         <result property="memberIdx" column="co_member_idx"/>
@@ -131,7 +235,8 @@
         <result property="memberPostIdx" column="co_member_post_idx"/>
     </resultMap>
 
-    <resultMap id="baseManagerPostResultMap" type="ManagerPost">
+    <!-- 공지사항 결과 매핑 -->
+    <resultMap id="notice" type="Notice" >
         <id property="postIdx" column="manager_p_post_idx"/>
         <result property="category" column="manager_p_category" javaType="com.now.core.category.domain.constants.Category"/>
         <result property="title" column="manager_p_title"/>
@@ -142,9 +247,11 @@
         <result property="viewCount" column="manager_p_view_count"/>
         <result property="likeCount" column="manager_p_like_count"/>
         <result property="dislikeCount" column="manager_p_dislike_count"/>
+        <result property="pinned" column="manager_p_pinned"/>
     </resultMap>
 
-    <resultMap id="baseMemberPostResultMap" type="MemberPost">
+    <!-- 커뮤니티 게시글 결과 매핑 -->
+    <resultMap id="community" type="Community">
         <id property="postIdx" column="member_p_post_idx"/>
         <result property="category" column="member_p_category" javaType="com.now.core.category.domain.constants.Category"/>
         <result property="title" column="member_p_title"/>
@@ -155,24 +262,44 @@
         <result property="viewCount" column="member_p_view_count"/>
         <result property="likeCount" column="member_p_like_count"/>
         <result property="dislikeCount" column="member_p_dislike_count"/>
-    </resultMap>
-
-    <resultMap id="notice" type="Notice" extends="baseManagerPostResultMap">
-    </resultMap>
-
-    <resultMap id="community" type="Community" extends="baseMemberPostResultMap">
         <!-- 공통 컬렉션 매핑 -->
-        <collection property="files" resultMap="fileTableCollectionMapping" />
+        <collection property="attachments" resultMap="attachmentTableCollectionMapping" />
         <collection property="comments" resultMap="commentTableCollectionMapping" />
     </resultMap>
 
-    <resultMap id="photo" type="Photo" extends="baseMemberPostResultMap">
+    <!-- 사진 게시글 결과 매핑 -->
+    <resultMap id="photo" type="Photo">
+        <id property="postIdx" column="member_p_post_idx"/>
+        <result property="category" column="member_p_category" javaType="com.now.core.category.domain.constants.Category"/>
+        <result property="title" column="member_p_title"/>
+        <result property="memberNickname" column="m_nickname"/>
+        <result property="regDate" column="member_p_reg_date"/>
+        <result property="modDate" column="member_p_mod_date"/>
+        <result property="content" column="member_p_content"/>
+        <result property="viewCount" column="member_p_view_count"/>
+        <result property="likeCount" column="member_p_like_count"/>
+        <result property="dislikeCount" column="member_p_dislike_count"/>
         <!-- 공통 컬렉션 매핑 -->
-        <collection property="files" resultMap="fileTableCollectionMapping" />
+        <collection property="attachments" resultMap="attachmentTableCollectionMapping" />
         <collection property="comments" resultMap="commentTableCollectionMapping" />
     </resultMap>
 
-    <resultMap id="inquiry" type="Inquiry" extends="baseMemberPostResultMap">
+    <!-- 문의 게시글 결과 매핑 -->
+    <resultMap id="inquiry" type="Inquiry">
+        <id property="postIdx" column="member_p_post_idx"/>
+        <result property="category" column="member_p_category" javaType="com.now.core.category.domain.constants.Category"/>
+        <result property="title" column="member_p_title"/>
+        <result property="memberNickname" column="m_nickname"/>
+        <result property="memberId" column="m_id"/>
+        <result property="regDate" column="member_p_reg_date"/>
+        <result property="modDate" column="member_p_mod_date"/>
+        <result property="content" column="member_p_content"/>
+        <result property="viewCount" column="member_p_view_count"/>
+        <result property="likeCount" column="member_p_like_count"/>
+        <result property="dislikeCount" column="member_p_dislike_count"/>
+        <result property="secret" column="i_secret"/>
+        <result property="answerManagerNickname" column="i_answer_manager_nickname"/>
+        <result property="answerContent" column="i_answer_content"/>
     </resultMap>
 
     <!-- 검색 조건에 따른 WHERE 절 SQL -->

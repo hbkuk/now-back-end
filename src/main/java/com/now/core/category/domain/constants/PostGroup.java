@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 게시물 그룹을 나타내는 enum
@@ -64,6 +65,12 @@ public enum PostGroup implements EnumMapperType {
 
     @Override
     public String getTitle() {
-        return categories.toString();
+        List<String> titleList = categories.stream()
+                .map(Category::getTitle)
+                .collect(Collectors.toList());
+        return "[" + String.join(", ", titleList) + "]";
     }
+
+
+
 }

@@ -1,6 +1,7 @@
 package com.now.core.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.now.core.authentication.constants.Authority;
 import lombok.*;
 
 import javax.validation.constraints.Pattern;
@@ -16,6 +17,8 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Member {
+
+    private final Authority authority = Authority.MEMBER;
 
     /**
      * 비밀번호 정규식

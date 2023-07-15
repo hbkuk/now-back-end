@@ -1,5 +1,6 @@
 package com.now.core.manager.domain;
 
+import com.now.core.authentication.constants.Authority;
 import lombok.*;
 
 /**
@@ -12,6 +13,8 @@ import lombok.*;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Manager {
+
+    private final Authority authority = Authority.MANAGER;
 
     /**
      * 매니저의 고유 식별자

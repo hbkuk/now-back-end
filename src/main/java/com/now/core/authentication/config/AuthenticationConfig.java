@@ -26,7 +26,8 @@ public class AuthenticationConfig implements WebMvcConfigurer {
                 .addPathPatterns("/api/notice")
                 .addPathPatterns("/api/community")
                 .addPathPatterns("/api/photo")
-                .addPathPatterns("/api/inquiry");
+                .addPathPatterns("/api/inquiry")
+                .addPathPatterns("/api/answer/{inquiryIdx}");
     }
 }
 

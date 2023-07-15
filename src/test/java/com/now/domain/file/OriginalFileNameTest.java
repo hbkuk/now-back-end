@@ -1,6 +1,6 @@
 package com.now.domain.file;
 
-import com.now.core.file.domain.wrapped.OriginalFileName;
+import com.now.core.attachment.domain.wrapped.OriginalAttachmentName;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ public class OriginalFileNameTest {
                 characters.append("가");
             }
 
-            OriginalFileName originalName = new OriginalFileName(characters.toString());
+            OriginalAttachmentName originalName = new OriginalAttachmentName(characters.toString());
         }
 
         @Test
@@ -36,7 +36,7 @@ public class OriginalFileNameTest {
 
             assertThatExceptionOfType(IllegalArgumentException.class)
                     .isThrownBy(() -> {
-                        new OriginalFileName(characters.toString());
+                        new OriginalAttachmentName(characters.toString());
                     })
                     .withMessage("파일 이름은 500자를 초과할 수 없습니다.");
         }

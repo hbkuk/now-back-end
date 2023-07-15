@@ -1,7 +1,6 @@
 package com.now.core.post.domain;
 
-import com.now.core.post.domain.abstractions.ManagerPost;
-import com.now.core.post.domain.abstractions.MemberPost;
+import com.now.core.post.presentation.dto.Answer;
 import com.now.core.post.presentation.dto.Condition;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -12,6 +11,7 @@ import java.util.List;
  */
 @Mapper
 public interface PostMapper {
+
 
     /**
      * 모든 공지사항 게시글 정보를 조회 후 반환
@@ -42,16 +42,76 @@ public interface PostMapper {
     List<Inquiry> findAllInquiries(Condition condition);
 
     /**
-     * 매니저가 작성한 게시글을 저장
-     *
-     * @param managerPost 저장할 게시글 정보
+     * 공지 게시글 정보를 조회 후 반환
+     * @param postIdx 게시글 번호
+     * @return 공지 게시글 정보
      */
-    void saveManagerPost(ManagerPost managerPost);
+    Notice findNotice(Long postIdx);
 
     /**
-     * 회원이 작성한 게시글을 저장
-     *
-     * @param memberPost 저장할 게시글 정보
+     * 커뮤니티 게시글 정보를 조회 후 반환
+     * @param postIdx 게시글 번호
+     * @return 커뮤니티 게시글 정보
      */
-    void saveMemberPost(MemberPost memberPost);
+    Community findCommunity(Long postIdx);
+
+    /**
+     * 사진 게시글 정보를 조회 후 반환
+     * @param postIdx 게시글 번호
+     * @return 사진 게시글 정보
+     */
+    Photo findPhoto(Long postIdx);
+
+    /**
+     * 문의 게시글 정보를 조회 후 반환
+     * @param postIdx 게시글 번호
+     * @return 문의 게시글 정보
+     */
+    Inquiry findInquiry(Long postIdx);
+
+    //TODO: 상속을 통한, 제네릭을 통한 <? extends ManagerPost>, <? extends MemberPost> 타입 제한
+    //void saveManagerPost(Object object);
+    //void saveMemberPost(Object object);
+
+    /**
+     * 공지 게시글 등록
+     *
+     * @param notice  등록할 공지 게시글 정보
+     */
+    void saveNotice(Notice notice);
+
+    /**
+     * 커뮤니티 게시글 등록
+     *
+     * @param community  할 커뮤니티 게시글 정보
+     */
+    void saveCommunity(Community community);
+
+    /**
+     * 사진 게시글 등록
+     *
+     * @param photo  등록할 공지 게시글 정보
+     */
+    void savePhoto(Photo photo);
+
+    /**
+     * 문의 게시글 등록
+     *
+     * @param inquiry  등록할 공지 게시글 정보
+     */
+    void saveInquiry(Inquiry inquiry);
+
+    /**
+     * 문의 게시글 비밀글 설정
+     *
+     * @param inquiry  등록할 공지 게시글 정보
+     */
+    void saveInquirySecretSetting(Inquiry inquiry);
+
+    /**
+     * 문의 게시글의 답변 게시글 등록
+     *
+     * @param answer  등록할 공지 게시글 정보
+     */
+    void saveAnswer(Answer answer);
 }

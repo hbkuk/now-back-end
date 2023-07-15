@@ -1,7 +1,6 @@
 package com.now.core.post.domain;
 
-import com.now.core.post.domain.abstractions.ManagerPost;
-import com.now.core.post.domain.abstractions.MemberPost;
+import com.now.core.post.presentation.dto.Answer;
 import com.now.core.post.presentation.dto.Condition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,7 +19,6 @@ public class PostRepository {
     public PostRepository(PostMapper postMapper) {
         this.postMapper = postMapper;
     }
-
 
     /**
      * 모든 공지사항 게시글 정보를 조회 후 반환
@@ -58,38 +56,86 @@ public class PostRepository {
         return postMapper.findAllInquiries(condition);
     }
 
+
     /**
-     * 매니저가 작성한 게시글을 저장
-     *
-     * @param managerPost 저장할 게시글 정보
+     * 공지 게시글 정보를 조회 후 반환
+     * @param postIdx 게시글 번호
+     * @return 공지 게시글 정보
      */
-    public void saveManagerPost(ManagerPost managerPost) {
-        if (managerPost instanceof Notice) {
-            Notice notice = (Notice) managerPost;
-            postMapper.saveManagerPost(notice);
-        }
+    public Notice findNotice(Long postIdx) {
+        return postMapper.findNotice(postIdx);
     }
 
     /**
-     * 회원이 작성한 게시글을 저장
-     *
-     * @param memberPost 저장할 게시글 정보
+     * 커뮤니티 게시글 정보를 조회 후 반환
+     * @param postIdx 게시글 번호
+     * @return 커뮤니티 게시글 정보
      */
-    // TODO: Refactoring
-    public void saveMemberPost(MemberPost memberPost) {
-        if (memberPost instanceof Community) {
-            Community community = (Community) memberPost;
-            postMapper.saveMemberPost(community);
-        }
+    public Community findCommunity(Long postIdx) {
+        return postMapper.findCommunity(postIdx);
+    }
 
-        if (memberPost instanceof Photo) {
-            Photo photo = (Photo) memberPost;
-            postMapper.saveMemberPost(photo);
-        }
+    /**
+     * 사진 게시글 정보를 조회 후 반환
+     * @param postIdx 게시글 번호
+     * @return 사진 게시글 정보
+     */
+    public Photo findPhoto(Long postIdx) {
+        return postMapper.findPhoto(postIdx);
+    }
 
-        if (memberPost instanceof Inquiry) {
-            Inquiry inquiry = (Inquiry) memberPost;
-            postMapper.saveMemberPost(inquiry);
-        }
+    /**
+     * 문의 게시글 정보를 조회 후 반환
+     * @param postIdx 게시글 번호
+     * @return 문의 게시글 정보
+     */
+    public Inquiry findInquiry(Long postIdx) {
+        return postMapper.findInquiry(postIdx);
+    }
+    
+    /**
+     * 공지 게시글 등록
+     * 
+     * @param notice  등록할 공지 게시글 정보
+     */
+    public void saveNotice(Notice notice) {
+        postMapper.saveNotice(notice);
+    }
+
+    /**
+     * 커뮤니티 게시글 등록
+     *
+     * @param community  할 커뮤니티 게시글 정보
+     */
+    public void saveCommunity(Community community) {
+        postMapper.saveCommunity(community);
+    }
+
+    /**
+     * 사진 게시글 등록
+     *
+     * @param photo  등록할 공지 게시글 정보
+     */
+    public void savePhoto(Photo photo) {
+        postMapper.savePhoto(photo);
+    }
+
+    /**
+     * 문의 게시글 등록
+     *
+     * @param inquiry  등록할 공지 게시글 정보
+     */
+    public void saveInquiry(Inquiry inquiry) {
+        postMapper.saveInquiry(inquiry);
+        postMapper.saveInquirySecretSetting(inquiry);
+    }
+
+    /**
+     * 문의 게시글의 답변 게시글 등록
+     *
+     * @param answer  등록할 공지 게시글 정보
+     */
+    public void saveAnswer(Answer answer) {
+        postMapper.saveAnswer(answer);
     }
 }

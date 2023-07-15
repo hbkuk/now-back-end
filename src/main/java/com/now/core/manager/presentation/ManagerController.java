@@ -1,7 +1,7 @@
 package com.now.core.manager.presentation;
 
-import com.now.core.manager.domain.Manager;
 import com.now.core.manager.application.ManagerService;
+import com.now.core.manager.domain.Manager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

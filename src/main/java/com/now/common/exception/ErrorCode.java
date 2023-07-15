@@ -12,6 +12,7 @@ public enum ErrorCode {
     INVALID_TOKEN("AUTH-002"),
     EXPIRED_TOKEN("AUTH-003"),
     PERMISSION_DENIED("AUTH-004"),
+    ELEMENT_NOT_FOUND("ELEMENT-001"),
     SERVER_INTERNAL_ERROR("SERVER-001");
 
     private final String code;

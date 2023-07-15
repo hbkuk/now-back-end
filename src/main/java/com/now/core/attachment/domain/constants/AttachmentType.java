@@ -1,4 +1,4 @@
-package com.now.core.file.domain.constants;
+package com.now.core.attachment.domain.constants;
 
 import lombok.Getter;
 
@@ -8,7 +8,7 @@ import java.util.List;
  * 파일 업로드 타입을 나타내는 enum
  */
 @Getter
-public enum UploadType {
+public enum AttachmentType {
     FILE(List.of("jpg", "gif", "png", "zip"), 2048000, 5),
     IMAGE(List.of("jpg", "gif", "png"), 1024000, 20);
 
@@ -23,7 +23,7 @@ public enum UploadType {
      * @param maxUploadSize 파일의 최대 업로드 크기 (바이트 단위)
      * @param maxUploadCount 최대 업로드 횟수
      */
-    UploadType(List<String> allowedExtensions, int maxUploadSize, int maxUploadCount) {
+    AttachmentType(List<String> allowedExtensions, int maxUploadSize, int maxUploadCount) {
         this.allowedExtensions = allowedExtensions;
         this.maxUploadSize = maxUploadSize;
         this.maxUploadCount = maxUploadCount;

@@ -32,7 +32,7 @@ public class JwtInterceptor implements HandlerInterceptor {
      * @throws Exception 예외가 발생한 경우
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         request.setAttribute("id", jwtTokenService.getClaim(request.getHeader("Authorization"), "id"));
         request.setAttribute("role", jwtTokenService.getClaim(request.getHeader("Authorization"), "role"));
         return true;

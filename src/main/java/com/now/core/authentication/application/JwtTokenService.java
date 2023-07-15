@@ -1,8 +1,11 @@
 package com.now.core.authentication.application;
 
 import com.now.core.authentication.application.dto.TokenClaims;
+import com.now.core.authentication.exception.AuthenticationFailedException;
 import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -16,10 +19,13 @@ import java.util.Map;
  * JWT(Json Web Token) 생성 및 검증을 담당하는 서비스 객체
  */
 @Service
+@RequiredArgsConstructor
 public class JwtTokenService {
 
     private static final String BEARER_PREFIX_WITH_SPACE = "Bearer ";
     private static final int MINUS_EXPIRE_HOURS = 1;
+
+    private final MessageSourceAccessor messageSource;
 
     @Value("${now.security.key}")
     private String securityKey;
@@ -60,6 +66,9 @@ public class JwtTokenService {
      * @throws IllegalArgumentException 잘못된 인자가 전달된 경우
      */
     public Object getClaim(String token, String key) {
+        if(token == null) {
+            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.failed"));
+        }
         Claims claims = Jwts.parser()
                 .setSigningKey(Base64.getEncoder().encodeToString(securityKey.getBytes()))
                 .parseClaimsJws(removeBearer(token))

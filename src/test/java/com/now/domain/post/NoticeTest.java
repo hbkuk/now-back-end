@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public class NoticeTest {
     public static Notice createNotice(String managerId) {
         return Notice.builder()
-                .postIdx(1L)
+                .noticeIdx(1L)
                 .title("제목")
                 .managerId(managerId)
                 .regDate(LocalDateTime.now())

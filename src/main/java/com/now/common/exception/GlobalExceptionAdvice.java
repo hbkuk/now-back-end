@@ -2,12 +2,11 @@ package com.now.common.exception;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.now.common.exception.ErrorCode;
-import com.now.common.exception.FileInsertionException;
 import com.now.common.exception.dto.ErrorResponse;
 import com.now.core.authentication.exception.AuthenticationFailedException;
 import com.now.core.category.exception.InvalidCategoryException;
 import com.now.core.member.exception.DuplicateMemberException;
+import com.now.core.post.exception.CannotViewInquiryException;
 import com.now.core.post.exception.CannotWritePostException;
 import com.now.core.post.exception.PermissionDeniedException;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -26,6 +25,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -43,6 +43,22 @@ public class GlobalExceptionAdvice {
     public GlobalExceptionAdvice(ObjectMapper objectMapper, MessageSourceAccessor messageSource) {
         this.objectMapper = objectMapper;
         this.messageSource = messageSource;
+    }
+
+    /**
+     * NoSuchElementException 처리하는 예외 핸들러
+     *
+     * @param e NoSuchElementException 인스턴스
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     */
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException e) {
+        log.error(e.getMessage(), e);
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.ELEMENT_NOT_FOUND, messageSource);
+        errorResponse.setDetail(e.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -75,6 +91,22 @@ public class GlobalExceptionAdvice {
         errorResponse.setDetail(e.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * CannotViewInquiryException 처리하는 예외 핸들러
+     *
+     * @param e CannotViewInquiryException 인스턴스
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     */
+    @ExceptionHandler(CannotViewInquiryException.class)
+    public ResponseEntity<ErrorResponse> handleCannotViewInquiryException(CannotViewInquiryException e) {
+        log.error(e.getMessage(), e);
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.PERMISSION_DENIED, messageSource);
+        errorResponse.setDetail(e.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
 
     /**

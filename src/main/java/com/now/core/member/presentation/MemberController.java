@@ -1,8 +1,8 @@
 package com.now.core.member.presentation;
 
-import com.now.core.member.domain.MemberValidationGroup;
-import com.now.core.member.domain.Member;
 import com.now.core.member.application.MemberService;
+import com.now.core.member.domain.Member;
+import com.now.core.member.domain.MemberValidationGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
