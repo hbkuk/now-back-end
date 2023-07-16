@@ -23,7 +23,7 @@ public enum PostGroup implements EnumMapperType {
     private final List<Category> categories;
 
     /**
-     * 전달받은 {@link Category}를 통해 게시물 그룹 찾은 후 반환, 없다면 RuntimeException 던짐
+     * 전달받은 {@link Category}를 통해 게시물 그룹 찾은 후 반환, 없다면 InvalidCategoryException 던짐
      *
      * @param category 카테고리
      * @return 해당 카테고리에 해당하는 게시물 그룹
@@ -39,11 +39,11 @@ public enum PostGroup implements EnumMapperType {
     /**
      * 전달받은 카테고리와 게시물 그룹에 포함된다면 true 반환, 그렇지 않다면 false 반환
      *
-     * @param category  확인할 카테고리
      * @param postGroup 확인할 게시물 그룹
+     * @param category  확인할 카테고리
      * @return 게시물 그룹에 포함된다면 true 반환, 그렇지 않다면 false 반환
      */
-    public static boolean isCategoryInGroup(Category category, PostGroup postGroup) {
+    public static boolean isCategoryInGroup(PostGroup postGroup, Category category) {
         return PostGroup.findByCategory(category) == postGroup;
     }
 
@@ -58,11 +58,21 @@ public enum PostGroup implements EnumMapperType {
                 .anyMatch(element -> element.equals(category));
     }
 
+    /**
+     * enum 상수의 코드 값 반환
+     *
+     * @return 코드 값
+     */
     @Override
     public String getCode() {
         return name();
     }
 
+    /**
+     * enum 상수의 제목 반환
+     *
+     * @return 제목
+     */
     @Override
     public String getTitle() {
         List<String> titleList = categories.stream()

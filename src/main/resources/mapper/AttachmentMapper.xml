@@ -5,16 +5,42 @@
 
 <mapper namespace="com.now.core.attachment.domain.AttachmentMapper">
 
+    <!-- 게시물 번호에 해당하는 Attachment 목록을 가져오는 쿼리 -->
+    <select id="findAllIndexesByPostIdx" parameterType="Long">
+        SELECT attachment_idx
+        FROM tb_attachment
+        WHERE member_post_idx = #{postIdx}
+    </select>
+
+    <select id="findByAttachmentIdx" parameterType="Long">
+        SELECT *
+        FROM tb_attachment
+        WHERE attachment_idx = #{attachmentIdx}
+    </select>
+
+    <!-- Attachment 저장 쿼리 -->
     <insert id="saveAttachment" parameterType="Attachment" useGeneratedKeys="true" keyProperty="attachmentIdx">
         INSERT INTO tb_attachment (saved_attachment_name, original_attachment_name, attachment_extension, attachment_size, member_post_idx)
         VALUES (#{savedAttachmentName}, #{originalAttachmentName.originalAttachmentName}, #{attachmentExtension.attachmentExtension}, #{attachmentSize.attachmentSize}, #{memberPostIdx});
     </insert>
 
-    <!-- ThumbNail의 저장 쿼리 -->
+    <!-- ThumbNail 저장 쿼리 -->
     <insert id="saveThumbNail" parameterType="Attachment">
         INSERT INTO tb_thumbnail (member_post_idx, attachment_idx)
         VALUES (#{memberPostIdx}, #{attachmentIdx})
     </insert>
+
+    <delete id="deleteByAttachmentIdx" parameterType="Long">
+        DELETE
+        FROM tb_attachment
+        WHERE attachment_idx = #{attachmentIdx}
+    </delete>
+
+    <delete id="deleteAllByPostIdx" parameterType="Long">
+        DELETE
+        FROM tb_attachment
+        WHERE member_post_idx = #{postIdx}
+    </delete>
 
 
 </mapper>

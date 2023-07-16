@@ -14,10 +14,13 @@ import lombok.RequiredArgsConstructor;
 public enum Category implements EnumMapperType {
     EVENT("이벤트"),
     NEWS("새소식"),
+
     LIFESTYLE("사는얘기"),
     COMMUNITY_STUDY("모임&스터디"),
+
     DAILY_LIFE("일상"),
     ARTWORK("작품"),
+
     SERVICE("서비스"),
     TECHNOLOGY("기술");
 

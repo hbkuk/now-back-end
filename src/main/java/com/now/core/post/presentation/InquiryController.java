@@ -30,6 +30,7 @@ public class InquiryController {
     /**
      * 모든 문의 게시글 정보를 조회하는 핸들러 메서드
      *
+     * @param condition 게시물 제한 정보를 담은 객체
      * @return 모든 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/inquiries")

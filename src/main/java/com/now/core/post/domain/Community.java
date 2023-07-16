@@ -1,15 +1,16 @@
 package com.now.core.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.now.core.attachment.domain.Attachment;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.comment.domain.Comment;
-import com.now.core.attachment.domain.Attachment;
 import com.now.core.member.domain.Member;
 import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,71 +27,39 @@ public class Community {
 
     private final PostGroup postGroup = PostGroup.COMMUNITY;
 
-    /**
-     * 게시글의 고유 식별자
-     */
-    private Long postIdx;
+    private Long postIdx; // 게시글의 고유 식별자
 
-    /**
-     * 카테고리
-     */
-    private final Category category;
+    @NotNull(groups = {PostValidationGroup.saveCommunity.class}, message = "카테고리 선택 필수")
+    private final Category category; // 카테고리
 
-    /**
-     * 게시글의 제목
-     */
-    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 100, message = "게시글의 제목은 1글자 이상, 100글자 이하")
-    private final String title;
+    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 100, message = "게시글의 제목은 1글자 이상, 100글자 이하")
+    private final String title; // 게시글의 제목
 
-    /**
-     * 게시글 등록일자
-     */
-    private final LocalDateTime regDate;
+    private final LocalDateTime regDate; // 게시글 등록일자
 
-    /**
-     * 게시글 수정일자
-     */
-    private final LocalDateTime modDate;
+    private final LocalDateTime modDate; // 게시글 수정일자
 
-    /**
-     * 게시글의 내용
-     */
-    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000, message = "공지사항의 내용은 1글자 이상, 2000글자 이하")
-    private final String content;
+    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 2000, message = "공지사항의 내용은 1글자 이상, 2000글자 이하")
+    private final String content; // 게시글의 내용
 
-    /**
-     * 게시글의 조회수
-     */
-    private final Integer viewCount;
+    private final Integer viewCount; // 게시글의 조회수
 
-    /**
-     * 게시글의 좋아요 수
-     */
-    private final Integer likeCount;
+    private final Integer likeCount; // 게시글의 좋아요 수
 
-    /**
-     * 게시글 싫어요 수
-     */
-    private final Integer dislikeCount;
+    private final Integer dislikeCount; // 게시글의 싫어요 수
 
-    /**
-     * 파일 (attachment 테이블에서 가져옴)
-     */
-    private final List<Attachment> attachments;
+    private final List<Attachment> attachments; // 파일 (attachment 테이블에서 가져옴)
 
-    /**
-     * 댓글 (comment 테이블에서 가져옴)
-     */
-    private final List<Comment> comments;
-
+    private final List<Comment> comments; // 댓글 (comment 테이블에서 가져옴)
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long memberIdx;
+    private Long memberIdx; // 회원의 고유 식별자
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String memberId;
+    private String memberId; // 회원의 아이디
 
-    private String memberNickname;
+    private String memberNickname; // 회원의 닉네임
+
 
     /**
      * 회원의 식별자를 업데이트
@@ -147,5 +116,16 @@ public class Community {
             }
         }
         return true;
+    }
+
+    /**
+     * 게시글 번호를 업데이트
+     *
+     * @param postIdx 게시글 번호
+     * @return 업데이트된 Community 도메인 객체
+     */
+    public Community updatePostIdx(Long postIdx) {
+        this.postIdx = postIdx;
+        return this;
     }
 }

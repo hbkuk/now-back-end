@@ -5,15 +5,9 @@ package com.now.core.authentication.constants;
  */
 public enum Authority {
 
-    /**
-     * 회원 권한
-     */
-    MEMBER("MEMBER"),
+    MEMBER("MEMBER"), // 회원 권한
 
-    /**
-     * 매니저 권한
-     */
-    MANAGER("MANAGER");
+    MANAGER("MANAGER"); // 매니저 권한
 
     private final String value;
 
@@ -30,12 +24,17 @@ public enum Authority {
         return value;
     }
 
-    public static boolean hasAccess(Authority authority) {
+    /**
+     * 주어진 권한(Authority)이 매니저라면 true 반환, 그렇지 않다면 false 반환
+     *
+     * @param authority 확인할 권한(Authority)
+     * @return 주어진 권한(Authority)이 매니저라면 true 반환, 그렇지 않다면 false 반환
+     */
+    public static boolean isManager(Authority authority) {
         if (authority == MANAGER) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 }
 

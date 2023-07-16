@@ -23,11 +23,10 @@ public class AuthenticationConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
-                .addPathPatterns("/api/notice")
-                .addPathPatterns("/api/community")
-                .addPathPatterns("/api/photo")
-                .addPathPatterns("/api/inquiry")
-                .addPathPatterns("/api/answer/{inquiryIdx}");
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/signup")
+                .excludePathPatterns("/api/login")
+                .excludePathPatterns("/api/manager/login");
     }
 }
 

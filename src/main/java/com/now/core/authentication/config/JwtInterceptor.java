@@ -1,6 +1,8 @@
 package com.now.core.authentication.config;
 
 import com.now.core.authentication.application.JwtTokenService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -12,14 +14,10 @@ import javax.servlet.http.HttpServletResponse;
  * 인증된 유저 토큰에서 클레임 값을 추출 후 HttpServletRequest의 속성으로 설정
  */
 @Component
+@RequiredArgsConstructor
 public class JwtInterceptor implements HandlerInterceptor {
 
     private final JwtTokenService jwtTokenService;
-
-    public JwtInterceptor(JwtTokenService jwtTokenService) {
-
-        this.jwtTokenService = jwtTokenService;
-    }
 
     /**
      * 요청 처리 전에 실행되는 메서드
@@ -33,8 +31,22 @@ public class JwtInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        if(isGetMethod(request.getMethod())) {
+            return true;
+        }
+
         request.setAttribute("id", jwtTokenService.getClaim(request.getHeader("Authorization"), "id"));
         request.setAttribute("role", jwtTokenService.getClaim(request.getHeader("Authorization"), "role"));
         return true;
+    }
+
+    /**
+     * 전달받은 HTTP 메서드가 GET 메서드라면 ture 반환, 그렇지 않다면 false 반환
+     *
+     * @param httpMethod 확인할 HTTP 메서드
+     * @return 전달받은 HTTP 메서드가 GET 메서드라면 ture 반환, 그렇지 않다면 false 반환
+     */
+    private boolean isGetMethod(String httpMethod) {
+        return HttpMethod.valueOf(httpMethod) == HttpMethod.GET;
     }
 }

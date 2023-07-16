@@ -1,12 +1,13 @@
 package com.now.service.user;
 
-import com.now.core.member.domain.Member;
-import com.now.core.authentication.exception.AuthenticationFailedException;
-import com.now.core.member.exception.DuplicateMemberException;
-import com.now.core.member.domain.MemberRepository;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.NowApplication;
 import com.now.common.security.PasswordSecurityManager;
+import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.exception.AuthenticationFailedException;
 import com.now.core.member.application.MemberService;
+import com.now.core.member.domain.Member;
+import com.now.core.member.domain.MemberRepository;
+import com.now.core.member.exception.DuplicateMemberException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

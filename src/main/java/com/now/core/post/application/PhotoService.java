@@ -66,7 +66,7 @@ public class PhotoService {
             throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
         }
 
-        if (!PostGroup.isCategoryInGroup(photo.getCategory(), photo.getPostGroup())) {
+        if (!PostGroup.isCategoryInGroup(PostGroup.PHOTO, photo.getCategory())) {
             throw new CannotWritePostException(messageSource.getMessage("error.write.failed"));
         }
 

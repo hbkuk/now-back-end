@@ -59,9 +59,9 @@ public class PostTypeTest {
     @Test
     @DisplayName("isCategoryInGroup 메서드는 전달한 카테고리가 전달한 그룹에 포함된다면 true, 그렇지 않다면 false 반환")
     void isCategoryInGroup_return_true_1() {
-        assertThat(PostGroup.isCategoryInGroup(Category.EVENT, PostGroup.NOTICE)).isTrue();
-        assertThat(PostGroup.isCategoryInGroup(Category.NEWS, PostGroup.NOTICE)).isTrue();
-        assertThat(PostGroup.isCategoryInGroup(Category.EVENT, PostGroup.PHOTO)).isFalse();
-        assertThat(PostGroup.isCategoryInGroup(Category.NEWS, PostGroup.COMMUNITY)).isFalse();
+        assertThat(PostGroup.isCategoryInGroup(PostGroup.NOTICE, Category.EVENT)).isTrue();
+        assertThat(PostGroup.isCategoryInGroup(PostGroup.NOTICE, Category.NEWS)).isTrue();
+        assertThat(PostGroup.isCategoryInGroup(PostGroup.PHOTO, Category.EVENT)).isFalse();
+        assertThat(PostGroup.isCategoryInGroup(PostGroup.COMMUNITY, Category.NEWS)).isFalse();
     }
 }

@@ -18,6 +18,11 @@ import java.util.stream.Collectors;
 @RestController
 public class CategoryController {
 
+    /**
+     * 모든 카테고리 정보를 조회하는 핸들러 메서드
+     *
+     * @return 모든 카테고리 정보와 함께 OK 응답을 반환
+     */
     @GetMapping("/api/categories")
     public ResponseEntity<List<EnumMapperValue>> findCategories() {
         log.debug("findCategories 핸들러 메서드 호출");

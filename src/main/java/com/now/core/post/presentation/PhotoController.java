@@ -32,6 +32,7 @@ public class PhotoController {
     /**
      * 모든 사진 게시글 정보를 조회하는 핸들러 메서드
      *
+     * @param condition 게시물 제한 정보를 담은 객체
      * @return 모든 사진 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/photos")
@@ -60,7 +61,7 @@ public class PhotoController {
     @PostMapping("/api/photo")
     public ResponseEntity<Void> registerPhoto(@RequestAttribute("id") String memberId, @RequestAttribute("role") String authority,
                                               @RequestPart(value = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo photo,
-                                              @RequestPart(value = "file", required = false) MultipartFile[] multipartFiles) {
+                                              @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles) {
         log.debug("registerPhoto 호출, memberId : {}, authority : {}, Community : {}, Multipart : {}", memberId, authority, photo, (multipartFiles != null ? multipartFiles.length : "null"));
 
         photoService.registerPhoto(photo.updateMemberId(memberId), Authority.valueOf(authority));

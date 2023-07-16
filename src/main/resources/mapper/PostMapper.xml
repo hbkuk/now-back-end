@@ -3,25 +3,59 @@
 
 <mapper namespace="com.now.core.post.domain.PostMapper">
 
-    <!-- Notice 저장 쿼리 (Manager Post 재활용) -->
+    <!-- Notice 삭제 쿼리 -->
+    <delete id="deleteCommunity" parameterType="Long">
+        DELETE
+        FROM tb_member_post
+        WHERE post_idx = #{postIdx}
+    </delete>
+
+    <insert id="updateCommunity" parameterType="Community">
+        UPDATE tb_member_post
+        SET category = #{category.name},
+            title   = #{title},
+            mod_date = NOW(),
+            content = #{content}
+        WHERE post_idx = #{postIdx}
+    </insert>
+
+    <!-- Notice 삭제 쿼리 -->
+    <delete id="deleteNotice" parameterType="Long">
+        DELETE
+        FROM tb_manager_post
+        WHERE post_idx = #{postIdx}
+    </delete>
+
+    <!-- Notice 수정 쿼리-->
+    <insert id="updateNotice" parameterType="Notice">
+        UPDATE tb_manager_post
+        SET category = #{category.name},
+            title   = #{title},
+            mod_date = NOW(),
+            content = #{content},
+            pinned = #{pinned}
+        WHERE post_idx = #{postIdx}
+    </insert>
+
+    <!-- Notice 저장 쿼리 -->
     <insert id="saveNotice" parameterType="Notice" useGeneratedKeys="true" keyProperty="postIdx">
         INSERT INTO tb_manager_post (post_group, category, title, manager_idx, reg_date, mod_date, content, view_count, like_count, dislike_count, pinned)
         VALUES (#{postGroup}, #{category.name}, #{title}, #{managerIdx}, now(), null, #{content}, 0, 0, 0, #{pinned})
     </insert>
 
-    <!-- Community 저장 쿼리 (Member Post 재활용) -->
+    <!-- Community 저장 쿼리 -->
     <insert id="saveCommunity" parameterType="Community" useGeneratedKeys="true" keyProperty="postIdx">
         INSERT INTO tb_member_post (post_group, category, title, member_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
         VALUES (#{postGroup}, #{category.name}, #{title}, #{memberIdx}, now(), null, #{content}, 0, 0, 0)
     </insert>
 
-    <!-- Photo 저장 쿼리 (Member Post 재활용) -->
+    <!-- Photo 저장 쿼리 -->
     <insert id="savePhoto" parameterType="Photo" useGeneratedKeys="true" keyProperty="postIdx">
         INSERT INTO tb_member_post (post_group, category, title, member_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
         VALUES (#{postGroup}, #{category.name}, #{title}, #{memberIdx}, now(), null, #{content}, 0, 0, 0)
     </insert>
 
-    <!-- Inquiry 저장 쿼리 (Member Post 재활용) -->
+    <!-- Inquiry 저장 쿼리 -->
     <insert id="saveInquiry" parameterType="Inquiry" useGeneratedKeys="true" keyProperty="postIdx">
         INSERT INTO tb_member_post (post_group, category, title, member_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
         VALUES (#{postGroup}, #{category.name}, #{title}, #{memberIdx}, now(), null, #{content}, 0, 0, 0)
@@ -255,6 +289,7 @@
         <id property="postIdx" column="member_p_post_idx"/>
         <result property="category" column="member_p_category" javaType="com.now.core.category.domain.constants.Category"/>
         <result property="title" column="member_p_title"/>
+        <result property="memberId" column="m_id"/>
         <result property="memberNickname" column="m_nickname"/>
         <result property="regDate" column="member_p_reg_date"/>
         <result property="modDate" column="member_p_mod_date"/>
@@ -272,6 +307,7 @@
         <id property="postIdx" column="member_p_post_idx"/>
         <result property="category" column="member_p_category" javaType="com.now.core.category.domain.constants.Category"/>
         <result property="title" column="member_p_title"/>
+        <result property="memberId" column="m_id"/>
         <result property="memberNickname" column="m_nickname"/>
         <result property="regDate" column="member_p_reg_date"/>
         <result property="modDate" column="member_p_mod_date"/>

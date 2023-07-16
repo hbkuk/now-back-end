@@ -21,71 +21,44 @@ public class Notice {
 
     private final PostGroup postGroup = PostGroup.NOTICE;
 
-    /**
-     * 공지 게시글의 고유 식별자
-     */
-    private Long postIdx;
+    private Long postIdx; // 공지 게시글의 고유 식별자
 
-    /**
-     * 카테고리
-     */
-    private final Category category;
+    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "카테고리 선택 필수")
+    private final Category category; // 카테고리
 
-    /**
-     * 게시글의 제목
-     */
     @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 100, message = "공지사항의 제목은 1글자 이상, 100글자 이하")
-    private final String title;
-    /**
-     * 게시글 등록일자
-     */
-    private final LocalDateTime regDate;
-    /**
-     * 게시글 수정일자
-     */
-    private final LocalDateTime modDate;
-    /**
-     * 게시글의 내용
-     */
+    private final String title; // 제목
+
+    private final LocalDateTime regDate; // 등록일자
+
+    private final LocalDateTime modDate; // 수정일자
+
     @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000, message = "공지사항의 내용은 1글자 이상, 2000글자 이하")
-    private final String content;
-    /**
-     * 게시글의 조회수
-     */
-    private final Integer viewCount;
-    /**
-     * 게시글의 좋아요 수
-     */
-    private final Integer likeCount;
-    /**
-     * 게시글 싫어요 수
-     */
-    private final Integer dislikeCount;
-    /**
-     * 공지사항의 상단 고정 여부 (true: 상단 고정)
-     */
-    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "핀 설정 필수")
+    private final String content; // 내용
+
+    private final Integer viewCount; // 조회수
+
+    private final Integer likeCount; // 좋아요 수
+
+    private final Integer dislikeCount; // 싫어요 수
+
+    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "핀 설정 필수")  // 상단 고정 여부 (true: 상단 고정)
     private final Boolean pinned;
-    /**
-     * 매니저 고유 식별자
-     */
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // 매니저 고유 식별자
     private Long managerIdx;
-    /**
-     * 매니저 아이디
-     */
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // 매니저 아이디
     private String managerId;
-    /**
-     * 매니저 닉네임
-     */
-    private String managerNickname;
+
+    private String managerNickname; // 매니저 닉네임
+
 
     /**
      * 매니저의 식별자를 업데이트
      *
      * @param managerIdx 매니저 식별자
-     * @return 업데이트된 ManagerPost 객체
+     * @return 업데이트된 Notice 도메인 객체
      */
     public Notice updateManagerIdx(Long managerIdx) {
         this.managerIdx = managerIdx;
@@ -96,10 +69,21 @@ public class Notice {
      * 매니저의 아이디를 업데이트
      *
      * @param managerId 매니저 아이디
-     * @return 업데이트된 ManagerPost 객체
+     * @return 업데이트된 Notice 도메인 객체
      */
     public Notice updateManagerId(String managerId) {
         this.managerId = managerId;
+        return this;
+    }
+
+    /**
+     * 게시글 번호를 업데이트
+     *
+     * @param postIdx 게시글 번호
+     * @return 업데이트된 Notice 도메인 객체
+     */
+    public Notice updatePostIdx(Long postIdx) {
+        this.postIdx = postIdx;
         return this;
     }
 }

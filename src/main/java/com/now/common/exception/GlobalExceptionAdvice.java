@@ -6,6 +6,7 @@ import com.now.common.exception.dto.ErrorResponse;
 import com.now.core.authentication.exception.AuthenticationFailedException;
 import com.now.core.category.exception.InvalidCategoryException;
 import com.now.core.member.exception.DuplicateMemberException;
+import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotViewInquiryException;
 import com.now.core.post.exception.CannotWritePostException;
 import com.now.core.post.exception.PermissionDeniedException;
@@ -88,6 +89,22 @@ public class GlobalExceptionAdvice {
         log.error(e.getMessage(), e);
 
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.INVALID_DATA, messageSource);
+        errorResponse.setDetail(e.getMessage());
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * CannotDeletePostException 처리하는 예외 핸들러
+     *
+     * @param e CannotDeletePostException 인스턴스
+     * @return ErrorResponse와 HttpStatus를 포함하는 ResponseEntity
+     */
+    @ExceptionHandler(CannotDeletePostException.class)
+    public ResponseEntity<ErrorResponse> handleCannotDeletePostException(CannotDeletePostException e) {
+        log.error(e.getMessage(), e);
+
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.PERMISSION_DENIED, messageSource);
         errorResponse.setDetail(e.getMessage());
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

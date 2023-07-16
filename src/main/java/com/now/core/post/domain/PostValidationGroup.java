@@ -18,5 +18,6 @@ public interface PostValidationGroup {
     interface saveInquiry {}
 
     interface saveAnswer {}
+
 }
 

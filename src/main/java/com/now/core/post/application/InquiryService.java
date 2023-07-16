@@ -62,7 +62,7 @@ public class InquiryService {
             }
 
             Authority authority = Authority.valueOf(jwtTokenService.getClaim(token, "role").toString());
-            if (!Authority.hasAccess(authority)) {
+            if (!Authority.isManager(authority)) {
                 inquiry.canView(memberService.findMemberById(jwtTokenService.getClaim(token, "id").toString()));
             }
         }
@@ -80,7 +80,7 @@ public class InquiryService {
             throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
         }
 
-        if (!PostGroup.isCategoryInGroup(inquiry.getCategory(), inquiry.getPostGroup())) {
+        if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, inquiry.getCategory())) {
             throw new CannotWritePostException(messageSource.getMessage("error.write.failed"));
         }
 

@@ -32,6 +32,7 @@ public class NoticeService {
     /**
      * 모든 공지 게시글 정보를 조회 후 반환
      *
+     * @param condition 게시물 제한 정보를 담은 객체
      * @return 공지사항 게시글 정보 리스트
      */
     public List<Notice> retrieveAllNotices(Condition condition) {
@@ -46,7 +47,7 @@ public class NoticeService {
      */
     public Notice findByPostIdx(Long postIdx) {
         Notice notice = postRepository.findNotice(postIdx);
-        if(notice == null) {
+        if (notice == null) {
             throw new NoSuchElementException(messageSource.getMessage("error.noSuch.post"));
         }
 
@@ -62,17 +63,52 @@ public class NoticeService {
      * @throws CannotWritePostException  게시글 작성이 불가능한 경우 발생하는 예외
      */
     public void registerNotice(Notice notice, Authority authority) {
-        if (authority != Authority.MANAGER) {
+        if (!Authority.isManager(authority)) {
             throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
         }
 
-        if (!PostGroup.isCategoryInGroup(notice.getCategory(), notice.getPostGroup())) {
+        if (!PostGroup.isCategoryInGroup(PostGroup.NOTICE, notice.getCategory())) {
             throw new CannotWritePostException(messageSource.getMessage("error.write.failed"));
         }
 
         Manager manager = managerService.findManagerById(notice.getManagerId());
 
         postRepository.saveNotice(notice.updateManagerIdx(manager.getManagerIdx()));
+    }
+
+    // TODO: 매니저별 권한 부여 -> Notice 도메인 객체에서 canUpdate(Authority authority) 선언
+    // TODO: 공지 수정 로그 기능 추가 -> 현재 ROOT 권한
+    /**
+     * 공지 게시글 수정
+     * @param updatedNotice 수정할 공지 게시글 정보
+     * @param authority 권한
+     */
+    public void updateNotice(Notice updatedNotice, Authority authority) {
+        if (Authority.isManager(authority)) {
+            throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
+        }
+
+        if (!PostGroup.isCategoryInGroup(PostGroup.NOTICE, updatedNotice.getCategory())) {
+            throw new CannotWritePostException(messageSource.getMessage("error.write.failed"));
+        }
+
+        postRepository.updateNotice(updatedNotice);
+    }
+
+    // TODO: 매니저별 권한 부여 -> Notice 도메인 객체에서 canDelete(Authority authority) 선언
+    // TODO: 공지 수정 로그 기능 추가 -> 현재 Only, ROOT 권한
+    /**
+     * 공지 게시글 삭제
+     * 
+     * @param postIdx   게시글 번호
+     * @param authority 권한
+     */
+    public void deleteNotice(Long postIdx, Authority authority) {
+        if (Authority.isManager(authority)) {
+            throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
+        }
+
+        postRepository.deleteNotice(postIdx);
     }
 }
 

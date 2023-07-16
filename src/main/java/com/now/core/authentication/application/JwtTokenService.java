@@ -67,7 +67,7 @@ public class JwtTokenService {
      */
     public Object getClaim(String token, String key) {
         if(token == null) {
-            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.failed"));
+            throw new AuthenticationFailedException(messageSource.getMessage("error.permission.denied"));
         }
         Claims claims = Jwts.parser()
                 .setSigningKey(Base64.getEncoder().encodeToString(securityKey.getBytes()))
