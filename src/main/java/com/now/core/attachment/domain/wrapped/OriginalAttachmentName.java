@@ -1,5 +1,7 @@
 package com.now.core.attachment.domain.wrapped;
 
+import com.now.common.exception.ErrorType;
+import com.now.core.attachment.exception.InvalidAttachmentException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -18,11 +20,11 @@ public class OriginalAttachmentName {
      * originalAttachmentName 객체 생성
      *
      * @param fileName 첨부파일의 이름
-     * @throws IllegalArgumentException 첨부파일의 이름이 정해진 길이를 초과할 경우 예외를 발생시킴
+     * @throws InvalidAttachmentException 첨부파일의 이름이 정해진 길이를 초과할 경우 예외를 발생시킴
      */
     public OriginalAttachmentName(String fileName) {
         if (fileName.length() > MAX_VALUE_LENGTH) {
-            throw new IllegalArgumentException("첨부파일 이름은 500자를 초과할 수 없습니다.");
+            throw new InvalidAttachmentException(ErrorType.INVALID_ATTACHMENT_ORIGINAL_NAME);
         }
         this.originalAttachmentName = fileName;
     }

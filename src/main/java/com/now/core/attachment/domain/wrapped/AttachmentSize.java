@@ -1,5 +1,7 @@
 package com.now.core.attachment.domain.wrapped;
 
+import com.now.common.exception.ErrorType;
+import com.now.core.attachment.exception.InvalidAttachmentException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,11 +22,11 @@ public class AttachmentSize {
      *
      * @param attachmentSize       첨부파일의 크기 값
      * @param maxAttachmentSize  허용되는 최대 첨부파일의 크기
-     * @throws IllegalArgumentException 첨부파일의 크기가 허용된 크기를 초과할 경우 발생하는 예외
+     * @throws InvalidAttachmentException 첨부파일의 크기가 허용된 크기를 초과할 경우 발생하는 예외
      */
     public AttachmentSize(int attachmentSize, int maxAttachmentSize) {
         if (attachmentSize > maxAttachmentSize) {
-            throw new IllegalArgumentException("허용하지 않는 파일 크기입니다.");
+            throw new InvalidAttachmentException(ErrorType.INVALID_ATTACHMENT_SIZE);
         }
         this.attachmentSize = attachmentSize;
     }

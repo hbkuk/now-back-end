@@ -1,31 +1,29 @@
 package com.now.common.exception.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.now.common.exception.ErrorCode;
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.context.support.MessageSourceAccessor;
+import lombok.NoArgsConstructor;
 
 /**
  * API 예외 응답을 나타내는 객체
  */
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
-@Setter
 public class ErrorResponse {
 
-    private String errorCode;
+    private int errorCode;
     private String message;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String detail;
 
-    /**
-     * ErrorResponse 생성자
-     *
-     * @param errorCode     예외 코드
-     * @param messageSource MessageSource 객체
-     */
-    public ErrorResponse(ErrorCode errorCode, MessageSourceAccessor messageSource) {
-        this.errorCode = errorCode.getCode();
-        this.message = messageSource.getMessage("error.code." + errorCode.getCode());
+    public ErrorResponse(final int errorCode, final String message) {
+        this.errorCode = errorCode;
+        this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "ErrorResponse{" +
+                "errorCode=" + errorCode +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

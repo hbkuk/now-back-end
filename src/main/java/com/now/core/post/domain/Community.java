@@ -1,6 +1,7 @@
 package com.now.core.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.now.common.exception.ErrorType;
 import com.now.core.attachment.domain.Attachment;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
@@ -10,6 +11,7 @@ import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
 import lombok.*;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -29,17 +31,19 @@ public class Community {
 
     private Long postIdx; // 게시글의 고유 식별자
 
-    @NotNull(groups = {PostValidationGroup.saveCommunity.class}, message = "카테고리 선택 필수")
+    @NotNull(groups = {PostValidationGroup.saveCommunity.class})
     private final Category category; // 카테고리
 
-    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 100, message = "게시글의 제목은 1글자 이상, 100글자 이하")
+    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 100)
+    @NotEmpty(groups = {PostValidationGroup.saveCommunity.class})
     private final String title; // 게시글의 제목
 
     private final LocalDateTime regDate; // 게시글 등록일자
 
     private final LocalDateTime modDate; // 게시글 수정일자
 
-    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 2000, message = "공지사항의 내용은 1글자 이상, 2000글자 이하")
+    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 2000)
+    @NotEmpty(groups = {PostValidationGroup.saveCommunity.class})
     private final String content; // 게시글의 내용
 
     private final Integer viewCount; // 게시글의 조회수
@@ -92,7 +96,7 @@ public class Community {
      */
     public boolean canUpdate(Member member) {
         if (!member.isSameMemberId(this.memberId)) {
-            throw new CannotUpdatePostException("다른 회원이 작성한 게시글을 수정할 수 없습니다.");
+            throw new CannotUpdatePostException(ErrorType.CAN_NOT_UPDATE_OTHER_MEMBER_POST);
         }
         return true;
     }
@@ -107,12 +111,12 @@ public class Community {
      */
     public boolean canDelete(Member member, List<Comment> comments) {
         if (!member.isSameMemberId(this.memberId)) {
-            throw new CannotDeletePostException("다른 회원이 작성한 게시글을 삭제할 수 없습니다.");
+            throw new CannotDeletePostException(ErrorType.CAN_NOT_DELETE_OTHER_MEMBER_POST);
         }
 
         for (Comment comment : comments) {
             if (!comment.canDelete(member)) {
-                throw new CannotDeletePostException("다른 회원이 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다.");
+                throw new CannotDeletePostException(ErrorType.CAN_NOT_DELETE_POST_WITH_OTHER_MEMBER_COMMENTS);
             }
         }
         return true;

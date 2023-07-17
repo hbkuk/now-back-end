@@ -23,17 +23,17 @@ public class Notice {
 
     private Long postIdx; // 공지 게시글의 고유 식별자
 
-    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "카테고리 선택 필수")
+    @NotNull(groups = {PostValidationGroup.saveNotice.class})
     private final Category category; // 카테고리
 
-    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 100, message = "공지사항의 제목은 1글자 이상, 100글자 이하")
+    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 100)
     private final String title; // 제목
 
     private final LocalDateTime regDate; // 등록일자
 
     private final LocalDateTime modDate; // 수정일자
 
-    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000, message = "공지사항의 내용은 1글자 이상, 2000글자 이하")
+    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000)
     private final String content; // 내용
 
     private final Integer viewCount; // 조회수
@@ -42,7 +42,7 @@ public class Notice {
 
     private final Integer dislikeCount; // 싫어요 수
 
-    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "핀 설정 필수")  // 상단 고정 여부 (true: 상단 고정)
+    @NotNull(groups = {PostValidationGroup.saveNotice.class})  // 상단 고정 여부 (true: 상단 고정)
     private final Boolean pinned;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // 매니저 고유 식별자

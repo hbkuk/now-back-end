@@ -14,7 +14,7 @@ public class Answer {
 
     private Long postIdx;
 
-    @Size(min = 1, max = 2000, message = "답변의 내용은 1글자 이상, 2000글자 이하")
+    @Size(min = 1, max = 2000)
     private final String answerContent;
 
     @JsonIgnore
@@ -24,12 +24,12 @@ public class Answer {
     private Long answerManagerIdx;
 
 
-    public Answer updateaAswerManagerId(String answerManagerId) {
+    public Answer updateAnswerManagerId(String answerManagerId) {
         this.answerManagerId = answerManagerId;
         return this;
     }
 
-    public Answer updateaAswerManagerIdx(Long answerManagerIdx) {
+    public Answer updateAnswerManaegrIdx(Long answerManagerIdx) {
         this.answerManagerIdx = answerManagerIdx;
         return this;
     }

@@ -1,11 +1,12 @@
 package com.now.core.authentication.application;
 
+import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.dto.TokenClaims;
-import com.now.core.authentication.exception.AuthenticationFailedException;
+import com.now.core.authentication.exception.InvalidAuthenticationException;
+import com.now.core.authentication.exception.InvalidTokenException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -24,8 +25,6 @@ public class JwtTokenService {
 
     private static final String BEARER_PREFIX_WITH_SPACE = "Bearer ";
     private static final int MINUS_EXPIRE_HOURS = 1;
-
-    private final MessageSourceAccessor messageSource;
 
     @Value("${now.security.key}")
     private String securityKey;
@@ -59,44 +58,24 @@ public class JwtTokenService {
      * @param token 검증할 JWT 토큰
      * @param key   가져올 클레임의 키
      * @return 전달받은 키에 해당하는 클레임 값
-     * @throws ExpiredJwtException      토큰이 만료된 경우
-     * @throws UnsupportedJwtException  지원되지 않는 형식의 JWT인 경우
-     * @throws MalformedJwtException    유효하지 않은 형식의 JWT인 경우
-     * @throws SignatureException       JWT 서명 검증에 실패한 경우
-     * @throws IllegalArgumentException 잘못된 인자가 전달된 경우
      */
     public Object getClaim(String token, String key) {
         if(token == null) {
-            throw new AuthenticationFailedException(messageSource.getMessage("error.permission.denied"));
+            throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
-        Claims claims = Jwts.parser()
-                .setSigningKey(Base64.getEncoder().encodeToString(securityKey.getBytes()))
-                .parseClaimsJws(removeBearer(token))
-                .getBody();
+
+        Claims claims = null;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(Base64.getEncoder().encodeToString(securityKey.getBytes()))
+                    .parseClaimsJws(removeBearer(token))
+                    .getBody();
+        }  catch (JwtException e) {
+            throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
+        }
 
         return claims.get(key);
     }
-
-    /**
-     * 전달받은 토큰을 검증하고, 모든 클레임 값을 Map 형태로 반환
-     *
-     * @param token 검증할 JWT 토큰
-     * @return 모든 클레임 값을 포함하는 Map 객체
-     * @throws ExpiredJwtException      토큰이 만료된 경우
-     * @throws UnsupportedJwtException  지원되지 않는 형식의 JWT인 경우
-     * @throws MalformedJwtException    유효하지 않은 형식의 JWT인 경우
-     * @throws SignatureException       JWT 서명 검증에 실패한 경우
-     * @throws IllegalArgumentException 잘못된 인자가 전달된 경우
-     */
-    public Map<String, Object> getAllClaims(String token) {
-        Claims claims = Jwts.parser()
-                .setSigningKey(Base64.getEncoder().encodeToString(securityKey.getBytes()))
-                .parseClaimsJws(removeBearer(token))
-                .getBody();
-
-        return new HashMap<>(claims);
-    }
-
 
     /**
      * 전달받은 토큰의 접두사를 붙인 토큰 반환

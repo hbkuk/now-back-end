@@ -33,26 +33,26 @@ public class Member {
     /**
      * 회원의 아이디
      */
-    @Size(groups = {MemberValidationGroup.signup.class}, max = 50, message = "ID는 최대 50자까지 입력 가능합니다.")
+    @Size(groups = {MemberValidationGroup.signup.class}, max = 50)
     private final String id;
 
     /**
      * 회원의 닉네임
      */
-    @Size(groups = {MemberValidationGroup.signup.class}, max = 50, message = "닉네임은 최대 50자까지 입력 가능합니다.")
+    @Size(groups = {MemberValidationGroup.signup.class}, max = 50)
     private final String nickname;
 
     /**
      * 회원의 이름
      */
-    @Size(groups = {MemberValidationGroup.signup.class}, max = 15, message = "이름은 최대 15자까지 입력 가능합니다.")
+    @Size(groups = {MemberValidationGroup.signup.class}, max = 15)
     private final String name;
 
     /**
      * 회원의 비밀번호
      */
-    @Size(groups = {MemberValidationGroup.signup.class}, min = 4, max = 15, message = "패스워드는 4글자 이상, 15글자 이하여야 합니다")
-    @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = PASSWORD_REGEX, message = "패스워드는 영문, 숫자, 특수문자를 포함해야 합니다")
+    @Size(groups = {MemberValidationGroup.signup.class}, min = 4, max = 15)
+    @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = PASSWORD_REGEX)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 

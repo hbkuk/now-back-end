@@ -76,7 +76,7 @@ public class InquiryController {
                                                @RequestBody @Validated({PostValidationGroup.saveAnswer.class}) Answer answer) {
         log.debug("registerInquiry 호출, memberId : {}, authority : {}, answer : {}", managerId, authority, answer);
 
-        inquiryService.registerAnswer(answer.updateaAswerManagerId(managerId), Authority.valueOf(authority));
+        inquiryService.registerAnswer(answer.updateAnswerManagerId(managerId), Authority.valueOf(authority));
 
         return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
     }

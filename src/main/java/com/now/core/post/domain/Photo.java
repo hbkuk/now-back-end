@@ -1,6 +1,7 @@
 package com.now.core.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.now.common.exception.ErrorType;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.comment.domain.Comment;
@@ -39,7 +40,7 @@ public class Photo {
     /**
      * 게시글의 제목
      */
-    @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 100, message = "게시글의 제목은 1글자 이상, 100글자 이하")
+    @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 100)
     private final String title;
 
     /**
@@ -55,7 +56,7 @@ public class Photo {
     /**
      * 게시글의 내용
      */
-    @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 2000, message = "공지사항의 내용은 1글자 이상, 2000글자 이하")
+    @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 2000)
     private final String content;
 
     /**
@@ -127,7 +128,7 @@ public class Photo {
      */
     public boolean canUpdate(Member member) {
         if (!member.isSameMemberId(this.memberId)) {
-            throw new CannotUpdatePostException("다른 회원이 작성한 게시글을 수정할 수 없습니다.");
+            throw new CannotUpdatePostException(ErrorType.CAN_NOT_UPDATE_OTHER_MEMBER_POST);
         }
         return true;
     }
@@ -142,12 +143,12 @@ public class Photo {
      */
     public boolean canDelete(Member member, List<Comment> comments) {
         if (!member.isSameMemberId(this.memberId)) {
-            throw new CannotDeletePostException("다른 회원이 작성한 게시글을 삭제할 수 없습니다.");
+            throw new CannotDeletePostException(ErrorType.CAN_NOT_DELETE_OTHER_MEMBER_POST);
         }
 
         for (Comment comment : comments) {
             if (!comment.canDelete(member)) {
-                throw new CannotDeletePostException("다른 회원이 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다.");
+                throw new CannotDeletePostException(ErrorType.CAN_NOT_DELETE_POST_WITH_OTHER_MEMBER_COMMENTS);
             }
         }
         return true;

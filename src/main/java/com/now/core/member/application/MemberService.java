@@ -1,17 +1,16 @@
 package com.now.core.member.application;
 
+import com.now.common.exception.ErrorType;
+import com.now.common.security.PasswordSecurityManager;
 import com.now.core.authentication.application.JwtTokenService;
-import com.now.core.authentication.exception.AuthenticationFailedException;
+import com.now.core.authentication.application.dto.TokenClaims;
+import com.now.core.authentication.constants.Authority;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
-import com.now.core.member.exception.DuplicateMemberException;
-import com.now.core.authentication.application.dto.TokenClaims;
-import com.now.core.member.application.dto.MemberDuplicateInfo;
-import com.now.core.authentication.constants.Authority;
-import com.now.common.security.PasswordSecurityManager;
+import com.now.core.member.exception.DuplicateMemberInfoException;
+import com.now.core.member.exception.InvalidMemberException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -27,21 +26,14 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final JwtTokenService jwtTokenManager;
     private final PasswordSecurityManager passwordSecurityManager;
-    private final MessageSourceAccessor messageSource;
 
     /**
      * 회원 정보를 등록하는 메서드
      *
      * @param member 등록할 회원 정보
-     * @throws DuplicateMemberException 중복된 회원 정보 예외
      */
     public void registerMember(Member member) {
-        MemberDuplicateInfo memberDuplicateInfo = duplicateMemberCheck(member);
-
-        if (memberDuplicateInfo.existsAtLeastOneDuplicate()) {
-            throw new DuplicateMemberException(memberDuplicateInfo.generateDuplicateFieldMessages());
-        }
-
+        duplicateMemberCheck(member);
         memberRepository.saveMember(member.updatePassword(passwordSecurityManager.encodeWithSalt(member.getPassword())));
     }
 
@@ -50,17 +42,17 @@ public class MemberService {
      *
      * @param member 로그인할 회원 정보
      * @return 인증된 회원에게 부여된 JWT(Json Web Token)
-     * @throws AuthenticationFailedException 아이디 또는 비밀번호가 틀린 경우 발생하는 예외
+     * @throws InvalidMemberException 인증에 실패한 경우 발생하는 예외
      */
     public String generateAuthToken(Member member) {
         Member savedMember = memberRepository.findById(member.getId());
 
         if (savedMember == null) {
-            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.failed"));
+            throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
         }
 
         if (!passwordSecurityManager.matchesWithSalt(member.getPassword(), savedMember.getPassword())) {
-            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.failed"));
+            throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
         }
 
         return jwtTokenManager.create(TokenClaims.create(Map.of(
@@ -76,21 +68,25 @@ public class MemberService {
     public Member findMemberById(String memberId) {
         Member member = memberRepository.findById(memberId);
         if(member == null) {
-            throw new AuthenticationFailedException(messageSource.getMessage("error.authentication.memberNotFound"));
+            throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
         }
         return member;
     }
 
     /**
-     * 중복된 회원 정보를 체크해서 {@link MemberDuplicateInfo}를 반환
+     * 중복된 회원 정보를 체크
      *
      * @param member 체크할 사용자 정보
-     * @return 중복된 사용자 정보 결과
      */
-    public MemberDuplicateInfo duplicateMemberCheck(Member member) {
-        return MemberDuplicateInfo.builder()
-                .duplicateId(memberRepository.existsById(member.getId()))
-                .duplicateNickname(memberRepository.existsByNickname(member.getNickname()))
-                .build();
+    public void duplicateMemberCheck(Member member) {
+        boolean duplicateId = memberRepository.existsById(member.getId());
+        boolean duplicateNickname = memberRepository.existsByNickname(member.getNickname());
+
+        if (duplicateId || duplicateNickname) {
+            ErrorType errorType = duplicateId && duplicateNickname ? ErrorType.DUPLICATE_MEMBER_INFO_ID_AND_NICKNAME :
+                    duplicateId ? ErrorType.DUPLICATE_MEMBER_INFO_ID : ErrorType.DUPLICATE_MEMBER_INFO_NICKNAME;
+            throw new DuplicateMemberInfoException(errorType);
+        }
     }
+
 }

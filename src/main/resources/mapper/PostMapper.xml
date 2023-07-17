@@ -340,8 +340,8 @@
 
     <!-- 검색 조건에 따른 WHERE 절 SQL -->
     <sql id="condition">
-        <if test="limit != 0">
-            LIMIT 0, #{limit}
+        <if test="maxNumberOfPosts != null">
+            LIMIT 0, #{maxNumberOfPosts}
         </if>
     </sql>
 </mapper>

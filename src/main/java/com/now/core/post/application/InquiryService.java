@@ -1,7 +1,10 @@
 package com.now.core.post.application;
 
+import com.now.common.exception.ErrorType;
+import com.now.common.exception.ForbiddenException;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
+import com.now.core.authentication.exception.InvalidAuthenticationException;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.manager.application.ManagerService;
 import com.now.core.manager.domain.Manager;
@@ -9,17 +12,15 @@ import com.now.core.member.application.MemberService;
 import com.now.core.member.domain.Member;
 import com.now.core.post.domain.Inquiry;
 import com.now.core.post.domain.PostRepository;
-import com.now.core.post.exception.CannotWritePostException;
-import com.now.core.post.exception.PermissionDeniedException;
+import com.now.core.post.exception.CannotCreatePostException;
+import com.now.core.post.exception.InvalidPostException;
 import com.now.core.post.presentation.dto.Answer;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * 문의 게시글 관련 비즈니스 로직을 처리하는 서비스
@@ -33,7 +34,6 @@ public class InquiryService {
     private final MemberService memberService;
     private final ManagerService managerService;
     private final JwtTokenService jwtTokenService;
-    private final MessageSourceAccessor messageSource;
 
     /**
      * 모든 문의 게시글 정보를 조회 후 반환
@@ -53,12 +53,12 @@ public class InquiryService {
     public Inquiry findInquiry(Long postIdx, String token) {
         Inquiry inquiry = postRepository.findInquiry(postIdx);
         if(inquiry == null) {
-            throw new NoSuchElementException(messageSource.getMessage("error.noSuch.post"));
+            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }
 
         if(inquiry.getSecret()) {
             if (token == null) {
-                throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
+                throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
             }
 
             Authority authority = Authority.valueOf(jwtTokenService.getClaim(token, "role").toString());
@@ -77,11 +77,11 @@ public class InquiryService {
      */
     public void registerInquiry(Inquiry inquiry, Authority authority) {
         if (authority != Authority.MEMBER) {
-            throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
+            throw new ForbiddenException(ErrorType.FORBIDDEN);
         }
 
         if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, inquiry.getCategory())) {
-            throw new CannotWritePostException(messageSource.getMessage("error.write.failed"));
+            throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
         }
 
         Member member = memberService.findMemberById(inquiry.getMemberId());
@@ -97,7 +97,7 @@ public class InquiryService {
      */
     public void registerAnswer(Answer answer, Authority authority) {
         if (authority != Authority.MANAGER) {
-            throw new PermissionDeniedException(messageSource.getMessage("error.permission.denied"));
+            throw new ForbiddenException(ErrorType.FORBIDDEN);
         }
 
         Manager manager = managerService.findManagerById(answer.getAnswerManagerId());

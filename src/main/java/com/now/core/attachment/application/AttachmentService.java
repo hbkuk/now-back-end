@@ -8,6 +8,7 @@ import com.now.core.attachment.domain.constants.AttachmentType;
 import com.now.core.attachment.domain.wrapped.AttachmentExtension;
 import com.now.core.attachment.domain.wrapped.AttachmentSize;
 import com.now.core.attachment.domain.wrapped.OriginalAttachmentName;
+import com.now.core.attachment.exception.InvalidAttachmentException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -164,7 +165,7 @@ public class AttachmentService {
                     .attachmentExtension(new AttachmentExtension(AttachmentUtils.extractFileExtension(uploadedAttachment.getSystemName()), uploadType.getAllowedExtensions()))
                     .attachmentSize(new AttachmentSize(uploadedAttachment.getAttachmentSize(), uploadType.getMaxUploadSize()))
                     .build();
-        } catch (IllegalArgumentException e) {
+        } catch (InvalidAttachmentException e) {
             log.error(e.getMessage(), e);
             AttachmentUtils.deleteUploadedFile(uploadedAttachment.getSystemName());
             return null;

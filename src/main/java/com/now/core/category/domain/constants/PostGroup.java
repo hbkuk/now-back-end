@@ -1,5 +1,6 @@
 package com.now.core.category.domain.constants;
 
+import com.now.common.exception.ErrorType;
 import com.now.common.mapper.EnumMapperType;
 import com.now.core.category.exception.InvalidCategoryException;
 import lombok.Getter;
@@ -27,13 +28,13 @@ public enum PostGroup implements EnumMapperType {
      *
      * @param category 카테고리
      * @return 해당 카테고리에 해당하는 게시물 그룹
-     * @throws RuntimeException 게시물 그룹을 찾을 수 없을 경우 예외 발생
+     * @throws InvalidCategoryException 게시물 그룹을 찾을 수 없을 경우 예외 발생
      */
     public static PostGroup findByCategory(Category category) {
         return Arrays.stream(PostGroup.values())
                 .filter(postType -> postType.hasCategory(category))
                 .findAny()
-                .orElseThrow(InvalidCategoryException::new);
+                .orElseThrow(() -> new InvalidCategoryException(ErrorType.INVALID_CATEGORY));
     }
 
     /**

@@ -34,7 +34,7 @@ public class Comment {
     /**
      * 댓글의 내용
      */
-    @Size(max = 2000, message = "댓글 내용은 최대 2000자까지 입력 가능합니다.")
+    @Size(max = 2000)
     private final String content;
 
     /**
