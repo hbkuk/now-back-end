@@ -1,4 +1,4 @@
-package com.now.core.manager.domain;
+package com.now.core.admin.manager.domain;
 
 import org.apache.ibatis.annotations.Mapper;
 

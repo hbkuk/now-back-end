@@ -87,7 +87,7 @@ public class Photo {
     /**
      * 대표 사진으로 설정된 파일의 고유 식별자
      */
-    private final Long thumbnailFileIdx;
+    private final Long thumbnailAttachmentIdx;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long memberIdx;
@@ -152,5 +152,10 @@ public class Photo {
             }
         }
         return true;
+    }
+
+    public Photo updatePostIdx(Long postIdx) {
+        this.postIdx = postIdx;
+        return this;
     }
 }

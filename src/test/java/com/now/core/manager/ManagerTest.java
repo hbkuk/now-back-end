@@ -1,6 +1,6 @@
 package com.now.core.manager;
 
-import com.now.core.manager.domain.Manager;
+import com.now.core.admin.manager.domain.Manager;
 
 public class ManagerTest {
 

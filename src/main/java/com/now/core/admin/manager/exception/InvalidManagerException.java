@@ -1,4 +1,4 @@
-package com.now.core.manager.exception;
+package com.now.core.admin.manager.exception;
 
 import com.now.common.exception.BadRequestException;
 import com.now.common.exception.ErrorType;

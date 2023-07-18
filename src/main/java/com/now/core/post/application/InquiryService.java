@@ -3,18 +3,14 @@ package com.now.core.post.application;
 import com.now.common.exception.ErrorType;
 import com.now.common.exception.ForbiddenException;
 import com.now.core.authentication.application.JwtTokenService;
-import com.now.core.authentication.constants.Authority;
-import com.now.core.authentication.exception.InvalidAuthenticationException;
 import com.now.core.category.domain.constants.PostGroup;
-import com.now.core.manager.application.ManagerService;
-import com.now.core.manager.domain.Manager;
+import com.now.core.comment.application.CommentService;
 import com.now.core.member.application.MemberService;
 import com.now.core.member.domain.Member;
 import com.now.core.post.domain.Inquiry;
 import com.now.core.post.domain.PostRepository;
 import com.now.core.post.exception.CannotCreatePostException;
 import com.now.core.post.exception.InvalidPostException;
-import com.now.core.post.presentation.dto.Answer;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +27,8 @@ import java.util.List;
 public class InquiryService {
 
     private final PostRepository postRepository;
+    private final CommentService commentService;
     private final MemberService memberService;
-    private final ManagerService managerService;
     private final JwtTokenService jwtTokenService;
 
     /**
@@ -52,19 +48,12 @@ public class InquiryService {
      */
     public Inquiry findInquiry(Long postIdx, String token) {
         Inquiry inquiry = postRepository.findInquiry(postIdx);
-        if(inquiry == null) {
+        if (inquiry == null) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }
 
-        if(inquiry.getSecret()) {
-            if (token == null) {
-                throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
-            }
-
-            Authority authority = Authority.valueOf(jwtTokenService.getClaim(token, "role").toString());
-            if (!Authority.isManager(authority)) {
-                inquiry.canView(memberService.findMemberById(jwtTokenService.getClaim(token, "id").toString()));
-            }
+        if (inquiry.getSecret()) {
+            inquiry.canView(memberService.findMemberById((String) jwtTokenService.getClaim(token, "id")));
         }
         return inquiry;
     }
@@ -72,37 +61,68 @@ public class InquiryService {
     /**
      * 문의 게시글 등록
      *
-     * @param inquiry   등록할 문의 게시글 정보
-     * @param authority 권한
+     * @param inquiry 등록할 문의 게시글 정보
      */
-    public void registerInquiry(Inquiry inquiry, Authority authority) {
-        if (authority != Authority.MEMBER) {
-            throw new ForbiddenException(ErrorType.FORBIDDEN);
-        }
+    public void registerInquiry(Inquiry inquiry) {
+        Member member = memberService.findMemberById(inquiry.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, inquiry.getCategory())) {
             throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
         }
 
-        Member member = memberService.findMemberById(inquiry.getMemberId());
-
         postRepository.saveInquiry(inquiry.updateMemberIdx(member.getMemberIdx()));
     }
 
     /**
-     * 문의 게시글의 답변 등록
+     * 문의 게시글 수정
      *
-     * @param answer    등록할 답변 정보
-     * @param authority 권한
+     * @param updateInquiry 수정할 문의 게시글 정보
      */
-    public void registerAnswer(Answer answer, Authority authority) {
-        if (authority != Authority.MANAGER) {
+    public void updateInquiry(Inquiry updateInquiry) {
+        Member member = memberService.findMemberById(updateInquiry.getMemberId());
+
+        if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, updateInquiry.getCategory())) {
+            throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
+        }
+        postRepository.updateInquiry(updateInquiry.updateMemberIdx(member.getMemberIdx()));
+    }
+
+    /**
+     * 문의 게시글 삭제
+     *
+     * @param postIdx  삭제할 게시글 번호
+     * @param memberId 회원 아이디
+     */
+    public void deleteInquiry(Long postIdx, String memberId) {
+        Member member = memberService.findMemberById(memberId);
+        Inquiry inquiry = postRepository.findInquiry(postIdx);
+
+        if (!inquiry.canDelete(member, commentService.findAllByPostIdx(postIdx))) {
             throw new ForbiddenException(ErrorType.FORBIDDEN);
         }
+        postRepository.deleteInquiry(postIdx);
+    }
 
-        Manager manager = managerService.findManagerById(answer.getAnswerManagerId());
+    /**
+     * 게시글 수정 권한 확인
+     *
+     * @param postIdx 게시글 번호
+     * @param memberId 회원 아이디
+     */
+    public void hasUpdateAccess(Long postIdx, String memberId) {
+        Inquiry inquiry = postRepository.findInquiry(postIdx);
+        inquiry.canUpdate(memberService.findMemberById(memberId));
+    }
 
-        postRepository.saveAnswer(answer.updateaAswerManagerIdx(manager.getManagerIdx()));
+    /**
+     * 게시글 삭제 권한 확인
+     *
+     * @param postIdx 게시글 번호
+     * @param memberId 회원 아이디
+     */
+    public void hasDeleteAccess(Long postIdx, String memberId) {
+        Inquiry inquiry = postRepository.findInquiry(postIdx);
+        inquiry.canDelete(memberService.findMemberById(memberId), commentService.findAllByPostIdx(postIdx));
     }
 }
 

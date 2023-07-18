@@ -1,5 +1,6 @@
 package com.now.core.attachment.domain;
 
+import com.now.core.attachment.application.dto.ThumbNail;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -53,4 +54,26 @@ public interface AttachmentMapper {
      * @param postIdx 게시글 번호
      */
     void deleteAllByPostIdx(Long postIdx);
+
+    /**
+     * 게시물 번호에 해당하는 대표 이미지 조회
+     *
+     * @param postIdx 게시글 번호
+     * @return 게시물 번호에 해당하는 대표 이미지 조회
+     */
+    ThumbNail findThumbnailByPostIdx(Long postIdx);
+
+    /**
+     * 대표 이미지 삭제
+     *
+     * @param thumbNailIdx 대표 이미지 고유 식별자
+     */
+    void deleteThumbNail(Long thumbNailIdx);
+
+    /**
+     * 대표 이미지 삭제
+     *
+     * @param postIdx 게시글 번호
+     */
+    void deleteThumbNailByPostIdx(Long postIdx);
 }

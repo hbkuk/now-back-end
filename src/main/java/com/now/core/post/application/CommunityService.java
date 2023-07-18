@@ -1,7 +1,6 @@
 package com.now.core.post.application;
 
 import com.now.common.exception.ErrorType;
-import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.comment.application.CommentService;
 import com.now.core.member.application.MemberService;
@@ -86,16 +85,11 @@ public class CommunityService {
 
     /**
      * 게시글 수정 권한 확인
-     * 
+     *
      * @param postIdx 게시글 번호
      * @param memberId 회원 아이디
-     * @param authority 권한
      */
-    public void hasUpdateAccess(Long postIdx, String memberId, Authority authority) {
-        if (Authority.isManager(authority)) {
-            return;
-        }
-
+    public void hasUpdateAccess(Long postIdx, String memberId) {
         Community community = postRepository.findCommunity(postIdx);
         community.canUpdate(memberService.findMemberById(memberId));
     }
@@ -105,13 +99,8 @@ public class CommunityService {
      *
      * @param postIdx   게시글 번호
      * @param memberId  회원 아이디
-     * @param authority 권한
      */
-    public void hasDeleteAccess(Long postIdx, String memberId, Authority authority) {
-        if (Authority.isManager(authority)) {
-            return;
-        }
-
+    public void hasDeleteAccess(Long postIdx, String memberId) {
         Community community = postRepository.findCommunity(postIdx);
         community.canDelete(memberService.findMemberById(memberId), commentService.findAllByPostIdx(postIdx));
     }

@@ -179,6 +179,11 @@ public class Inquiry {
                 throw new CannotDeletePostException(ErrorType.CAN_NOT_DELETE_POST_WITH_OTHER_MEMBER_COMMENTS);
             }
         }
+
+        if(answerManagerNickname != null) {
+            throw new CannotDeletePostException(ErrorType.CAN_NOT_DELETE_POST_WITH_MANAGER_ANSWER);
+        }
+
         return true;
     }
 

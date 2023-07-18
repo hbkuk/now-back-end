@@ -2,7 +2,6 @@ package com.now.core.post.presentation;
 
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.attachment.domain.constants.AttachmentType;
-import com.now.core.authentication.constants.Authority;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.application.CommunityService;
 import com.now.core.post.domain.Community;
@@ -73,9 +72,9 @@ public class CommunityController {
         communityService.registerCommunity(community.updateMemberId(memberId));
         attachmentService.saveAttachments(multipartFiles, community.getPostIdx(), AttachmentType.FILE);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
+    
     /**
      * 커뮤니티 게시글 수정
      *
@@ -87,40 +86,37 @@ public class CommunityController {
      * @return 수정된 게시글에 대한 CREATED 응답을 반환
      */
     @PutMapping("/api/community/{postIdx}")
-    public ResponseEntity<Void> updateCommunity(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId, @RequestAttribute("role") String authority,
+    public ResponseEntity<Void> updateCommunity(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
                                                 @Validated(PostValidationGroup.saveNotice.class) @RequestPart(value = "community") Community updatedCommunity,
                                                 @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles,
                                                 @RequestParam(value = "attachmentIdx", required = false) List<Long> previouslyUploadedIndexes) {
         log.debug("updateCommunity 호출,  Update Community : {}, Multipart Files Size: {}, previouslyUploadedIndexes size : {}",
                 updatedCommunity, (multipartFiles != null ? multipartFiles.length : "null"), (previouslyUploadedIndexes != null ? previouslyUploadedIndexes.size() : "null"));
 
-        communityService.hasUpdateAccess(postIdx, memberId, Authority.valueOf(authority));
+        communityService.hasUpdateAccess(postIdx, memberId);
 
         communityService.updateCommunity(updatedCommunity.updatePostIdx(postIdx).updateMemberId(memberId));
         attachmentService.updateAttachments(multipartFiles, previouslyUploadedIndexes, postIdx, AttachmentType.FILE);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
+    
     /**
      * 커뮤니티 게시글 삭제
      *
      * @param postIdx 게시글 번호
      * @param memberId 회원 아이디
-     * @param authority 권한
      * @return No Content 응답
      */
     @DeleteMapping("/api/community/{postIdx}")
-    public ResponseEntity<Void> deleteCommunity(@PathVariable("postIdx") Long postIdx,
-                                                @RequestAttribute("id") String memberId, @RequestAttribute("role") String authority) {
+    public ResponseEntity<Void> deleteCommunity(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId) {
         log.debug("deleteCommunity 호출");
 
-        communityService.hasDeleteAccess(postIdx, memberId, Authority.valueOf(authority));
+        communityService.hasDeleteAccess(postIdx, memberId);
 
         commentService.deleteAllByPostIdx(postIdx);
         attachmentService.deleteAllByPostIdx(postIdx);
         communityService.deleteCommunity(postIdx);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
 }

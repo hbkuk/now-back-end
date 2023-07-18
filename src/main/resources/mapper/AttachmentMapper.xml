@@ -5,6 +5,13 @@
 
 <mapper namespace="com.now.core.attachment.domain.AttachmentMapper">
 
+    <!-- 게시물 번호에 해당하는 Thumbnail을 가져오는 쿼리 -->
+    <select id="findThumbnailByPostIdx" parameterType="Long">
+        SELECT *
+        FROM tb_thumbnail
+        WHERE member_post_idx = #{postIdx}
+    </select>
+
     <!-- 게시물 번호에 해당하는 Attachment 목록을 가져오는 쿼리 -->
     <select id="findAllIndexesByPostIdx" parameterType="Long">
         SELECT attachment_idx
@@ -42,5 +49,16 @@
         WHERE member_post_idx = #{postIdx}
     </delete>
 
+    <delete id="deleteThumbNail" parameterType="Long">
+        DELETE
+        FROM tb_thumbnail
+        WHERE attachment_idx = #{attachmentIdx}
+    </delete>
+
+    <delete id="deleteThumbNailByPostIdx" parameterType="Long">
+        DELETE
+        FROM tb_thumbnail
+        WHERE member_post_idx = #{postIdx}
+    </delete>
 
 </mapper>

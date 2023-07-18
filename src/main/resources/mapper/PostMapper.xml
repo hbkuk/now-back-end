@@ -3,7 +3,40 @@
 
 <mapper namespace="com.now.core.post.domain.PostMapper">
 
-    <!-- Notice 삭제 쿼리 -->
+    <!-- Photo 삭제 쿼리 -->
+    <delete id="deleteInquiry" parameterType="Long">
+        DELETE
+        FROM tb_member_post
+        WHERE post_idx = #{postIdx}
+    </delete>
+
+    <!-- Inquiry 수정 쿼리-->
+    <insert id="updateInquiry" parameterType="Inquiry">
+        UPDATE tb_member_post
+        SET category = #{category.name},
+            title   = #{title},
+            mod_date = NOW(),
+            content = #{content}
+        WHERE post_idx = #{postIdx}
+    </insert>
+
+    <!-- Photo 삭제 쿼리 -->
+    <delete id="deletePhoto" parameterType="Long">
+        DELETE
+        FROM tb_member_post
+        WHERE post_idx = #{postIdx}
+    </delete>
+
+    <insert id="updatePhoto" parameterType="Photo">
+        UPDATE tb_member_post
+        SET category = #{category.name},
+            title   = #{title},
+            mod_date = NOW(),
+            content = #{content}
+        WHERE post_idx = #{postIdx}
+    </insert>
+
+    <!-- Community 삭제 쿼리 -->
     <delete id="deleteCommunity" parameterType="Long">
         DELETE
         FROM tb_member_post
@@ -110,11 +143,13 @@
         <include refid="selectMemberPostTableColumn"/>,
         <include refid="selectAttachmentTableColumn"/>,
         <include refid="selectCommentTableColumn"/>,
-        <include refid="selectMemberTableColumn"/>
+        <include refid="selectMemberTableColumn"/>,
+        <include refid="selectThumbnailTableColumn"/>
         FROM tb_member_post member_p
         LEFT OUTER JOIN tb_attachment f ON member_p.post_idx = f.member_post_idx
         LEFT OUTER JOIN tb_comment co ON member_p.post_idx = co.member_post_idx
         LEFT OUTER JOIN tb_member m ON member_p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_thumbnail th ON member_p.post_idx = th.member_post_Idx
         WHERE member_p.post_group = 'PHOTO'
         ORDER BY member_p.post_idx DESC
         <include refid="condition"/>
@@ -251,6 +286,12 @@
         m.id AS m_id
     </sql>
 
+    <!-- Member 테이블의 컬럼 매핑 -->
+    <sql id="selectThumbnailTableColumn">
+        th.attachment_idx AS th_thumbnail_attachment_idx
+    </sql>
+
+
     <!-- Attachment 컬렉션 매핑 -->
     <resultMap id="attachmentTableCollectionMapping" type="Attachment">
         <id property="attachmentIdx" column="f_attachment_idx"/>
@@ -315,6 +356,7 @@
         <result property="viewCount" column="member_p_view_count"/>
         <result property="likeCount" column="member_p_like_count"/>
         <result property="dislikeCount" column="member_p_dislike_count"/>
+        <result property="thumbnailAttachmentIdx" column="th_thumbnail_attachment_idx"/>
         <!-- 공통 컬렉션 매핑 -->
         <collection property="attachments" resultMap="attachmentTableCollectionMapping" />
         <collection property="comments" resultMap="commentTableCollectionMapping" />

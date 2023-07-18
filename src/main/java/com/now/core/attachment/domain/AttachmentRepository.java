@@ -1,5 +1,6 @@
 package com.now.core.attachment.domain;
 
+import com.now.core.attachment.application.dto.ThumbNail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -59,5 +60,33 @@ public class AttachmentRepository {
      */
     public void deleteAttachmentIdx(Long attachmentIdx) {
         attachmentMapper.deleteByAttachmentIdx(attachmentIdx);
+    }
+
+    /**
+     * 게시물 번호에 해당하는 대표 이미지 정보를 반환
+     *
+     * @param postIdx 게시글 번호
+     * @return 게시물 번호에 해당하는 대표 이미지 정보를 반환
+     */
+    public ThumbNail findThumbnailByPostIdx(Long postIdx) {
+        return attachmentMapper.findThumbnailByPostIdx(postIdx);
+    }
+
+    /**
+     * 대표 이미지 삭제
+     * 
+     * @param thumbNailIdx 대표 이미지 고유 식별자
+     */
+    public void deleteThumbNail(Long thumbNailIdx) {
+        attachmentMapper.deleteThumbNail(thumbNailIdx);
+    }
+
+    /**
+     * 대표 이미지 삭제
+     * 
+     * @param postIdx 게시글 번호
+     */
+    public void deleteThumbNailByPostIdx(Long postIdx) {
+        attachmentMapper.deleteThumbNailByPostIdx(postIdx);
     }
 }

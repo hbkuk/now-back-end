@@ -146,4 +146,32 @@ public interface PostMapper {
      * @param postIdx 게시글 번호
      */
     void deleteCommunity(Long postIdx);
+
+    /**
+     * 사진 게시글 수정
+     *
+     * @param photo 수정할 사진 게시물 정보
+     */
+    void updatePhoto(Photo photo);
+
+    /**
+     * 사진 게시글 삭제
+     *
+     * @param postIdx 삭제할 게시글 번호
+     */
+    void deletePhoto(Long postIdx);
+
+    /**
+     * 문의 게시글 수정
+     *
+     * @param inquiry 수정할 문의 게시글 정보
+     */
+    void updateInquiry(Inquiry inquiry);
+
+    /**
+     * 문의 게시글 삭제
+     *
+     * @param postIdx 게시글 번호
+     */
+    void deleteInquiry(Long postIdx);
 }

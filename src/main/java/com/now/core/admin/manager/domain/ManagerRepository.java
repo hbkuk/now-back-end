@@ -1,4 +1,4 @@
-package com.now.core.manager.domain;
+package com.now.core.admin.manager.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

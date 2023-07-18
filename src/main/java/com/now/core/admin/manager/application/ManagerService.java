@@ -1,14 +1,14 @@
-package com.now.core.manager.application;
+package com.now.core.admin.manager.application;
 
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
+import com.now.core.admin.manager.exception.InvalidManagerException;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.application.dto.TokenClaims;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.authentication.exception.InvalidAuthenticationException;
-import com.now.core.manager.domain.Manager;
-import com.now.core.manager.domain.ManagerRepository;
-import com.now.core.manager.exception.InvalidManagerException;
+import com.now.core.admin.manager.domain.Manager;
+import com.now.core.admin.manager.domain.ManagerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

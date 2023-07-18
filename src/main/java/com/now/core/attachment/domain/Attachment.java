@@ -15,6 +15,7 @@ import lombok.*;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Attachment {
+
     /**
      * 첨부파일의 고유 식별자
      */

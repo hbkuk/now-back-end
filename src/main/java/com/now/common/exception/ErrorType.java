@@ -29,6 +29,7 @@ public enum ErrorType {
     CAN_NOT_DELETE_OTHER_MEMBER_POST(6005, "다른 회원이 작성한 게시글을 삭제할 수 없습니다."),
     CAN_NOT_DELETE_POST_WITH_OTHER_MEMBER_COMMENTS(6006, "다른 회원이 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다."),
     CAN_NOT_VIEW_OTHER_MEMBER_INQUIRIES(6007, "다른 사용자가 작성한 문의글을 볼 수 없습니다."),
+    CAN_NOT_DELETE_POST_WITH_MANAGER_ANSWER(6008, "매니저가 작성한 답변이 있으므로 해당 게시글을 삭제할 수 없습니다."),
 
     INVALID_ATTACHMENT_EXTENSION(8001, "허용하지 않은 첨부 파일의 확장자입니다."),
     INVALID_ATTACHMENT_SIZE(8002, "허용하지 않은 첨부 파일의 크기입니다."),

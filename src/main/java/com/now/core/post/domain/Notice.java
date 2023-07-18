@@ -1,6 +1,7 @@
 package com.now.core.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import lombok.*;
@@ -53,7 +54,6 @@ public class Notice {
 
     private String managerNickname; // 매니저 닉네임
 
-
     /**
      * 매니저의 식별자를 업데이트
      *
@@ -85,5 +85,27 @@ public class Notice {
     public Notice updatePostIdx(Long postIdx) {
         this.postIdx = postIdx;
         return this;
+    }
+    
+    // TODO: 추후 매니저별 권한 부여
+    /**
+     * 게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 false 반환
+     * 
+     * @param authority 권한
+     * @return 게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 false 반환
+     */
+    public boolean canUpdate(Authority authority) {
+        return true;
+    }
+
+    // TODO: 추후 매니저별 권한 부여
+    /**
+     * 게시글을 삭제할 수 있다면 true를 반환, 그렇지 않다면 false 반환
+     *
+     * @param authority 권한
+     * @return 게시글을 삭제할 수 있다면 true를 반환, 그렇지 않다면 false 반환
+     */
+    public boolean canDelete(Authority authority) {
+        return true;
     }
 }

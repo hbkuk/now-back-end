@@ -1,10 +1,8 @@
 package com.now.core.post.presentation;
 
-import com.now.core.authentication.constants.Authority;
-import com.now.core.post.domain.PostValidationGroup;
 import com.now.core.post.application.InquiryService;
 import com.now.core.post.domain.Inquiry;
-import com.now.core.post.presentation.dto.Answer;
+import com.now.core.post.domain.PostValidationGroup;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,31 +51,51 @@ public class InquiryController {
     /**
      * 문의 게시글 등록
      *
-     * @param memberId  작성자의 회원 ID
-     * @param inquiry 등록할 문의 게시글 정보
+     * @param memberId 작성자의 회원 ID
+     * @param inquiry  등록할 문의 게시글 정보
      * @return 생성된 게시글에 대한 CREATED 응답을 반환
      */
     @PostMapping("/api/inquiry")
-    public ResponseEntity<Void> registerInquiry(@RequestAttribute("id") String memberId, @RequestAttribute("role") String authority,
+    public ResponseEntity<Void> registerInquiry(@RequestAttribute("id") String memberId,
                                                 @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry inquiry) {
-        log.debug("registerInquiry 호출, memberId : {}, authority : {}, inquiry : {}", memberId, authority, inquiry);
+        log.debug("registerInquiry 호출, memberId : {}, inquiry : {}", memberId, inquiry);
 
-        inquiryService.registerInquiry(inquiry.updateMemberId(memberId), Authority.valueOf(authority));
+        inquiryService.registerInquiry(inquiry.updateMemberId(memberId));
 
         return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
     }
 
     /**
-     * 문의 게시글 답변 등록
+     * 문의 게시글 수정
+     *
+     * @param memberId 작성자의 회원 ID
+     * @param inquiry  등록할 문의 게시글 정보
+     * @return 수정된 게시글에 대한 CREATED 응답을 반환
      */
-    @PostMapping("/api/answer/{postIdx}")
-    public ResponseEntity<Void> registerAnswer(@PathVariable("postIdx") Long postIdx,
-                                               @RequestAttribute("id") String managerId, @RequestAttribute("role") String authority,
-                                               @RequestBody @Validated({PostValidationGroup.saveAnswer.class}) Answer answer) {
-        log.debug("registerInquiry 호출, memberId : {}, authority : {}, answer : {}", managerId, authority, answer);
+    @PutMapping("/api/inquiry/{postIdx}")
+    public ResponseEntity<Void> updateInquiry(@PathVariable("postIdx") Long postIdx,
+                                              @RequestAttribute("id") String memberId,
+                                              @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry inquiry) {
+        log.debug("updateInquiry 호출, memberId : {}, inquiry : {}", memberId, inquiry);
 
-        inquiryService.registerAnswer(answer.updateAnswerManagerId(managerId), Authority.valueOf(authority));
-
+        inquiryService.hasUpdateAccess(postIdx, memberId);
+        inquiryService.updateInquiry(inquiry.updateMemberId(memberId));
         return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+    }
+
+    /**
+     * 문의 게시글 삭제
+     *
+     * @param postIdx 게시글 번호
+     * @return 응답 결과
+     */
+    @DeleteMapping("/api/inquiry/{postIdx}")
+    public ResponseEntity<Void> deleteInquiry(@PathVariable("postIdx") Long postIdx,
+                                              @RequestAttribute("id") String memberId) {
+        log.debug("deleteInquiry 호출");
+
+        inquiryService.hasDeleteAccess(postIdx, memberId);
+        inquiryService.deleteInquiry(postIdx, memberId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

@@ -175,11 +175,47 @@ public class PostRepository {
     }
 
     /**
-     * 게시글 번호에 해당하는 게시글 삭제
+     * 커뮤니티 게시글 삭제
      *
      * @param postIdx 게시글 번호
      */
     public void deleteCommunity(Long postIdx) {
         postMapper.deleteCommunity(postIdx);
+    }
+
+    /**
+     * 사진 게시글 수정
+     * 
+     * @param photo 수정할 사진 게시물 정보
+     */
+    public void updatePhoto(Photo photo) {
+        postMapper.updatePhoto(photo);
+    }
+
+    /**
+     * 사진 게시글 삭제
+     * 
+     * @param postIdx 삭제할 게시글 번호
+     */
+    public void deletePhoto(Long postIdx) {
+        postMapper.deletePhoto(postIdx);
+    }
+
+    /**
+     * 문의 게시글 수정
+     * 
+     * @param inquiry 수정할 문의 게시글 정보
+     */
+    public void updateInquiry(Inquiry inquiry) {
+        postMapper.updateInquiry(inquiry);
+    }
+
+    /**
+     * 문의 게시글 삭제
+     * 
+     * @param postIdx 게시글 번호
+     */
+    public void deleteInquiry(Long postIdx) {
+        postMapper.deleteInquiry(postIdx);
     }
 }
