@@ -2,9 +2,9 @@ package com.now.core.admin.post.notice.application;
 
 import com.now.common.exception.ErrorType;
 import com.now.common.exception.ForbiddenException;
-import com.now.core.admin.manager.application.ManagerService;
 import com.now.core.admin.manager.domain.Manager;
-import com.now.core.authentication.constants.Authority;
+import com.now.core.admin.manager.domain.ManagerRepository;
+import com.now.core.admin.manager.exception.InvalidManagerException;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.post.domain.Notice;
 import com.now.core.post.domain.PostRepository;
@@ -23,58 +23,36 @@ import org.springframework.stereotype.Service;
 public class ManagerNoticeService {
 
     private final PostRepository postRepository;
-    private final ManagerService managerService;
-
-    /**
-     * 공지 게시글 응답
-     *
-     * @param postIdx 게시글 번호
-     * @return 공지 게시글 정보
-     */
-    public Notice findByPostIdx(Long postIdx) {
-        Notice notice = postRepository.findNotice(postIdx);
-        if (notice == null) {
-            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
-        }
-
-        return notice;
-    }
+    private final ManagerRepository managerRepository;
 
     /**
      * 공지 게시글 등록
      *
      * @param notice    등록할 공지 게시글 정보
-     * @param authority 권한
      */
-    public void registerNotice(Notice notice, Authority authority) {
-        if (!Authority.isManager(authority)) {
-            throw new ForbiddenException(ErrorType.FORBIDDEN);
-        }
+    public void registerNotice(Notice notice) {
+        Manager manager = getManager(notice.getManagerId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.NOTICE, notice.getCategory())) {
             throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
         }
 
-        Manager manager = managerService.findManagerById(notice.getManagerId());
-
-        postRepository.saveNotice(notice.updateManagerIdx(manager.getManagerIdx()));
+        postRepository.saveNotice((Notice) notice.updateManagerIdx(manager.getManagerIdx()));
     }
+
 
     // TODO: 매니저별 권한 부여 -> Notice 도메인 객체에서 canUpdate(Authority authority) 선언
     // TODO: 공지 수정 로그 기능 추가 -> 현재 ROOT 권한
     /**
      * 공지 게시글 수정
+     * 
      * @param updatedNotice 수정할 공지 게시글 정보
-     * @param authority 권한
      */
-    public void updateNotice(Notice updatedNotice, Authority authority) {
-        Notice notice = findByPostIdx(updatedNotice.getPostIdx());
+    public void updateNotice(Notice updatedNotice) {
+        Manager manager = getManager(updatedNotice.getManagerId());
 
-        if(!notice.canUpdate(authority)) {
-            throw new ForbiddenException(ErrorType.FORBIDDEN);
-        }
-
-        if (!Authority.isManager(authority)) {
+        Notice notice = getNotice(updatedNotice.getPostIdx());
+        if(!notice.canUpdate(manager)) {
             throw new ForbiddenException(ErrorType.FORBIDDEN);
         }
 
@@ -91,20 +69,46 @@ public class ManagerNoticeService {
      * 공지 게시글 삭제
      *
      * @param postIdx   게시글 번호
-     * @param authority 권한
      */
-    public void deleteNotice(Long postIdx, Authority authority) {
-        Notice notice = findByPostIdx(postIdx);
+    public void deleteNotice(Long postIdx, String managerId) {
+        Manager manager = getManager(managerId);
 
-        if(!notice.canDelete(authority)) {
-            throw new ForbiddenException(ErrorType.FORBIDDEN);
-        }
-
-        if (!Authority.isManager(authority)) {
+        Notice notice = getNotice(postIdx);
+        if(!notice.canDelete(manager)) {
             throw new ForbiddenException(ErrorType.FORBIDDEN);
         }
 
         postRepository.deleteNotice(postIdx);
+    }
+
+    /**
+     * 공지 게시글 응답
+     *
+     * @param postIdx 게시글 번호
+     * @return 공지 게시글 정보
+     */
+    public Notice getNotice(Long postIdx) {
+        Notice notice = postRepository.findNotice(postIdx);
+        if (notice == null) {
+            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
+        }
+
+        return notice;
+    }
+
+    /**
+     * 매니저 객체 응답
+     *
+     * @param managerId 매니저 ID
+     * @return 매니저 객체
+     */
+    private Manager getManager(String managerId) {
+        Manager manager = managerRepository.findById(managerId);
+        if(manager == null) {
+            throw new InvalidManagerException(ErrorType.NOT_FOUND_MANAGER);
+        }
+
+        return manager;
     }
 }
 

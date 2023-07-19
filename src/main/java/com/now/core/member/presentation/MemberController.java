@@ -30,11 +30,12 @@ public class MemberController {
      * @return ResponseEntity 객체 (HTTP 응답)
      */
     @PostMapping("/api/signup")
-    public ResponseEntity<Void> registerMember(@Validated(MemberValidationGroup.signup.class) @RequestBody Member member) {
+    public ResponseEntity<Void> registerMember(@RequestBody
+                                               @Validated(MemberValidationGroup.signup.class) Member member) {
         log.debug("registerMember 핸들러 메서드 호출, Member : {}", member);
 
         memberService.registerMember(member);
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**

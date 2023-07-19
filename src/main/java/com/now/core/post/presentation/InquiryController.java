@@ -1,5 +1,6 @@
 package com.now.core.post.presentation;
 
+import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.post.application.InquiryService;
 import com.now.core.post.domain.Inquiry;
 import com.now.core.post.domain.PostValidationGroup;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,7 @@ import java.util.List;
 public class InquiryController {
 
     private final InquiryService inquiryService;
+    private final JwtTokenService jwtTokenService;
 
     /**
      * 모든 문의 게시글 정보를 조회하는 핸들러 메서드
@@ -32,20 +35,26 @@ public class InquiryController {
      * @return 모든 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/inquiries")
-    public ResponseEntity<List<Inquiry>> retrieveAllInquiries(@Valid @ModelAttribute Condition condition) {
-        log.debug("retrieveAllInquiries 호출, condition : {}", condition);
+    public ResponseEntity<List<Inquiry>> getAllInquiries(@Valid @ModelAttribute Condition condition) {
+        log.debug("getAllInquiries 호출, condition : {}", condition);
 
-        return new ResponseEntity<>(inquiryService.retrieveAllInquiries(condition), HttpStatus.OK);
+        return new ResponseEntity<>(inquiryService.getAllInquiries(condition), HttpStatus.OK);
     }
 
     /**
-     * 문의 게시글 응답
+     * 문의 게시글 조회
+     *
+     * @param postIdx 게시글 번호
+     * @param token 토큰
+     * @return 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/inquiry/{postIdx}")
-    public ResponseEntity<Inquiry> findInquiry(@PathVariable("postIdx") Long postIdx,
-                                               @RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) final String token) {
-        log.debug("findInquiry 호출, postIdx : {}, token : {}", postIdx, token);
-        return ResponseEntity.ok(inquiryService.findInquiry(postIdx, token));
+    public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx, @Nullable String password,
+                                              @RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String token) {
+        log.debug("getInquiry 호출, postIdx : {}, token : {}", postIdx, token);
+
+        String memberId = (String) jwtTokenService.getClaim(token, "id");
+        return ResponseEntity.ok(inquiryService.getInquiryWithSecretCheck(postIdx, memberId, password));
     }
 
     /**
@@ -79,6 +88,7 @@ public class InquiryController {
         log.debug("updateInquiry 호출, memberId : {}, inquiry : {}", memberId, inquiry);
 
         inquiryService.hasUpdateAccess(postIdx, memberId);
+
         inquiryService.updateInquiry(inquiry.updateMemberId(memberId));
         return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
     }
@@ -95,6 +105,7 @@ public class InquiryController {
         log.debug("deleteInquiry 호출");
 
         inquiryService.hasDeleteAccess(postIdx, memberId);
+
         inquiryService.deleteInquiry(postIdx, memberId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

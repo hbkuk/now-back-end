@@ -24,8 +24,8 @@ public class CategoryController {
      * @return 모든 카테고리 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/categories")
-    public ResponseEntity<List<EnumMapperValue>> findCategories() {
-        log.debug("findCategories 핸들러 메서드 호출");
+    public ResponseEntity<List<EnumMapperValue>> getAllCategories() {
+        log.debug("getAllCategories 핸들러 메서드 호출");
 
         List<EnumMapperValue> categories = Arrays.stream(PostGroup.values())
                 .map(EnumMapperValue::new)

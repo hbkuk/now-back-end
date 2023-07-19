@@ -1,9 +1,8 @@
 package com.now.core.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.now.core.authentication.constants.Authority;
+import com.now.core.admin.manager.domain.Manager;
 import com.now.core.category.domain.constants.Category;
-import com.now.core.category.domain.constants.PostGroup;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -19,8 +18,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Notice {
-
-    private final PostGroup postGroup = PostGroup.NOTICE;
 
     private Long postIdx; // 공지 게시글의 고유 식별자
 
@@ -47,7 +44,7 @@ public class Notice {
     private final Boolean pinned;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // 매니저 고유 식별자
-    private Long managerIdx;
+    private Integer managerIdx;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // 매니저 아이디
     private String managerId;
@@ -60,7 +57,7 @@ public class Notice {
      * @param managerIdx 매니저 식별자
      * @return 업데이트된 Notice 도메인 객체
      */
-    public Notice updateManagerIdx(Long managerIdx) {
+    public Notice updateManagerIdx(Integer managerIdx) {
         this.managerIdx = managerIdx;
         return this;
     }
@@ -86,15 +83,15 @@ public class Notice {
         this.postIdx = postIdx;
         return this;
     }
-    
+
     // TODO: 추후 매니저별 권한 부여
     /**
      * 게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 false 반환
-     * 
-     * @param authority 권한
+     *
+     * @param manager 매니저 도메인 객체
      * @return 게시글을 수정할 수 있다면 true를 반환, 그렇지 않다면 false 반환
      */
-    public boolean canUpdate(Authority authority) {
+    public boolean canUpdate(Manager manager) {
         return true;
     }
 
@@ -102,10 +99,10 @@ public class Notice {
     /**
      * 게시글을 삭제할 수 있다면 true를 반환, 그렇지 않다면 false 반환
      *
-     * @param authority 권한
+     * @param manager 매니저 도메인 객체
      * @return 게시글을 삭제할 수 있다면 true를 반환, 그렇지 않다면 false 반환
      */
-    public boolean canDelete(Authority authority) {
+    public boolean canDelete(Manager manager) {
         return true;
     }
 }

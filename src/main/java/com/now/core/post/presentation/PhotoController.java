@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -37,19 +38,21 @@ public class PhotoController {
      * @return 모든 사진 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/photos")
-    public ResponseEntity<List<Photo>> retrieveAllPhotos(@Valid @ModelAttribute Condition condition) {
-        log.debug("retrieveAllPhotos 호출, condition : {}", condition);
-
-        return new ResponseEntity<>(photoService.retrieveAllPhotos(condition), HttpStatus.OK);
+    public ResponseEntity<List<Photo>> getAllPhotos(@Valid @ModelAttribute Condition condition) {
+        log.debug("getAllPhotos 호출, condition : {}", condition);
+        return new ResponseEntity<>(photoService.getAllPhotos(condition), HttpStatus.OK);
     }
-
+    
     /**
-     * 사진 게시글 응답
+     * 사진 게시글 조회
+     * 
+     * @param postIdx 게시글 번호
+     * @return 사진 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/photo/{postIdx}")
-    public ResponseEntity<Photo> findPhotoByPostIdx(@PathVariable("postIdx") Long postIdx) {
-        log.debug("findPhotoByPostIdx 호출, postIdx : {}", postIdx);
-        return ResponseEntity.ok(photoService.findByPostIdx(postIdx));
+    public ResponseEntity<Photo> getPhoto(@PathVariable("postIdx") Long postIdx) {
+        log.debug("getPhoto 호출, postIdx : {}", postIdx);
+        return ResponseEntity.ok(photoService.getPhoto(postIdx));
     }
 
     /**
@@ -57,18 +60,19 @@ public class PhotoController {
      *
      * @param memberId 작성자의 회원 ID
      * @param photo    등록할 사진 게시글 정보
-     * @return 생성된 게시글에 대한 CREATED 응답을 반환
+     * @return 생성된 위치 URI로 응답
      */
     @PostMapping("/api/photo")
     public ResponseEntity<Void> registerPhoto(@RequestAttribute("id") String memberId,
                                               @RequestPart(value = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo photo,
                                               @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles) {
-        log.debug("registerPhoto 호출, memberId : {}, Community : {}, Multipart : {}", memberId, photo, (multipartFiles != null ? multipartFiles.length : "null"));
+        log.debug("registerPhoto 호출, memberId : {}, Community : {}, Multipart : {}",
+                                        memberId, photo, (multipartFiles != null ? multipartFiles.length : "null"));
 
         photoService.registerPhoto(photo.updateMemberId(memberId));
         attachmentService.saveAttachmentsWithThumbnail(multipartFiles, photo.getPostIdx(), AttachmentType.IMAGE);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+        return ResponseEntity.created(URI.create("/api/photo" + photo.getPostIdx())).build();
     }
 
     /**
@@ -79,7 +83,7 @@ public class PhotoController {
      * @param updatePhoto               삭제할 커뮤니티 게시글 정보
      * @param multipartFiles            MultipartFile[] 객체
      * @param previouslyUploadedIndexes 이전에 업로드된 파일 번호 목록
-     * @return 수정된 게시글에 대한 CREATED 응답을 반환
+     * @return 생성된 위치 URI로 응답
      */
     @PutMapping("/api/photo/{postIdx}")
     public ResponseEntity<Void> updatePhoto(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
@@ -102,7 +106,7 @@ public class PhotoController {
      *
      * @param postIdx   게시글 번호
      * @param memberId  회원 아이디
-     * @return No Content 응답
+     * @return 응답 본문이 없는 상태 코드 204 반환
      */
     @DeleteMapping("/api/photo/{postIdx}")
     public ResponseEntity<Void> deletePhoto(@PathVariable("postIdx") Long postIdx,
@@ -114,6 +118,7 @@ public class PhotoController {
         commentService.deleteAllByPostIdx(postIdx);
         attachmentService.deleteAllByPostIdxWithThumbNail(postIdx);
         photoService.deletePhoto(postIdx);
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

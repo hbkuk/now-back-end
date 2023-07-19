@@ -24,7 +24,7 @@ import java.util.Map;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final JwtTokenService jwtTokenManager;
+    private final JwtTokenService jwtTokenService;
     private final PasswordSecurityManager passwordSecurityManager;
 
     /**
@@ -42,20 +42,15 @@ public class MemberService {
      *
      * @param member 로그인할 회원 정보
      * @return 인증된 회원에게 부여된 JWT(Json Web Token)
-     * @throws InvalidMemberException 인증에 실패한 경우 발생하는 예외
      */
     public String generateAuthToken(Member member) {
-        Member savedMember = memberRepository.findById(member.getId());
-
-        if (savedMember == null) {
-            throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
-        }
+        Member savedMember = getMember(member.getId());
 
         if (!passwordSecurityManager.matchesWithSalt(member.getPassword(), savedMember.getPassword())) {
             throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
         }
 
-        return jwtTokenManager.create(TokenClaims.create(Map.of(
+        return jwtTokenService.create(TokenClaims.create(Map.of(
                 "id", member.getId(), "role", Authority.MEMBER.getValue())));
     }
 
@@ -65,7 +60,7 @@ public class MemberService {
      * @param memberId 조회할 회원의 아이디
      * @return 회원을 조회 후 {@link Member}를 반환
      */
-    public Member findMemberById(String memberId) {
+    public Member getMember(String memberId) {
         Member member = memberRepository.findById(memberId);
         if(member == null) {
             throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);

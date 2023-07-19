@@ -31,7 +31,7 @@ public class CommunityServiceTest {
 
         assertThatExceptionOfType(InvalidPostException.class)
                 .isThrownBy(() -> {
-                    communityService.findByPostIdx(postIdx);
+                    communityService.getCommunity(postIdx);
                 })
                 .withMessage(ErrorType.NOT_FOUND_POST.getMessage());
     }

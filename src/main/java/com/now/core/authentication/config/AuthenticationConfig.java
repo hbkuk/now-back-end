@@ -7,13 +7,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * WebMvcConfigurer 인터페이스를 구현하여 인터셉터를 등록
- * JwtInterceptor를 사용하여 특정 URL 패턴에 대한 토큰 검증을 수행합니다.
  */
 @Configuration
 @RequiredArgsConstructor
 public class AuthenticationConfig implements WebMvcConfigurer {
 
     private final JwtInterceptor jwtInterceptor;
+    private final ManagerInterceptor managerInterceptor;
 
     /**
      * 인터셉터를 등록하는 메서드
@@ -24,8 +24,13 @@ public class AuthenticationConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/manager/**")
                 .excludePathPatterns("/api/signup")
                 .excludePathPatterns("/api/login")
+                .excludePathPatterns("/api/manager/login");
+
+        registry.addInterceptor(managerInterceptor)
+                .addPathPatterns("/api/manager/**")
                 .excludePathPatterns("/api/manager/login");
     }
 }

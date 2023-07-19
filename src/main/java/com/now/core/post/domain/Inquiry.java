@@ -102,7 +102,7 @@ public class Inquiry {
     @Nullable
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 4, max = 15)
-    private final String password;
+    private String password;
     /**
      * 답변 내용
      */
@@ -199,5 +199,10 @@ public class Inquiry {
             throw new CannotViewInquiryException(ErrorType.CAN_NOT_VIEW_OTHER_MEMBER_INQUIRIES);
         }
         return true;
+    }
+
+    public Inquiry updatePassword(String newPassword) {
+        this.password = newPassword;
+        return this;
     }
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -37,10 +38,10 @@ public class CommunityController {
      * @return 모든 커뮤니티 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/communities")
-    public ResponseEntity<List<Community>> retrieveCommunities(@Valid @ModelAttribute Condition condition) {
-        log.debug("retrieveCommunities 호출, condition : {}", condition);
+    public ResponseEntity<List<Community>> getAllCommunities(@Valid @ModelAttribute Condition condition) {
+        log.debug("getAllCommunities 호출, condition : {}", condition);
 
-        return new ResponseEntity<>(communityService.retrieveAllCommunities(condition), HttpStatus.OK);
+        return new ResponseEntity<>(communityService.getAllCommunities(condition), HttpStatus.OK);
     }
 
     /**
@@ -50,9 +51,9 @@ public class CommunityController {
      * @return 공지 게시글 정보
      */
     @GetMapping("/api/community/{postIdx}")
-    public ResponseEntity<Community> findCommunityByPostIdx(@PathVariable("postIdx") Long postIdx) {
-        log.debug("findCommunityByPostIdx 호출, postIdx : {}", postIdx);
-        return ResponseEntity.ok(communityService.findByPostIdx(postIdx));
+    public ResponseEntity<Community> getCommunity(@PathVariable("postIdx") Long postIdx) {
+        log.debug("getCommunity 호출, postIdx : {}", postIdx);
+        return ResponseEntity.ok(communityService.getCommunity(postIdx));
     }
 
     /**
@@ -61,18 +62,19 @@ public class CommunityController {
      * @param memberId       회원 아이디
      * @param community      등록할 커뮤니티 게시글 정보
      * @param multipartFiles MultipartFile[] 객체
-     * @return 생성된 게시글에 대한 CREATED 응답을 반환
+     * @return 생성된 위치 URI로 응답
      */
     @PostMapping("/api/community")
     public ResponseEntity<Void> registerCommunity(@RequestAttribute("id") String memberId,
                                                   @RequestPart(value = "community") @Validated(PostValidationGroup.saveCommunity.class) Community community,
                                                   @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles) {
-        log.debug("registerCommunity 호출, memberId : {}, Community : {}, Multipart : {}", memberId, community, (multipartFiles != null ? multipartFiles.length : "null"));
+        log.debug("registerCommunity 호출, memberId : {}, Community : {}, Multipart : {}",
+                                        memberId, community, (multipartFiles != null ? multipartFiles.length : "null"));
 
         communityService.registerCommunity(community.updateMemberId(memberId));
         attachmentService.saveAttachments(multipartFiles, community.getPostIdx(), AttachmentType.FILE);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.created(URI.create("/api/community/" + community.getPostIdx())).build();
     }
     
     /**
@@ -83,7 +85,7 @@ public class CommunityController {
      * @param updatedCommunity          수정할 커뮤니티 게시글 정보
      * @param multipartFiles            MultipartFile[] 객체
      * @param previouslyUploadedIndexes 이전에 업로드된 파일 번호 목록
-     * @return 수정된 게시글에 대한 CREATED 응답을 반환
+     * @return 생성된 위치 URI로 응답
      */
     @PutMapping("/api/community/{postIdx}")
     public ResponseEntity<Void> updateCommunity(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
@@ -98,7 +100,7 @@ public class CommunityController {
         communityService.updateCommunity(updatedCommunity.updatePostIdx(postIdx).updateMemberId(memberId));
         attachmentService.updateAttachments(multipartFiles, previouslyUploadedIndexes, postIdx, AttachmentType.FILE);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.created(URI.create("/api/community/" + updatedCommunity.getPostIdx())).build();
     }
     
     /**
@@ -106,10 +108,11 @@ public class CommunityController {
      *
      * @param postIdx 게시글 번호
      * @param memberId 회원 아이디
-     * @return No Content 응답
+     * @return 응답 본문이 없는 상태 코드 204 반환
      */
     @DeleteMapping("/api/community/{postIdx}")
-    public ResponseEntity<Void> deleteCommunity(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId) {
+    public ResponseEntity<Void> deleteCommunity(@PathVariable("postIdx") Long postIdx,
+                                                @RequestAttribute("id") String memberId) {
         log.debug("deleteCommunity 호출");
 
         communityService.hasDeleteAccess(postIdx, memberId);
@@ -117,6 +120,7 @@ public class CommunityController {
         commentService.deleteAllByPostIdx(postIdx);
         attachmentService.deleteAllByPostIdx(postIdx);
         communityService.deleteCommunity(postIdx);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+
+        return ResponseEntity.noContent().build();
     }
 }

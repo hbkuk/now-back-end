@@ -35,7 +35,7 @@ public class NoticeController {
     public ResponseEntity<List<Notice>> retrieveAllNotices(@Valid @ModelAttribute Condition condition) {
         log.debug("retrieveAllNotices 호출, condition : {}", condition);
 
-        return new ResponseEntity<>(noticeService.retrieveAllNotices(condition), HttpStatus.OK);
+        return new ResponseEntity<>(noticeService.getAllNotices(condition), HttpStatus.OK);
     }
 
     /**
@@ -45,9 +45,9 @@ public class NoticeController {
      * @return 공지 게시글 정보
      */
     @GetMapping("/api/notice/{postIdx}")
-    public ResponseEntity<Notice> findNoticeByPostIdx(@PathVariable("postIdx") Long postIdx) {
-        log.debug("findNoticeByPostIdx 호출, postIdx : {}", postIdx);
+    public ResponseEntity<Notice> getNotice(@PathVariable("postIdx") Long postIdx) {
+        log.debug("getNotice 호출, postIdx : {}", postIdx);
 
-        return ResponseEntity.ok(noticeService.findByPostIdx(postIdx));
+        return ResponseEntity.ok(noticeService.getNotice(postIdx));
     }
 }

@@ -1,12 +1,12 @@
 package com.now.core.post.application;
 
 import com.now.common.exception.ErrorType;
-import com.now.common.exception.ForbiddenException;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.common.security.PasswordSecurityManager;
 import com.now.core.category.domain.constants.PostGroup;
-import com.now.core.comment.application.CommentService;
-import com.now.core.member.application.MemberService;
+import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
+import com.now.core.member.domain.MemberRepository;
+import com.now.core.member.exception.InvalidMemberException;
 import com.now.core.post.domain.Inquiry;
 import com.now.core.post.domain.PostRepository;
 import com.now.core.post.exception.CannotCreatePostException;
@@ -27,16 +27,16 @@ import java.util.List;
 public class InquiryService {
 
     private final PostRepository postRepository;
-    private final CommentService commentService;
-    private final MemberService memberService;
-    private final JwtTokenService jwtTokenService;
+    private final CommentRepository commentRepository;
+    private final MemberRepository memberRepository;
+    private final PasswordSecurityManager passwordSecurityManager;
 
     /**
      * 모든 문의 게시글 정보를 조회 후 반환
      *
      * @return 문의 게시글 정보 리스트
      */
-    public List<Inquiry> retrieveAllInquiries(Condition condition) {
+    public List<Inquiry> getAllInquiries(Condition condition) {
         return postRepository.findAllInquiries(condition);
     }
 
@@ -44,16 +44,17 @@ public class InquiryService {
      * 문의 게시글 응답
      *
      * @param postIdx 게시글 번호
+     * @param memberId 회원 아이디
      * @return 문의 게시글 정보
      */
-    public Inquiry findInquiry(Long postIdx, String token) {
-        Inquiry inquiry = postRepository.findInquiry(postIdx);
-        if (inquiry == null) {
-            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
-        }
+    public Inquiry getInquiryWithSecretCheck(Long postIdx, String memberId, String password) {
+        Inquiry inquiry = getInquiry(postIdx);
 
         if (inquiry.getSecret()) {
-            inquiry.canView(memberService.findMemberById((String) jwtTokenService.getClaim(token, "id")));
+            if (isPasswordMatching(inquiry.getPassword(), password)) {
+                return inquiry;
+            }
+            inquiry.canView(getMember(memberId));
         }
         return inquiry;
     }
@@ -64,13 +65,14 @@ public class InquiryService {
      * @param inquiry 등록할 문의 게시글 정보
      */
     public void registerInquiry(Inquiry inquiry) {
-        Member member = memberService.findMemberById(inquiry.getMemberId());
+        Member member = getMember(inquiry.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, inquiry.getCategory())) {
             throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
         }
 
-        postRepository.saveInquiry(inquiry.updateMemberIdx(member.getMemberIdx()));
+        postRepository.saveInquiry(inquiry.updateMemberIdx(member.getMemberIdx())
+                                            .updatePassword(passwordSecurityManager.encodeWithSalt(member.getPassword())));
     }
 
     /**
@@ -79,7 +81,7 @@ public class InquiryService {
      * @param updateInquiry 수정할 문의 게시글 정보
      */
     public void updateInquiry(Inquiry updateInquiry) {
-        Member member = memberService.findMemberById(updateInquiry.getMemberId());
+        Member member = getMember(updateInquiry.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, updateInquiry.getCategory())) {
             throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
@@ -94,12 +96,8 @@ public class InquiryService {
      * @param memberId 회원 아이디
      */
     public void deleteInquiry(Long postIdx, String memberId) {
-        Member member = memberService.findMemberById(memberId);
-        Inquiry inquiry = postRepository.findInquiry(postIdx);
+        Member member = getMember(memberId);
 
-        if (!inquiry.canDelete(member, commentService.findAllByPostIdx(postIdx))) {
-            throw new ForbiddenException(ErrorType.FORBIDDEN);
-        }
         postRepository.deleteInquiry(postIdx);
     }
 
@@ -110,8 +108,8 @@ public class InquiryService {
      * @param memberId 회원 아이디
      */
     public void hasUpdateAccess(Long postIdx, String memberId) {
-        Inquiry inquiry = postRepository.findInquiry(postIdx);
-        inquiry.canUpdate(memberService.findMemberById(memberId));
+        Inquiry inquiry = getInquiry(postIdx);
+        inquiry.canUpdate(getMember(memberId));
     }
 
     /**
@@ -121,8 +119,48 @@ public class InquiryService {
      * @param memberId 회원 아이디
      */
     public void hasDeleteAccess(Long postIdx, String memberId) {
+        Inquiry inquiry = getInquiry(postIdx);
+        inquiry.canDelete(getMember(memberId), commentRepository.findAllByPostIdx(postIdx));
+    }
+
+    /**
+     * 문의 게시글 조회
+     * 
+     * @param postIdx 게시글 번호
+     * @return 문의 게시글
+     */
+    public Inquiry getInquiry(Long postIdx) {
         Inquiry inquiry = postRepository.findInquiry(postIdx);
-        inquiry.canDelete(memberService.findMemberById(memberId), commentService.findAllByPostIdx(postIdx));
+        if (inquiry == null) {
+            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
+        }
+        return inquiry;
+    }
+
+
+    /**
+     * 회원 정보 응답
+     *
+     * @param memberId 회원 아이디
+     * @return 회원 도메인 객체
+     */
+    private Member getMember(String memberId) {
+        Member member = memberRepository.findById(memberId);
+        if(member == null) {
+            throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
+        }
+        return member;
+    }
+
+    /**
+     * 주어진 패스워드가 기존 패스워드와 일치하는지 확인합니다.
+     *
+     * @param existingPassword 기존 패스워드
+     * @param providedPassword 주어진 패스워드
+     * @return 주어진 패스워드가 기존 패스워드와 일치하면 {@code true}를 반환하고, 그렇지 않으면 {@code false}를 반환합니다.
+     */
+    private boolean isPasswordMatching(String existingPassword, String providedPassword) {
+        return existingPassword != null && passwordSecurityManager.matchesWithSalt(existingPassword, providedPassword);
     }
 }
 

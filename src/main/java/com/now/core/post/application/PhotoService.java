@@ -2,9 +2,10 @@ package com.now.core.post.application;
 
 import com.now.common.exception.ErrorType;
 import com.now.core.category.domain.constants.PostGroup;
-import com.now.core.comment.application.CommentService;
-import com.now.core.member.application.MemberService;
+import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
+import com.now.core.member.domain.MemberRepository;
+import com.now.core.member.exception.InvalidMemberException;
 import com.now.core.post.domain.Photo;
 import com.now.core.post.domain.PostRepository;
 import com.now.core.post.exception.CannotCreatePostException;
@@ -26,31 +27,16 @@ import java.util.List;
 public class PhotoService {
 
     private final PostRepository postRepository;
-    private final MemberService memberService;
-    private final CommentService commentService;
+    private final MemberRepository memberRepository;
+    private final CommentRepository commentRepository;
 
     /**
      * 모든 사진 게시글 정보를 조회 후 반환
      *
      * @return 사진 게시글 정보 리스트
      */
-    public List<Photo> retrieveAllPhotos(Condition condition) {
+    public List<Photo> getAllPhotos(Condition condition) {
         return postRepository.findAllPhotos(condition);
-    }
-
-    /**
-     * 사진 게시글 응답
-     *
-     * @param postIdx 게시글 번호
-     * @return 사진 게시글 정보
-     */
-    public Photo findByPostIdx(Long postIdx) {
-        Photo photo = postRepository.findPhoto(postIdx);
-        if (photo == null) {
-            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
-        }
-
-        return photo;
     }
 
     /**
@@ -59,7 +45,7 @@ public class PhotoService {
      * @param photo 등록할 사진 게시글 정보
      */
     public void registerPhoto(Photo photo) {
-        Member member = memberService.findMemberById(photo.getMemberId());
+        Member member = getMember(photo.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.PHOTO, photo.getCategory())) {
             throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
@@ -74,7 +60,7 @@ public class PhotoService {
      * @param photo 수정할 사진 게시글 정보
      */
     public void updatePhoto(Photo photo) {
-        Member member = memberService.findMemberById(photo.getMemberId());
+        Member member = getMember(photo.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.PHOTO, photo.getCategory())) {
             throw new CannotUpdatePostException(ErrorType.CAN_NOT_UPDATE_POST);
@@ -82,7 +68,6 @@ public class PhotoService {
 
         postRepository.updatePhoto(photo.updateMemberIdx(member.getMemberIdx()));
     }
-
     /**
      * 사진 게시글 삭제
      *
@@ -100,7 +85,7 @@ public class PhotoService {
      */
     public void hasUpdateAccess(Long postIdx, String memberId) {
         Photo photo = postRepository.findPhoto(postIdx);
-        photo.canUpdate(memberService.findMemberById(memberId));
+        photo.canUpdate(getMember(memberId));
     }
 
     /**
@@ -111,7 +96,36 @@ public class PhotoService {
      */
     public void hasDeleteAccess(Long postIdx, String memberId) {
         Photo photo = postRepository.findPhoto(postIdx);
-        photo.canDelete(memberService.findMemberById(memberId), commentService.findAllByPostIdx(postIdx));
+        photo.canDelete(getMember(memberId), commentRepository.findAllByPostIdx(postIdx));
+    }
+
+    /**
+     * 회원 정보 응답
+     *
+     * @param memberId 회원 아이디
+     * @return 회원 도메인 객체
+     */
+    private Member getMember(String memberId) {
+        Member member = memberRepository.findById(memberId);
+        if(member == null) {
+            throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
+        }
+        return member;
+    }
+
+    /**
+     * 사진 게시글 응답
+     *
+     * @param postIdx 게시글 번호
+     * @return 사진 게시글 정보
+     */
+    public Photo getPhoto(Long postIdx) {
+        Photo photo = postRepository.findPhoto(postIdx);
+        if (photo == null) {
+            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
+        }
+
+        return photo;
     }
 }
 

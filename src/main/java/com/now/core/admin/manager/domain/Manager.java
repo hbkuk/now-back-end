@@ -19,7 +19,7 @@ public class Manager {
     /**
      * 매니저의 고유 식별자
      */
-    private final Long managerIdx;
+    private final Integer managerIdx;
 
     /**
      * 매니저의 아이디

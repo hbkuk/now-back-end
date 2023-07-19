@@ -21,7 +21,7 @@ public class Answer {
     private String answerManagerId;
 
     @JsonIgnore
-    private Long answerManagerIdx;
+    private Integer answerManagerIdx;
 
 
     public Answer updateAnswerManagerId(String answerManagerId) {
@@ -29,8 +29,13 @@ public class Answer {
         return this;
     }
 
-    public Answer updateAnswerManaegrIdx(Long answerManagerIdx) {
+    public Answer updateAnswerManaegrIdx(Integer answerManagerIdx) {
         this.answerManagerIdx = answerManagerIdx;
+        return this;
+    }
+
+    public Answer updatePostIdx(Long postIdx) {
+        this.postIdx = postIdx;
         return this;
     }
 }

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.common.exception.ErrorType;
 import com.now.core.attachment.domain.Attachment;
 import com.now.core.category.domain.constants.Category;
-import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.comment.domain.Comment;
 import com.now.core.member.domain.Member;
 import com.now.core.post.exception.CannotDeletePostException;
@@ -26,8 +25,6 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Community {
-
-    private final PostGroup postGroup = PostGroup.COMMUNITY;
 
     private Long postIdx; // 게시글의 고유 식별자
 

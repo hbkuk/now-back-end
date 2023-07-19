@@ -1,15 +1,15 @@
 package com.now.core.admin.post.notice.presentation;
 
 import com.now.core.admin.post.notice.application.ManagerNoticeService;
-import com.now.core.authentication.constants.Authority;
 import com.now.core.post.domain.Notice;
 import com.now.core.post.domain.PostValidationGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 /**
  * 공지 게시글 관련 작업을 위한 컨트롤러
@@ -24,51 +24,50 @@ public class ManagerNoticeController {
 
     /**
      * 공지 게시글 등록
-     * @param managerId 작성자의 매니저 ID
-     * @param authority 권한
+     * @param managerId 매니저 ID
      * @param notice 등록할 공지 게시글 정보
-     * @return 생성된 게시글에 대한 CREATED 응답을 반환
+     * @return 생성된 위치 URI로 응답
      */
     @PostMapping("/api/manager/notice")
-    public ResponseEntity<Void> registerNotice(@RequestAttribute("id") String managerId, @RequestAttribute("role") String authority,
+    public ResponseEntity<Void> registerNotice(@RequestAttribute("id") String managerId,
                                                @RequestBody @Validated(PostValidationGroup.saveNotice.class) Notice notice) {
-        log.debug("registerNotice 호출, managerId : {}, authority : {}, notice : {}", managerId, authority, notice);
+        log.debug("registerNotice 호출, managerId : {}, notice : {}", managerId, notice);
 
-        managerNoticeService.registerNotice(notice.updateManagerId(managerId), Authority.valueOf(authority));
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        managerNoticeService.registerNotice(notice.updateManagerId(managerId));
+        return ResponseEntity.created(URI.create("/api/notice/" + notice.getPostIdx())).build();
     }
-
 
     /**
      * 공지 게시글 수정
      *
      * @param postIdx       게시글 번호
-     * @param authority     권한
+     * @param managerId 매니저 ID
      * @param updatedNotice 수정된 공지 게시글 정보
      * @return 수정된 게시글에 대한 CREATED 응답을 반환
      */
     @PutMapping("/api/manager/notice/{postIdx}")
-    public ResponseEntity<Void> updateNotice(@PathVariable("postIdx") Long postIdx, @RequestAttribute("role") String authority,
+    public ResponseEntity<Void> updateNotice(@PathVariable("postIdx") Long postIdx,
+                                             @RequestAttribute("id") String managerId,
                                              @RequestBody @Validated(PostValidationGroup.saveNotice.class) Notice updatedNotice) {
         log.debug("updateNotice 호출,  Updated Notice : {}", updatedNotice);
 
-        managerNoticeService.updateNotice(updatedNotice.updatePostIdx(postIdx), Authority.valueOf(authority));
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        managerNoticeService.updateNotice(updatedNotice.updatePostIdx(postIdx).updateManagerId(managerId));
+        return ResponseEntity.created(URI.create("/api/notice/" + updatedNotice.getPostIdx())).build();
     }
 
     /**
      * 공지 게시글 삭제
      *
      * @param postIdx   게시글 번호
-     * @param authority 권한
-     * @return 응답 결과
+     * @param managerId 매니저 ID
+     * @return 응답 본문이 없는 상태 코드 204 반환
      */
     @DeleteMapping("/api/manager/notice/{postIdx}")
     public ResponseEntity<Void> deleteNotice(@PathVariable("postIdx") Long postIdx,
-                                             @RequestAttribute("role") String authority) {
+                                             @RequestAttribute("id") String managerId) {
         log.debug("deleteNotice 호출");
 
-        managerNoticeService.deleteNotice(postIdx, Authority.valueOf(authority));
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        managerNoticeService.deleteNotice(postIdx, managerId);
+        return ResponseEntity.noContent().build();
     }
 }

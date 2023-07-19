@@ -3,64 +3,31 @@
 
 <mapper namespace="com.now.core.post.domain.PostMapper">
 
-    <!-- Photo 삭제 쿼리 -->
-    <delete id="deleteInquiry" parameterType="Long">
-        DELETE
-        FROM tb_member_post
-        WHERE post_idx = #{postIdx}
-    </delete>
-
-    <!-- Inquiry 수정 쿼리-->
-    <insert id="updateInquiry" parameterType="Inquiry">
-        UPDATE tb_member_post
-        SET category = #{category.name},
-            title   = #{title},
-            mod_date = NOW(),
-            content = #{content}
-        WHERE post_idx = #{postIdx}
-    </insert>
-
-    <!-- Photo 삭제 쿼리 -->
-    <delete id="deletePhoto" parameterType="Long">
-        DELETE
-        FROM tb_member_post
-        WHERE post_idx = #{postIdx}
-    </delete>
-
-    <insert id="updatePhoto" parameterType="Photo">
-        UPDATE tb_member_post
-        SET category = #{category.name},
-            title   = #{title},
-            mod_date = NOW(),
-            content = #{content}
-        WHERE post_idx = #{postIdx}
-    </insert>
-
-    <!-- Community 삭제 쿼리 -->
-    <delete id="deleteCommunity" parameterType="Long">
-        DELETE
-        FROM tb_member_post
-        WHERE post_idx = #{postIdx}
-    </delete>
-
-    <insert id="updateCommunity" parameterType="Community">
-        UPDATE tb_member_post
-        SET category = #{category.name},
-            title   = #{title},
-            mod_date = NOW(),
-            content = #{content}
-        WHERE post_idx = #{postIdx}
-    </insert>
-
-    <!-- Notice 삭제 쿼리 -->
-    <delete id="deleteNotice" parameterType="Long">
+    <!-- ManagerPost 삭제 삭제 쿼리 -->
+    <delete id="deleteManagerPost" parameterType="Long">
         DELETE
         FROM tb_manager_post
         WHERE post_idx = #{postIdx}
     </delete>
 
-    <!-- Notice 수정 쿼리-->
-    <insert id="updateNotice" parameterType="Notice">
+    <!-- MemberPost 삭제 삭제 쿼리 -->
+    <delete id="deleteMemberPost" parameterType="Long">
+        DELETE
+        FROM tb_member_post
+        WHERE post_idx = #{postIdx}
+    </delete>
+
+    <!-- Inquiry 테이블 삭제 쿼리 -->
+    <delete id="deleteInquiry" parameterType="Long">
+        DELETE
+        FROM tb_inquiry
+        WHERE member_post_idx = #{postIdx}
+    </delete>
+
+
+
+    <!-- tb_manager_post Notice 수정 쿼리-->
+    <update id="updateManageNoticePost" parameterType="Notice">
         UPDATE tb_manager_post
         SET category = #{category.name},
             title   = #{title},
@@ -68,7 +35,57 @@
             content = #{content},
             pinned = #{pinned}
         WHERE post_idx = #{postIdx}
-    </insert>
+    </update>
+
+    <!-- tb_member_post Community 수정 쿼리-->
+    <update id="updateMemberCommunityPost" parameterType="Community">
+        UPDATE tb_member_post
+        SET category = #{category.name},
+            title   = #{title},
+            mod_date = NOW(),
+            content = #{content}
+        WHERE post_idx = #{postIdx}
+    </update>
+
+    <!-- tb_member_post Photo 수정 쿼리-->
+    <update id="updateMemberPhotoPost" parameterType="Photo">
+        UPDATE tb_member_post
+        SET category = #{category.name},
+            title   = #{title},
+            mod_date = NOW(),
+            content = #{content}
+        WHERE post_idx = #{postIdx}
+    </update>
+
+    <!-- tb_member_post Inquiry 수정 쿼리-->
+    <update id="updateMemberInquiryPost" parameterType="Inquiry">
+        UPDATE tb_member_post
+        SET category = #{category.name},
+        title   = #{title},
+        mod_date = NOW(),
+        content = #{content}
+        WHERE post_idx = #{postIdx}
+    </update>
+
+    <!-- tb_inquiry Inquiry 수정 쿼리-->
+    <update id="updateInquiry" parameterType="Inquiry">
+        UPDATE tb_inquiry
+        SET secret   = #{secret},
+            password = #{password}
+        WHERE member_post_idx = #{postIdx}
+    </update>
+
+    <!-- tb_inquiry Answer 수정 쿼리-->
+    <update id="updateAnswer" parameterType="Answer">
+        UPDATE tb_inquiry
+        SET answer_content     = #{answerContent},
+            answer_reg_date    = NOW()
+        WHERE member_post_idx = #{postIdx}
+    </update>
+
+
+
+
 
     <!-- Notice 저장 쿼리 -->
     <insert id="saveNotice" parameterType="Notice" useGeneratedKeys="true" keyProperty="postIdx">

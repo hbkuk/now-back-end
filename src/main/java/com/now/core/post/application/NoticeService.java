@@ -27,7 +27,7 @@ public class NoticeService {
      * @param condition 게시물 제한 정보를 담은 객체
      * @return 공지사항 게시글 정보 리스트
      */
-    public List<Notice> retrieveAllNotices(Condition condition) {
+    public List<Notice> getAllNotices(Condition condition) {
         return postRepository.findAllNotices(condition);
     }
 
@@ -37,7 +37,7 @@ public class NoticeService {
      * @param postIdx 게시글 번호
      * @return 공지 게시글 정보
      */
-    public Notice findByPostIdx(Long postIdx) {
+    public Notice getNotice(Long postIdx) {
         Notice notice = postRepository.findNotice(postIdx);
         if (notice == null) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);

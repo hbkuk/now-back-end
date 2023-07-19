@@ -119,47 +119,36 @@ public interface PostMapper {
      */
     void saveAnswer(Answer answer);
 
+
+
+
     /**
      * 공지 게시글 수정
      *
      * @param notice 수정할 공지 게시글 정보
      */
-    void updateNotice(Notice notice);
-
-    /**
-     * 공지 게시글 삭제
-     *
-     * @param postIdx 삭제할 공지 게시글 번호
-     */
-    void deleteNotice(Long postIdx);
+    void updateManageNoticePost(Notice notice);
 
     /**
      * 커뮤니티 게시글 수정
      *
      * @param community 수정할 커뮤니티 게시글 정보
      */
-    void updateCommunity(Community community);
-
-    /**
-     * 게시글 번호에 해당하는 게시글 삭제
-     *
-     * @param postIdx 게시글 번호
-     */
-    void deleteCommunity(Long postIdx);
+    void updateMemberCommunityPost(Community community);
 
     /**
      * 사진 게시글 수정
      *
      * @param photo 수정할 사진 게시물 정보
      */
-    void updatePhoto(Photo photo);
+    void updateMemberPhotoPost(Photo photo);
 
     /**
-     * 사진 게시글 삭제
+     * 문의 게시글 수정
      *
-     * @param postIdx 삭제할 게시글 번호
+     * @param inquiry 수정할 문의 게시글 정보
      */
-    void deletePhoto(Long postIdx);
+    void updateMemberInquiryPost(Inquiry inquiry);
 
     /**
      * 문의 게시글 수정
@@ -169,7 +158,33 @@ public interface PostMapper {
     void updateInquiry(Inquiry inquiry);
 
     /**
-     * 문의 게시글 삭제
+     * 문의 게시글의 답변 수정
+     *
+     * @param answer 수정할 문의 게시글의 답변 정보
+     */
+    void updateAnswer(Answer answer);
+
+
+
+
+
+
+    /**
+     * 매니저 작성 게시글 삭제
+     *
+     * @param postIdx 게시글 번호
+     */
+    void deleteManagerPost(Long postIdx);
+
+    /**
+     * 회원 작성 게시글 삭제
+     *
+     * @param postIdx 게시글 번호
+     */
+    void deleteMemberPost(Long postIdx);
+
+    /**
+     * 문의 테이블 삭제
      *
      * @param postIdx 게시글 번호
      */

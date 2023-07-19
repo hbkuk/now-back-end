@@ -24,7 +24,7 @@ public class CommentService {
      * @param postIdx 게시글 번호
      * @return 댓글 정보 리스트
      */
-    public List<Comment> findAllByPostIdx(Long postIdx) {
+    public List<Comment> getAllByPostIdx(Long postIdx) {
         return commentRepository.findAllByPostIdx(postIdx);
     }
 

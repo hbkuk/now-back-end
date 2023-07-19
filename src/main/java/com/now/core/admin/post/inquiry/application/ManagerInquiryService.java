@@ -1,10 +1,9 @@
 package com.now.core.admin.post.inquiry.application;
 
 import com.now.common.exception.ErrorType;
-import com.now.common.exception.ForbiddenException;
-import com.now.core.admin.manager.application.ManagerService;
 import com.now.core.admin.manager.domain.Manager;
-import com.now.core.authentication.constants.Authority;
+import com.now.core.admin.manager.domain.ManagerRepository;
+import com.now.core.admin.manager.exception.InvalidManagerException;
 import com.now.core.post.domain.Inquiry;
 import com.now.core.post.domain.PostRepository;
 import com.now.core.post.exception.InvalidPostException;
@@ -22,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class ManagerInquiryService {
 
     private final PostRepository postRepository;
-    private final ManagerService managerService;
+    private final ManagerRepository managerRepository;
 
     /**
      * 문의 게시글 응답
@@ -30,15 +29,12 @@ public class ManagerInquiryService {
      * @param postIdx 게시글 번호
      * @return 문의 게시글 정보
      */
-    public Inquiry findInquiry(Long postIdx, Authority authority) {
-        if (authority != Authority.MANAGER) {
-            throw new ForbiddenException(ErrorType.FORBIDDEN);
-        }
-
+    public Inquiry getInquiry(Long postIdx) {
         Inquiry inquiry = postRepository.findInquiry(postIdx);
         if (inquiry == null) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }
+
         return inquiry;
     }
 
@@ -46,14 +42,12 @@ public class ManagerInquiryService {
      * 문의 게시글의 답변 등록
      *
      * @param answer    등록할 답변 정보
-     * @param authority 권한
      */
-    public void registerAnswer(Answer answer, Authority authority) {
-        if (authority != Authority.MANAGER) {
-            throw new ForbiddenException(ErrorType.FORBIDDEN);
+    public void registerAnswer(Answer answer) {
+        Manager manager = managerRepository.findById(answer.getAnswerManagerId());
+        if(manager == null) {
+            throw new InvalidManagerException(ErrorType.NOT_FOUND_MANAGER);
         }
-
-        Manager manager = managerService.findManagerById(answer.getAnswerManagerId());
 
         postRepository.saveAnswer(answer.updateAnswerManaegrIdx(manager.getManagerIdx()));
     }

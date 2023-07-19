@@ -2,7 +2,7 @@ package com.now.core.post.domain;
 
 import com.now.core.post.presentation.dto.Answer;
 import com.now.core.post.presentation.dto.Condition;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,14 +11,10 @@ import java.util.List;
  * 게시글 관련 정보를 관리하는 레포지토리
  */
 @Repository
+@RequiredArgsConstructor
 public class PostRepository {
 
-    public PostMapper postMapper;
-
-    @Autowired
-    public PostRepository(PostMapper postMapper) {
-        this.postMapper = postMapper;
-    }
+    public final PostMapper postMapper;
 
     /**
      * 모든 공지사항 게시글 정보를 조회 후 반환
@@ -100,6 +96,11 @@ public class PostRepository {
     public Inquiry findInquiry(Long postIdx) {
         return postMapper.findInquiry(postIdx);
     }
+
+
+
+
+
     
     /**
      * 공지 게시글 등록
@@ -147,22 +148,18 @@ public class PostRepository {
         postMapper.saveAnswer(answer);
     }
 
+
+
+
+
+
     /**
      * 공지 게시글 수정
      *
      * @param notice 수정할 공지 게시글 정보
      */
     public void updateNotice(Notice notice) {
-        postMapper.updateNotice(notice);
-    }
-
-    /**
-     * 공지 게시글 삭제
-     * 
-     * @param postIdx 삭제할 공지 게시글 번호
-     */
-    public void deleteNotice(Long postIdx) {
-        postMapper.deleteNotice(postIdx);
+        postMapper.updateManageNoticePost(notice);
     }
 
     /**
@@ -171,7 +168,49 @@ public class PostRepository {
      * @param community 수정할 커뮤니티 게시글 정보
      */
     public void updateCommunity(Community community) {
-        postMapper.updateCommunity(community);
+        postMapper.updateMemberCommunityPost(community);
+    }
+
+    /**
+     * 사진 게시글 수정
+     *
+     * @param photo 수정할 사진 게시물 정보
+     */
+    public void updatePhoto(Photo photo) {
+        postMapper.updateMemberPhotoPost(photo);
+    }
+
+    /**
+     * 문의 게시글 수정
+     *
+     * @param inquiry 수정할 문의 게시글 정보
+     */
+    public void updateInquiry(Inquiry inquiry) {
+        postMapper.updateMemberInquiryPost(inquiry);
+        postMapper.updateInquiry(inquiry);
+    }
+
+    /**
+     * 문의 게시글의 답변 수정
+     *
+     * @param answer  등록할 문의 게시글의 답변 정보
+     */
+    public void updateAnswer(Answer answer) {
+        postMapper.updateAnswer(answer);
+    }
+
+
+
+
+
+
+    /**
+     * 공지 게시글 삭제
+     *
+     * @param postIdx 삭제할 공지 게시글 번호
+     */
+    public void deleteNotice(Long postIdx) {
+        postMapper.deleteManagerPost(postIdx);
     }
 
     /**
@@ -180,42 +219,25 @@ public class PostRepository {
      * @param postIdx 게시글 번호
      */
     public void deleteCommunity(Long postIdx) {
-        postMapper.deleteCommunity(postIdx);
-    }
-
-    /**
-     * 사진 게시글 수정
-     * 
-     * @param photo 수정할 사진 게시물 정보
-     */
-    public void updatePhoto(Photo photo) {
-        postMapper.updatePhoto(photo);
+        postMapper.deleteMemberPost(postIdx);
     }
 
     /**
      * 사진 게시글 삭제
-     * 
+     *
      * @param postIdx 삭제할 게시글 번호
      */
     public void deletePhoto(Long postIdx) {
-        postMapper.deletePhoto(postIdx);
-    }
-
-    /**
-     * 문의 게시글 수정
-     * 
-     * @param inquiry 수정할 문의 게시글 정보
-     */
-    public void updateInquiry(Inquiry inquiry) {
-        postMapper.updateInquiry(inquiry);
+        postMapper.deleteMemberPost(postIdx);
     }
 
     /**
      * 문의 게시글 삭제
-     * 
+     *
      * @param postIdx 게시글 번호
      */
     public void deleteInquiry(Long postIdx) {
+        postMapper.deleteMemberPost(postIdx);
         postMapper.deleteInquiry(postIdx);
     }
 }
