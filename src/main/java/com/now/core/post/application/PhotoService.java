@@ -48,7 +48,7 @@ public class PhotoService {
         Member member = getMember(photo.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.PHOTO, photo.getCategory())) {
-            throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
+            throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
 
         postRepository.savePhoto(photo.updateMemberIdx(member.getMemberIdx()));

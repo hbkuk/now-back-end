@@ -2,14 +2,13 @@ package com.now.core.post.application;
 
 import com.now.common.exception.ErrorType;
 import com.now.core.category.domain.constants.PostGroup;
+import com.now.core.category.exception.InvalidCategoryException;
 import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
 import com.now.core.post.domain.Community;
 import com.now.core.post.domain.PostRepository;
-import com.now.core.post.exception.CannotCreatePostException;
-import com.now.core.post.exception.CannotUpdatePostException;
 import com.now.core.post.exception.InvalidPostException;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +47,7 @@ public class CommunityService {
         Member member = getMember(community.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.COMMUNITY, community.getCategory())) {
-            throw new CannotCreatePostException(ErrorType.CAN_NOT_CREATE_POST);
+            throw new InvalidCategoryException(ErrorType.INVALID_CATEGORY);
         }
 
         postRepository.saveCommunity(community.updateMemberIdx(member.getMemberIdx()));
@@ -63,7 +62,7 @@ public class CommunityService {
         Member member = getMember(community.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.COMMUNITY, community.getCategory())) {
-            throw new CannotUpdatePostException(ErrorType.CAN_NOT_UPDATE_POST);
+            throw new InvalidCategoryException(ErrorType.INVALID_CATEGORY);
         }
 
         postRepository.updateCommunity(community.updateMemberIdx(member.getMemberIdx()));

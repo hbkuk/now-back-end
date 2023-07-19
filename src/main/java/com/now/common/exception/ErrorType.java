@@ -20,7 +20,8 @@ public enum ErrorType {
 
     NOT_FOUND_MANAGER(3001, "존재하지 않는 매니저입니다."),
 
-    INVALID_CATEGORY(4001, "존재하지 않는 카테고리입니다."),
+    NOT_FOUND_CATEGORY(4001, "존재하지 않는 카테고리입니다."),
+    INVALID_CATEGORY(4002, "허용되지 않는 카테고리입니다."),
 
     NOT_FOUND_POST(6001, "게시글을 찾을 수 없습니다."),
     CAN_NOT_CREATE_POST(6002, "게시글을 생성할 수 없습니다."),
@@ -30,6 +31,8 @@ public enum ErrorType {
     CAN_NOT_DELETE_POST_WITH_OTHER_MEMBER_COMMENTS(6006, "다른 회원이 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다."),
     CAN_NOT_VIEW_OTHER_MEMBER_INQUIRIES(6007, "다른 사용자가 작성한 문의글을 볼 수 없습니다."),
     CAN_NOT_DELETE_POST_WITH_MANAGER_ANSWER(6008, "매니저가 작성한 답변이 있으므로 해당 게시글을 삭제할 수 없습니다."),
+
+    INVALID_SECRET(7001, "유효하지 않은 비밀글 설정입니다."),
 
     INVALID_ATTACHMENT_EXTENSION(8001, "허용하지 않은 첨부 파일의 확장자입니다."),
     INVALID_ATTACHMENT_SIZE(8002, "허용하지 않은 첨부 파일의 크기입니다."),

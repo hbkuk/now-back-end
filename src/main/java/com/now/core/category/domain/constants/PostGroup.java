@@ -34,7 +34,7 @@ public enum PostGroup implements EnumMapperType {
         return Arrays.stream(PostGroup.values())
                 .filter(postType -> postType.hasCategory(category))
                 .findAny()
-                .orElseThrow(() -> new InvalidCategoryException(ErrorType.INVALID_CATEGORY));
+                .orElseThrow(() -> new InvalidCategoryException(ErrorType.NOT_FOUND_CATEGORY));
     }
 
     /**

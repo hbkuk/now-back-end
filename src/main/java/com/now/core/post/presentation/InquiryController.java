@@ -1,9 +1,11 @@
 package com.now.core.post.presentation;
 
+import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.post.application.InquiryService;
 import com.now.core.post.domain.Inquiry;
 import com.now.core.post.domain.PostValidationGroup;
+import com.now.core.post.exception.CannotCreatePostException;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -68,6 +70,10 @@ public class InquiryController {
     public ResponseEntity<Void> registerInquiry(@RequestAttribute("id") String memberId,
                                                 @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry inquiry) {
         log.debug("registerInquiry 호출, memberId : {}, inquiry : {}", memberId, inquiry);
+
+        if (inquiry.isSecretInquiryWithoutPassword()) {
+            throw new CannotCreatePostException(ErrorType.INVALID_SECRET);
+        }
 
         inquiryService.registerInquiry(inquiry.updateMemberId(memberId));
 

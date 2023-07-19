@@ -3,19 +3,15 @@ package com.now.core.post.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.common.exception.ErrorType;
+import com.now.core.attachment.domain.Attachment;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.comment.domain.Comment;
-import com.now.core.attachment.domain.Attachment;
 import com.now.core.member.domain.Member;
 import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
 import com.now.core.post.exception.CannotViewInquiryException;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
+import lombok.*;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
@@ -26,7 +22,7 @@ import java.util.List;
 /**
  * 문의 게시글을 나타내는 도메인 객체
  */
-@SuperBuilder(toBuilder = true)
+@Builder(toBuilder = true)
 @Getter
 @ToString(callSuper = true)
 @NoArgsConstructor(force = true)
@@ -37,6 +33,7 @@ public class Inquiry {
     /**
      * 카테고리
      */
+    @NotNull(groups = {PostValidationGroup.saveInquiry.class})
     private final Category category;
     /**
      * 게시글의 제목
@@ -187,6 +184,12 @@ public class Inquiry {
         return true;
     }
 
+    /**
+     * 게시글을 열람할 수 있다면 true 반환, 그렇지 않다면 false 반환
+     *
+     * @param memeber 열람를 시도하는 회원
+     * @return 게시글을 열람할 수 있다면 true 반환, 그렇지 않다면 false 반환
+     */
     public boolean canView(Member memeber) {
         if (this.secret) {
             return isAccessSecretBy(memeber);
@@ -194,6 +197,12 @@ public class Inquiry {
         return true;
     }
 
+    /**
+     * 접근이 가능하다면 true를 반환, 그렇지 않다면 false 반환
+     *
+     * @param member 접근을 시도하는 회원
+     * @return 접근이 가능하다면 true를 반환, 그렇지 않다면 false 반환
+     */
     public boolean isAccessSecretBy(Member member) {
         if (!member.isSameMemberId(this.memberId)) {
             throw new CannotViewInquiryException(ErrorType.CAN_NOT_VIEW_OTHER_MEMBER_INQUIRIES);
@@ -201,8 +210,23 @@ public class Inquiry {
         return true;
     }
 
+    /**
+     * 비밀번호 필드를 수정 후 해당 객체 반환
+     * 
+     * @param newPassword 수정할 비밀번호
+     * @return 비밀번호 필드를 수정한 해당 객체
+     */
     public Inquiry updatePassword(String newPassword) {
         this.password = newPassword;
         return this;
+    }
+
+    /**
+     * 비밀번호가 없는 비밀 문의글이라면 true 반환, 그렇지 않다면 false 반환
+     *
+     * @return 비밀번호가 없는 비밀 문의글이라면 true 반환, 그렇지 않다면 false 반환
+     */
+    public boolean isSecretInquiryWithoutPassword() {
+        return this.getSecret() && this.getPassword() == null;
     }
 }

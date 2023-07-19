@@ -68,7 +68,7 @@ public class InquiryService {
         Member member = getMember(inquiry.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, inquiry.getCategory())) {
-            throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
+            throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
 
         postRepository.saveInquiry(inquiry.updateMemberIdx(member.getMemberIdx())
@@ -84,7 +84,7 @@ public class InquiryService {
         Member member = getMember(updateInquiry.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, updateInquiry.getCategory())) {
-            throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
+            throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
         postRepository.updateInquiry(updateInquiry.updateMemberIdx(member.getMemberIdx()));
     }

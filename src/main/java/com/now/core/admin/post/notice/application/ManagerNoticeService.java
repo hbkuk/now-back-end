@@ -34,7 +34,7 @@ public class ManagerNoticeService {
         Manager manager = getManager(notice.getManagerId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.NOTICE, notice.getCategory())) {
-            throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
+            throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
 
         postRepository.saveNotice((Notice) notice.updateManagerIdx(manager.getManagerIdx()));
@@ -57,7 +57,7 @@ public class ManagerNoticeService {
         }
 
         if (!PostGroup.isCategoryInGroup(PostGroup.NOTICE, updatedNotice.getCategory())) {
-            throw new CannotCreatePostException(ErrorType.INVALID_CATEGORY);
+            throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
 
         postRepository.updateNotice(updatedNotice);
