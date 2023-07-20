@@ -1,7 +1,6 @@
-package com.now.core.attachment;
+package com.now.core.attachment.domain.wrapped;
 
 import com.now.core.attachment.domain.constants.AttachmentType;
-import com.now.core.attachment.domain.wrapped.AttachmentExtension;
 import com.now.core.attachment.exception.InvalidAttachmentException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

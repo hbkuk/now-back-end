@@ -310,11 +310,11 @@
 
 
     <!-- Attachment 컬렉션 매핑 -->
-    <resultMap id="attachmentTableCollectionMapping" type="Attachment">
+    <resultMap id="attachmentTableCollectionMapping" type="AttachmentResponse">
         <id property="attachmentIdx" column="f_attachment_idx"/>
-        <result property="originalAttachmentName.originalAttachmentName" column="f_original_attachment_name"/>
-        <result property="attachmentExtension.attachmentExtension" column="f_attachment_extension"/>
-        <result property="attachmentSize.attachmentSize" column="f_attachment_size"/>
+        <result property="originalAttachmentName" column="f_original_attachment_name"/>
+        <result property="attachmentExtension" column="f_attachment_extension"/>
+        <result property="attachmentSize" column="f_attachment_size"/>
         <result property="memberPostIdx" column="f_member_post_idx"/>
     </resultMap>
 

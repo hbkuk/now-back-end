@@ -1,4 +1,4 @@
-package com.now.core.attachment;
+package com.now.core.attachment.domain.wrapped;
 
 import com.now.core.attachment.domain.wrapped.OriginalAttachmentName;
 import com.now.core.attachment.exception.InvalidAttachmentException;

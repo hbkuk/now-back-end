@@ -1,9 +1,12 @@
 package com.now.core.post.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.common.exception.ErrorType;
 import com.now.core.attachment.domain.Attachment;
+import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import com.now.core.category.domain.constants.Category;
+import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.comment.domain.Comment;
 import com.now.core.member.domain.Member;
 import com.now.core.post.exception.CannotDeletePostException;
@@ -21,12 +24,16 @@ import java.util.List;
  */
 @Builder(toBuilder = true)
 @Getter
-@ToString(callSuper = true)
+@ToString
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Community {
 
+    private static PostGroup postGroup = PostGroup.COMMUNITY;
+
     private Long postIdx; // 게시글의 고유 식별자
+
+    private String memberNickname; // 회원의 닉네임
 
     @NotNull(groups = {PostValidationGroup.saveCommunity.class})
     private final Category category; // 카테고리
@@ -35,8 +42,10 @@ public class Community {
     @NotEmpty(groups = {PostValidationGroup.saveCommunity.class})
     private final String title; // 게시글의 제목
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime regDate; // 게시글 등록일자
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime modDate; // 게시글 수정일자
 
     @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 2000)
@@ -49,7 +58,7 @@ public class Community {
 
     private final Integer dislikeCount; // 게시글의 싫어요 수
 
-    private final List<Attachment> attachments; // 파일 (attachment 테이블에서 가져옴)
+    private final List<AttachmentResponse> attachments; // 파일 (attachment 테이블에서 가져옴)
 
     private final List<Comment> comments; // 댓글 (comment 테이블에서 가져옴)
 
@@ -58,9 +67,6 @@ public class Community {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String memberId; // 회원의 아이디
-
-    private String memberNickname; // 회원의 닉네임
-
 
     /**
      * 회원의 식별자를 업데이트

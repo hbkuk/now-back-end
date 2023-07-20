@@ -1,0 +1,10 @@
+[[Community-API]]
+== Community API
+
+[[Community-전체-조회]]
+=== Community 전체 조회
+operation::community/communities-get[snippets='http-request,path-parameters,http-response,response-fields']
+
+[[Community-단건-조회]]
+=== Community 단건 조회
+operation::community/community-get[snippets='http-request,path-parameters,http-response,response-fields']

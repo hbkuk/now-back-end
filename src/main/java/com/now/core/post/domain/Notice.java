@@ -3,6 +3,7 @@ package com.now.core.post.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.admin.manager.domain.Manager;
 import com.now.core.category.domain.constants.Category;
+import com.now.core.category.domain.constants.PostGroup;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -18,6 +19,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Notice {
+
+    private static PostGroup postGroup = PostGroup.NOTICE;
 
     private Long postIdx; // 공지 게시글의 고유 식별자
 
