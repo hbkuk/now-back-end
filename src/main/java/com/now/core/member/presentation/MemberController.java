@@ -5,7 +5,6 @@ import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberValidationGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,28 +28,12 @@ public class MemberController {
      * @param member 등록할 회원 정보
      * @return ResponseEntity 객체 (HTTP 응답)
      */
-    @PostMapping("/api/signup")
-    public ResponseEntity<Void> registerMember(@RequestBody
+    @PostMapping("/api/sign-up")
+    public ResponseEntity<Void> signUp(@RequestBody
                                                @Validated(MemberValidationGroup.signup.class) Member member) {
-        log.debug("registerMember 핸들러 메서드 호출, Member : {}", member);
+        log.debug("signUp 핸들러 메서드 호출, Member : {}", member);
 
         memberService.registerMember(member);
         return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-    /**
-     * 회원 정보를 조회 후 로그인 처리하는 핸들러 메서드
-     *
-     * @param member 조회할 회원 정보
-     * @return ResponseEntity 객체 (HTTP 응답)
-     */
-    @PostMapping("/api/login")
-    public ResponseEntity<HttpHeaders> loginMember(@RequestBody Member member) {
-        log.debug("loginMember 핸들러 메서드 호출, Member : {}", member);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add("Authorization", memberService.generateAuthToken(member));
-
-        return ResponseEntity.ok().headers(httpHeaders).build();
     }
 }

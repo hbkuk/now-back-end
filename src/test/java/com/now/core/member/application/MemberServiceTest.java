@@ -111,7 +111,7 @@ public class MemberServiceTest {
             InOrder inOrder = inOrder(memberRepository, passwordSecurityManager, jwtTokenService);
             inOrder.verify(memberRepository, times(1)).findById(anyString());
             inOrder.verify(passwordSecurityManager, times(1)).matchesWithSalt(anyString(), anyString());
-            inOrder.verify(jwtTokenService, times(1)).create(any());
+            inOrder.verify(jwtTokenService, times(1)).createAccessToken(any());
         }
     }
 }

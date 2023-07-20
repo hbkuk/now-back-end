@@ -11,7 +11,8 @@ public enum ErrorType {
     NOT_AUTHENTICATED(1001, "인증되지 않았습니다."),
     ALREADY_AUTHENTICATED(1002, "이미 인증정보가 존재합니다."),
     INVALID_TOKEN(1003, "유효하지 않은 토큰입니다."),
-    FORBIDDEN(1004, "권한이 없습니다."),
+    EXPIRED_TOKEN(1004, "유효기간이 만료된 토큰입니다."),
+    FORBIDDEN(1005, "권한이 없습니다."),
 
     NOT_FOUND_MEMBER(2001, "존재하지 않는 회원입니다."),
     DUPLICATE_MEMBER_INFO_ID(2002, "중복된 회원 아이디입니다."),

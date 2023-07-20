@@ -3,6 +3,7 @@ package com.now.core.member.application;
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.dto.Token;
 import com.now.core.authentication.application.dto.TokenClaims;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.member.domain.Member;
@@ -40,18 +41,22 @@ public class MemberService {
     /**
      * 회원의 인증을 처리하고 JWT 토큰을 생성하여 반환
      *
-     * @param member 로그인할 회원 정보
-     * @return 인증된 회원에게 부여된 JWT(Json Web Token)
+     * @param member 인증할 회원 정보
+     * @return 인증된 회원에게 부여되는 JWT
      */
-    public String generateAuthToken(Member member) {
+    public Token generateAuthToken(Member member) {
         Member savedMember = getMember(member.getId());
 
         if (!passwordSecurityManager.matchesWithSalt(member.getPassword(), savedMember.getPassword())) {
             throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
         }
 
-        return jwtTokenService.create(TokenClaims.create(Map.of(
-                "id", member.getId(), "role", Authority.MEMBER.getValue())));
+        return Token.builder()
+                .accessToken(jwtTokenService.createAccessToken(TokenClaims.create(Map.of(
+                        "id", member.getId(), "role", Authority.MEMBER.getValue()))))
+                .refreshToken(jwtTokenService.createRefreshToken(TokenClaims.create(Map.of(
+                        "id", member.getId(), "role", Authority.MEMBER.getValue()))))
+                .build();
     }
 
     /**

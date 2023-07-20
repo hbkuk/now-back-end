@@ -45,7 +45,7 @@ public class ManagerService {
             throw new InvalidManagerException(ErrorType.NOT_FOUND_MANAGER);
         }
 
-        return tokenProvider.create(TokenClaims.create(Map.of(
+        return tokenProvider.createAccessToken(TokenClaims.create(Map.of(
                 "id", manager.getId(), "role", Authority.MANAGER.getValue())));
     }
 

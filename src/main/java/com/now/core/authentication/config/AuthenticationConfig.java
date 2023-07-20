@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class AuthenticationConfig implements WebMvcConfigurer {
 
-    private final JwtInterceptor jwtInterceptor;
+    private final AuthenticationInterceptor jwtInterceptor;
     private final ManagerInterceptor managerInterceptor;
 
     /**
@@ -25,9 +25,9 @@ public class AuthenticationConfig implements WebMvcConfigurer {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/manager/**")
-                .excludePathPatterns("/api/signup")
-                .excludePathPatterns("/api/login")
-                .excludePathPatterns("/api/manager/login");
+                .excludePathPatterns("/api/sign-up")
+                .excludePathPatterns("/api/sign-in")
+                .excludePathPatterns("/api/refresh");
 
         registry.addInterceptor(managerInterceptor)
                 .addPathPatterns("/api/manager/**")
