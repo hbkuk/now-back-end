@@ -24,8 +24,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
+import static com.now.config.fixtures.member.MemberFixture.createMember;
 import static com.now.config.fixtures.post.CommunityFixture.createCommunity;
-import static com.now.core.member.domain.MemberTest.createMember;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;

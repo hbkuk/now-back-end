@@ -1,70 +1,88 @@
-package com.now.core.authentication.presentation;
+package com.now.core.authentication;
 
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.config.document.utils.RestDocsTestSupport;
+import com.now.config.fixtures.member.MemberFixture;
 import com.now.core.authentication.application.dto.Token;
-import com.now.core.member.application.MemberService;
 import com.now.core.member.domain.Member;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.MediaType;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-/**
- * 회원 인증 관련 작업을 위한 컨트롤러
- */
-@Slf4j
-@RestController
-@RequiredArgsConstructor
-public class AuthenticationController {
+import static com.now.config.fixtures.member.MemberFixture.createMember;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-    private final MemberService memberService;
-    private final JwtTokenService jwtTokenService;
+class AuthenticationControllerTest extends RestDocsTestSupport {
 
-    /**
-     * 회원 정보를 조회 후 로그인 처리하는 핸들러 메서드
-     *
-     * @param member 조회할 회원 정보
-     * @return ResponseEntity 객체 (HTTP 응답)
-     */
-    @PostMapping("/api/sign-in")
-    public ResponseEntity<HttpHeaders> signIn(@RequestBody Member member) {
-        log.debug("signIn 핸들러 메서드 호출, Member : {}", member);
+    @Test
+    @DisplayName("회원 정보 조회 후 로그인 처리")
+    void signIn() throws Exception {
+        String requestBody = "{\"id\": \"honi132\", \"password\": \"testPassword1!\"}";
+        Member member = createMember(MemberFixture.SAMPLE_MEMBER_ID_1,
+                MemberFixture.SAMPLE_PASSWORD_1);
+        Token token = Token.builder()
+                .accessToken("AccessToken")
+                .refreshToken("RefreshToken")
+                .build();
 
-        Token token = memberService.generateAuthToken(member);
+        given(memberService.generateAuthToken(member)).willReturn(token);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtTokenService.ACCESS_TOKEN_HEADER_KEY, token.getAccessToken());
-        httpHeaders.add(JwtTokenService.REFRESH_TOKEN_HEADER_KEY, token.getRefreshToken());
 
-        return ResponseEntity.ok().headers(httpHeaders).build();
+        ResultActions resultActions =
+                mockMvc.perform(RestDocumentationRequestBuilders.post("/api/sign-in")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(requestBody))
+                        .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
+                        .andExpect(MockMvcResultMatchers.header().exists(jwtTokenService.REFRESH_TOKEN_HEADER_KEY))
+                        .andExpect(status().isOk());
+
+        resultActions
+                .andDo(restDocs.document(
+                        requestFields(
+                                fieldWithPath("id").description("회원 아이디"),
+                                fieldWithPath("password").description("비밀번호")
+                        )
+                ));
     }
 
-    /**
-     * 토큰을 확인 후 AccessToken을 재발급 처리하는 핸들러 메서드
-     *
-     * @param accessToken AccessToken
-     * @param refreshToken RefreshToken
-     * @return ResponseEntity 객체 (HTTP 응답)
-     */
-    @PostMapping("/api/refresh")
-    public ResponseEntity<HttpHeaders> refresh(@RequestHeader
-                                                    (name = HttpHeaders.AUTHORIZATION, required = false) String accessToken,
-                                               @RequestHeader
-                                                    (name = JwtTokenService.REFRESH_TOKEN_HEADER_KEY, required = false) String refreshToken) {
-        log.debug("refresh 핸들러 메서드 호출");
+    @Test
+    @DisplayName("토큰 확인 후 AccessToken 재발급 처리")
+    void refresh() throws Exception {
+        String accessToken = "AccessToken";
+        String refreshToken = "RefreshToken";
+        Token token = Token.builder()
+                .accessToken("AccessToken")
+                .refreshToken("RefreshToken")
+                .build();
 
-        jwtTokenService.validateTokensForRefresh(accessToken, refreshToken);
+        given(jwtTokenService.refreshTokens(refreshToken)).willReturn(token);
 
-        Token newTokens = jwtTokenService.refreshTokens(refreshToken);
+        ResultActions resultActions =
+                mockMvc.perform(RestDocumentationRequestBuilders.post("/api/refresh")
+                                .header(jwtTokenService.ACCESS_TOKEN_HEADER_KEY, accessToken)
+                                .header(jwtTokenService.REFRESH_TOKEN_HEADER_KEY, refreshToken))
+                        .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
+                        .andExpect(MockMvcResultMatchers.header().exists(jwtTokenService.REFRESH_TOKEN_HEADER_KEY))
+                        .andExpect(status().isOk());
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtTokenService.ACCESS_TOKEN_HEADER_KEY, newTokens.getAccessToken());
-        httpHeaders.add(JwtTokenService.REFRESH_TOKEN_HEADER_KEY, newTokens.getRefreshToken());
-
-        return ResponseEntity.ok().headers(httpHeaders).build();
+        resultActions
+                .andDo(restDocs.document(
+                        requestHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("유효기간이 만료된 AccessToken"),
+                                headerWithName(jwtTokenService.REFRESH_TOKEN_HEADER_KEY).description("유효기간이 만료되지 않은 RefreshToken")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.AUTHORIZATION).description("새로 발급된 AccessToken"),
+                                headerWithName(jwtTokenService.REFRESH_TOKEN_HEADER_KEY).description("RefreshToken")
+                        )
+                ));
     }
 }

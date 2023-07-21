@@ -1,0 +1,10 @@
+[[Authentication-API]]
+== Authentication API
+
+[[Authentication-Sign-In]]
+=== Authentication Sign-In
+operation::authentication-controller-test/sign-in[snippets='http-request,request-body,request-fields,http-response']
+
+[[Authentication-Refresh]]
+=== Authentication Refresh
+operation::authentication-controller-test/refresh[snippets='http-request,request-headers,http-response,response-headers']

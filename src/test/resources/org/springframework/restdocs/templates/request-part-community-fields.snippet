@@ -1,16 +1,10 @@
-|===
-|Path|Type|Description
-
-|`+title+`
-|`+String+`
-|제목
-
-|`+category+`
-|`+String+`
-|카테고리
-
-|`+content+`
-|`+String+`
-|내용
-
-|===
+    |===
+        |필드명|타입|필수여부|제약조건|설명
+    {{#fields}}
+        |`{{path}}`
+        |`{{type}}`
+        |{{#optional}}false{{/optional}}{{^optional}}true{{/optional}}
+        |{{#constraints}}{{.}}{{/constraints}}{{^constraints}}N/A{{/constraints}}
+        |{{description}}
+    {{/fields}}
+        |===

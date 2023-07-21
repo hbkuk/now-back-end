@@ -51,10 +51,8 @@ public class AuthenticationController {
      * @return ResponseEntity 객체 (HTTP 응답)
      */
     @PostMapping("/api/refresh")
-    public ResponseEntity<HttpHeaders> refresh(@RequestHeader
-                                                    (name = HttpHeaders.AUTHORIZATION, required = false) String accessToken,
-                                               @RequestHeader
-                                                    (name = JwtTokenService.REFRESH_TOKEN_HEADER_KEY, required = false) String refreshToken) {
+    public ResponseEntity<HttpHeaders> refresh(@RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String accessToken,
+                                               @RequestHeader(name = JwtTokenService.REFRESH_TOKEN_HEADER_KEY, required = false) String refreshToken) {
         log.debug("refresh 핸들러 메서드 호출");
 
         jwtTokenService.validateTokensForRefresh(accessToken, refreshToken);

@@ -1,10 +1,10 @@
 package com.now.core.post.domain;
 
 import com.now.config.fixtures.comment.CommentFixture;
+import com.now.config.fixtures.member.MemberFixture;
 import com.now.config.fixtures.post.CommunityFixture;
 import com.now.core.comment.domain.Comment;
 import com.now.core.member.domain.Member;
-import com.now.core.member.domain.MemberTest;
 import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,7 @@ public class PostTest {
         @DisplayName("Member 객체가 매개변수로 전달될 때, 동일한 회원이라면 true를 반환한다.")
         void return_true_when_same_user() {
             // given
-            Member member = MemberTest.createMember("tester1");
+            Member member = MemberFixture.createMember("tester1");
             Community community = CommunityFixture.createCommunity("tester1");
 
             // when, then
@@ -38,7 +38,7 @@ public class PostTest {
         @DisplayName("Member 객체가 매개변수로 전달될 때, 다른 회원이라면 CannotUpdatePostException을 던진다.")
         void throw_exception_when_not_same_user() {
             // given
-            Member member = MemberTest.createMember("tester1");
+            Member member = MemberFixture.createMember("tester1");
             Community community = CommunityFixture.createCommunity("tester2");
 
             // when, then
@@ -62,7 +62,7 @@ public class PostTest {
             @DisplayName("동일한 회원이면서, 댓글이 하나도 없을 경우 true를 반환한다.")
             void return_true_when_nothing_comment() {
                 // given
-                Member member = MemberTest.createMember("tester1");
+                Member member = MemberFixture.createMember("tester1");
                 Community community = CommunityFixture.createCommunity("tester1");
 
                 // when, then
@@ -74,7 +74,7 @@ public class PostTest {
             @DisplayName("동일한 회원이면서, 댓글 작성자도 같다면 true를 반환한다.")
             void return_true_when_same_comment_author() {
                 // given
-                Member member = MemberTest.createMember("tester1");
+                Member member = MemberFixture.createMember("tester1");
                 Community community = CommunityFixture.createCommunity("tester1");
                 List<Comment> comments = Arrays.asList(CommentFixture.createCommentByMemberId("tester1"));
 
@@ -86,7 +86,7 @@ public class PostTest {
             @DisplayName("댓글 작성자가 다르다면 CanDeletePostException을 던진다.")
             void throw_exception_when_not_same_comment_author() {
                 // given
-                Member member = MemberTest.createMember("tester1");
+                Member member = MemberFixture.createMember("tester1");
                 Community community = CommunityFixture.createCommunity("tester1");
                 List<Comment> comments = Arrays.asList(CommentFixture.createCommentByMemberId("tester2"));
 
@@ -107,7 +107,7 @@ public class PostTest {
             @DisplayName("댓글이 하나도 없을 경우 CanDeletePostException을 던진다.")
             void throw_exception_when_nothing_comment() {
                 // given
-                Member member = MemberTest.createMember("tester1");
+                Member member = MemberFixture.createMember("tester1");
                 Community community = CommunityFixture.createCommunity("tester2");
 
                 // when, then
@@ -122,7 +122,7 @@ public class PostTest {
             @DisplayName("댓글이 있을 경우 CanDeletePostException을 던진다.")
             void throw_exception_when_exist_comment() {
                 // given
-                Member member = MemberTest.createMember("tester1");
+                Member member = MemberFixture.createMember("tester1");
                 Community community = CommunityFixture.createCommunity("tester2");
                 List<Comment> comments = Arrays.asList(CommentFixture.createCommentByMemberId("tester2"));
 
@@ -138,7 +138,7 @@ public class PostTest {
             @DisplayName("댓글이 같은 회원일 경우 CanDeletePostException을 던진다.")
             void throw_exception_when_same_comment_author() {
                 // given
-                Member member = MemberTest.createMember("tester1");
+                Member member = MemberFixture.createMember("tester1");
                 Community community = CommunityFixture.createCommunity("tester2");
                 List<Comment> comments = Arrays.asList(CommentFixture.createCommentByMemberId("tester1"));
 

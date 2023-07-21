@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.presentation.AuthenticationController;
 import com.now.core.comment.application.CommentService;
 import com.now.core.member.application.MemberService;
 import com.now.core.member.presentation.MemberController;
@@ -27,6 +28,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 
 @WebMvcTest({
+        AuthenticationController.class,
         MemberController.class,
         NoticeController.class,
         CommunityController.class,

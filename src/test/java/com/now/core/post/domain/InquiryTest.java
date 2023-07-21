@@ -1,8 +1,8 @@
 package com.now.core.post.domain;
 
+import com.now.config.fixtures.member.MemberFixture;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.member.domain.Member;
-import com.now.core.member.domain.MemberTest;
 import com.now.core.post.exception.CannotViewInquiryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -112,7 +112,7 @@ public class InquiryTest {
             void return_true_when_same_member() {
                 // given
                 Inquiry inquiry = createSecretInquiry("tester1");
-                Member member = MemberTest.createMember("tester1");
+                Member member = MemberFixture.createMember("tester1");
 
                 // when, then
                 assertThat(inquiry.canView(member)).isTrue();
@@ -123,7 +123,7 @@ public class InquiryTest {
             void throw_exception_when_not_same_member() {
                 // given
                 Inquiry inquiry = createSecretInquiry("tester1");
-                Member member = MemberTest.createMember("tester2");
+                Member member = MemberFixture.createMember("tester2");
 
                 // when, then
                 assertThatExceptionOfType(CannotViewInquiryException.class)
@@ -143,7 +143,7 @@ public class InquiryTest {
             void return_true_when_same_member() {
                 // given
                 Inquiry inquiry = createNonSecretInquiry("tester1");
-                Member member = MemberTest.createMember("tester1");
+                Member member = MemberFixture.createMember("tester1");
 
                 // when, then
                 assertThat(inquiry.canView(member)).isTrue();
@@ -154,7 +154,7 @@ public class InquiryTest {
             void throw_exception_when_not_same_member() {
                 // given
                 Inquiry inquiry = createNonSecretInquiry("tester1");
-                Member member = MemberTest.createMember("tester2");
+                Member member = MemberFixture.createMember("tester2");
 
                 // when, then
                 assertThat(inquiry.canView(member)).isTrue();
