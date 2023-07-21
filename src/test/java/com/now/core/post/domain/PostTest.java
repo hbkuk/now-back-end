@@ -1,7 +1,8 @@
 package com.now.core.post.domain;
 
+import com.now.config.fixtures.comment.CommentFixture;
+import com.now.config.fixtures.post.CommunityFixture;
 import com.now.core.comment.domain.Comment;
-import com.now.core.comment.CommentTest;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberTest;
 import com.now.core.post.exception.CannotDeletePostException;
@@ -27,7 +28,7 @@ public class PostTest {
         void return_true_when_same_user() {
             // given
             Member member = MemberTest.createMember("tester1");
-            Community community = CommunityTest.createCommunity("tester1");
+            Community community = CommunityFixture.createCommunity("tester1");
 
             // when, then
             assertThat(community.canUpdate(member)).isTrue();
@@ -38,7 +39,7 @@ public class PostTest {
         void throw_exception_when_not_same_user() {
             // given
             Member member = MemberTest.createMember("tester1");
-            Community community = CommunityTest.createCommunity("tester2");
+            Community community = CommunityFixture.createCommunity("tester2");
 
             // when, then
             assertThatExceptionOfType(CannotUpdatePostException.class)
@@ -62,7 +63,7 @@ public class PostTest {
             void return_true_when_nothing_comment() {
                 // given
                 Member member = MemberTest.createMember("tester1");
-                Community community = CommunityTest.createCommunity("tester1");
+                Community community = CommunityFixture.createCommunity("tester1");
 
                 // when, then
                 assertThat(community.canDelete(member, new ArrayList<Comment>())).isTrue();
@@ -74,8 +75,8 @@ public class PostTest {
             void return_true_when_same_comment_author() {
                 // given
                 Member member = MemberTest.createMember("tester1");
-                Community community = CommunityTest.createCommunity("tester1");
-                List<Comment> comments = Arrays.asList(CommentTest.createComment("tester1"));
+                Community community = CommunityFixture.createCommunity("tester1");
+                List<Comment> comments = Arrays.asList(CommentFixture.createCommentByMemberId("tester1"));
 
                 // when, then
                 assertThat(community.canDelete(member, comments)).isTrue();
@@ -86,8 +87,8 @@ public class PostTest {
             void throw_exception_when_not_same_comment_author() {
                 // given
                 Member member = MemberTest.createMember("tester1");
-                Community community = CommunityTest.createCommunity("tester1");
-                List<Comment> comments = Arrays.asList(CommentTest.createComment("tester2"));
+                Community community = CommunityFixture.createCommunity("tester1");
+                List<Comment> comments = Arrays.asList(CommentFixture.createCommentByMemberId("tester2"));
 
                 // when, then
                 assertThatExceptionOfType(CannotDeletePostException.class)
@@ -107,7 +108,7 @@ public class PostTest {
             void throw_exception_when_nothing_comment() {
                 // given
                 Member member = MemberTest.createMember("tester1");
-                Community community = CommunityTest.createCommunity("tester2");
+                Community community = CommunityFixture.createCommunity("tester2");
 
                 // when, then
                 assertThatExceptionOfType(CannotDeletePostException.class)
@@ -122,8 +123,8 @@ public class PostTest {
             void throw_exception_when_exist_comment() {
                 // given
                 Member member = MemberTest.createMember("tester1");
-                Community community = CommunityTest.createCommunity("tester2");
-                List<Comment> comments = Arrays.asList(CommentTest.createComment("tester2"));
+                Community community = CommunityFixture.createCommunity("tester2");
+                List<Comment> comments = Arrays.asList(CommentFixture.createCommentByMemberId("tester2"));
 
                 // when, then
                 assertThatExceptionOfType(CannotDeletePostException.class)
@@ -138,8 +139,8 @@ public class PostTest {
             void throw_exception_when_same_comment_author() {
                 // given
                 Member member = MemberTest.createMember("tester1");
-                Community community = CommunityTest.createCommunity("tester2");
-                List<Comment> comments = Arrays.asList(CommentTest.createComment("tester1"));
+                Community community = CommunityFixture.createCommunity("tester2");
+                List<Comment> comments = Arrays.asList(CommentFixture.createCommentByMemberId("tester1"));
 
                 // when, then
                 assertThatExceptionOfType(CannotDeletePostException.class)

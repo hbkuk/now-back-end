@@ -1,9 +1,10 @@
 package com.now.core.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.common.exception.ErrorType;
-import com.now.core.attachment.domain.Attachment;
 import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
@@ -27,12 +28,14 @@ import java.util.List;
 @ToString
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Community {
 
     private static PostGroup postGroup = PostGroup.COMMUNITY;
 
     private Long postIdx; // 게시글의 고유 식별자
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String memberNickname; // 회원의 닉네임
 
     @NotNull(groups = {PostValidationGroup.saveCommunity.class})
@@ -43,29 +46,36 @@ public class Community {
     private final String title; // 게시글의 제목
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final LocalDateTime regDate; // 게시글 등록일자
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final LocalDateTime modDate; // 게시글 수정일자
 
     @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 2000)
     @NotEmpty(groups = {PostValidationGroup.saveCommunity.class})
     private final String content; // 게시글의 내용
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final Integer viewCount; // 게시글의 조회수
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final Integer likeCount; // 게시글의 좋아요 수
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final Integer dislikeCount; // 게시글의 싫어요 수
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final List<AttachmentResponse> attachments; // 파일 (attachment 테이블에서 가져옴)
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final List<Comment> comments; // 댓글 (comment 테이블에서 가져옴)
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonIgnore
     private Long memberIdx; // 회원의 고유 식별자
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonIgnore
     private String memberId; // 회원의 아이디
 
     /**

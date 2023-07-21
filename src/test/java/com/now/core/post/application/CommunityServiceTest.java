@@ -2,9 +2,9 @@ package com.now.core.post.application;
 
 import com.now.NowApplication;
 import com.now.common.exception.ErrorType;
+import com.now.config.fixtures.comment.CommentFixture;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.exception.InvalidCategoryException;
-import com.now.core.comment.CommentTest;
 import com.now.core.comment.domain.Comment;
 import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
@@ -24,8 +24,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
+import static com.now.config.fixtures.post.CommunityFixture.createCommunity;
 import static com.now.core.member.domain.MemberTest.createMember;
-import static com.now.core.post.domain.CommunityTest.createCommunity;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -128,7 +128,7 @@ public class CommunityServiceTest {
             Long postIdx = 1L;
             Member member = createMember("tester1");
             Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
-            List<Comment> comments = List.of(CommentTest.createComment("tester3"));
+            List<Comment> comments = List.of(CommentFixture.createCommentByMemberId("tester3"));
 
             when(postRepository.findCommunity(anyLong())).thenReturn(community);
             when(memberRepository.findById(anyString())).thenReturn(member);

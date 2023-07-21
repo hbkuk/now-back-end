@@ -3,8 +3,8 @@ package com.now.core.post.application;
 import com.now.NowApplication;
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
+import com.now.config.fixtures.comment.CommentFixture;
 import com.now.core.category.domain.constants.Category;
-import com.now.core.comment.CommentTest;
 import com.now.core.comment.domain.Comment;
 import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
@@ -26,7 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 
 import static com.now.core.member.domain.MemberTest.createMember;
-import static com.now.core.post.domain.InquiryTest.*;
+import static com.now.core.post.domain.InquiryTest.createSecretInquiryWithAnswer;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -193,7 +193,7 @@ class InquiryServiceTest {
             Long postIdx = 1L;
             Member member = createMember("tester1");
             Inquiry inquiry = InquiryTest.createSecretInquiry("tester1", Category.SERVICE);
-            List<Comment> comments = List.of(CommentTest.createComment("tester3"));
+            List<Comment> comments = List.of(CommentFixture.createCommentByMemberId("tester3"));
 
             when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById(anyString())).thenReturn(member);
@@ -212,7 +212,7 @@ class InquiryServiceTest {
             Long postIdx = 1L;
             Member member = createMember("tester1");
             Inquiry inquiry = createSecretInquiryWithAnswer("tester1", Category.SERVICE);
-            List<Comment> comments = List.of(CommentTest.createComment("tester1"));
+            List<Comment> comments = List.of(CommentFixture.createCommentByMemberId("tester1"));
 
             when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById(anyString())).thenReturn(member);
