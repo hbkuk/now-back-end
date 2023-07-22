@@ -1,69 +1,39 @@
-# NOW
+# NOW 프로젝트
 
-## 요구사항 정리
+![home](https://github.com/hbkuk/now-back-end/assets/109803585/5e96cfb3-70b1-4273-8443-f2fd836185a8)
 
-### 게시글
-  - Notice(공지사항)
-    - 분류
-      - (관리자 관리) 별도 코드 그룹 Table
-    - 제목
-      - (필수) 100자 이하
-    - 내용
-      - (필수) 4000자 이하
-    - 핀 설정(상단 고정 여부)
-      - 선택사항
+- **NOW**는 공지사항, 커뮤니티, 사진 및 문의 게시판을 통해 정보를 공유 및 소통하는 플랫폼
 
 <br>
 
-  - Post(공지사항을 제외한 게시글)
-    - Community(커뮤니티)
-      - 분류
-        - (관리자 관리) 별도 코드 그룹 Table
-      - 제목
-        - (필수) 100자 이하
-      - 내용
-        - (필수) 4000자 이하
-      - 파일
-        - (선택) 
-          - 확장자는 jpg, gif, png, zip만 허용
-          - 크기는 2MB 까지만 허용
-          - 개수는 최대 5개까지 허용
-      - 게시글 수정 및 삭제
-        - 수정 가능
-        - 댓글이 있는 경우 삭제 불가능
-    
-    - Photo(사진)
-        - 분류
-            - (관리자 관리) 별도 코드 그룹 Table
-        - 제목
-            - (필수) 100자 이하
-        - 내용
-            - (필수) 4000자 이하
-        - 파일
-            - (선택)
-                - 확장자는 jpg, gif, png만 허용
-                - 크기는 1MB 까지만 허용
-                - 개수는 최대 20개까지 허용
-        - 게시글 수정 및 삭제
-            - 수정 가능
-            - 댓글이 있는 경우 삭제 불가능
-    
-    - Inquiry(문의)
-        - 분류
-            - (관리자 관리) 별도 코드 그룹 Table
-        - 제목
-            - (필수) 100자 이하
-        - 내용
-            - (필수) 4000자 이하
-        - 비밀글 설정
-          - 선택사항
-            - 비밀글 설정
-              - 본인의 문의글이라면 보기 가능(관리자 보기 가능)
-              - 본인의 문의글이 아닐때(관리자 보기 가능)
-                - 비밀번호가 동일하다면 보기 가능
-                - 비밀번호가 다르다면 보기 불가
-            - 비밀글 설정 안함
-              - 보기 가능
-        - 게시글 수정 및 삭제
-            - 수정 가능
-            - 답변이 있는 경우 삭제 불가능
+## ERD(Entity Relationship Diagram)
+![erd](https://github.com/hbkuk/now-back-end/assets/109803585/159f9f69-3843-4ccd-a806-cf4564c8973c)
+
+<br>   
+
+## 기록
+
+#### 기술적 도전
+- [SpringBoot에서 존재하지 않는 API 요청의 응답](https://starting-coding.tistory.com/654)
+- [SpringBoot 환경에서의 사용자 정의 예외 처리](https://starting-coding.tistory.com/652)
+- [빈번하게 변경되지 않는 게시글 카테고리를 Enum으로 관리](https://starting-coding.tistory.com/659)
+
+#### 클린코드
+- [빌더 패턴(Builder Pattern)](https://starting-coding.tistory.com/638)
+- [원시값을 포장한 도메인 객체](https://starting-coding.tistory.com/640)
+- [게시글(POST) 도메인 객체 설계와 테스트 코드 작성을 통한 리팩토링](https://starting-coding.tistory.com/655)
+- [enum 활용을 통한 파일(File) 도메인 관련 리팩토링](https://starting-coding.tistory.com/658)
+- [상속을 활용한 Global Exception Handler 리팩토링](https://starting-coding.tistory.com/660)
+
+#### 테스트 코드
+- [도메인 객체]()
+- [서비스 레이어]()
+- [컨트롤러 레이어]()
+
+#### 데이터베이스
+- []()
+
+<br>
+
+## REST API
+- [API 명세]()
