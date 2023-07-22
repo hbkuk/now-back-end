@@ -202,10 +202,6 @@ public class JwtTokenService {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
 
-        if (!isTokenExpired(accessToken)) {
-            throw new InvalidAuthenticationException(ErrorType.ALREADY_AUTHENTICATED);
-        }
-
         if (isTokenExpired(refreshToken)) {
             throw new InvalidAuthenticationException(ErrorType.EXPIRED_TOKEN);
         }

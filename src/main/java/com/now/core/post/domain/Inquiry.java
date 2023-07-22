@@ -226,6 +226,7 @@ public class Inquiry {
      *
      * @return 비밀번호가 없는 비밀 문의글이라면 true 반환, 그렇지 않다면 false 반환
      */
+    @JsonIgnore
     public boolean isSecretInquiryWithoutPassword() {
         return this.getSecret() && this.getPassword() == null;
     }

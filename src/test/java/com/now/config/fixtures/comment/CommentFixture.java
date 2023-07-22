@@ -18,7 +18,7 @@ public class CommentFixture {
                 .memberNickname("Shark")
                 .content("좋은 글 입니다.")
                 .regDate(LocalDateTime.now().plus(1, ChronoUnit.DAYS))
-                .memberPostIdx(1L)
+                .postIdx(1L)
                 .build();
     }
 
@@ -26,7 +26,7 @@ public class CommentFixture {
         return Comment.builder()
                 .memberId(memberId)
                 .content("contents")
-                .memberPostIdx(1L)
+                .postIdx(1L)
                 .build();
     }
 }

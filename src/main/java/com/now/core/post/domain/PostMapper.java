@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
-//TODO: 상속을 통한, 제네릭을 통한 <? extends ManagerPost>, <? extends MemberPost> 타입 제한
 /**
  * 게시글 정보에 접근하는 매퍼 인터페이스
  */
@@ -77,6 +76,10 @@ public interface PostMapper {
      */
     Inquiry findInquiry(Long postIdx);
 
+
+
+
+
     /**
      * 공지 게시글 등록
      *
@@ -127,28 +130,28 @@ public interface PostMapper {
      *
      * @param notice 수정할 공지 게시글 정보
      */
-    void updateManageNoticePost(Notice notice);
+    void updateNotice(Notice notice);
 
     /**
      * 커뮤니티 게시글 수정
      *
      * @param community 수정할 커뮤니티 게시글 정보
      */
-    void updateMemberCommunityPost(Community community);
+    void updateCommunity(Community community);
 
     /**
      * 사진 게시글 수정
      *
      * @param photo 수정할 사진 게시물 정보
      */
-    void updateMemberPhotoPost(Photo photo);
+    void updatePhoto(Photo photo);
 
     /**
      * 문의 게시글 수정
      *
      * @param inquiry 수정할 문의 게시글 정보
      */
-    void updateMemberInquiryPost(Inquiry inquiry);
+    void updateInquiryPost(Inquiry inquiry);
 
     /**
      * 문의 게시글 수정
@@ -170,18 +173,11 @@ public interface PostMapper {
 
 
     /**
-     * 매니저 작성 게시글 삭제
+     * 게시글 삭제
      *
      * @param postIdx 게시글 번호
      */
-    void deleteManagerPost(Long postIdx);
-
-    /**
-     * 회원 작성 게시글 삭제
-     *
-     * @param postIdx 게시글 번호
-     */
-    void deleteMemberPost(Long postIdx);
+    void deletePost(Long postIdx);
 
     /**
      * 문의 테이블 삭제

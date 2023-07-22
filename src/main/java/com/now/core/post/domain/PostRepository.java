@@ -159,7 +159,7 @@ public class PostRepository {
      * @param notice 수정할 공지 게시글 정보
      */
     public void updateNotice(Notice notice) {
-        postMapper.updateManageNoticePost(notice);
+        postMapper.updateNotice(notice);
     }
 
     /**
@@ -168,7 +168,7 @@ public class PostRepository {
      * @param community 수정할 커뮤니티 게시글 정보
      */
     public void updateCommunity(Community community) {
-        postMapper.updateMemberCommunityPost(community);
+        postMapper.updateCommunity(community);
     }
 
     /**
@@ -177,7 +177,7 @@ public class PostRepository {
      * @param photo 수정할 사진 게시물 정보
      */
     public void updatePhoto(Photo photo) {
-        postMapper.updateMemberPhotoPost(photo);
+        postMapper.updatePhoto(photo);
     }
 
     /**
@@ -186,7 +186,7 @@ public class PostRepository {
      * @param inquiry 수정할 문의 게시글 정보
      */
     public void updateInquiry(Inquiry inquiry) {
-        postMapper.updateMemberInquiryPost(inquiry);
+        postMapper.updateInquiryPost(inquiry);
         postMapper.updateInquiry(inquiry);
     }
 
@@ -210,7 +210,7 @@ public class PostRepository {
      * @param postIdx 삭제할 공지 게시글 번호
      */
     public void deleteNotice(Long postIdx) {
-        postMapper.deleteManagerPost(postIdx);
+        postMapper.deletePost(postIdx);
     }
 
     /**
@@ -219,7 +219,7 @@ public class PostRepository {
      * @param postIdx 게시글 번호
      */
     public void deleteCommunity(Long postIdx) {
-        postMapper.deleteMemberPost(postIdx);
+        postMapper.deletePost(postIdx);
     }
 
     /**
@@ -228,7 +228,7 @@ public class PostRepository {
      * @param postIdx 삭제할 게시글 번호
      */
     public void deletePhoto(Long postIdx) {
-        postMapper.deleteMemberPost(postIdx);
+        postMapper.deletePost(postIdx);
     }
 
     /**
@@ -237,7 +237,7 @@ public class PostRepository {
      * @param postIdx 게시글 번호
      */
     public void deleteInquiry(Long postIdx) {
-        postMapper.deleteMemberPost(postIdx);
+        postMapper.deletePost(postIdx);
         postMapper.deleteInquiry(postIdx);
     }
 }

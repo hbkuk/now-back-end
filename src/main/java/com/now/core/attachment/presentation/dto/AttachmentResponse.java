@@ -33,5 +33,5 @@ public class AttachmentResponse {
     /**
      *  게시글의 고유 식별자
      */
-    private Long memberPostIdx;
+    private Long postIdx;
 }

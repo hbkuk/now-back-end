@@ -25,7 +25,7 @@ public class Comment {
     @Size(max = 2000)
     private final String content; // 댓글의 내용
 
-    private final Long memberPostIdx; // 게시글의 고유 식별자
+    private final Long postIdx; // 게시글의 고유 식별자
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime regDate; // 댓글의 등록일자

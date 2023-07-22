@@ -51,13 +51,15 @@ public class InquiryController {
      * @return 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/inquiry/{postIdx}")
-    public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx, @Nullable String password,
+    public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx, @RequestParam(name = "password") @Nullable String password,
                                               @RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String token) {
         log.debug("getInquiry 호출, postIdx : {}, token : {}", postIdx, token);
 
         String memberId = (String) jwtTokenService.getClaim(token, "id");
         return ResponseEntity.ok(inquiryService.getInquiryWithSecretCheck(postIdx, memberId, password));
     }
+    
+    // TODO: 비밀글 조회 POST 요청,  핸들러 메서드 추가
 
     /**
      * 문의 게시글 등록

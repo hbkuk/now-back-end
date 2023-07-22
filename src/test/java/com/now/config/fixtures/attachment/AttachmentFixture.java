@@ -16,7 +16,7 @@ public class AttachmentFixture {
                 .attachmentSize(7777)
                 .originalAttachmentName(attachmentName)
                 .attachmentExtension(AttachmentUtils.extractFileExtension(attachmentName))
-                .memberPostIdx(1L)
+                .postIdx(1L)
                 .build();
         return attachment;
     }

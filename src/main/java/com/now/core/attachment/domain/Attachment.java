@@ -45,15 +45,15 @@ public class Attachment {
     /**
      *  게시글의 고유 식별자
      */
-    private Long memberPostIdx;
+    private Long postIdx;
 
     /**
      * 게시글 번호가 업데이트 된 해당 객체를 리턴
      *
-     * @param memberPostIdx 게시글 번호
+     * @param postIdx 게시글 번호
      */
-    public Attachment updateMemberPostIdx(Long memberPostIdx) {
-        this.memberPostIdx = memberPostIdx;
+    public Attachment updateMemberPostIdx(Long postIdx) {
+        this.postIdx = postIdx;
         return this;
     }
 }

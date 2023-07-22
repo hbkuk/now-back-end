@@ -9,14 +9,14 @@
     <select id="findThumbnailByPostIdx" parameterType="Long">
         SELECT *
         FROM tb_thumbnail
-        WHERE member_post_idx = #{postIdx}
+        WHERE post_idx = #{postIdx}
     </select>
 
     <!-- 게시물 번호에 해당하는 Attachment 목록을 가져오는 쿼리 -->
     <select id="findAllIndexesByPostIdx" parameterType="Long">
         SELECT attachment_idx
         FROM tb_attachment
-        WHERE member_post_idx = #{postIdx}
+        WHERE post_idx = #{postIdx}
     </select>
 
     <select id="findByAttachmentIdx" parameterType="Long">
@@ -27,14 +27,14 @@
 
     <!-- Attachment 저장 쿼리 -->
     <insert id="saveAttachment" parameterType="Attachment" useGeneratedKeys="true" keyProperty="attachmentIdx">
-        INSERT INTO tb_attachment (saved_attachment_name, original_attachment_name, attachment_extension, attachment_size, member_post_idx)
-        VALUES (#{savedAttachmentName}, #{originalAttachmentName.originalAttachmentName}, #{attachmentExtension.attachmentExtension}, #{attachmentSize.attachmentSize}, #{memberPostIdx});
+        INSERT INTO tb_attachment (saved_attachment_name, original_attachment_name, attachment_extension, attachment_size, post_idx)
+        VALUES (#{savedAttachmentName}, #{originalAttachmentName.originalAttachmentName}, #{attachmentExtension.attachmentExtension}, #{attachmentSize.attachmentSize}, #{postIdx});
     </insert>
 
     <!-- ThumbNail 저장 쿼리 -->
     <insert id="saveThumbNail" parameterType="Attachment">
-        INSERT INTO tb_thumbnail (member_post_idx, attachment_idx)
-        VALUES (#{memberPostIdx}, #{attachmentIdx})
+        INSERT INTO tb_thumbnail (post_idx, attachment_idx)
+        VALUES (#{postIdx}, #{attachmentIdx})
     </insert>
 
     <delete id="deleteByAttachmentIdx" parameterType="Long">
@@ -46,7 +46,7 @@
     <delete id="deleteAllByPostIdx" parameterType="Long">
         DELETE
         FROM tb_attachment
-        WHERE member_post_idx = #{postIdx}
+        WHERE post_idx = #{postIdx}
     </delete>
 
     <delete id="deleteThumbNail" parameterType="Long">
@@ -58,7 +58,7 @@
     <delete id="deleteThumbNailByPostIdx" parameterType="Long">
         DELETE
         FROM tb_thumbnail
-        WHERE member_post_idx = #{postIdx}
+        WHERE post_idx = #{postIdx}
     </delete>
 
 </mapper>

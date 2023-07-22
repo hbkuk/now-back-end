@@ -7,14 +7,14 @@
     <select id="findAllByPostIdx" parameterType="Long">
         SELECT *
         FROM tb_comment
-        WHERE member_post_idx = #{postIdx}
+        WHERE post_idx = #{postIdx}
     </select>
 
 
     <delete id="deleteAllByPostIdx" parameterType="Long">
         DELETE
         FROM tb_comment
-        WHERE member_post_idx = #{postIdx}
+        WHERE post_idx = #{postIdx}
     </delete>
 
 
