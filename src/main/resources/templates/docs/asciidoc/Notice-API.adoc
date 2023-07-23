@@ -1,0 +1,22 @@
+[[Notice-API]]
+== Notice API
+
+[[Notice-전체-조회]]
+=== Notice 전체 조회
+operation::notice-controller-test/get-all-notices[snippets='http-request,request-parameters,http-response,response-fields']
+
+[[Notice-단건-조회]]
+=== Notice 단건 조회
+operation::notice-controller-test/get-notice[snippets='http-request,path-parameters,http-response,response-fields']
+
+[[Notice-등록]]
+=== Notice 등록
+operation::notice-controller-test/register-notice[snippets='http-request,request-body,request-fields,request-headers,http-response,response-headers']
+
+[[Notice-수정]]
+=== Notice 수정
+operation::notice-controller-test/update-notice[snippets='http-request,request-body,request-fields,request-headers,http-response,response-headers']
+
+[[Notice-삭제]]
+=== Notice 삭제
+operation::notice-controller-test/delete-notice[snippets='http-request,request-headers,http-response']

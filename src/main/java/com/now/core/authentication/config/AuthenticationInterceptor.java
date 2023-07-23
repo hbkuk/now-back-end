@@ -35,7 +35,8 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         if (jwtTokenService.isTokenExpired(accessToken)) {
             throw new InvalidTokenException(ErrorType.EXPIRED_TOKEN);
         }
-
+        
+        // TODO: request 조작이 아닌, 다른 방법 고려
         request.setAttribute("id", jwtTokenService.getClaim(accessToken, "id"));
         request.setAttribute("role", jwtTokenService.getClaim(accessToken, "role"));
         return true;

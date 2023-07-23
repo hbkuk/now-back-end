@@ -2,6 +2,8 @@ package com.now.config.document.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.now.core.admin.post.notice.application.ManagerNoticeService;
+import com.now.core.admin.post.notice.presentation.ManagerNoticeController;
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.presentation.AuthenticationController;
@@ -28,6 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 
 @WebMvcTest({
+        ManagerNoticeController.class,
         AuthenticationController.class,
         MemberController.class,
         NoticeController.class,
@@ -43,6 +46,9 @@ public abstract class ControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
+
+    @MockBean
+    protected ManagerNoticeService managerNoticeService;
 
     @MockBean
     protected MemberService memberService;

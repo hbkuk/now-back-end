@@ -35,7 +35,6 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
 
         given(memberService.generateAuthToken(member)).willReturn(token);
 
-
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.post("/api/sign-in")
                                 .contentType(MediaType.APPLICATION_JSON)

@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CommunityControllerTest extends RestDocsTestSupport {
 
     @Test
-    @DisplayName("모든 커뮤니티 게시글 정보를 조회")
+    @DisplayName("모든 커뮤니티 게시글을 조회")
     void getAllCommunities() throws Exception {
         // given
         Condition condition = new Condition(5);
@@ -106,7 +106,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         responseFields(
                                 fieldWithPath("postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("title").type(STRING).description("제목"),
-                                fieldWithPath("memberNickname").type(STRING).description("작성자 닉네임"),
+                                fieldWithPath("memberNickname").type(STRING).description("매니저 닉네임"),
                                 fieldWithPath("regDate").type(STRING).description("등록일"),
                                 fieldWithPath("modDate").type(STRING).optional().description("수정일(null 가능)"),
                                 fieldWithPath("content").type(STRING).description("내용"),

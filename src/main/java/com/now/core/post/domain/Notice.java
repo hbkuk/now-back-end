@@ -1,5 +1,6 @@
 package com.now.core.post.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.admin.manager.domain.Manager;
 import com.now.core.category.domain.constants.Category;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 @ToString(callSuper = true)
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Notice {
 
     private static PostGroup postGroup = PostGroup.NOTICE;

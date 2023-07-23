@@ -1,11 +1,16 @@
-= NOW
+= NOW API 명세
 :doctype: book
 :icons: font
 :source-highlighter: highlightjs
 :toc: left
 :toclevels: 2
 :sectlinks:
+:docinfo: shared-head
 
+include::Overview.adoc[]
+*
 include::Authentication-API.adoc[]
+
+include::Notice-API.adoc[]
 
 include::Community-API.adoc[]

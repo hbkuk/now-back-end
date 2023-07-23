@@ -37,7 +37,7 @@ public class ManagerNoticeService {
             throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
 
-        postRepository.saveNotice((Notice) notice.updateManagerIdx(manager.getManagerIdx()));
+        postRepository.saveNotice(notice.updateManagerIdx(manager.getManagerIdx()));
     }
 
 
