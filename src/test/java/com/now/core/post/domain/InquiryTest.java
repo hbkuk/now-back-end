@@ -1,103 +1,18 @@
 package com.now.core.post.domain;
 
 import com.now.config.fixtures.member.MemberFixture;
-import com.now.core.category.domain.constants.Category;
 import com.now.core.member.domain.Member;
 import com.now.core.post.exception.CannotViewInquiryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.time.LocalDateTime;
-
+import static com.now.config.fixtures.post.InquiryFixture.createNonSecretInquiry;
+import static com.now.config.fixtures.post.InquiryFixture.createSecretInquiry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class InquiryTest {
-    public static Inquiry createSecretInquiry(String memberId) {
-        return Inquiry.builder()
-                .postIdx(1L)
-                .title("제목")
-                .memberId(memberId)
-                .regDate(LocalDateTime.now())
-                .modDate(LocalDateTime.now())
-                .content("내용")
-                .viewCount(0)
-                .likeCount(0)
-                .dislikeCount(0)
-                .secret(true)
-                .password("0736")
-                .category(Category.SERVICE)
-                .build();
-    }
-
-    public static Inquiry createSecretInquiry(String memberId, Category category) {
-        return Inquiry.builder()
-                .postIdx(1L)
-                .title("제목")
-                .memberId(memberId)
-                .regDate(LocalDateTime.now())
-                .modDate(LocalDateTime.now())
-                .content("내용")
-                .viewCount(0)
-                .likeCount(0)
-                .dislikeCount(0)
-                .secret(true)
-                .category(category)
-                .password("0736")
-                .build();
-    }
-
-    public static Inquiry createSecretInquiryWithAnswer(String memberId, Category category) {
-        return Inquiry.builder()
-                .postIdx(1L)
-                .title("제목")
-                .memberId(memberId)
-                .regDate(LocalDateTime.now())
-                .modDate(LocalDateTime.now())
-                .content("내용")
-                .viewCount(0)
-                .likeCount(0)
-                .dislikeCount(0)
-                .secret(true)
-                .category(category)
-                .password("0736")
-                .answerManagerNickname("manager1")
-                .build();
-    }
-
-    public static Inquiry createNonSecretInquiry(String memberId) {
-        return Inquiry.builder()
-                .postIdx(1L)
-                .title("제목")
-                .answerManagerIdx(memberId)
-                .regDate(LocalDateTime.now())
-                .modDate(LocalDateTime.now())
-                .content("내용")
-                .viewCount(0)
-                .likeCount(0)
-                .dislikeCount(0)
-                .secret(false)
-                .category(Category.SERVICE)
-                .build();
-    }
-
-    public static Inquiry createNonSecretInquiry(String memberId, Category category) {
-        return Inquiry.builder()
-                .postIdx(1L)
-                .title("제목")
-                .answerManagerIdx(memberId)
-                .regDate(LocalDateTime.now())
-                .modDate(LocalDateTime.now())
-                .content("내용")
-                .viewCount(0)
-                .likeCount(0)
-                .dislikeCount(0)
-                .secret(false)
-                .category(category)
-                .build();
-    }
-
 
     @Nested
     @DisplayName("canView 메서드는")

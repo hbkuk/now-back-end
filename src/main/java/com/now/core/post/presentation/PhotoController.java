@@ -72,7 +72,7 @@ public class PhotoController {
         photoService.registerPhoto(photo.updateMemberId(memberId));
         attachmentService.saveAttachmentsWithThumbnail(multipartFiles, photo.getPostIdx(), AttachmentType.IMAGE);
 
-        return ResponseEntity.created(URI.create("/api/photo" + photo.getPostIdx())).build();
+        return ResponseEntity.created(URI.create("/api/photo/" + photo.getPostIdx())).build();
     }
 
     /**
@@ -98,7 +98,7 @@ public class PhotoController {
         photoService.updatePhoto(updatePhoto.updatePostIdx(postIdx).updateMemberId(memberId));
         attachmentService.updateAttachmentsWithThumbnail(multipartFiles, previouslyUploadedIndexes, postIdx, AttachmentType.IMAGE);
 
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+        return ResponseEntity.created(URI.create("/api/photo/" + updatePhoto.getPostIdx())).build();
     }
 
     /**

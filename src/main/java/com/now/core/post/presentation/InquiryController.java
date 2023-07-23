@@ -12,11 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -47,19 +47,35 @@ public class InquiryController {
      * 문의 게시글 조회
      *
      * @param postIdx 게시글 번호
-     * @param token 토큰
      * @return 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/inquiry/{postIdx}")
-    public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx, @RequestParam(name = "password") @Nullable String password,
-                                              @RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String token) {
-        log.debug("getInquiry 호출, postIdx : {}, token : {}", postIdx, token);
+    public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx) {
+        log.debug("getInquiry 호출, postIdx : {}", postIdx);
 
-        String memberId = (String) jwtTokenService.getClaim(token, "id");
+        return ResponseEntity.ok(inquiryService.getInquiryWithSecretCheck(postIdx));
+    }
+
+    /**
+     * 비밀글 설정된 문의 게시글 조회
+     *
+     * @param postIdx 게시글 번호
+     * @param token   토큰
+     * @return 문의 게시글 정보와 함께 OK 응답을 반환
+     */
+    @PostMapping("/api/inquiry/secret/{postIdx}")
+    public ResponseEntity<Inquiry> getSecretInquiry(@PathVariable("postIdx") Long postIdx,
+                                                    @RequestParam(required = false) String password,
+                                                    @RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String token) {
+        log.debug("getSecretInquiry 호출, postIdx : {}, password : {}, token : {}", postIdx, password, token);
+
+        String memberId = null;
+        if (token != null) {
+            memberId = (String) jwtTokenService.getClaim(token, "id");
+        }
+
         return ResponseEntity.ok(inquiryService.getInquiryWithSecretCheck(postIdx, memberId, password));
     }
-    
-    // TODO: 비밀글 조회 POST 요청,  핸들러 메서드 추가
 
     /**
      * 문의 게시글 등록
@@ -78,27 +94,26 @@ public class InquiryController {
         }
 
         inquiryService.registerInquiry(inquiry.updateMemberId(memberId));
-
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+        return ResponseEntity.created(URI.create("/api/inquiry/" + inquiry.getPostIdx())).build();
     }
 
     /**
      * 문의 게시글 수정
      *
      * @param memberId 작성자의 회원 ID
-     * @param inquiry  등록할 문의 게시글 정보
+     * @param updateInquiry  등록할 문의 게시글 정보
      * @return 수정된 게시글에 대한 CREATED 응답을 반환
      */
     @PutMapping("/api/inquiry/{postIdx}")
     public ResponseEntity<Void> updateInquiry(@PathVariable("postIdx") Long postIdx,
                                               @RequestAttribute("id") String memberId,
-                                              @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry inquiry) {
-        log.debug("updateInquiry 호출, memberId : {}, inquiry : {}", memberId, inquiry);
+                                              @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry updateInquiry) {
+        log.debug("updateInquiry 호출, memberId : {}, inquiry : {}", memberId, updateInquiry);
 
         inquiryService.hasUpdateAccess(postIdx, memberId);
 
-        inquiryService.updateInquiry(inquiry.updateMemberId(memberId));
-        return ResponseEntity.status(HttpStatus.CREATED).build(); // Status Code 201
+        inquiryService.updateInquiry(updateInquiry.updateMemberId(memberId));
+        return ResponseEntity.created(URI.create("/api/inquiry/" + updateInquiry.getPostIdx())).build();
     }
 
     /**

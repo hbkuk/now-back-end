@@ -1,9 +1,10 @@
 package com.now.core.post.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.common.exception.ErrorType;
-import com.now.core.attachment.domain.Attachment;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.comment.domain.Comment;
@@ -27,9 +28,12 @@ import java.util.List;
 @ToString(callSuper = true)
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Inquiry {
 
-    private final PostGroup postGroup = PostGroup.INQUIRY;
+    // TODO: 게시글 등록, 수정 객체 별도 관리
+
+    private static final PostGroup postGroup = PostGroup.INQUIRY;
     /**
      * 카테고리
      */
@@ -43,10 +47,12 @@ public class Inquiry {
     /**
      * 게시글 등록일자
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime regDate;
     /**
      * 게시글 수정일자
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime modDate;
     /**
      * 게시글의 내용
@@ -65,14 +71,6 @@ public class Inquiry {
      * 게시글 싫어요 수
      */
     private final Integer dislikeCount;
-    /**
-     * 파일 (file 테이블에서 가져옴)
-     */
-    private final List<Attachment> files;
-    /**
-     * 댓글 (comment 테이블에서 가져옴)
-     */
-    private final List<Comment> comments;
     /**
      * 문의 게시글의 고유 식별자
      */
@@ -103,17 +101,19 @@ public class Inquiry {
     /**
      * 답변 내용
      */
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final String answerContent;
     /**
      * 답변 일자
      */
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final String answerRegDate;
     /**
      * 게시글의 고유 식별자
      */
     private Long postIdx;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long memberIdx;
 
@@ -228,6 +228,17 @@ public class Inquiry {
      */
     @JsonIgnore
     public boolean isSecretInquiryWithoutPassword() {
-        return this.getSecret() && this.getPassword() == null;
+        return this.getSecret() && this.getPassword() != null;
+    }
+
+    /**
+     * 게시글 번호 수정 후 해당 객체 반환
+     *
+     * @param postIdx 수정할 게시물 번호
+     * @return 게시물 번호 필드를 수정한 해당 객체
+     */
+    public Inquiry updatePostIdx(long postIdx) {
+        this.postIdx = postIdx;
+        return this;
     }
 }

@@ -8,9 +8,15 @@
 :docinfo: shared-head
 
 include::Overview.adoc[]
-*
+
+include::Category-API.adoc[]
+
 include::Authentication-API.adoc[]
 
 include::Notice-API.adoc[]
 
 include::Community-API.adoc[]
+
+include::Photo-API.adoc[]
+
+include::Inquiry-API.adoc[]

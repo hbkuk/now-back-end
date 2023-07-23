@@ -29,9 +29,10 @@ public enum ErrorType {
     CAN_NOT_UPDATE_POST(6003, "게시글을 수정할 수 없습니다."),
     CAN_NOT_UPDATE_OTHER_MEMBER_POST(6004, "다른 회원이 작성한 게시글을 수정할 수 없습니다."),
     CAN_NOT_DELETE_OTHER_MEMBER_POST(6005, "다른 회원이 작성한 게시글을 삭제할 수 없습니다."),
-    CAN_NOT_DELETE_POST_WITH_OTHER_MEMBER_COMMENTS(6006, "다른 회원이 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다."),
-    CAN_NOT_VIEW_OTHER_MEMBER_INQUIRIES(6007, "다른 사용자가 작성한 문의글을 볼 수 없습니다."),
-    CAN_NOT_DELETE_POST_WITH_MANAGER_ANSWER(6008, "매니저가 작성한 답변이 있으므로 해당 게시글을 삭제할 수 없습니다."),
+    CAN_NOT_VIEW_SECRET_INQUIRY(6006, "비밀글로 설정된 문의글을 볼 수 없습니다."),
+    CAN_NOT_DELETE_POST_WITH_OTHER_MEMBER_COMMENTS(6007, "다른 회원이 작성한 댓글이 있으므로 해당 게시글을 삭제할 수 없습니다."),
+    CAN_NOT_VIEW_OTHER_MEMBER_INQUIRIES(6008, "다른 사용자가 작성한 문의글을 볼 수 없습니다."),
+    CAN_NOT_DELETE_POST_WITH_MANAGER_ANSWER(6009, "매니저가 작성한 답변이 있으므로 해당 게시글을 삭제할 수 없습니다."),
 
     INVALID_SECRET(7001, "유효하지 않은 비밀글 설정입니다."),
 

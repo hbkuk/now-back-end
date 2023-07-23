@@ -2,11 +2,13 @@ package com.now.config.document.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.now.common.mapper.EnumMapperFactory;
 import com.now.core.admin.post.notice.application.ManagerNoticeService;
 import com.now.core.admin.post.notice.presentation.ManagerNoticeController;
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.presentation.AuthenticationController;
+import com.now.core.category.presentation.CategoryController;
 import com.now.core.comment.application.CommentService;
 import com.now.core.member.application.MemberService;
 import com.now.core.member.presentation.MemberController;
@@ -36,7 +38,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
         NoticeController.class,
         CommunityController.class,
         PhotoController.class,
-        InquiryController.class
+        InquiryController.class,
+        CategoryController.class
 })
 @AutoConfigureMybatis
 public abstract class ControllerTest {
@@ -52,6 +55,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected MemberService memberService;
+
+    @MockBean
+    protected EnumMapperFactory enumMapperFactory;
 
     @MockBean
     protected NoticeService noticeService;

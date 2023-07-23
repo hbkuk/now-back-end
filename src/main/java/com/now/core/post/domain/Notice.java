@@ -1,5 +1,6 @@
 package com.now.core.post.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.admin.manager.domain.Manager;
@@ -22,7 +23,9 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Notice {
 
-    private static PostGroup postGroup = PostGroup.NOTICE;
+    // TODO: 게시글 등록, 수정 객체 별도 관리
+
+    private static final PostGroup postGroup = PostGroup.NOTICE;
 
     private Long postIdx; // 공지 게시글의 고유 식별자
 
@@ -32,8 +35,10 @@ public class Notice {
     @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 100)
     private final String title; // 제목
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime regDate; // 등록일자
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime modDate; // 수정일자
 
     @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000)

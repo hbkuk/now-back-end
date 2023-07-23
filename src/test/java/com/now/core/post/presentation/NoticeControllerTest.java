@@ -115,7 +115,8 @@ class NoticeControllerTest extends RestDocsTestSupport {
                                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createNoticeForSave().updatePostIdx(1L))))
-                        .andExpect(status().isCreated());
+                        .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
+                        .andExpect(MockMvcResultMatchers.status().isCreated());
 
         resultActions
                 .andDo(restDocs.document(
@@ -150,7 +151,8 @@ class NoticeControllerTest extends RestDocsTestSupport {
                                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createNoticeForSave().updatePostIdx(postIdx))))
-                        .andExpect(status().isCreated());
+                        .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
+                        .andExpect(MockMvcResultMatchers.status().isCreated());
 
         resultActions
                 .andDo(restDocs.document(

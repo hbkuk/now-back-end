@@ -31,7 +31,9 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Community {
 
-    private static PostGroup postGroup = PostGroup.COMMUNITY;
+    // TODO: 게시글 등록, 수정 객체 별도 관리
+
+    private static final PostGroup postGroup = PostGroup.COMMUNITY;
 
     private Long postIdx; // 게시글의 고유 식별자
 

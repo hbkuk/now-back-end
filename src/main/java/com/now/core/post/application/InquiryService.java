@@ -10,6 +10,7 @@ import com.now.core.member.exception.InvalidMemberException;
 import com.now.core.post.domain.Inquiry;
 import com.now.core.post.domain.PostRepository;
 import com.now.core.post.exception.CannotCreatePostException;
+import com.now.core.post.exception.CannotViewInquiryException;
 import com.now.core.post.exception.InvalidPostException;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +45,21 @@ public class InquiryService {
      * 문의 게시글 응답
      *
      * @param postIdx 게시글 번호
+     * @return 문의 게시글 정보
+     */
+    public Inquiry getInquiryWithSecretCheck(Long postIdx) {
+        Inquiry inquiry = getInquiry(postIdx);
+
+        if (inquiry.getSecret()) {
+            throw new CannotViewInquiryException(ErrorType.CAN_NOT_VIEW_SECRET_INQUIRY);
+        }
+        return inquiry;
+    }
+
+    /**
+     * 문의 게시글 응답
+     *
+     * @param postIdx 게시글 번호
      * @param memberId 회원 아이디
      * @return 문의 게시글 정보
      */
@@ -51,7 +67,7 @@ public class InquiryService {
         Inquiry inquiry = getInquiry(postIdx);
 
         if (inquiry.getSecret()) {
-            if (isPasswordMatching(inquiry.getPassword(), password)) {
+            if (isPasswordMatching(password, inquiry.getPassword())) {
                 return inquiry;
             }
             inquiry.canView(getMember(memberId));
@@ -72,7 +88,7 @@ public class InquiryService {
         }
 
         postRepository.saveInquiry(inquiry.updateMemberIdx(member.getMemberIdx())
-                                            .updatePassword(passwordSecurityManager.encodeWithSalt(member.getPassword())));
+                                            .updatePassword(passwordSecurityManager.encodeWithSalt(inquiry.getPassword())));
     }
 
     /**

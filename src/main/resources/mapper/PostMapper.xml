@@ -107,7 +107,7 @@
     <!-- Inquiry의 비밀글 설정 저장 쿼리 -->
     <insert id="saveInquirySecretSetting" parameterType="Inquiry" useGeneratedKeys="true" keyProperty="inquiryIdx">
         INSERT INTO tb_inquiry (post_idx, secret, password)
-        VALUES (#{postIdx}, #{secret}, password)
+        VALUES (#{postIdx}, #{secret}, #{password})
     </insert>
 
     <!-- Inquiry에 대한 답변 저장 쿼리 -->
@@ -169,12 +169,12 @@
         <include refid="condition"/>
     </select>
 
-    <!-- 모든 문의 게시글 조회 쿼리 -->
+    <!-- 모든 문의 게시글 조회 쿼리, content 제외 -->
     <select id="findAllInquiries" parameterType="Condition" resultMap="inquiry" useCache="false" flushCache="true">
         SELECT
-        <include refid="selectPostTableColumn"/>,
+        <include refid="selectPostTableColumnWithoutContent"/>,
         <include refid="selectMemberTableColumn"/>,
-        <include refid="selectInquiryTableColumn"/>
+        <include refid="selectInquiriesWithNonSecretInfo"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
         LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
@@ -235,7 +235,7 @@
         WHERE p.post_group = 'INQUIRY' AND p.post_idx = #{postIdx}
     </select>
 
-    <!-- Manager Post 테이블의 컬럼 매핑 -->
+    <!-- Post 테이블의 컬럼 매핑 -->
     <sql id="selectPostTableColumn">
         p.post_idx AS p_post_idx,
         p.category AS p_category,
@@ -245,6 +245,21 @@
         p.reg_date AS p_reg_date,
         p.mod_date AS p_mod_date,
         p.content AS p_content,
+        p.view_count AS p_view_count,
+        p.like_count AS p_like_count,
+        p.dislike_count AS p_dislike_count,
+        p.pinned AS p_pinned
+    </sql>
+
+    <!-- Post 테이블의 컬럼 매핑, content 제외 -->
+    <sql id="selectPostTableColumnWithoutContent">
+        p.post_idx AS p_post_idx,
+        p.category AS p_category,
+        p.title AS p_title,
+        p.member_idx AS p_member_idx,
+        p.manager_idx AS p_manager_idx,
+        p.reg_date AS p_reg_date,
+        p.mod_date AS p_mod_date,
         p.view_count AS p_view_count,
         p.like_count AS p_like_count,
         p.dislike_count AS p_dislike_count,
@@ -269,12 +284,19 @@
         co.post_idx AS co_post_idx
     </sql>
 
+    <!-- Inquiry 테이블의 컬럼 매핑, 비밀글 여부만-->
+    <sql id="selectInquiriesWithNonSecretInfo">
+        i.secret AS i_secret
+    </sql>
+
     <!-- Inquiry 테이블의 컬럼 매핑 -->
     <sql id="selectInquiryTableColumn">
         i.secret AS i_secret,
         i.answer_content AS i_answer_manager_nickname,
-        i.answer_reg_date AS i_answer_content
+        i.answer_reg_date AS i_answer_content,
+        i.password AS i_password
     </sql>
+
 
     <!-- Manager 테이블의 컬럼 매핑 -->
     <sql id="selectManagerTableColumn">
@@ -379,6 +401,7 @@
         <result property="secret" column="i_secret"/>
         <result property="answerManagerNickname" column="i_answer_manager_nickname"/>
         <result property="answerContent" column="i_answer_content"/>
+        <result property="password" column="i_password"/>
     </resultMap>
 
     <!-- 검색 조건에 따른 WHERE 절 SQL -->

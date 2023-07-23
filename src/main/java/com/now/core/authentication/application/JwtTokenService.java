@@ -25,7 +25,7 @@ public class JwtTokenService {
 
     private static final String BEARER_PREFIX_WITH_SPACE = "Bearer ";
 
-    private static final int ACCESS_TOKEN_EXPIRE_MINUTES = 1;
+    private static final int ACCESS_TOKEN_EXPIRE_MINUTES = 60;
     private static final int REFRESH_TOKEN_EXPIRE_HOURS = 24;
 
     public static final String ACCESS_TOKEN_HEADER_KEY = "Authorization";

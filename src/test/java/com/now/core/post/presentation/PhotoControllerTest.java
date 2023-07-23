@@ -1,9 +1,10 @@
 package com.now.core.post.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
+import com.now.config.fixtures.post.PhotoFixture;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
-import com.now.core.post.domain.Community;
+import com.now.core.post.domain.Photo;
 import com.now.core.post.presentation.dto.Condition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,10 @@ import java.util.List;
 import static com.now.config.document.utils.RestDocsConfig.field;
 import static com.now.config.fixtures.attachment.AttachmentFixture.createAttachments;
 import static com.now.config.fixtures.comment.CommentFixture.createComments;
-import static com.now.config.fixtures.post.CommunityFixture.*;
+import static com.now.config.fixtures.post.CommunityFixture.SAMPLE_NICKNAME_1;
+import static com.now.config.fixtures.post.CommunityFixture.SAMPLE_NICKNAME_2;
+import static com.now.config.fixtures.post.PhotoFixture.createPhoto;
+import static com.now.config.fixtures.post.PhotoFixture.createPhotoForSave;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
@@ -29,22 +33,22 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class CommunityControllerTest extends RestDocsTestSupport {
+class PhotoControllerTest extends RestDocsTestSupport {
 
     @Test
-    @DisplayName("모든 커뮤니티 게시글을 조회")
-    void getAllCommunities() throws Exception {
+    @DisplayName("모든 사진 게시글을 조회")
+    void getAllPhotos() throws Exception {
         // given
         Condition condition = new Condition(5);
-        given(communityService.getAllCommunities(condition))
+        given(photoService.getAllPhotos(condition))
                 .willReturn(List.of(
-                        createCommunity(1L, SAMPLE_NICKNAME_1, SAMPLE_TITLE_1, SAMPLE_CONTENT_1, createAttachments(), createComments()),
-                        createCommunity(2L, SAMPLE_NICKNAME_2, SAMPLE_TITLE_2, SAMPLE_CONTENT_2, createAttachments(), createComments())
+                        createPhoto(1L, SAMPLE_NICKNAME_1, PhotoFixture.SAMPLE_TITLE_1, PhotoFixture.SAMPLE_CONTENT_1, createAttachments(), createComments()),
+                        createPhoto(2L, SAMPLE_NICKNAME_2, PhotoFixture.SAMPLE_TITLE_2, PhotoFixture.SAMPLE_CONTENT_2, createAttachments(), createComments())
                 ));
 
         // when, then
         ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.get("/api/communities")
+                mockMvc.perform(RestDocumentationRequestBuilders.get("/api/photos")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .param("maxNumberOfPosts", String.valueOf(condition.getMaxNumberOfPosts())))
                         .andExpect(status().isOk());
@@ -56,7 +60,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 parameterWithName("maxNumberOfPosts").description("페이지 개수 제한").optional()
                         ),
                         responseFields(
-                                fieldWithPath("[]").type(ARRAY).description("커뮤니티 게시글 목록"),
+                                fieldWithPath("[]").type(ARRAY).description("사진 게시글 목록"),
                                 fieldWithPath("[].postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("[].title").type(STRING).description("제목"),
                                 fieldWithPath("[].memberNickname").type(STRING).description("작성자 닉네임"),
@@ -67,6 +71,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("[].likeCount").type(NUMBER).description("좋아요 수"),
                                 fieldWithPath("[].dislikeCount").type(NUMBER).description("싫어요 수"),
                                 fieldWithPath("[].category").type(STRING).description("카테고리"),
+                                fieldWithPath("[].thumbnailAttachmentIdx").type(NUMBER).description("대표 이미지 첨부파일 ID"),
 
                                 fieldWithPath("[].attachments").type(ARRAY).optional().description("첨부파일 목록"),
                                 fieldWithPath("[].attachments[].attachmentIdx").type(NUMBER).optional().description("첨부파일 ID"),
@@ -85,16 +90,16 @@ class CommunityControllerTest extends RestDocsTestSupport {
     }
 
     @Test
-    @DisplayName("커뮤니티 게시글 응답")
-    void getCommunity() throws Exception {
+    @DisplayName("사진 게시글 응답")
+    void getPhoto() throws Exception {
         // given
         Long postIdx = 1L;
-        given(communityService.getCommunity(postIdx))
-                .willReturn(createCommunity(
-                        1L, SAMPLE_NICKNAME_1, SAMPLE_TITLE_1, SAMPLE_CONTENT_1, createAttachments(), createComments()));
+        given(photoService.getPhoto(postIdx))
+                .willReturn(createPhoto(
+                        1L, PhotoFixture.SAMPLE_NICKNAME_1, PhotoFixture.SAMPLE_TITLE_1, PhotoFixture.SAMPLE_CONTENT_1, createAttachments(), createComments()));
 
         // when, then
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/community/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/photo/{postIdx}", postIdx)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -114,6 +119,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("likeCount").type(NUMBER).description("좋아요 수"),
                                 fieldWithPath("dislikeCount").type(NUMBER).description("싫어요 수"),
                                 fieldWithPath("category").type(STRING).description("카테고리"),
+                                fieldWithPath("thumbnailAttachmentIdx").type(NUMBER).description("대표 이미지 첨부파일 ID"),
 
                                 fieldWithPath("attachments").type(ARRAY).optional().description("첨부파일 목록"),
                                 fieldWithPath("attachments[].attachmentIdx").type(NUMBER).optional().description("첨부파일 ID"),
@@ -131,18 +137,17 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         )));
     }
 
-
     @Test
-    @DisplayName("커뮤니티 게시글 등록")
-    void registerCommunity() throws Exception {
+    @DisplayName("사진 게시글 등록")
+    void registerPhoto() throws Exception {
         String memberId = "tester1";
         String token = "Bearer accessToken";
-        Community community = createCommunityForSave().updatePostIdx(1L);
+        Photo photo = createPhotoForSave().updatePostIdx(1L);
         given(jwtTokenService.getClaim(token, "id")).willReturn(memberId);
         given(jwtTokenService.getClaim(token, "role")).willReturn(Authority.MEMBER.getValue());
 
-        MockMultipartFile communityPart = new MockMultipartFile("community", "",
-                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(community));
+        MockMultipartFile communityPart = new MockMultipartFile("photo", "",
+                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(photo));
 
         MockMultipartFile fileA = new MockMultipartFile("attachment", "file1.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file1 content".getBytes());
@@ -150,7 +155,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
         MockMultipartFile fileB = new MockMultipartFile("attachment", "file2.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file2 content".getBytes());
 
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/community")
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/photo")
                         .file(communityPart)
                         .file(fileA)
                         .file(fileB)
@@ -165,14 +170,15 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
                         ),
                         requestParts(
-                                partWithName("community").description("커뮤니티 게시글 정보"),
+                                partWithName("photo").description("사진 게시글 정보"),
                                 partWithName("attachment").description("첨부파일 (다중 파일 업로드 가능)").optional()
                         ),
-                        requestPartFields("community",
+                        requestPartFields("photo",
                                 fieldWithPath("postIdx").ignored(),
                                 fieldWithPath("title").description("제목"),
                                 fieldWithPath("category").description("카테고리"),
-                                fieldWithPath("content").description("내용")
+                                fieldWithPath("content").description("내용"),
+                                fieldWithPath("thumbnailAttachmentIdx").description("대표 이미지 ID")
                         ),
                         responseHeaders(
                                 headerWithName(HttpHeaders.LOCATION).description("생성된 위치 URI")
@@ -181,22 +187,23 @@ class CommunityControllerTest extends RestDocsTestSupport {
     }
 
     @Test
-    @DisplayName("커뮤니티 게시글 수정")
-    void updateCommunity() throws Exception {
+    @DisplayName("사진 게시글 수정")
+    void updatePhoto() throws Exception {
         Long postIdx = 1L;
         String memberId = "tester1";
         String token = "Bearer accessToken";
         given(jwtTokenService.getClaim(token, "id")).willReturn(memberId);
         given(jwtTokenService.getClaim(token, "role")).willReturn(Authority.MEMBER.getValue());
 
-        Community updatedCommunity = Community.builder()
-                .category(Category.COMMUNITY_STUDY)
+        Photo updatedPhoto = Photo.builder()
+                .category(Category.ARTWORK)
                 .title("수정된 제목")
                 .content("수정된 내용")
+                .thumbnailAttachmentIdx(1L)
                 .build();
 
-        MockMultipartFile communityPart = new MockMultipartFile("community", "",
-                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(updatedCommunity));
+        MockMultipartFile communityPart = new MockMultipartFile("photo", "",
+                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(updatedPhoto));
 
         MockMultipartFile fileA = new MockMultipartFile("attachment", "file1.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file1 content".getBytes());
@@ -204,7 +211,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
         MockMultipartFile fileB = new MockMultipartFile("attachment", "file2.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file2 content".getBytes());
 
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/community/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/photo/{postIdx}", postIdx)
                         .file(communityPart)
                         .file(fileA)
                         .file(fileB)
@@ -224,13 +231,14 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
                         ),
                         requestParts(
-                                partWithName("community").description("커뮤니티 게시글 정보"),
+                                partWithName("photo").description("사진 게시글 정보"),
                                 partWithName("attachment").description("첨부파일 (다중 파일 업로드 가능)").optional()
                         ),
-                        requestPartFields("community",
+                        requestPartFields("photo",
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 10 이하")),
                                 fieldWithPath("category").description("카테고리").attributes(field("constraints", "길이 10 이하")),
-                                fieldWithPath("content").description("내용").attributes(field("constraints", "길이 10 이하"))
+                                fieldWithPath("content").description("내용").attributes(field("constraints", "길이 10 이하")),
+                                fieldWithPath("thumbnailAttachmentIdx").description("대표 이미지 ID")
                         ),
                         requestParameters( // 전달된 파라미터 정보 출력
                                 parameterWithName("attachmentIdx").description("이전에 업로드된 파일 번호 목록").optional()
@@ -242,15 +250,15 @@ class CommunityControllerTest extends RestDocsTestSupport {
     }
 
     @Test
-    @DisplayName("커뮤니티 게시글 삭제")
-    void deleteCommunity() throws Exception {
+    @DisplayName("사진 게시글 삭제")
+    void deletePhoto() throws Exception {
         Long postIdx = 1L;
         String memberId = "tester1";
         String token = "Bearer accessToken";
         given(jwtTokenService.getClaim(token, "id")).willReturn(memberId);
         given(jwtTokenService.getClaim(token, "role")).willReturn(Authority.MEMBER.getValue());
 
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/community/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/photo/{postIdx}", postIdx)
                         .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 

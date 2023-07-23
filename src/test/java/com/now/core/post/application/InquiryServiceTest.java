@@ -4,13 +4,13 @@ import com.now.NowApplication;
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
 import com.now.config.fixtures.comment.CommentFixture;
+import com.now.config.fixtures.post.InquiryFixture;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.comment.domain.Comment;
 import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.post.domain.Inquiry;
-import com.now.core.post.domain.InquiryTest;
 import com.now.core.post.domain.PostRepository;
 import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
@@ -26,7 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 
 import static com.now.config.fixtures.member.MemberFixture.createMember;
-import static com.now.core.post.domain.InquiryTest.createSecretInquiryWithAnswer;
+import static com.now.config.fixtures.post.InquiryFixture.createSecretInquiryWithAnswer;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -63,7 +63,7 @@ class InquiryServiceTest {
         @DisplayName("비밀글 설정이 아닐 때, 문의 게시글을 반환한다")
         void getInquiryWithSecretCheck() {
             Long postIdx = 1L;
-            Inquiry inquiry = InquiryTest.createNonSecretInquiry("tester1", Category.SERVICE);
+            Inquiry inquiry = InquiryFixture.createNonSecretInquiry("tester1", Category.SERVICE);
 
             when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
 
@@ -78,7 +78,7 @@ class InquiryServiceTest {
             @DisplayName("비밀번호를 확인 후 같다면 문의 게시글을 반환한다.")
             void getInquiryWithSecretCheck_isPasswordMatching() {
                 Long postIdx = 1L;
-                Inquiry inquiry = InquiryTest.createSecretInquiry("tester1", Category.SERVICE);
+                Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
                 when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
                 when(passwordSecurityManager.matchesWithSalt(anyString(), anyString())).thenReturn(true);
@@ -91,7 +91,7 @@ class InquiryServiceTest {
             void getInquiryWithSecretCheck_SameMemberId() {
                 Long postIdx = 1L;
                 Member member = createMember("tester1");
-                Inquiry inquiry = InquiryTest.createSecretInquiry("tester1", Category.SERVICE);
+                Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
                 when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
                 when(memberRepository.findById(anyString())).thenReturn(member);
@@ -104,7 +104,7 @@ class InquiryServiceTest {
             void getInquiryWithSecretCheck_throw_CannotViewInquiryException() {
                 Long postIdx = 1L;
                 Member member = createMember("tester2");
-                Inquiry inquiry = InquiryTest.createSecretInquiry("tester1", Category.SERVICE);
+                Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
                 when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
                 when(memberRepository.findById(anyString())).thenReturn(member);
@@ -127,7 +127,7 @@ class InquiryServiceTest {
         void hasUpdateAccess() {
             Long postIdx = 1L;
             Member member = createMember("tester1");
-            Inquiry inquiry = InquiryTest.createSecretInquiry("tester1", Category.SERVICE);
+            Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
             when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById("tester1")).thenReturn(member);
@@ -140,7 +140,7 @@ class InquiryServiceTest {
         void hasUpdateAccess_throw_CannotUpdatePostException() {
             Long postIdx = 1L;
             Member member = createMember("tester2");
-            Inquiry inquiry = InquiryTest.createSecretInquiry("tester1", Category.SERVICE);
+            Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
             when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById(anyString())).thenReturn(member);
@@ -162,7 +162,7 @@ class InquiryServiceTest {
         void hasDeleteAccess() {
             Long postIdx = 1L;
             Member member = createMember("tester1");
-            Inquiry inquiry = InquiryTest.createSecretInquiry("tester1", Category.SERVICE);
+            Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
             when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById("tester1")).thenReturn(member);
@@ -175,7 +175,7 @@ class InquiryServiceTest {
         void hasDeleteAccess_throw_CannotDeletePostException() {
             Long postIdx = 1L;
             Member member = createMember("tester2");
-            Inquiry inquiry = InquiryTest.createSecretInquiry("tester1", Category.SERVICE);
+            Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
             when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById(anyString())).thenReturn(member);
@@ -192,7 +192,7 @@ class InquiryServiceTest {
         void hasDeleteAccess_throw_CannotDeletePostException_2() {
             Long postIdx = 1L;
             Member member = createMember("tester1");
-            Inquiry inquiry = InquiryTest.createSecretInquiry("tester1", Category.SERVICE);
+            Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
             List<Comment> comments = List.of(CommentFixture.createCommentByMemberId("tester3"));
 
             when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
