@@ -4,6 +4,7 @@ import com.now.core.category.domain.constants.Category;
 import com.now.core.post.domain.Inquiry;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 public class InquiryFixture {
 
@@ -14,6 +15,8 @@ public class InquiryFixture {
     public static final String SAMPLE_NICKNAME_2 = "Hoon";
     public static final String SAMPLE_TITLE_2 = "서비스 이용에 문의드립니다.";
     public static final String SAMPLE_CONTENT_2 = "게시글에 몇 가지 궁금한 점이 있어서 문의드립니다.";
+
+    public static final String SAMPLE_MANAGER_NICKNAME_1 = "GangManager";
 
     public static Inquiry createSecretInquiry(Long postIdx, String nickName, String title, String content) {
         return Inquiry.builder()
@@ -27,7 +30,10 @@ public class InquiryFixture {
                 .viewCount(1000)
                 .likeCount(100)
                 .dislikeCount(2)
-                .secret(false)
+                .secret(true)
+                .answerManagerNickname(SAMPLE_MANAGER_NICKNAME_1)
+                .answerContent("안녕하세요. 답변드리도록 하겠습니다.....")
+                .answerRegDate(String.valueOf(LocalDateTime.now().plus(2, ChronoUnit.DAYS)))
                 .build();
     }
 

@@ -1,28 +1,13 @@
 package com.now.core.category.domain;
 
-import com.now.common.mapper.EnumMapperValue;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PostTypeTest {
-
-    @Test
-    @DisplayName("카테고리 전체 출력")
-    void create() {
-        List<EnumMapperValue> categories = Arrays.stream(Category.values())
-                .map(EnumMapperValue::new)
-                .collect(Collectors.toList());
-
-        System.out.println(categories);
-    }
 
     @Test
     @DisplayName("Category의 EVENT는 PostGroup의 NOTICE에 속한다.")

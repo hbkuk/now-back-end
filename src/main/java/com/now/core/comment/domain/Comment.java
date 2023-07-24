@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Comment {
 
+    // TODO: 댓글 수정, 삭제 컨트롤러 핸들러 메서드 추가
+    // TODO: 매니저 작성 기능 및 테스트 코드 추가
+
     private final Long commentIdx; // 댓글의 고유 식별자
 
     private String memberNickname; // 댓글의 작성자의 닉네임

@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CommunityControllerTest extends RestDocsTestSupport {
 
     @Test
-    @DisplayName("모든 커뮤니티 게시글을 조회")
+    @DisplayName("모든 커뮤니티 게시글 조회")
     void getAllCommunities() throws Exception {
         // given
         Condition condition = new Condition(5);
@@ -59,7 +59,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("[]").type(ARRAY).description("커뮤니티 게시글 목록"),
                                 fieldWithPath("[].postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("[].title").type(STRING).description("제목"),
-                                fieldWithPath("[].memberNickname").type(STRING).description("작성자 닉네임"),
+                                fieldWithPath("[].memberNickname").type(STRING).description("회원 닉네임"),
                                 fieldWithPath("[].regDate").type(STRING).description("등록일"),
                                 fieldWithPath("[].modDate").type(STRING).optional().description("수정일(null 가능)"),
                                 fieldWithPath("[].content").type(STRING).description("내용"),
@@ -77,7 +77,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
 
                                 fieldWithPath("[].comments").type(ARRAY).optional().description("댓글 목록"),
                                 fieldWithPath("[].comments[].commentIdx").type(NUMBER).optional().description("댓글 ID"),
-                                fieldWithPath("[].comments[].memberNickname").type(STRING).optional().description("댓글 작성자 ID"),
+                                fieldWithPath("[].comments[].memberNickname").type(STRING).optional().description("회원 닉네임"),
                                 fieldWithPath("[].comments[].regDate").type(STRING).optional().description("댓글 등록일 (null 가능)"),
                                 fieldWithPath("[].comments[].content").type(STRING).optional().description("댓글 내용"),
                                 fieldWithPath("[].comments[].postIdx").type(NUMBER).optional().description("원글의 ID")
@@ -106,7 +106,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         responseFields(
                                 fieldWithPath("postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("title").type(STRING).description("제목"),
-                                fieldWithPath("memberNickname").type(STRING).description("매니저 닉네임"),
+                                fieldWithPath("memberNickname").type(STRING).description("회원 닉네임"),
                                 fieldWithPath("regDate").type(STRING).description("등록일"),
                                 fieldWithPath("modDate").type(STRING).optional().description("수정일(null 가능)"),
                                 fieldWithPath("content").type(STRING).description("내용"),
@@ -170,9 +170,9 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         ),
                         requestPartFields("community",
                                 fieldWithPath("postIdx").ignored(),
-                                fieldWithPath("title").description("제목"),
                                 fieldWithPath("category").description("카테고리"),
-                                fieldWithPath("content").description("내용")
+                                fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
+                                fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하"))
                         ),
                         responseHeaders(
                                 headerWithName(HttpHeaders.LOCATION).description("생성된 위치 URI")
@@ -227,13 +227,13 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 partWithName("community").description("커뮤니티 게시글 정보"),
                                 partWithName("attachment").description("첨부파일 (다중 파일 업로드 가능)").optional()
                         ),
-                        requestPartFields("community",
-                                fieldWithPath("title").description("제목").attributes(field("constraints", "길이 10 이하")),
-                                fieldWithPath("category").description("카테고리").attributes(field("constraints", "길이 10 이하")),
-                                fieldWithPath("content").description("내용").attributes(field("constraints", "길이 10 이하"))
+                        requestParameters(
+                                parameterWithName("attachmentIdx").description("이전에 업로드된 첨부파일 ID").optional()
                         ),
-                        requestParameters( // 전달된 파라미터 정보 출력
-                                parameterWithName("attachmentIdx").description("이전에 업로드된 파일 번호 목록").optional()
+                        requestPartFields("community",
+                                fieldWithPath("category").description("카테고리"),
+                                fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
+                                fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하"))
                         ),
                         responseHeaders(
                                 headerWithName(HttpHeaders.LOCATION).description("생성된 위치 URI")
@@ -260,7 +260,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
                         ),
                         pathParameters(
-                                parameterWithName("postIdx").description("삭제할 게시글 번호")
+                                parameterWithName("postIdx").description("게시글 번호")
                         )
                 ));
     }

@@ -31,9 +31,16 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Inquiry {
 
+    // TODO: 전체 도메인 객체 필드 정리
     // TODO: 게시글 등록, 수정 객체 별도 관리
 
     private static final PostGroup postGroup = PostGroup.INQUIRY;
+
+    /**
+     * 게시글의 고유 식별자
+     */
+    private Long postIdx;
+
     /**
      * 카테고리
      */
@@ -109,10 +116,6 @@ public class Inquiry {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final String answerRegDate;
-    /**
-     * 게시글의 고유 식별자
-     */
-    private Long postIdx;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long memberIdx;

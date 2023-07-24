@@ -1,6 +1,10 @@
 package com.now.common.mapper;
 
 
+import com.now.core.category.presentation.SubCodeGroup;
+
+import java.util.List;
+
 /**
  * {@link Enum}을 매핑하는 인터페이스
  */
@@ -19,5 +23,7 @@ public interface EnumMapperType {
      * @return 제목
      */
     String getTitle();
+
+    List<SubCodeGroup> getSubCodeGroup();
 }
 

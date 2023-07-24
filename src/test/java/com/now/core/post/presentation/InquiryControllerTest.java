@@ -54,7 +54,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("[]").type(ARRAY).description("문의 게시글 목록"),
                                 fieldWithPath("[].postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("[].title").type(STRING).description("제목"),
-                                fieldWithPath("[].memberNickname").type(STRING).description("매니저 닉네임"),
+                                fieldWithPath("[].memberNickname").type(STRING).description("회원 닉네임"),
                                 fieldWithPath("[].regDate").type(STRING).description("등록일"),
                                 fieldWithPath("[].modDate").type(STRING).optional().description("수정일(null 가능)"),
                                 fieldWithPath("[].content").type(STRING).optional().description("내용(비밀글 설정 시 null 가능)"),
@@ -89,7 +89,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         responseFields(
                                 fieldWithPath("postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("title").type(STRING).description("제목"),
-                                fieldWithPath("memberNickname").type(STRING).description("작성자 닉네임"),
+                                fieldWithPath("memberNickname").type(STRING).description("회원 닉네임"),
                                 fieldWithPath("regDate").type(STRING).description("등록일"),
                                 fieldWithPath("modDate").type(STRING).optional().description("수정일(null 가능)"),
                                 fieldWithPath("content").type(STRING).optional().description("내용(비밀글 설정 시 null 가능)"),
@@ -100,16 +100,17 @@ class InquiryControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("secret").type(BOOLEAN).description("비밀글 설정 여부"),
                                 fieldWithPath("answerManagerNickname").type(STRING).description("답변한 매니저 닉네임(비밀글 설정 시 null 가능)").optional(),
                                 fieldWithPath("answerContent").type(STRING).description("답변 내용(비밀글 설정 시 null 가능)").optional(),
-                                fieldWithPath("answerRegDate").type(STRING).description("답변 수정일(비밀글 설정 시 null 가능)").optional()
+                                fieldWithPath("answerRegDate").type(STRING).description("답변 작성일(비밀글 설정 시 null 가능)").optional()
                         )));
     }
 
     @Test
     @DisplayName("비밀글 설정된 문의 게시글 응답")
     void getSecretInquiry() throws Exception {
+        // given
         Long postIdx = 1L;
         String accessToken = "AccessToken";
-        given(jwtTokenService.getClaim(accessToken,"id")).willReturn("teter1");
+        given(jwtTokenService.getClaim(accessToken,"id")).willReturn("tester1");
         given(inquiryService.getInquiryWithSecretCheck(anyLong(), anyString(), any()))
                 .willReturn(createSecretInquiry(
                         1L, InquiryFixture.SAMPLE_NICKNAME_1, InquiryFixture.SAMPLE_TITLE_1, InquiryFixture.SAMPLE_CONTENT_1));
@@ -130,15 +131,15 @@ class InquiryControllerTest extends RestDocsTestSupport {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken").optional()
                         ),
                         requestParameters(
-                                parameterWithName("password").description("비밀글 비밀번호").optional()
+                                parameterWithName("password").description("비밀글 설정 비밀번호").optional()
                         ),
                         responseFields(
                                 fieldWithPath("postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("title").type(STRING).description("제목"),
                                 fieldWithPath("memberNickname").type(STRING).description("작성자 닉네임"),
                                 fieldWithPath("regDate").type(STRING).description("등록일"),
-                                fieldWithPath("modDate").type(STRING).optional().description("수정일(null 가능)"),
-                                fieldWithPath("content").type(STRING).optional().description("내용(비밀글 설정 시 null 가능)"),
+                                fieldWithPath("modDate").type(STRING).description("수정일(null 가능)").optional(),
+                                fieldWithPath("content").type(STRING).description("내용"),
                                 fieldWithPath("viewCount").type(NUMBER).description("조회수"),
                                 fieldWithPath("likeCount").type(NUMBER).description("좋아요 수"),
                                 fieldWithPath("dislikeCount").type(NUMBER).description("싫어요 수"),
@@ -146,7 +147,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("secret").type(BOOLEAN).description("비밀글 설정 여부"),
                                 fieldWithPath("answerManagerNickname").type(STRING).description("답변한 매니저 닉네임(비밀글 설정 시 null 가능)").optional(),
                                 fieldWithPath("answerContent").type(STRING).description("답변 내용(비밀글 설정 시 null 가능)").optional(),
-                                fieldWithPath("answerRegDate").type(STRING).description("답변 수정일(비밀글 설정 시 null 가능)").optional()
+                                fieldWithPath("answerRegDate").type(STRING).description("답변 작성일(비밀글 설정 시 null 가능)").optional()
                         )));
     }
 
@@ -174,7 +175,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         ),
                         requestFields(
                                 fieldWithPath("postIdx").ignored(),
-                                fieldWithPath("category").description("카테고리").attributes(field("constraints", "필수 선택")),
+                                fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
                                 fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하")),
                                 fieldWithPath("secret").description("비밀글 설정 여부"),
@@ -210,8 +211,8 @@ class InquiryControllerTest extends RestDocsTestSupport {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
                         ),
                         requestFields(
-                                fieldWithPath("postIdx").description("수정할 게시글 번호"),
-                                fieldWithPath("category").description("카테고리").attributes(field("constraints", "필수 선택")),
+                                fieldWithPath("postIdx").description("게시글 번호"),
+                                fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
                                 fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하")),
                                 fieldWithPath("secret").description("비밀글 설정 여부"),

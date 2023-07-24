@@ -16,6 +16,8 @@ import lombok.*;
 @AllArgsConstructor
 public class Attachment {
 
+    // TODO: 첨부파일 다운로드 컨트롤러 핸들러 메서드 추가
+    
     /**
      * 첨부파일의 고유 식별자
      */

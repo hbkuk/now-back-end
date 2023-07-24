@@ -28,6 +28,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Photo {
 
+    // TODO: 첨부파일 설정에 대한 로직
     // TODO: 게시글 등록, 수정 객체 별도 관리
 
     private static final PostGroup postGroup = PostGroup.PHOTO;

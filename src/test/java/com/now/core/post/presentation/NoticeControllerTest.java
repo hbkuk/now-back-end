@@ -51,7 +51,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
                                 parameterWithName("maxNumberOfPosts").description("페이지 개수 제한").optional()
                         ),
                         responseFields(
-                                fieldWithPath("[]").type(ARRAY).description("공지 게시글 목록"),
+                                fieldWithPath("[]").type(ARRAY).description("공지 목록"),
                                 fieldWithPath("[].postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("[].title").type(STRING).description("제목"),
                                 fieldWithPath("[].managerNickname").type(STRING).description("매니저 닉네임"),
@@ -125,7 +125,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
                         ),
                         requestFields(
                                 fieldWithPath("postIdx").ignored(),
-                                fieldWithPath("category").description("카테고리").attributes(field("constraints", "필수 선택")),
+                                fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
                                 fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하")),
                                 fieldWithPath("pinned").description("상단 고정 여부")
@@ -160,8 +160,8 @@ class NoticeControllerTest extends RestDocsTestSupport {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
                         ),
                         requestFields(
-                                fieldWithPath("postIdx").description("수정할 게시글 번호"),
-                                fieldWithPath("category").description("카테고리").attributes(field("constraints", "필수 선택")),
+                                fieldWithPath("postIdx").description("게시글 번호"),
+                                fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
                                 fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하")),
                                 fieldWithPath("pinned").description("상단 고정 여부")
@@ -192,7 +192,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
                         ),
                         pathParameters(
-                                parameterWithName("postIdx").description("삭제할 게시글 번호")
+                                parameterWithName("postIdx").description("게시글 번호")
                         )
                 ));
     }

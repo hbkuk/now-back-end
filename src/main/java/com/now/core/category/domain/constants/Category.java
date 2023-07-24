@@ -2,7 +2,6 @@ package com.now.core.category.domain.constants;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.now.common.mapper.EnumMapperType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -11,7 +10,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Getter
 @RequiredArgsConstructor
-public enum Category implements EnumMapperType {
+public enum Category {
     EVENT("이벤트"),
     NEWS("새소식"),
 
@@ -24,12 +23,14 @@ public enum Category implements EnumMapperType {
     SERVICE("서비스"),
     TECHNOLOGY("기술");
 
+    private final String title;
+
     /**
      * enum 상수의 코드 값을 반환
      *
      * @return 코드 값
      */
-    @Override
+    @JsonValue  // 열거형의 특정 필드를 JSON 값으로 변환할 때 사용
     public String getCode() {
         return name();
     }
@@ -39,13 +40,9 @@ public enum Category implements EnumMapperType {
      *
      * @return 제목
      */
-    @Override
     public String getTitle() {
         return title;
     }
-
-    @JsonValue  // 열거형의 특정 필드를 JSON 값으로 변환할 때 사용
-    private final String title;
 
     /**
      * 전달받은 값으로부터 해당하는 Category enum 생성
@@ -56,7 +53,7 @@ public enum Category implements EnumMapperType {
     @JsonCreator //  JSON 값을 열거형으로 변환할 때 사용
     public static Category from(String value) {
         for (Category category : Category.values()) {
-            if (category.getTitle().equals(value)) {
+            if (category.name().equals(value)) {
                 return category;
             }
         }

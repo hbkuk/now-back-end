@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CategoryControllerTest extends RestDocsTestSupport {
 
     @Test
-    @DisplayName("모든 카테고리 게시글 조회")
+    @DisplayName("모든 게시글 그룹 목록 조회")
     void getAllCategories() throws Exception {
         given(enumMapperFactory.get("PostGroup"))
                 .willReturn(Arrays.stream(PostGroup.values())
@@ -38,8 +38,11 @@ class CategoryControllerTest extends RestDocsTestSupport {
                 .andDo(restDocs.document(
                         responseFields(
                                 fieldWithPath("[].").type(ARRAY).description("게시글 그룹 목록"),
-                                fieldWithPath("[].code").type(STRING).description("게시글 그룹"),
-                                fieldWithPath("[].title").type(STRING).description("카테고리")
+                                fieldWithPath("[].code").type(STRING).description("게시글 그룹 코드"),
+                                fieldWithPath("[].title").type(STRING).description("게시글 그룹명"),
+                                fieldWithPath("[].subCodeGroup").type(ARRAY).description("하위 코드 목록"),
+                                fieldWithPath("[].subCodeGroup[].subCode").type(STRING).description("하위 코드"),
+                                fieldWithPath("[].subCodeGroup[].subCodeTitle").type(STRING).description("하위 코드명")
                         )));
     }
 }

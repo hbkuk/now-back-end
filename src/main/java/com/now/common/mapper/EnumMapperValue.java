@@ -1,12 +1,19 @@
 package com.now.common.mapper;
 
+import com.now.core.category.presentation.SubCodeGroup;
+import lombok.ToString;
+
+import java.util.List;
+
 /**
  * {@link EnumMapperType}을 매핑하는 클래스
  */
+@ToString
 public class EnumMapperValue {
 
-    private String code;
-    private String title;
+    private final String code;
+    private final String title;
+    private final List<SubCodeGroup> subCodeGroup;
 
     /**
      * EnumMapperValue의 생성자
@@ -16,6 +23,7 @@ public class EnumMapperValue {
     public EnumMapperValue(EnumMapperType enumMapperType) {
         this.code = enumMapperType.getCode();
         this.title = enumMapperType.getTitle();
+        this.subCodeGroup = enumMapperType.getSubCodeGroup();
     }
 
     /**
@@ -36,17 +44,8 @@ public class EnumMapperValue {
         return title;
     }
 
-    /**
-     * 객체의 문자열 표현을 반환
-     *
-     * @return 문자열 표현
-     */
-    @Override
-    public String toString() {
-        return "{" +
-                "code='" + code + '\'' +
-                ", title='" + title + '\'' +
-                '}';
+    public List<SubCodeGroup> getSubCodeGroup() {
+        return subCodeGroup;
     }
 }
 
