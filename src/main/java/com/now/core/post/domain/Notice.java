@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.admin.manager.domain.Manager;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
+import com.now.core.comment.domain.Comment;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 공지사항 게시글을 나타내는 도메인 객체
@@ -54,6 +56,9 @@ public class Notice {
 
     @NotNull(groups = {PostValidationGroup.saveNotice.class})  // 상단 고정 여부 (true: 상단 고정)
     private final Boolean pinned;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private final List<Comment> comments; // 댓글 (comment 테이블에서 가져옴)
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // 매니저 고유 식별자
     private Integer managerIdx;

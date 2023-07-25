@@ -127,10 +127,13 @@
     <select id="findAllNotices" parameterType="Condition" resultMap="notice" useCache="false" flushCache="true">
         SELECT
         <include refid="selectPostTableColumn"/>,
-        <include refid="selectManagerTableColumn"/>
+        <include refid="selectManagerTableColumn"/>,
+        <include refid="selectMaxCommentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_manager m ON p.manager_idx = m.manager_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         WHERE p.post_group = 'NOTICE'
+        GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
         <include refid="condition"/>
     </select>
@@ -139,14 +142,15 @@
     <select id="findAllCommunity" parameterType="Condition" resultMap="community" useCache="false" flushCache="true">
         SELECT
         <include refid="selectPostTableColumn"/>,
-        <include refid="selectAttachmentTableColumn"/>,
-        <include refid="selectCommentTableColumn"/>,
+        <include refid="selectMaxAttachmentTableColumn"/>,
+        <include refid="selectMaxCommentTableColumn"/>,
         <include refid="selectMemberTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
         WHERE p.post_group = 'COMMUNITY'
+        GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
         <include refid="condition"/>
     </select>
@@ -155,16 +159,17 @@
     <select id="findAllPhotos" parameterType="Condition" resultMap="photo" useCache="false" flushCache="true">
         SELECT
         <include refid="selectPostTableColumn"/>,
-        <include refid="selectAttachmentTableColumn"/>,
-        <include refid="selectCommentTableColumn"/>,
+        <include refid="selectMaxAttachmentTableColumn"/>,
+        <include refid="selectMaxCommentTableColumn"/>,
         <include refid="selectMemberTableColumn"/>,
-        <include refid="selectThumbnailTableColumn"/>
+        <include refid="selectMaxThumbnailTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
         LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
         WHERE p.post_group = 'PHOTO'
+        GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
         <include refid="condition"/>
     </select>
@@ -174,23 +179,32 @@
         SELECT
         <include refid="selectPostTableColumnWithoutContent"/>,
         <include refid="selectMemberTableColumn"/>,
-        <include refid="selectInquiriesWithNonSecretInfo"/>
+        <include refid="selectMaxInquiriesWithNonSecretInfo"/>,
+        <include refid="selectMaxCommentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
         LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
         LEFT OUTER JOIN tb_manager ma ON ma.manager_idx = i.answer_manager_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         WHERE p.post_group = 'INQUIRY'
+        GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
         <include refid="condition"/>
     </select>
+
+
+
+
 
     <!-- 단일 공지사항 조회 쿼리 -->
     <select id="findNotice" parameterType="Long" resultMap="notice" useCache="false" flushCache="true">
         SELECT
         <include refid="selectPostTableColumn"/>,
-        <include refid="selectManagerTableColumn"/>
+        <include refid="selectManagerTableColumn"/>,
+        <include refid="selectCommentTableColumn"/>,
         FROM tb_post p
         LEFT OUTER JOIN tb_manager m ON p.manager_idx = m.manager_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         WHERE p.post_group = 'NOTICE' AND p.post_idx = #{postIdx}
     </select>
 
@@ -227,11 +241,13 @@
         SELECT
         <include refid="selectPostTableColumn"/>,
         <include refid="selectMemberTableColumn"/>,
-        <include refid="selectInquiryTableColumn"/>
+        <include refid="selectInquiryTableColumn"/>,
+        <include refid="selectCommentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
         LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
         LEFT OUTER JOIN tb_manager ma ON ma.manager_idx = i.answer_manager_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         WHERE p.post_group = 'INQUIRY' AND p.post_idx = #{postIdx}
     </select>
 
@@ -279,6 +295,8 @@
         p.pinned AS p_pinned
     </sql>
 
+
+
     <!-- Attachment 테이블의 컬럼 매핑 -->
     <sql id="selectAttachmentTableColumn">
         f.attachment_idx AS f_attachment_idx,
@@ -288,19 +306,48 @@
         f.post_idx AS f_post_idx
     </sql>
 
+    <sql id="selectMaxAttachmentTableColumn">
+        MAX(f.attachment_idx) AS f_attachment_idx,
+        MAX(f.original_attachment_name) AS f_original_attachment_name,
+        MAX(f.attachment_extension) AS f_attachment_extension,
+        MAX(f.attachment_size) AS f_attachment_size,
+        MAX(f.post_idx) AS f_post_idx
+    </sql>
+
+
     <!-- Comment 테이블의 컬럼 매핑 -->
     <sql id="selectCommentTableColumn">
         co.comment_idx AS co_comment_idx,
         co.member_idx AS co_member_idx,
-        co.manager_ix AS co_manager_idx,
+        co.manager_idx AS co_manager_idx,
         co.reg_date AS co_reg_date,
         co.content AS co_content,
         co.post_idx AS co_post_idx
     </sql>
 
+
+    <sql id="selectMaxCommentTableColumn">
+        MAX(co.comment_idx) AS co_comment_idx,
+        MAX(co.member_idx) AS co_member_idx,
+        MAX(co.manager_idx) AS co_manager_idx,
+        MAX(co.reg_date) AS co_reg_date,
+        MAX(co.content) AS co_content,
+        MAX(co.post_idx) AS co_post_idx
+    </sql>
+
+
+
+
+
+
+
     <!-- Inquiry 테이블의 컬럼 매핑, 비밀글 여부만-->
     <sql id="selectInquiriesWithNonSecretInfo">
         i.secret AS i_secret
+    </sql>
+
+    <sql id="selectMaxInquiriesWithNonSecretInfo">
+        MAX(i.secret) AS i_secret
     </sql>
 
     <!-- Inquiry 테이블의 컬럼 매핑 -->
@@ -326,6 +373,10 @@
     <!-- Member 테이블의 컬럼 매핑 -->
     <sql id="selectThumbnailTableColumn">
         th.attachment_idx AS th_thumbnail_attachment_idx
+    </sql>
+
+    <sql id="selectMaxThumbnailTableColumn">
+        MAX(th.attachment_idx) AS th_thumbnail_attachment_idx
     </sql>
 
 
@@ -361,6 +412,8 @@
         <result property="likeCount" column="p_like_count"/>
         <result property="dislikeCount" column="p_dislike_count"/>
         <result property="pinned" column="p_pinned"/>
+        <!-- 공통 컬렉션 매핑 -->
+        <collection property="comments" resultMap="commentTableCollectionMapping" />
     </resultMap>
 
     <!-- 커뮤니티 게시글 결과 매핑 -->
@@ -417,6 +470,8 @@
         <result property="answerManagerNickname" column="i_answer_manager_nickname"/>
         <result property="answerContent" column="i_answer_content"/>
         <result property="password" column="i_password"/>
+        <!-- 공통 컬렉션 매핑 -->
+        <collection property="comments" resultMap="commentTableCollectionMapping" />
     </resultMap>
 
     <!-- 검색 조건에 따른 WHERE 절 SQL -->

@@ -85,6 +85,9 @@ public class Inquiry {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final String answerRegDate; // 답변 일자
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private final List<Comment> comments; // 댓글 (comment 테이블에서 가져옴)
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long memberIdx; // 회원의 고유 식별자
 
