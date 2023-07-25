@@ -29,4 +29,23 @@ public class CommentFixture {
                 .postIdx(1L)
                 .build();
     }
+
+    public static Comment createCommentForSave() {
+        return Comment.builder()
+                .memberNickname("Shark")
+                .content("좋은 글 입니다.")
+                .regDate(LocalDateTime.now().plus(1, ChronoUnit.DAYS))
+                .postIdx(1L)
+                .build();
+    }
+
+    public static Comment createCommentForUpdate(Long commentIdx) {
+        return Comment.builder()
+                .commentIdx(commentIdx)
+                .memberNickname("Shark")
+                .content("수정된 글 입니다.")
+                .regDate(LocalDateTime.now().plus(5, ChronoUnit.DAYS))
+                .postIdx(1L)
+                .build();
+    }
 }

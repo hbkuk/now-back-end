@@ -1,5 +1,6 @@
 package com.now.core.attachment.application;
 
+import com.now.common.exception.ErrorType;
 import com.now.common.utils.AttachmentUtils;
 import com.now.core.attachment.application.dto.ThumbNail;
 import com.now.core.attachment.application.dto.UploadedAttachment;
@@ -36,7 +37,7 @@ public class AttachmentService {
      * @param postIdx 게시물 번호
      * @return 첨부파일 번호 목록
      */
-    public List<Long> findAllIndexesByPostIdx(Long postIdx) {
+    public List<Long> getAllIndexesByPostIdx(Long postIdx) {
         return attachmentRepository.findAllIndexesByPostIdx(postIdx);
     }
 
@@ -46,8 +47,13 @@ public class AttachmentService {
      * @param attachmentIdx 첨부파일 번호
      * @return 첨부파일 객체
      */
-    private Attachment findByAttachmentIdx(Long attachmentIdx) {
-        return attachmentRepository.findByAttachmentIdx(attachmentIdx);
+    public Attachment getAttachment(Long attachmentIdx) {
+        Attachment attachment = attachmentRepository.findByAttachmentIdx(attachmentIdx);
+        if(attachment == null) {
+            throw new InvalidAttachmentException(ErrorType.NOT_FOUND_ATTACHMENT);
+        }
+
+        return attachment;
     }
 
     /**
@@ -115,7 +121,7 @@ public class AttachmentService {
      */
     public void updateAttachments(MultipartFile[] multipartFiles, List<Long> previouslyUploadedIndexes,
                                   Long postIdx, AttachmentType attachmentType) {
-        List<Long> indexesToDelete = findAllIndexesByPostIdx(postIdx);
+        List<Long> indexesToDelete = getAllIndexesByPostIdx(postIdx);
         if(indexesToDelete.isEmpty()) {
             saveAttachments(multipartFiles, postIdx, attachmentType);
             return;
@@ -141,7 +147,7 @@ public class AttachmentService {
      * @param postIdx 게시글 번호
      * @return 게시물 번호에 해당하는 대표 이미지 정보를 반환
      */
-    public ThumbNail findThumbnailByPostIdx(Long postIdx) {
+    public ThumbNail getThumbnailByPostIdx(Long postIdx) {
         return attachmentRepository.findThumbnailByPostIdx(postIdx);
     }
 
@@ -154,7 +160,7 @@ public class AttachmentService {
      * @param attachmentType            첨부파일 업로드 타입을 정의한 {@link AttachmentType} 객체
      */
     public void updateAttachmentsWithThumbnail(MultipartFile[] multipartFiles, List<Long> previouslyUploadedIndexes, Long postIdx, AttachmentType attachmentType) {
-        List<Long> indexesToDelete = findAllIndexesByPostIdx(postIdx);
+        List<Long> indexesToDelete = getAllIndexesByPostIdx(postIdx);
         if(indexesToDelete.isEmpty()) {
             saveAttachments(multipartFiles, postIdx, attachmentType);
             return;
@@ -162,7 +168,7 @@ public class AttachmentService {
 
         indexesToDelete.removeAll(previouslyUploadedIndexes);
 
-        ThumbNail thumbNail = findThumbnailByPostIdx(postIdx);
+        ThumbNail thumbNail = getThumbnailByPostIdx(postIdx);
 
         if (indexesToDelete.contains(thumbNail.getAttachmentIdx())) {
             deleteThumbNail(thumbNail.getAttachmentIdx());
@@ -191,7 +197,7 @@ public class AttachmentService {
      * @param attachmentIdx 첨부파일 번호
      */
     public void deleteAttachment(Long attachmentIdx) {
-        AttachmentUtils.deleteUploadedFile(findByAttachmentIdx(attachmentIdx).getSavedAttachmentName());
+        AttachmentUtils.deleteUploadedFile(getAttachment(attachmentIdx).getSavedAttachmentName());
         attachmentRepository.deleteAttachmentIdx(attachmentIdx);
     }
 

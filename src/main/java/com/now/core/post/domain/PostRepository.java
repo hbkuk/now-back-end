@@ -97,6 +97,16 @@ public class PostRepository {
         return postMapper.findInquiry(postIdx);
     }
 
+    /**
+     * 게시글 번호에 해당하는 게시글이 있다면 true 반환, 그렇지 않다면 false 반환
+     *
+     * @param postIdx 게시글 번호
+     * @return 게시글이 있다면 true 반환, 그렇지 않다면 false 반환
+     */
+    public boolean existPostByPostId(Long postIdx) {
+        return postMapper.existPostByPostId(postIdx);
+    }
+
 
 
 

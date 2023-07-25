@@ -32,17 +32,19 @@ public class Notice {
     @NotNull(groups = {PostValidationGroup.saveNotice.class})
     private final Category category; // 카테고리
 
+    private String managerNickname; // 매니저 닉네임
+
     @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 100)
     private final String title; // 제목
+
+    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000)
+    private final String content; // 내용
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime regDate; // 등록일자
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime modDate; // 수정일자
-
-    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000)
-    private final String content; // 내용
 
     private final Integer viewCount; // 조회수
 
@@ -58,8 +60,6 @@ public class Notice {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // 매니저 아이디
     private String managerId;
-
-    private String managerNickname; // 매니저 닉네임
 
     /**
      * 매니저의 식별자를 업데이트

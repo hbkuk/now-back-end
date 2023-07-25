@@ -44,7 +44,7 @@ public class NoticeController {
      * @param postIdx 게시글 번호
      * @return 공지 게시글 정보
      */
-    @GetMapping("/api/notice/{postIdx}")
+    @GetMapping("/api/notices/{postIdx}")
     public ResponseEntity<Notice> getNotice(@PathVariable("postIdx") Long postIdx) {
         log.debug("getNotice 호출, postIdx : {}", postIdx);
 

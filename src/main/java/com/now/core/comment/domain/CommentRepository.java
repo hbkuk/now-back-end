@@ -25,11 +25,48 @@ public class CommentRepository {
     }
 
     /**
+     * 댓글 정보 응답
+     *
+     * @param commentIdx 댓글 번호
+     * @return 댓글 도메인 객체
+     */
+    public Comment findComment(Long commentIdx) {
+        return commentMapper.findComment(commentIdx);
+    }
+
+    /**
+     * 댓글 등록
+     *
+     * @param comment 등록할 댓글 정보
+     */
+    public void saveCommentByMember(Comment comment) {
+        commentMapper.saveCommentByMember(comment);
+    }
+
+    /**
+     * 댓글 수정
+     *
+     * @param comment 수정할 댓글 정보
+     */
+    public void updateComment(Comment comment) {
+        commentMapper.updateComment(comment);
+    }
+
+    /**
      * 게시글 번호에 해당하는 모든 댓글 삭제
      *
      * @param postIdx 게시글 번호
      */
     public void deleteAllByPostIdx(Long postIdx) {
         commentMapper.deleteAllByPostIdx(postIdx);
+    }
+
+    /**
+     * 댓글 번호에 해당하는 댓글 삭제
+     * 
+     * @param commentIdx 댓글 번호
+     */
+    public void deleteComment(Long commentIdx) {
+        commentMapper.deleteComment(commentIdx);
     }
 }

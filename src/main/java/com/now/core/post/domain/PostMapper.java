@@ -76,6 +76,8 @@ public interface PostMapper {
      */
     Inquiry findInquiry(Long postIdx);
 
+    boolean existPostByPostId(Long postIdx);
+
 
 
 

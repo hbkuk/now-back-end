@@ -235,6 +235,19 @@
         WHERE p.post_group = 'INQUIRY' AND p.post_idx = #{postIdx}
     </select>
 
+
+    <select id="existPostByPostId" parameterType="Long" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM tb_post
+        WHERE post_idx = #{postIdx}
+    </select>
+
+
+
+
+
+
+
     <!-- Post 테이블의 컬럼 매핑 -->
     <sql id="selectPostTableColumn">
         p.post_idx AS p_post_idx,
@@ -279,6 +292,7 @@
     <sql id="selectCommentTableColumn">
         co.comment_idx AS co_comment_idx,
         co.member_idx AS co_member_idx,
+        co.manager_ix AS co_manager_idx,
         co.reg_date AS co_reg_date,
         co.content AS co_content,
         co.post_idx AS co_post_idx
@@ -328,6 +342,7 @@
     <resultMap id="commentTableCollectionMapping" type="Comment">
         <id property="commentIdx" column="co_comment_idx"/>
         <result property="memberIdx" column="co_member_idx"/>
+        <result property="managerIdx" column="co_manager_idx"/>
         <result property="regDate" column="co_reg_date"/>
         <result property="content" column="co_content"/>
         <result property="postIdx" column="co_post_idx"/>

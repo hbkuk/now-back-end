@@ -76,7 +76,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
                         1L, NoticeFixture.SAMPLE_NICKNAME_1, NoticeFixture.SAMPLE_TITLE_1, NoticeFixture.SAMPLE_CONTENT_1));
 
         // when, then
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/notice/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/notices/{postIdx}", postIdx)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -111,7 +111,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MANAGER.getValue());
 
         ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.post("/api/manager/notice")
+                mockMvc.perform(RestDocumentationRequestBuilders.post("/api/manager/notices")
                                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createNoticeForSave().updatePostIdx(1L))))
@@ -147,7 +147,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MANAGER.getValue());
 
         ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.put("/api/manager/notice/{postIdx}", postIdx)
+                mockMvc.perform(RestDocumentationRequestBuilders.put("/api/manager/notices/{postIdx}", postIdx)
                                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createNoticeForSave().updatePostIdx(postIdx))))
@@ -182,7 +182,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(token, "id")).willReturn(managerId);
         given(jwtTokenService.getClaim(token, "role")).willReturn(Authority.MANAGER.getValue());
 
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/manager/notice/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/manager/notices/{postIdx}", postIdx)
                         .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 

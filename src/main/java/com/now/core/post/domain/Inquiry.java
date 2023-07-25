@@ -36,94 +36,60 @@ public class Inquiry {
 
     private static final PostGroup postGroup = PostGroup.INQUIRY;
 
-    /**
-     * 게시글의 고유 식별자
-     */
-    private Long postIdx;
+    private Long postIdx;   // 게시글의 고유 식별자
 
-    /**
-     * 카테고리
-     */
     @NotNull(groups = {PostValidationGroup.saveInquiry.class})
-    private final Category category;
-    /**
-     * 게시글의 제목
-     */
+    private final Category category;    // 카테고리
+
+    private String memberNickname;  // 회원의 닉네임
+
     @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 100)
-    private final String title;
-    /**
-     * 게시글 등록일자
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime regDate;
-    /**
-     * 게시글 수정일자
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime modDate;
-    /**
-     * 게시글의 내용
-     */
+    private final String title; // 게시글의 제목
+
     @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 2000)
-    private final String content;
-    /**
-     * 게시글의 조회수
-     */
-    private final Integer viewCount;
-    /**
-     * 게시글의 좋아요 수
-     */
-    private final Integer likeCount;
-    /**
-     * 게시글 싫어요 수
-     */
-    private final Integer dislikeCount;
-    /**
-     * 문의 게시글의 고유 식별자
-     */
+    private final String content;   // 게시글의 내용
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private final LocalDateTime regDate;    // 게시글 등록일자
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private final LocalDateTime modDate;    // 게시글 수정일자
+
+    private final Integer viewCount;    // 게시글의 조회수
+
+    private final Integer likeCount;    // 게시글의 좋아요 수
+
+    private final Integer dislikeCount; // 게시글 싫어요 수
+
     @JsonIgnore
-    private final Long inquiryIdx;
-    /**
-     * 비밀글 설정 여부 (true: 비밀글)
-     */
+    private final Long inquiryIdx;  // 문의 게시글의 고유 식별자
+
     @NotNull(groups = {PostValidationGroup.saveInquiry.class})
-    private final Boolean secret;
-    /**
-     * 답변 관리자의 고유 식별자
-     */
+    private final Boolean secret;   // 비밀글 설정 여부 (true: 비밀글)
+
     @JsonIgnore
-    private final String answerManagerIdx;
-    /**
-     * 답변 관리자의 고유 식별자
-     */
+    private final String answerManagerIdx;  // 답변 관리자의 고유 식별자
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private final String answerManagerNickname;
-    /**
-     * 비밀글의 비밀번호
-     */
+    private final String answerManagerNickname; // 답변 관리자의 고유 식별자
+
     @Nullable
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 4, max = 15)
-    private String password;
-    /**
-     * 답변 내용
-     */
+    private String password;    // 비밀글의 비밀번호
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private final String answerContent;
-    /**
-     * 답변 일자
-     */
+    private final String answerContent; // 답변 내용
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private final String answerRegDate;
+    private final String answerRegDate; // 답변 일자
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long memberIdx;
+    private Long memberIdx; // 회원의 고유 식별자
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String memberId;
-
-    private String memberNickname;
+    private String memberId;    // 회원의 아이디
 
     /**
      * 회원의 식별자를 업데이트

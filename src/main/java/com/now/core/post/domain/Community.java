@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * 커뮤니티 게시글을 나타내는 도메인 객체 
+ * 커뮤니티 게시글을 나타내는 도메인 객체
  */
 @Builder(toBuilder = true)
 @Getter
@@ -37,15 +37,19 @@ public class Community {
 
     private Long postIdx; // 게시글의 고유 식별자
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private String memberNickname; // 회원의 닉네임
-
     @NotNull(groups = {PostValidationGroup.saveCommunity.class})
     private final Category category; // 카테고리
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String memberNickname; // 회원의 닉네임
 
     @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 100)
     @NotEmpty(groups = {PostValidationGroup.saveCommunity.class})
     private final String title; // 게시글의 제목
+
+    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 2000)
+    @NotEmpty(groups = {PostValidationGroup.saveCommunity.class})
+    private final String content; // 게시글의 내용
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -54,10 +58,6 @@ public class Community {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final LocalDateTime modDate; // 게시글 수정일자
-
-    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 2000)
-    @NotEmpty(groups = {PostValidationGroup.saveCommunity.class})
-    private final String content; // 게시글의 내용
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final Integer viewCount; // 게시글의 조회수

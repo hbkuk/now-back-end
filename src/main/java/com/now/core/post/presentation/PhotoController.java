@@ -49,7 +49,7 @@ public class PhotoController {
      * @param postIdx 게시글 번호
      * @return 사진 게시글 정보와 함께 OK 응답을 반환
      */
-    @GetMapping("/api/photo/{postIdx}")
+    @GetMapping("/api/photos/{postIdx}")
     public ResponseEntity<Photo> getPhoto(@PathVariable("postIdx") Long postIdx) {
         log.debug("getPhoto 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(photoService.getPhoto(postIdx));
@@ -62,7 +62,7 @@ public class PhotoController {
      * @param photo    등록할 사진 게시글 정보
      * @return 생성된 위치 URI로 응답
      */
-    @PostMapping("/api/photo")
+    @PostMapping("/api/photos")
     public ResponseEntity<Void> registerPhoto(@RequestAttribute("id") String memberId,
                                               @RequestPart(value = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo photo,
                                               @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles) {
@@ -72,7 +72,7 @@ public class PhotoController {
         photoService.registerPhoto(photo.updateMemberId(memberId));
         attachmentService.saveAttachmentsWithThumbnail(multipartFiles, photo.getPostIdx(), AttachmentType.IMAGE);
 
-        return ResponseEntity.created(URI.create("/api/photo/" + photo.getPostIdx())).build();
+        return ResponseEntity.created(URI.create("/api/photos/" + photo.getPostIdx())).build();
     }
 
     /**
@@ -85,7 +85,7 @@ public class PhotoController {
      * @param previouslyUploadedIndexes 이전에 업로드된 파일 번호 목록
      * @return 생성된 위치 URI로 응답
      */
-    @PutMapping("/api/photo/{postIdx}")
+    @PutMapping("/api/photos/{postIdx}")
     public ResponseEntity<Void> updatePhoto(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
                                             @Validated(PostValidationGroup.savePhoto.class) @RequestPart(value = "photo") Photo updatePhoto,
                                             @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles,
@@ -98,7 +98,7 @@ public class PhotoController {
         photoService.updatePhoto(updatePhoto.updatePostIdx(postIdx).updateMemberId(memberId));
         attachmentService.updateAttachmentsWithThumbnail(multipartFiles, previouslyUploadedIndexes, postIdx, AttachmentType.IMAGE);
 
-        return ResponseEntity.created(URI.create("/api/photo/" + updatePhoto.getPostIdx())).build();
+        return ResponseEntity.created(URI.create("/api/photos/" + updatePhoto.getPostIdx())).build();
     }
 
     /**
@@ -108,7 +108,7 @@ public class PhotoController {
      * @param memberId  회원 아이디
      * @return 응답 본문이 없는 상태 코드 204 반환
      */
-    @DeleteMapping("/api/photo/{postIdx}")
+    @DeleteMapping("/api/photos/{postIdx}")
     public ResponseEntity<Void> deletePhoto(@PathVariable("postIdx") Long postIdx,
                                             @RequestAttribute("id") String memberId) {
         log.debug("deleteCommunity 호출");

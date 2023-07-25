@@ -28,7 +28,7 @@ public class ManagerInquiryController {
      * @param postIdx 게시글 번호
      * @return 문의 게시글
      */
-    @GetMapping("/api/manager/inquiry/{postIdx}")
+    @GetMapping("/api/manager/inquiries/{postIdx}")
     public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx) {
         log.debug("getInquiry 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(managerInquiryService.getInquiry(postIdx));
@@ -37,7 +37,7 @@ public class ManagerInquiryController {
     /**
      * 문의 게시글 답변 등록
      */
-    @PostMapping("/api/manager/answer/{postIdx}")
+    @PostMapping("/api/manager/answers/{postIdx}")
     public ResponseEntity<Void> registerAnswer(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String managerId,
                                                @RequestBody @Validated({PostValidationGroup.saveAnswer.class}) Answer answer) {
         log.debug("registerInquiry 호출, memberId : {}, answer : {}", managerId, answer);

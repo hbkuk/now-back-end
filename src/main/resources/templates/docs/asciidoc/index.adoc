@@ -20,3 +20,7 @@ include::Community-API.adoc[]
 include::Photo-API.adoc[]
 
 include::Inquiry-API.adoc[]
+
+include::Comment-API.adoc[]
+
+include::Attachment-API.adoc[]

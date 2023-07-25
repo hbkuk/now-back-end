@@ -77,7 +77,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         1L, InquiryFixture.SAMPLE_NICKNAME_1, InquiryFixture.SAMPLE_TITLE_1, InquiryFixture.SAMPLE_CONTENT_1));
 
         // when, then
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/inquiry/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/inquiries/{postIdx}", postIdx)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -116,7 +116,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         1L, InquiryFixture.SAMPLE_NICKNAME_1, InquiryFixture.SAMPLE_TITLE_1, InquiryFixture.SAMPLE_CONTENT_1));
 
         // when, then
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/inquiry/secret/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/inquiries/secret/{postIdx}", postIdx)
                         .header(HttpHeaders.AUTHORIZATION, accessToken)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("password", "password"))
@@ -161,7 +161,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.post("/api/inquiry")
+                mockMvc.perform(RestDocumentationRequestBuilders.post("/api/inquiries")
                                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createInquiryForSave().updatePostIdx(1L))))
@@ -198,7 +198,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.put("/api/inquiry/{postIdx}", postIdx)
+                mockMvc.perform(RestDocumentationRequestBuilders.put("/api/inquiries/{postIdx}", postIdx)
                                 .header(HttpHeaders.AUTHORIZATION, accessToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createInquiryForSave().updatePostIdx(postIdx))))
@@ -234,7 +234,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/inquiry/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/inquiries/{postIdx}", postIdx)
                         .header(HttpHeaders.AUTHORIZATION, accessToken))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 

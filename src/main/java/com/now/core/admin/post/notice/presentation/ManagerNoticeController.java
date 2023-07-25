@@ -28,7 +28,7 @@ public class ManagerNoticeController {
      * @param notice 등록할 공지 게시글 정보
      * @return 생성된 위치 URI로 응답
      */
-    @PostMapping("/api/manager/notice")
+    @PostMapping("/api/manager/notices")
     public ResponseEntity<Void> registerNotice(@RequestAttribute("id") String managerId,
                                                @RequestBody @Validated(PostValidationGroup.saveNotice.class) Notice notice) {
         log.debug("registerNotice 호출, managerId : {}, notice : {}", managerId, notice);
@@ -45,7 +45,7 @@ public class ManagerNoticeController {
      * @param updatedNotice 수정된 공지 게시글 정보
      * @return 수정된 게시글에 대한 CREATED 응답을 반환
      */
-    @PutMapping("/api/manager/notice/{postIdx}")
+    @PutMapping("/api/manager/notices/{postIdx}")
     public ResponseEntity<Void> updateNotice(@PathVariable("postIdx") Long postIdx,
                                              @RequestAttribute("id") String managerId,
                                              @RequestBody @Validated(PostValidationGroup.saveNotice.class) Notice updatedNotice) {
@@ -62,7 +62,7 @@ public class ManagerNoticeController {
      * @param managerId 매니저 ID
      * @return 응답 본문이 없는 상태 코드 204 반환
      */
-    @DeleteMapping("/api/manager/notice/{postIdx}")
+    @DeleteMapping("/api/manager/notices/{postIdx}")
     public ResponseEntity<Void> deleteNotice(@PathVariable("postIdx") Long postIdx,
                                              @RequestAttribute("id") String managerId) {
         log.debug("deleteNotice 호출");

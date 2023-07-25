@@ -99,7 +99,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
                         1L, PhotoFixture.SAMPLE_NICKNAME_1, PhotoFixture.SAMPLE_TITLE_1, PhotoFixture.SAMPLE_CONTENT_1, createAttachments(), createComments()));
 
         // when, then
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/photo/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/photos/{postIdx}", postIdx)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -155,7 +155,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
         MockMultipartFile fileB = new MockMultipartFile("attachment", "file2.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file2 content".getBytes());
 
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/photo")
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/photos")
                         .file(communityPart)
                         .file(fileA)
                         .file(fileB)
@@ -211,7 +211,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
         MockMultipartFile fileB = new MockMultipartFile("attachment", "file2.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file2 content".getBytes());
 
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/photo/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/photos/{postIdx}", postIdx)
                         .file(communityPart)
                         .file(fileA)
                         .file(fileB)
@@ -258,7 +258,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(token, "id")).willReturn(memberId);
         given(jwtTokenService.getClaim(token, "role")).willReturn(Authority.MEMBER.getValue());
 
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/photo/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/photos/{postIdx}", postIdx)
                         .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 

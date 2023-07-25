@@ -33,77 +33,41 @@ public class Photo {
 
     private static final PostGroup postGroup = PostGroup.PHOTO;
 
-    /**
-     * 게시글의 고유 식별자
-     */
-    private Long postIdx;
+    private Long postIdx;   // 게시글의 고유 식별자
 
-    /**
-     * 카테고리
-     */
-    private final Category category;
+    private final Category category; // 카테고리
 
-    /**
-     * 게시글의 제목
-     */
+    private String memberNickname;  // 회원의 닉네임
+
     @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 100)
-    private final String title;
+    private final String title; // 게시글의 제목
 
-    /**
-     * 게시글 등록일자
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime regDate;
-
-    /**
-     * 게시글 수정일자
-     */
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime modDate;
-
-    /**
-     * 게시글의 내용
-     */
     @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 2000)
-    private final String content;
+    private final String content;   // 게시글의 내용
 
-    /**
-     * 게시글의 조회수
-     */
-    private final Integer viewCount;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private final LocalDateTime regDate;    // 게시글 등록일자
 
-    /**
-     * 게시글의 좋아요 수
-     */
-    private final Integer likeCount;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private final LocalDateTime modDate;    // 게시글 수정일자
 
-    /**
-     * 게시글 싫어요 수
-     */
-    private final Integer dislikeCount;
+    private final Integer viewCount;    // 게시글의 조회수
 
-    /**
-     * 파일 (attachment 테이블에서 가져옴)
-     */
-    private final List<AttachmentResponse> attachments;
+    private final Integer likeCount;    // 게시글의 좋아요 수
 
-    /**
-     * 댓글 (comment 테이블에서 가져옴)
-     */
-    private final List<Comment> comments;
+    private final Integer dislikeCount; // 게시글 싫어요 수
 
-    /**
-     * 대표 사진으로 설정된 파일의 고유 식별자
-     */
-    private final Long thumbnailAttachmentIdx;
+    private final List<AttachmentResponse> attachments; // 파일 (attachment 테이블에서 가져옴)
+
+    private final List<Comment> comments;   // 댓글 (comment 테이블에서 가져옴)
+
+    private final Long thumbnailAttachmentIdx;  // 대표 사진으로 설정된 파일의 고유 식별자
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long memberIdx;
+    private Long memberIdx; // 회원의 고유 식별자
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String memberId;
-
-    private String memberNickname;
+    private String memberId;    // 회원의 아이디
 
     /**
      * 회원의 식별자를 업데이트

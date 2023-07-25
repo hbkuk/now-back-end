@@ -94,7 +94,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         1L, SAMPLE_NICKNAME_1, SAMPLE_TITLE_1, SAMPLE_CONTENT_1, createAttachments(), createComments()));
 
         // when, then
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/community/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/communities/{postIdx}", postIdx)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -150,7 +150,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
         MockMultipartFile fileB = new MockMultipartFile("attachment", "file2.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file2 content".getBytes());
 
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/community")
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/communities")
                         .file(communityPart)
                         .file(fileA)
                         .file(fileB)
@@ -204,7 +204,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
         MockMultipartFile fileB = new MockMultipartFile("attachment", "file2.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file2 content".getBytes());
 
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/community/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/communities/{postIdx}", postIdx)
                         .file(communityPart)
                         .file(fileA)
                         .file(fileB)
@@ -250,7 +250,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(token, "id")).willReturn(memberId);
         given(jwtTokenService.getClaim(token, "role")).willReturn(Authority.MEMBER.getValue());
 
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/community/{postIdx}", postIdx)
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/communities/{postIdx}", postIdx)
                         .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 

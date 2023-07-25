@@ -50,7 +50,7 @@ public class CommunityController {
      * @param postIdx 게시글 번호
      * @return 공지 게시글 정보
      */
-    @GetMapping("/api/community/{postIdx}")
+    @GetMapping("/api/communities/{postIdx}")
     public ResponseEntity<Community> getCommunity(@PathVariable("postIdx") Long postIdx) {
         log.debug("getCommunity 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(communityService.getCommunity(postIdx));
@@ -64,7 +64,7 @@ public class CommunityController {
      * @param multipartFiles MultipartFile[] 객체
      * @return 생성된 위치 URI로 응답
      */
-    @PostMapping("/api/community")
+    @PostMapping("/api/communities")
     public ResponseEntity<Void> registerCommunity(@RequestAttribute("id") String memberId,
                                                   @RequestPart(value = "community") @Validated(PostValidationGroup.saveCommunity.class) Community community,
                                                   @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles) {
@@ -74,7 +74,7 @@ public class CommunityController {
         communityService.registerCommunity(community.updateMemberId(memberId));
         attachmentService.saveAttachments(multipartFiles, community.getPostIdx(), AttachmentType.FILE);
 
-        return ResponseEntity.created(URI.create("/api/community/" + community.getPostIdx())).build();
+        return ResponseEntity.created(URI.create("/api/communities/" + community.getPostIdx())).build();
     }
     
     /**
@@ -87,7 +87,7 @@ public class CommunityController {
      * @param previouslyUploadedIndexes 이전에 업로드된 파일 번호 목록
      * @return 생성된 위치 URI로 응답
      */
-    @PutMapping("/api/community/{postIdx}")
+    @PutMapping("/api/communities/{postIdx}")
     public ResponseEntity<Void> updateCommunity(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
                                                 @Validated(PostValidationGroup.saveNotice.class) @RequestPart(value = "community") Community updatedCommunity,
                                                 @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles,
@@ -100,7 +100,7 @@ public class CommunityController {
         communityService.updateCommunity(updatedCommunity.updatePostIdx(postIdx).updateMemberId(memberId));
         attachmentService.updateAttachments(multipartFiles, previouslyUploadedIndexes, postIdx, AttachmentType.FILE);
 
-        return ResponseEntity.created(URI.create("/api/community/" + updatedCommunity.getPostIdx())).build();
+        return ResponseEntity.created(URI.create("/api/communities/" + updatedCommunity.getPostIdx())).build();
     }
     
     /**
@@ -110,7 +110,7 @@ public class CommunityController {
      * @param memberId 회원 아이디
      * @return 응답 본문이 없는 상태 코드 204 반환
      */
-    @DeleteMapping("/api/community/{postIdx}")
+    @DeleteMapping("/api/communities/{postIdx}")
     public ResponseEntity<Void> deleteCommunity(@PathVariable("postIdx") Long postIdx,
                                                 @RequestAttribute("id") String memberId) {
         log.debug("deleteCommunity 호출");

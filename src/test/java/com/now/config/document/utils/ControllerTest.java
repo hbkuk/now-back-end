@@ -6,10 +6,12 @@ import com.now.common.mapper.EnumMapperFactory;
 import com.now.core.admin.post.notice.application.ManagerNoticeService;
 import com.now.core.admin.post.notice.presentation.ManagerNoticeController;
 import com.now.core.attachment.application.AttachmentService;
+import com.now.core.attachment.presentation.AttachmentController;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.presentation.AuthenticationController;
 import com.now.core.category.presentation.CategoryController;
 import com.now.core.comment.application.CommentService;
+import com.now.core.comment.presentation.CommentController;
 import com.now.core.member.application.MemberService;
 import com.now.core.member.presentation.MemberController;
 import com.now.core.post.application.CommunityService;
@@ -39,7 +41,9 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
         CommunityController.class,
         PhotoController.class,
         InquiryController.class,
-        CategoryController.class
+        CategoryController.class,
+        CommentController.class,
+        AttachmentController.class
 })
 @AutoConfigureMybatis
 public abstract class ControllerTest {

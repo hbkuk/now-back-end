@@ -1,0 +1,14 @@
+[[Comment-API]]
+== Comment API
+
+[[Comment-등록]]
+=== Comment 등록
+operation::comment-controller-test/register-comment[snippets='http-request,request-body,request-fields,request-headers,http-response']
+
+[[Comment-수정]]
+=== Comment 수정
+operation::comment-controller-test/update-comment[snippets='http-request,request-body,request-fields,request-headers,http-response']
+
+[[Comment-삭제]]
+=== Comment 삭제
+operation::comment-controller-test/delete-comment[snippets='http-request,request-headers,http-response']

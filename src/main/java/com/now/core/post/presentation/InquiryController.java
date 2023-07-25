@@ -49,7 +49,7 @@ public class InquiryController {
      * @param postIdx 게시글 번호
      * @return 문의 게시글 정보와 함께 OK 응답을 반환
      */
-    @GetMapping("/api/inquiry/{postIdx}")
+    @GetMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx) {
         log.debug("getInquiry 호출, postIdx : {}", postIdx);
 
@@ -63,7 +63,7 @@ public class InquiryController {
      * @param token   토큰
      * @return 문의 게시글 정보와 함께 OK 응답을 반환
      */
-    @PostMapping("/api/inquiry/secret/{postIdx}")
+    @PostMapping("/api/inquiries/secret/{postIdx}")
     public ResponseEntity<Inquiry> getSecretInquiry(@PathVariable("postIdx") Long postIdx,
                                                     @RequestParam(required = false) String password,
                                                     @RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String token) {
@@ -84,7 +84,7 @@ public class InquiryController {
      * @param inquiry  등록할 문의 게시글 정보
      * @return 생성된 게시글에 대한 CREATED 응답을 반환
      */
-    @PostMapping("/api/inquiry")
+    @PostMapping("/api/inquiries")
     public ResponseEntity<Void> registerInquiry(@RequestAttribute("id") String memberId,
                                                 @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry inquiry) {
         log.debug("registerInquiry 호출, memberId : {}, inquiry : {}", memberId, inquiry);
@@ -94,7 +94,7 @@ public class InquiryController {
         }
 
         inquiryService.registerInquiry(inquiry.updateMemberId(memberId));
-        return ResponseEntity.created(URI.create("/api/inquiry/" + inquiry.getPostIdx())).build();
+        return ResponseEntity.created(URI.create("/api/inquiries/" + inquiry.getPostIdx())).build();
     }
 
     /**
@@ -104,7 +104,7 @@ public class InquiryController {
      * @param updateInquiry  등록할 문의 게시글 정보
      * @return 수정된 게시글에 대한 CREATED 응답을 반환
      */
-    @PutMapping("/api/inquiry/{postIdx}")
+    @PutMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Void> updateInquiry(@PathVariable("postIdx") Long postIdx,
                                               @RequestAttribute("id") String memberId,
                                               @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry updateInquiry) {
@@ -113,7 +113,7 @@ public class InquiryController {
         inquiryService.hasUpdateAccess(postIdx, memberId);
 
         inquiryService.updateInquiry(updateInquiry.updateMemberId(memberId));
-        return ResponseEntity.created(URI.create("/api/inquiry/" + updateInquiry.getPostIdx())).build();
+        return ResponseEntity.created(URI.create("/api/inquiries/" + updateInquiry.getPostIdx())).build();
     }
 
     /**
@@ -122,7 +122,7 @@ public class InquiryController {
      * @param postIdx 게시글 번호
      * @return 응답 결과
      */
-    @DeleteMapping("/api/inquiry/{postIdx}")
+    @DeleteMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Void> deleteInquiry(@PathVariable("postIdx") Long postIdx,
                                               @RequestAttribute("id") String memberId) {
         log.debug("deleteInquiry 호출");

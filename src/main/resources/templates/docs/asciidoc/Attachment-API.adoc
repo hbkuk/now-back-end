@@ -1,0 +1,6 @@
+[[Attachment-API]]
+== Attachment API
+
+[[Binary-Download]]
+=== Binary-Download
+operation::attachment-controller-test/serve-download-file[snippets='http-request,path-parameters,response-headers']
