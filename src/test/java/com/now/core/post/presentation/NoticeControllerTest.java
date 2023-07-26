@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.List;
 
 import static com.now.config.document.utils.RestDocsConfig.field;
+import static com.now.config.fixtures.comment.CommentFixture.createComments;
 import static com.now.config.fixtures.post.NoticeFixture.createNotice;
 import static com.now.config.fixtures.post.NoticeFixture.createNoticeForSave;
 import static org.mockito.BDDMockito.given;
@@ -33,8 +34,8 @@ class NoticeControllerTest extends RestDocsTestSupport {
         Condition condition = new Condition(5);
         given(noticeService.getAllNotices(condition))
                 .willReturn(List.of(
-                        createNotice(1L, NoticeFixture.SAMPLE_NICKNAME_1, NoticeFixture.SAMPLE_TITLE_1, NoticeFixture.SAMPLE_CONTENT_1),
-                        createNotice(2L, NoticeFixture.SAMPLE_NICKNAME_2, NoticeFixture.SAMPLE_TITLE_2, NoticeFixture.SAMPLE_CONTENT_2)
+                        createNotice(1L, NoticeFixture.SAMPLE_NICKNAME_1, NoticeFixture.SAMPLE_TITLE_1, NoticeFixture.SAMPLE_CONTENT_1, createComments()),
+                        createNotice(2L, NoticeFixture.SAMPLE_NICKNAME_2, NoticeFixture.SAMPLE_TITLE_2, NoticeFixture.SAMPLE_CONTENT_2, createComments())
                 ));
 
         // when, then
@@ -52,6 +53,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
                         ),
                         responseFields(
                                 fieldWithPath("[]").type(ARRAY).description("공지 목록"),
+                                fieldWithPath("[].postGroup").type(STRING).description("게시물 그룹 코드"),
                                 fieldWithPath("[].postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("[].title").type(STRING).description("제목"),
                                 fieldWithPath("[].managerNickname").type(STRING).description("매니저 닉네임"),
@@ -62,7 +64,15 @@ class NoticeControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("[].likeCount").type(NUMBER).description("좋아요 수"),
                                 fieldWithPath("[].dislikeCount").type(NUMBER).description("싫어요 수"),
                                 fieldWithPath("[].category").type(STRING).description("카테고리"),
-                                fieldWithPath("[].pinned").type(BOOLEAN).description("상단 고정 여부")
+                                fieldWithPath("[].pinned").type(BOOLEAN).description("상단 고정 여부"),
+
+                                fieldWithPath("[].comments").type(ARRAY).optional().description("댓글 목록"),
+                                fieldWithPath("[].comments[].commentIdx").type(NUMBER).optional().description("댓글 ID"),
+                                fieldWithPath("[].comments[].memberNickname").type(STRING).optional().description("회원 닉네임"),
+                                fieldWithPath("[].comments[].managerNickname").type(STRING).optional().description("매니저 닉네임"),
+                                fieldWithPath("[].comments[].regDate").type(STRING).optional().description("댓글 등록일"),
+                                fieldWithPath("[].comments[].content").type(STRING).optional().description("댓글 내용"),
+                                fieldWithPath("[].comments[].postIdx").type(NUMBER).optional().description("원글의 ID")
                         )));
     }
 
@@ -72,13 +82,12 @@ class NoticeControllerTest extends RestDocsTestSupport {
         // given
         Long postIdx = 1L;
         given(noticeService.getNotice(postIdx))
-                .willReturn(createNotice(
-                        1L, NoticeFixture.SAMPLE_NICKNAME_1, NoticeFixture.SAMPLE_TITLE_1, NoticeFixture.SAMPLE_CONTENT_1));
+                .willReturn(createNotice(2L, NoticeFixture.SAMPLE_NICKNAME_2, NoticeFixture.SAMPLE_TITLE_2, NoticeFixture.SAMPLE_CONTENT_2, createComments()));
 
-        // when, then
-        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/notices/{postIdx}", postIdx)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                        // when, then
+                        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/notices/{postIdx}", postIdx)
+                                        .contentType(MediaType.APPLICATION_JSON))
+                                .andExpect(status().isOk());
 
         resultActions
                 .andDo(restDocs.document(
@@ -87,6 +96,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
                         ),
                         responseFields(
                                 fieldWithPath("postIdx").type(NUMBER).description("게시글 ID"),
+                                fieldWithPath("postGroup").type(STRING).description("게시물 그룹 코드"),
                                 fieldWithPath("title").type(STRING).description("제목"),
                                 fieldWithPath("managerNickname").type(STRING).description("작성자 닉네임"),
                                 fieldWithPath("regDate").type(STRING).description("등록일"),
@@ -96,10 +106,18 @@ class NoticeControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("likeCount").type(NUMBER).description("좋아요 수"),
                                 fieldWithPath("dislikeCount").type(NUMBER).description("싫어요 수"),
                                 fieldWithPath("category").type(STRING).description("카테고리"),
-                                fieldWithPath("pinned").type(BOOLEAN).description("상단 고정 여부")
+                                fieldWithPath("pinned").type(BOOLEAN).description("상단 고정 여부"),
+
+                                fieldWithPath("comments").type(ARRAY).optional().description("댓글 목록"),
+                                fieldWithPath("comments[].commentIdx").type(NUMBER).optional().description("댓글 ID"),
+                                fieldWithPath("comments[].memberNickname").type(STRING).optional().description("회원 ID"),
+                                fieldWithPath("comments[].managerNickname").type(STRING).optional().description("매니저 닉네임"),
+                                fieldWithPath("comments[].regDate").type(STRING).optional().description("댓글 등록일"),
+                                fieldWithPath("comments[].content").type(STRING).optional().description("댓글 내용"),
+                                fieldWithPath("comments[].postIdx").type(NUMBER).optional().description("원글의 ID")
                         )));
     }
-    
+
     // TODO: BindException 처리
     @Test
     @DisplayName("공지 게시글 등록")
@@ -124,6 +142,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
                         ),
                         requestFields(
+                                fieldWithPath("postGroup").ignored(),
                                 fieldWithPath("postIdx").ignored(),
                                 fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
@@ -160,6 +179,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
                         ),
                         requestFields(
+                                fieldWithPath("postGroup").ignored(),
                                 fieldWithPath("postIdx").description("게시글 번호"),
                                 fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),

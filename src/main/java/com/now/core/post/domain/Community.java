@@ -33,12 +33,15 @@ public class Community {
 
     // TODO: 게시글 등록, 수정 객체 별도 관리
 
-    private static final PostGroup postGroup = PostGroup.COMMUNITY;
+    private final PostGroup postGroup = PostGroup.COMMUNITY;
 
     private Long postIdx; // 게시글의 고유 식별자
 
     @NotNull(groups = {PostValidationGroup.saveCommunity.class})
     private final Category category; // 카테고리
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String managerNickname; // 매니저의 닉네임
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String memberNickname; // 회원의 닉네임
@@ -79,6 +82,12 @@ public class Community {
 
     @JsonIgnore
     private String memberId; // 회원의 아이디
+
+    @JsonIgnore
+    private Long managerIdx; // 매니저의 고유 식별자
+
+    @JsonIgnore
+    private String managerId; // 매니저의 아이디
 
     /**
      * 회원의 식별자를 업데이트

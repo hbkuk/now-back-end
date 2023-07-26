@@ -24,7 +24,6 @@ public class Attachment {
     /**
      * 서버 디렉토리에 저장된 첨부파일 이름(JSON 직렬화 시 숨김 처리)
      */
-    @JsonIgnore
     private final String savedAttachmentName;
 
     /**

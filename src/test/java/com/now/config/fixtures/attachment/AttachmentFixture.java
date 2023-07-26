@@ -19,6 +19,7 @@ public class AttachmentFixture {
                 .attachmentIdx(1L)
                 .attachmentSize(7777)
                 .originalAttachmentName(attachmentName)
+                .savedAttachmentName(AttachmentUtils.generateSystemName(attachmentName))
                 .attachmentExtension(AttachmentUtils.extractFileExtension(attachmentName))
                 .postIdx(1L)
                 .build();

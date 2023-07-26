@@ -1,5 +1,6 @@
     package com.now.core.category.domain.constants;
 
+    import com.fasterxml.jackson.annotation.JsonValue;
     import com.now.common.exception.ErrorType;
     import com.now.common.mapper.EnumMapperType;
     import com.now.core.category.exception.InvalidCategoryException;

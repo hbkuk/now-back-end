@@ -21,6 +21,11 @@ public class AttachmentResponse {
     private final String originalAttachmentName;
 
     /**
+     * 서버 디렉토리에 저장된 첨부파일 이름
+     */
+    private final String savedAttachmentName;
+
+    /**
      * 첨부파일의 확장자명
      */
     private final String attachmentExtension;

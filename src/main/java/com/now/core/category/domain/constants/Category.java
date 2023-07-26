@@ -23,7 +23,6 @@ public enum Category {
     SERVICE("서비스"),
     TECHNOLOGY("기술");
 
-    @JsonValue  // 열거형의 특정 필드를 JSON 값으로 변환할 때 사용
     private final String title;
 
     /**
@@ -31,6 +30,7 @@ public enum Category {
      *
      * @return 코드 값
      */
+    @JsonValue  // 열거형의 특정 필드를 JSON 값으로 변환할 때 사용
     public String getCode() {
         return name();
     }

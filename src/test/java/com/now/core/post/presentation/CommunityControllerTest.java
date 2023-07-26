@@ -57,6 +57,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         ),
                         responseFields(
                                 fieldWithPath("[]").type(ARRAY).description("커뮤니티 게시글 목록"),
+                                fieldWithPath("[].postGroup").type(STRING).description("게시물 그룹 코드"),
                                 fieldWithPath("[].postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("[].title").type(STRING).description("제목"),
                                 fieldWithPath("[].memberNickname").type(STRING).description("회원 닉네임"),
@@ -71,6 +72,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("[].attachments").type(ARRAY).optional().description("첨부파일 목록"),
                                 fieldWithPath("[].attachments[].attachmentIdx").type(NUMBER).optional().description("첨부파일 ID"),
                                 fieldWithPath("[].attachments[].originalAttachmentName").type(STRING).optional().description("원본 첨부파일 이름"),
+                                fieldWithPath("[].attachments[].savedAttachmentName").type(STRING).optional().description("저장된 첨부파일 이름"),
                                 fieldWithPath("[].attachments[].attachmentExtension").type(STRING).optional().description("첨부파일 확장자"),
                                 fieldWithPath("[].attachments[].attachmentSize").type(NUMBER).optional().description("첨부파일 크기"),
                                 fieldWithPath("[].attachments[].postIdx").type(NUMBER).optional().description("원글의 ID"),
@@ -78,7 +80,8 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("[].comments").type(ARRAY).optional().description("댓글 목록"),
                                 fieldWithPath("[].comments[].commentIdx").type(NUMBER).optional().description("댓글 ID"),
                                 fieldWithPath("[].comments[].memberNickname").type(STRING).optional().description("회원 닉네임"),
-                                fieldWithPath("[].comments[].regDate").type(STRING).optional().description("댓글 등록일 (null 가능)"),
+                                fieldWithPath("[].comments[].managerNickname").type(STRING).optional().description("매니저 닉네임"),
+                                fieldWithPath("[].comments[].regDate").type(STRING).optional().description("댓글 등록일"),
                                 fieldWithPath("[].comments[].content").type(STRING).optional().description("댓글 내용"),
                                 fieldWithPath("[].comments[].postIdx").type(NUMBER).optional().description("원글의 ID")
                         )));
@@ -105,6 +108,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         ),
                         responseFields(
                                 fieldWithPath("postIdx").type(NUMBER).description("게시글 ID"),
+                                fieldWithPath("postGroup").type(STRING).description("게시물 그룹 코드"),
                                 fieldWithPath("title").type(STRING).description("제목"),
                                 fieldWithPath("memberNickname").type(STRING).description("회원 닉네임"),
                                 fieldWithPath("regDate").type(STRING).description("등록일"),
@@ -118,14 +122,16 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("attachments").type(ARRAY).optional().description("첨부파일 목록"),
                                 fieldWithPath("attachments[].attachmentIdx").type(NUMBER).optional().description("첨부파일 ID"),
                                 fieldWithPath("attachments[].originalAttachmentName").type(STRING).optional().description("원본 첨부파일 이름"),
+                                fieldWithPath("attachments[].savedAttachmentName").type(STRING).optional().description("저장된 첨부파일 이름"),
                                 fieldWithPath("attachments[].attachmentExtension").type(STRING).optional().description("첨부파일 확장자"),
                                 fieldWithPath("attachments[].attachmentSize").type(NUMBER).optional().description("첨부파일 크기"),
                                 fieldWithPath("attachments[].postIdx").type(NUMBER).optional().description("원글의 ID"),
 
                                 fieldWithPath("comments").type(ARRAY).optional().description("댓글 목록"),
                                 fieldWithPath("comments[].commentIdx").type(NUMBER).optional().description("댓글 ID"),
-                                fieldWithPath("comments[].memberNickname").type(STRING).optional().description("댓글 작성자 ID"),
-                                fieldWithPath("comments[].regDate").type(STRING).optional().description("댓글 등록일 (null 가능)"),
+                                fieldWithPath("comments[].memberNickname").type(STRING).optional().description("회원 ID"),
+                                fieldWithPath("comments[].managerNickname").type(STRING).optional().description("매니저 닉네임"),
+                                fieldWithPath("comments[].regDate").type(STRING).optional().description("댓글 등록일"),
                                 fieldWithPath("comments[].content").type(STRING).optional().description("댓글 내용"),
                                 fieldWithPath("comments[].postIdx").type(NUMBER).optional().description("원글의 ID")
                         )));
@@ -169,6 +175,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 partWithName("attachment").description("첨부파일 (다중 파일 업로드 가능)").optional()
                         ),
                         requestPartFields("community",
+                                fieldWithPath("postGroup").ignored(),
                                 fieldWithPath("postIdx").ignored(),
                                 fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
@@ -231,6 +238,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 parameterWithName("attachmentIdx").description("이전에 업로드된 첨부파일 ID").optional()
                         ),
                         requestPartFields("community",
+                                fieldWithPath("postGroup").ignored(),
                                 fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
                                 fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하"))

@@ -1,9 +1,11 @@
 package com.now.config.fixtures.post;
 
 import com.now.core.category.domain.constants.Category;
+import com.now.core.comment.domain.Comment;
 import com.now.core.post.domain.Notice;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class NoticeFixture {
 
@@ -15,7 +17,7 @@ public class NoticeFixture {
     public static final String SAMPLE_TITLE_2 = "서비스 이용 안내";
     public static final String SAMPLE_CONTENT_2 = "안녕하세요. 저희 서비스를 이용해 주셔서 감사합니다. 이용 중 궁금한 점이나 문제가 발생하면 언제든지 문의해주세요. 즐거운 하루 되세요!";
 
-    public static Notice createNotice(Long postIdx, String nickName, String title, String content) {
+    public static Notice createNotice(Long postIdx, String nickName, String title, String content, List<Comment> comments) {
         return Notice.builder()
                 .postIdx(postIdx)
                 .managerNickname(nickName)
@@ -28,6 +30,7 @@ public class NoticeFixture {
                 .likeCount(100)
                 .dislikeCount(2)
                 .pinned(true)
+                .comments(comments)
                 .build();
     }
 

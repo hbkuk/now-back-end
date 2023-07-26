@@ -27,7 +27,7 @@ public class Notice {
 
     // TODO: 게시글 등록, 수정 객체 별도 관리
 
-    private static final PostGroup postGroup = PostGroup.NOTICE;
+    private final PostGroup postGroup = PostGroup.NOTICE;
 
     private Long postIdx; // 공지 게시글의 고유 식별자
 

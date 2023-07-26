@@ -52,6 +52,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         ),
                         responseFields(
                                 fieldWithPath("[]").type(ARRAY).description("문의 게시글 목록"),
+                                fieldWithPath("[].postGroup").type(STRING).description("게시물 그룹 코드"),
                                 fieldWithPath("[].postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("[].title").type(STRING).description("제목"),
                                 fieldWithPath("[].memberNickname").type(STRING).description("회원 닉네임"),
@@ -63,7 +64,15 @@ class InquiryControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("[].dislikeCount").type(NUMBER).description("싫어요 수"),
                                 fieldWithPath("[].category").type(STRING).description("카테고리"),
                                 fieldWithPath("[].secret").type(BOOLEAN).description("비밀글 설정 여부"),
-                                fieldWithPath("[].answerManagerNickname").type(STRING).description("답변한 매니저 닉네임").optional()
+                                fieldWithPath("[].answerManagerNickname").type(STRING).description("답변한 매니저 닉네임").optional(),
+
+                                fieldWithPath("[].comments").type(ARRAY).optional().description("댓글 목록"),
+                                fieldWithPath("[].comments[].commentIdx").type(NUMBER).optional().description("댓글 ID"),
+                                fieldWithPath("[].comments[].memberNickname").type(STRING).optional().description("회원 닉네임"),
+                                fieldWithPath("[].comments[].managerNickname").type(STRING).optional().description("매니저 닉네임"),
+                                fieldWithPath("[].comments[].regDate").type(STRING).optional().description("댓글 등록일"),
+                                fieldWithPath("[].comments[].content").type(STRING).optional().description("댓글 내용"),
+                                fieldWithPath("[].comments[].postIdx").type(NUMBER).optional().description("원글의 ID")
                         )));
     }
 
@@ -87,6 +96,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                                 parameterWithName("postIdx").description("게시글 ID")
                         ),
                         responseFields(
+                                fieldWithPath("postGroup").type(STRING).description("게시물 그룹 코드"),
                                 fieldWithPath("postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("title").type(STRING).description("제목"),
                                 fieldWithPath("memberNickname").type(STRING).description("회원 닉네임"),
@@ -100,7 +110,15 @@ class InquiryControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("secret").type(BOOLEAN).description("비밀글 설정 여부"),
                                 fieldWithPath("answerManagerNickname").type(STRING).description("답변한 매니저 닉네임(비밀글 설정 시 null 가능)").optional(),
                                 fieldWithPath("answerContent").type(STRING).description("답변 내용(비밀글 설정 시 null 가능)").optional(),
-                                fieldWithPath("answerRegDate").type(STRING).description("답변 작성일(비밀글 설정 시 null 가능)").optional()
+                                fieldWithPath("answerRegDate").type(STRING).description("답변 작성일(비밀글 설정 시 null 가능)").optional(),
+
+                                fieldWithPath("comments").type(ARRAY).optional().description("댓글 목록"),
+                                fieldWithPath("comments[].commentIdx").type(NUMBER).optional().description("댓글 ID"),
+                                fieldWithPath("comments[].memberNickname").type(STRING).optional().description("회원 ID"),
+                                fieldWithPath("comments[].managerNickname").type(STRING).optional().description("매니저 닉네임"),
+                                fieldWithPath("comments[].regDate").type(STRING).optional().description("댓글 등록일"),
+                                fieldWithPath("comments[].content").type(STRING).optional().description("댓글 내용"),
+                                fieldWithPath("comments[].postIdx").type(NUMBER).optional().description("원글의 ID")
                         )));
     }
 
@@ -134,6 +152,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                                 parameterWithName("password").description("비밀글 설정 비밀번호").optional()
                         ),
                         responseFields(
+                                fieldWithPath("postGroup").ignored(),
                                 fieldWithPath("postIdx").type(NUMBER).description("게시글 ID"),
                                 fieldWithPath("title").type(STRING).description("제목"),
                                 fieldWithPath("memberNickname").type(STRING).description("작성자 닉네임"),
@@ -175,6 +194,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         ),
                         requestFields(
                                 fieldWithPath("postIdx").ignored(),
+                                fieldWithPath("postGroup").ignored(),
                                 fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
                                 fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하")),
@@ -212,6 +232,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         ),
                         requestFields(
                                 fieldWithPath("postIdx").description("게시글 번호"),
+                                fieldWithPath("postGroup").ignored(),
                                 fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
                                 fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하")),

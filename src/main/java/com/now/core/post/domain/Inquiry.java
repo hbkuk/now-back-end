@@ -34,7 +34,7 @@ public class Inquiry {
     // TODO: 전체 도메인 객체 필드 정리
     // TODO: 게시글 등록, 수정 객체 별도 관리
 
-    private static final PostGroup postGroup = PostGroup.INQUIRY;
+    private final PostGroup postGroup = PostGroup.INQUIRY;
 
     private Long postIdx;   // 게시글의 고유 식별자
 
@@ -71,7 +71,7 @@ public class Inquiry {
     private final String answerManagerIdx;  // 답변 관리자의 고유 식별자
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private final String answerManagerNickname; // 답변 관리자의 고유 식별자
+    private final String answerManagerNickname; // 답변 매니저의 닉네임
 
     @Nullable
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

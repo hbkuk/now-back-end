@@ -128,10 +128,13 @@
         SELECT
         <include refid="selectPostTableColumn"/>,
         <include refid="selectManagerTableColumn"/>,
-        <include refid="selectMaxCommentTableColumn"/>
+        <include refid="selectMaxCommentTableColumn"/>,
+        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
-        LEFT OUTER JOIN tb_manager m ON p.manager_idx = m.manager_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'NOTICE'
         GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
@@ -144,11 +147,14 @@
         <include refid="selectPostTableColumn"/>,
         <include refid="selectMaxAttachmentTableColumn"/>,
         <include refid="selectMaxCommentTableColumn"/>,
-        <include refid="selectMemberTableColumn"/>
+        <include refid="selectMemberTableColumn"/>,
+        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'COMMUNITY'
         GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
@@ -162,12 +168,15 @@
         <include refid="selectMaxAttachmentTableColumn"/>,
         <include refid="selectMaxCommentTableColumn"/>,
         <include refid="selectMemberTableColumn"/>,
-        <include refid="selectMaxThumbnailTableColumn"/>
+        <include refid="selectMaxThumbnailTableColumn"/>,
+        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
         LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'PHOTO'
         GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
@@ -180,17 +189,22 @@
         <include refid="selectPostTableColumnWithoutContent"/>,
         <include refid="selectMemberTableColumn"/>,
         <include refid="selectMaxInquiriesWithNonSecretInfo"/>,
-        <include refid="selectMaxCommentTableColumn"/>
+        <include refid="selectMaxCommentTableColumn"/>,
+        <include refid="selectMaxManagerTableColumn"/>,
+        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
         LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
         LEFT OUTER JOIN tb_manager ma ON ma.manager_idx = i.answer_manager_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'INQUIRY'
         GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
         <include refid="condition"/>
     </select>
+
 
 
 
@@ -202,9 +216,12 @@
         <include refid="selectPostTableColumn"/>,
         <include refid="selectManagerTableColumn"/>,
         <include refid="selectCommentTableColumn"/>,
+        <include refid="selectMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
-        LEFT OUTER JOIN tb_manager m ON p.manager_idx = m.manager_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'NOTICE' AND p.post_idx = #{postIdx}
     </select>
 
@@ -214,11 +231,14 @@
         <include refid="selectPostTableColumn"/>,
         <include refid="selectAttachmentTableColumn"/>,
         <include refid="selectCommentTableColumn"/>,
-        <include refid="selectMemberTableColumn"/>
+        <include refid="selectMemberTableColumn"/>,
+        <include refid="selectMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'COMMUNITY' AND p.post_idx = #{postIdx}
     </select>
 
@@ -228,11 +248,14 @@
         <include refid="selectPostTableColumn"/>,
         <include refid="selectAttachmentTableColumn"/>,
         <include refid="selectCommentTableColumn"/>,
-        <include refid="selectMemberTableColumn"/>
+        <include refid="selectMemberTableColumn"/>,
+        <include refid="selectMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'PHOTO' AND p.post_idx = #{postIdx}
     </select>
 
@@ -242,12 +265,17 @@
         <include refid="selectPostTableColumn"/>,
         <include refid="selectMemberTableColumn"/>,
         <include refid="selectInquiryTableColumn"/>,
-        <include refid="selectCommentTableColumn"/>
+        <include refid="selectCommentTableColumn"/>,
+        <include refid="selectManagerTableColumn"/>,
+        <include refid="selectMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
         LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
         LEFT OUTER JOIN tb_manager ma ON ma.manager_idx = i.answer_manager_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'INQUIRY' AND p.post_idx = #{postIdx}
     </select>
 
@@ -301,6 +329,7 @@
     <sql id="selectAttachmentTableColumn">
         f.attachment_idx AS f_attachment_idx,
         f.original_attachment_name AS f_original_attachment_name,
+        f.saved_attachment_name AS f_saved_attachment_name,
         f.attachment_extension AS f_attachment_extension,
         f.attachment_size AS f_attachment_size,
         f.post_idx AS f_post_idx
@@ -309,10 +338,15 @@
     <sql id="selectMaxAttachmentTableColumn">
         MAX(f.attachment_idx) AS f_attachment_idx,
         MAX(f.original_attachment_name) AS f_original_attachment_name,
+        MAX(f.saved_attachment_name) AS f_saved_attachment_name,
         MAX(f.attachment_extension) AS f_attachment_extension,
         MAX(f.attachment_size) AS f_attachment_size,
         MAX(f.post_idx) AS f_post_idx
     </sql>
+
+
+
+
 
 
     <!-- Comment 테이블의 컬럼 매핑 -->
@@ -335,6 +369,15 @@
         MAX(co.post_idx) AS co_post_idx
     </sql>
 
+    <sql id="selectMaxMemberAndManagerInfoOfCommentTableColumn">
+        MAX(com.nickname) AS com_nickname,
+        MAX(coma.nickname) AS coma_nickname
+    </sql>
+
+    <sql id="selectMemberAndManagerInfoOfCommentTableColumn">
+        com.nickname AS com_nickname,
+        coma.nickname AS coma_nickname
+    </sql>
 
 
 
@@ -343,26 +386,39 @@
 
     <!-- Inquiry 테이블의 컬럼 매핑, 비밀글 여부만-->
     <sql id="selectInquiriesWithNonSecretInfo">
-        i.secret AS i_secret
+        i.secret AS i_secret,
+        i.answer_manager_idx AS i_answer_manager_idx
     </sql>
 
     <sql id="selectMaxInquiriesWithNonSecretInfo">
-        MAX(i.secret) AS i_secret
+        MAX(i.secret) AS i_secret,
+        MAX(i.answer_manager_idx) AS i_answer_manager_idx
     </sql>
 
     <!-- Inquiry 테이블의 컬럼 매핑 -->
     <sql id="selectInquiryTableColumn">
         i.secret AS i_secret,
-        i.answer_content AS i_answer_manager_nickname,
-        i.answer_reg_date AS i_answer_content,
+        i.answer_content AS i_answer_content,
+        i.answer_reg_date AS i_answer_reg_date,
+        i.answer_manager_idx AS i_answer_manager_idx,
         i.password AS i_password
     </sql>
 
 
+
+
+
+
     <!-- Manager 테이블의 컬럼 매핑 -->
     <sql id="selectManagerTableColumn">
-        m.nickname AS m_nickname
+        ma.nickname AS ma_nickname
     </sql>
+
+    <!-- Manager 테이블의 컬럼 매핑 -->
+    <sql id="selectMaxManagerTableColumn">
+        max(ma.nickname) AS ma_nickname
+    </sql>
+
 
     <!-- Member 테이블의 컬럼 매핑 -->
     <sql id="selectMemberTableColumn">
@@ -384,6 +440,7 @@
     <resultMap id="attachmentTableCollectionMapping" type="AttachmentResponse">
         <id property="attachmentIdx" column="f_attachment_idx"/>
         <result property="originalAttachmentName" column="f_original_attachment_name"/>
+        <result property="savedAttachmentName" column="f_saved_attachment_name"/>
         <result property="attachmentExtension" column="f_attachment_extension"/>
         <result property="attachmentSize" column="f_attachment_size"/>
         <result property="postIdx" column="f_post_idx"/>
@@ -392,8 +449,8 @@
     <!-- Comment 컬렉션 매핑 -->
     <resultMap id="commentTableCollectionMapping" type="Comment">
         <id property="commentIdx" column="co_comment_idx"/>
-        <result property="memberIdx" column="co_member_idx"/>
-        <result property="managerIdx" column="co_manager_idx"/>
+        <result property="memberNickname" column="com_nickname"/>
+        <result property="managerNickname" column="coma_nickname"/>
         <result property="regDate" column="co_reg_date"/>
         <result property="content" column="co_content"/>
         <result property="postIdx" column="co_post_idx"/>
@@ -404,7 +461,7 @@
         <id property="postIdx" column="p_post_idx"/>
         <result property="category" column="p_category" javaType="com.now.core.category.domain.constants.Category"/>
         <result property="title" column="p_title"/>
-        <result property="managerNickname" column="m_nickname"/>
+        <result property="managerNickname" column="ma_nickname"/>
         <result property="regDate" column="p_reg_date"/>
         <result property="modDate" column="p_mod_date"/>
         <result property="content" column="p_content"/>
@@ -467,8 +524,9 @@
         <result property="likeCount" column="p_like_count"/>
         <result property="dislikeCount" column="p_dislike_count"/>
         <result property="secret" column="i_secret"/>
-        <result property="answerManagerNickname" column="i_answer_manager_nickname"/>
+        <result property="answerManagerNickname" column="ma_nickname"/>
         <result property="answerContent" column="i_answer_content"/>
+        <result property="answerRegDate" column="i_answer_reg_date"/>
         <result property="password" column="i_password"/>
         <!-- 공통 컬렉션 매핑 -->
         <collection property="comments" resultMap="commentTableCollectionMapping" />
