@@ -2,8 +2,10 @@ package com.now.core.authentication.presentation;
 
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.application.dto.Token;
+import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.member.application.MemberService;
 import com.now.core.member.domain.Member;
+import com.now.core.member.presentation.dto.MemberProfile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
 
 /**
@@ -27,23 +30,24 @@ public class AuthenticationController {
     private final JwtTokenService jwtTokenService;
 
     /**
-         * 회원 정보를 조회 후 로그인 처리하는 핸들러 메서드
+     * 회원 정보를 조회 후 로그인 처리하는 핸들러 메서드
      *
      * @param member 조회할 회원 정보
      * @return ResponseEntity 객체 (HTTP 응답)
      */
     @PostMapping("/api/sign-in")
-    public ResponseEntity<Void> signIn(@RequestBody Member member) {
+    public ResponseEntity<MemberProfile> signIn(@RequestBody Member member, HttpServletResponse response) {
         log.debug("signIn 핸들러 메서드 호출, Member : {}", member);
 
-        Token token = memberService.generateAuthToken(member);
+        Member authenticatedMember = memberService.validateCredentialsAndRetrieveMember(member);
+        Token token = memberService.generateAuthToken(authenticatedMember);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtTokenService.ACCESS_TOKEN_HEADER_KEY, token.getAccessToken());
-        httpHeaders.add(JwtTokenService.REFRESH_TOKEN_HEADER_KEY, token.getRefreshToken());
+        response.addCookie(CookieUtil.generateHttpOnlyCookie("access_token", token.getAccessToken(), true));
+        response.addCookie(CookieUtil.generateHttpOnlyCookie("refresh_token", token.getRefreshToken(), true));
 
-        return ResponseEntity.created(URI.create("/api/members/me")).headers(httpHeaders).build();
+        return ResponseEntity.ok().body(MemberProfile.from(authenticatedMember));
     }
+
 
     /**
      * 토큰을 확인 후 AccessToken을 재발급 처리하는 핸들러 메서드

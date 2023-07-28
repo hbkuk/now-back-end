@@ -1,5 +1,6 @@
 package com.now.core.authentication.application.dto;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
  * JWT 토큰의 클레임 정보를 담고 있는 객체
  */
 @Getter
+@EqualsAndHashCode
 public class TokenClaims {
     private final Map<String, Object> claims;
 

@@ -5,6 +5,7 @@ import com.now.config.fixtures.member.MemberFixture;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.application.dto.Token;
 import com.now.core.member.domain.Member;
+import com.now.core.member.presentation.dto.MemberProfile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -14,35 +15,47 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static com.now.config.fixtures.member.MemberFixture.createMember;
+import static com.now.config.fixtures.member.MemberFixture.createMemberProfile;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 class AuthenticationControllerTest extends RestDocsTestSupport {
 
     @Test
     @DisplayName("회원 정보 조회 후 로그인 처리")
     void signIn() throws Exception {
-        String requestBody = "{\"id\": \"honi132\", \"password\": \"testPassword1!\"}";
-        Member member = createMember(MemberFixture.SAMPLE_MEMBER_ID_1,
-                MemberFixture.SAMPLE_PASSWORD_1);
+        String memberId = "honi132";
+        String password = "testPassword1!";
+        String nickname = "Honi";
+        String name = "김훈이";
+
+        String requestBody = "{\"id\": \"" + memberId +"\", \"password\": \"" + password + "\"}";
+        Member member = createMember(memberId, MemberFixture.SAMPLE_PASSWORD_1);
+        Member memberProfile = createMemberProfile(memberId, nickname, name);
         Token token = Token.builder()
                 .accessToken("AccessToken")
                 .refreshToken("RefreshToken")
                 .build();
 
-        given(memberService.generateAuthToken(member)).willReturn(token);
+        given(memberService.validateCredentialsAndRetrieveMember(member)).willReturn(memberProfile);
+        given(memberService.generateAuthToken(memberProfile)).willReturn(token);
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.post("/api/sign-in")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(requestBody))
-                        .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
-                        .andExpect(MockMvcResultMatchers.header().exists(jwtTokenService.REFRESH_TOKEN_HEADER_KEY))
-                        .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
-                        .andExpect(MockMvcResultMatchers.status().isCreated());
+                        .andExpect(status().isOk())
+
+                        .andExpect(cookie().httpOnly("access_token", true))
+                        .andExpect(cookie().httpOnly("refresh_token", true))
+                        .andExpect(cookie().value("access_token", token.getAccessToken()))
+                        .andExpect(cookie().value("refresh_token", token.getRefreshToken()))
+
+                        .andExpect(jsonPath("$.id").value(memberId))
+                        .andExpect(jsonPath("$.nickname").value(nickname))
+                        .andExpect(jsonPath("$.name").value(name));
 
         resultActions
                 .andDo(restDocs.document(
@@ -50,12 +63,14 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("id").description("아이디"),
                                 fieldWithPath("password").description("비밀번호")
                         ),
-                        responseHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken"),
-                                headerWithName(JwtTokenService.REFRESH_TOKEN_HEADER_KEY).description("RefreshToken")
+                        responseFields(
+                                fieldWithPath("id").description("회원 아이디"),
+                                fieldWithPath("nickname").description("회원 닉네임"),
+                                fieldWithPath("name").description("회원 성명")
                         ),
                         responseHeaders(
-                                headerWithName(HttpHeaders.LOCATION).description("생성된 위치 URI")
+                                headerWithName("Set-Cookie")
+                                        .description("쿠키 정보 (access_token, refresh_token)")
                         )
                 ));
     }

@@ -39,23 +39,32 @@ public class MemberService {
     }
 
     /**
-     * 회원의 인증을 처리하고 JWT 토큰을 생성하여 반환
+     * 회원의 자격 증명을 확인하고, 유효한 회원 정보를 반환
      *
-     * @param member 인증할 회원 정보
-     * @return 인증된 회원에게 부여되는 JWT
+     * @param member 자격 증명을 확인할 회원 객체
+     * @return 유효한 회원 정보를 담고 있는 객체
      */
-    public Token generateAuthToken(Member member) {
+    public Member validateCredentialsAndRetrieveMember(Member member) {
         Member savedMember = getMember(member.getId());
 
         if (!passwordSecurityManager.matchesWithSalt(member.getPassword(), savedMember.getPassword())) {
             throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
         }
+        return savedMember;
+    }
 
+    /**
+     * 회원의 정보를 기반으로 액세스 토큰과 리프레시 토큰 생성
+     *
+     * @param member 토큰을 생성할 회원 객체
+     * @return 액세스 토큰과 리프레시 토큰을 담은 인증 토큰
+     */
+    public Token generateAuthToken(Member member) {
         return Token.builder()
                 .accessToken(jwtTokenService.createAccessToken(TokenClaims.create(Map.of(
-                        "id", savedMember.getId(), "nickname", savedMember.getNickname(), "role", Authority.MEMBER.getValue()))))
+                        "id", member.getId(), "nickname", member.getNickname(), "role", Authority.MEMBER.getValue()))))
                 .refreshToken(jwtTokenService.createRefreshToken(TokenClaims.create(Map.of(
-                        "id", savedMember.getId(), "nickname", savedMember.getNickname(), "role", Authority.MEMBER.getValue()))))
+                        "id", member.getId(), "nickname", member.getNickname(), "role", Authority.MEMBER.getValue()))))
                 .build();
     }
 

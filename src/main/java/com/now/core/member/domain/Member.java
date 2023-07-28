@@ -1,5 +1,6 @@
 package com.now.core.member.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.authentication.constants.Authority;
 import lombok.*;
@@ -18,8 +19,6 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class Member {
 
-    private final Authority authority = Authority.MEMBER;
-
     /**
      * 비밀번호 정규식
      */
@@ -28,6 +27,7 @@ public class Member {
     /**
      * 회원의 고유 식별자
      */
+    @JsonIgnore
     private final Long memberIdx;
 
     /**
@@ -45,6 +45,7 @@ public class Member {
     /**
      * 회원의 이름
      */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(groups = {MemberValidationGroup.signup.class}, max = 15)
     private final String name;
 

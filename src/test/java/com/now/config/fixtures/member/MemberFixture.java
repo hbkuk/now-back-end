@@ -1,6 +1,7 @@
 package com.now.config.fixtures.member;
 
 import com.now.core.member.domain.Member;
+import com.now.core.member.presentation.dto.MemberProfile;
 
 public class MemberFixture {
 
@@ -20,6 +21,14 @@ public class MemberFixture {
         return Member.builder()
                 .id(id)
                 .password(password)
+                .build();
+    }
+
+    public static Member createMemberProfile(String id, String nickname, String name) {
+        return Member.builder()
+                .id(id)
+                .nickname(nickname)
+                .name(name)
                 .build();
     }
 }
