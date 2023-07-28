@@ -41,7 +41,8 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
                                 .content(requestBody))
                         .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
                         .andExpect(MockMvcResultMatchers.header().exists(jwtTokenService.REFRESH_TOKEN_HEADER_KEY))
-                        .andExpect(status().isOk());
+                        .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
+                        .andExpect(MockMvcResultMatchers.status().isCreated());
 
         resultActions
                 .andDo(restDocs.document(
@@ -52,6 +53,9 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
                         responseHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken"),
                                 headerWithName(JwtTokenService.REFRESH_TOKEN_HEADER_KEY).description("RefreshToken")
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.LOCATION).description("생성된 위치 URI")
                         )
                 ));
     }

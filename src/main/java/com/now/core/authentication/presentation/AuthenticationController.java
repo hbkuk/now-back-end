@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URI;
+
 /**
  * 회원 인증 관련 작업을 위한 컨트롤러
  */
@@ -25,13 +27,13 @@ public class AuthenticationController {
     private final JwtTokenService jwtTokenService;
 
     /**
-     * 회원 정보를 조회 후 로그인 처리하는 핸들러 메서드
+         * 회원 정보를 조회 후 로그인 처리하는 핸들러 메서드
      *
      * @param member 조회할 회원 정보
      * @return ResponseEntity 객체 (HTTP 응답)
      */
     @PostMapping("/api/sign-in")
-    public ResponseEntity<HttpHeaders> signIn(@RequestBody Member member) {
+    public ResponseEntity<Void> signIn(@RequestBody Member member) {
         log.debug("signIn 핸들러 메서드 호출, Member : {}", member);
 
         Token token = memberService.generateAuthToken(member);
@@ -40,7 +42,7 @@ public class AuthenticationController {
         httpHeaders.add(JwtTokenService.ACCESS_TOKEN_HEADER_KEY, token.getAccessToken());
         httpHeaders.add(JwtTokenService.REFRESH_TOKEN_HEADER_KEY, token.getRefreshToken());
 
-        return ResponseEntity.ok().headers(httpHeaders).build();
+        return ResponseEntity.created(URI.create("/api/members/me")).headers(httpHeaders).build();
     }
 
     /**

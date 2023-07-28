@@ -53,9 +53,9 @@ public class MemberService {
 
         return Token.builder()
                 .accessToken(jwtTokenService.createAccessToken(TokenClaims.create(Map.of(
-                        "id", member.getId(), "role", Authority.MEMBER.getValue()))))
+                        "id", savedMember.getId(), "nickname", savedMember.getNickname(), "role", Authority.MEMBER.getValue()))))
                 .refreshToken(jwtTokenService.createRefreshToken(TokenClaims.create(Map.of(
-                        "id", member.getId(), "role", Authority.MEMBER.getValue()))))
+                        "id", savedMember.getId(), "nickname", savedMember.getNickname(), "role", Authority.MEMBER.getValue()))))
                 .build();
     }
 
