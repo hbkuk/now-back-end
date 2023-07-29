@@ -6,6 +6,7 @@ import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
+import com.now.core.post.domain.Community;
 import com.now.core.post.domain.Photo;
 import com.now.core.post.domain.PostRepository;
 import com.now.core.post.exception.CannotCreatePostException;
@@ -125,6 +126,21 @@ public class PhotoService {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }
 
+        return photo;
+    }
+
+    /**
+     * 사진 수정 게시글 응답
+     *
+     * @param postIdx 게시글 번호
+     * @param memberId 회원 ID
+     * @return 사진 수정 게시글 정보
+     */
+    public Photo getEditPhoto(Long postIdx, String memberId) {
+        Photo photo = getPhoto(postIdx);
+        Member member = getMember(memberId);
+
+        photo.canUpdate(member);
         return photo;
     }
 }

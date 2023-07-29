@@ -153,6 +153,21 @@ public class InquiryService {
         return inquiry;
     }
 
+    /**
+     * 수정 문의 게시글 조회
+     *
+     * @param postIdx 게시글 번호
+     * @param memberId 회원 아이디
+     * @return 수정 문의 게시글
+     */
+    public Inquiry getEditInquiry(Long postIdx, String memberId) {
+        Inquiry inquiry = getInquiry(postIdx);
+        Member member = getMember(memberId);
+
+        inquiry.canUpdate(member);
+        return inquiry;
+    }
+
 
     /**
      * 회원 정보 응답

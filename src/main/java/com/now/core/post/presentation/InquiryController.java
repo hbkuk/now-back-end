@@ -77,6 +77,21 @@ public class InquiryController {
         return ResponseEntity.ok(inquiryService.getInquiryWithSecretCheck(postIdx, memberId, password));
     }
 
+
+    /**
+     * 수정 문의 게시글 조회
+     *
+     * @param postIdx 게시글 번호
+     * @return 문의 게시글 정보와 함께 OK 응답을 반환
+     */
+    @GetMapping("/api/inquiries/{postIdx}/edit")
+    public ResponseEntity<Inquiry> getEditInquiry(@PathVariable("postIdx") Long postIdx,
+                                                  @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
+        log.debug("getEditInquiry 호출, postIdx : {}", postIdx);
+
+        return ResponseEntity.ok(inquiryService.getEditInquiry(postIdx, (String) jwtTokenService.getClaim(accessToken, "id")));
+    }
+
     /**
      * 문의 게시글 등록
      *

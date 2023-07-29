@@ -5,7 +5,6 @@ import com.now.config.fixtures.member.MemberFixture;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.application.dto.Token;
 import com.now.core.member.domain.Member;
-import com.now.core.member.presentation.dto.MemberProfile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -89,21 +88,21 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.post("/api/refresh")
-                                .header(JwtTokenService.ACCESS_TOKEN_HEADER_KEY, accessToken)
-                                .header(JwtTokenService.REFRESH_TOKEN_HEADER_KEY, refreshToken))
+                                .header(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)
+                                .header(JwtTokenService.REFRESH_TOKEN_KEY, refreshToken))
                         .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
-                        .andExpect(MockMvcResultMatchers.header().exists(JwtTokenService.REFRESH_TOKEN_HEADER_KEY))
+                        .andExpect(MockMvcResultMatchers.header().exists(JwtTokenService.REFRESH_TOKEN_KEY))
                         .andExpect(status().isOk());
 
         resultActions
                 .andDo(restDocs.document(
                         requestHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken"),
-                                headerWithName(JwtTokenService.REFRESH_TOKEN_HEADER_KEY).description("유효기간이 만료되지 않은 RefreshToken")
+                                headerWithName(JwtTokenService.REFRESH_TOKEN_KEY).description("유효기간이 만료되지 않은 RefreshToken")
                         ),
                         responseHeaders(
                                 headerWithName(HttpHeaders.AUTHORIZATION).description("새로 발급된 AccessToken"),
-                                headerWithName(JwtTokenService.REFRESH_TOKEN_HEADER_KEY).description("기존 RefreshToken")
+                                headerWithName(JwtTokenService.REFRESH_TOKEN_KEY).description("기존 RefreshToken")
                         )
                 ));
     }

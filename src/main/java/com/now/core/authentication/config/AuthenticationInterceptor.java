@@ -2,6 +2,7 @@ package com.now.core.authentication.config;
 
 import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.authentication.exception.InvalidAuthenticationException;
 import com.now.core.authentication.exception.InvalidTokenException;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,7 +30,12 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             return true;
         }
 
-        String accessToken = request.getHeader(JwtTokenService.ACCESS_TOKEN_HEADER_KEY);
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
+        }
+
+        String accessToken = CookieUtil.getValue(cookies, JwtTokenService.ACCESS_TOKEN_KEY);
         if (accessToken == null) {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
@@ -36,7 +43,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             throw new InvalidTokenException(ErrorType.EXPIRED_TOKEN);
         }
         
-        // TODO: request 조작이 아닌, 다른 방법 고려
         request.setAttribute("id", jwtTokenService.getClaim(accessToken, "id"));
         request.setAttribute("role", jwtTokenService.getClaim(accessToken, "role"));
         return true;

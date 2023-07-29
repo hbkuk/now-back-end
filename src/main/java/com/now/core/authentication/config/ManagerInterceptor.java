@@ -2,12 +2,15 @@ package com.now.core.authentication.config;
 
 import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.authentication.exception.InvalidAuthenticationException;
+import com.now.core.authentication.exception.InvalidTokenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,8 +39,21 @@ public class ManagerInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
+        }
+
+        String accessToken = CookieUtil.getValue(cookies, JwtTokenService.ACCESS_TOKEN_KEY);
+        if (accessToken == null) {
+            throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
+        }
+        if (jwtTokenService.isTokenExpired(accessToken)) {
+            throw new InvalidTokenException(ErrorType.EXPIRED_TOKEN);
+        }
+
         Authority authority =
-                Authority.valueOf((String) jwtTokenService.getClaim(request.getHeader("Authorization"), "role"));
+                Authority.valueOf((String) jwtTokenService.getClaim(accessToken, "role"));
         if(!Authority.isManager(authority)) {
             throw new InvalidAuthenticationException(ErrorType.FORBIDDEN);
         }

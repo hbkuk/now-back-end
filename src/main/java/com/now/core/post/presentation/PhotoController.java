@@ -2,8 +2,10 @@ package com.now.core.post.presentation;
 
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.attachment.domain.constants.AttachmentType;
+import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.application.PhotoService;
+import com.now.core.post.domain.Community;
 import com.now.core.post.domain.Photo;
 import com.now.core.post.domain.PostValidationGroup;
 import com.now.core.post.presentation.dto.Condition;
@@ -27,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PhotoController {
 
+    private final JwtTokenService jwtTokenService;
     private final PhotoService photoService;
     private final AttachmentService attachmentService;
     private final CommentService commentService;
@@ -42,10 +45,10 @@ public class PhotoController {
         log.debug("getAllPhotos 호출, condition : {}", condition);
         return new ResponseEntity<>(photoService.getAllPhotos(condition), HttpStatus.OK);
     }
-    
+
     /**
      * 사진 게시글 조회
-     * 
+     *
      * @param postIdx 게시글 번호
      * @return 사진 게시글 정보와 함께 OK 응답을 반환
      */
@@ -53,6 +56,19 @@ public class PhotoController {
     public ResponseEntity<Photo> getPhoto(@PathVariable("postIdx") Long postIdx) {
         log.debug("getPhoto 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(photoService.getPhoto(postIdx));
+    }
+
+    /**
+     * 수정 사진 게시글 조회
+     *
+     * @param postIdx 게시글 번호
+     * @return 사진 게시글 정보와 함께 OK 응답을 반환
+     */
+    @GetMapping("/api/photos/{postIdx}/edit")
+    public ResponseEntity<Photo> getEditPhoto(@PathVariable("postIdx") Long postIdx,
+                                              @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
+        log.debug("getEditPhoto 호출, postIdx : {}", postIdx);
+        return ResponseEntity.ok(photoService.getEditPhoto(postIdx, (String) jwtTokenService.getClaim(accessToken, "id")));
     }
 
     /**
@@ -67,7 +83,7 @@ public class PhotoController {
                                               @RequestPart(value = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo photo,
                                               @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles) {
         log.debug("registerPhoto 호출, memberId : {}, Community : {}, Multipart : {}",
-                                        memberId, photo, (multipartFiles != null ? multipartFiles.length : "null"));
+                memberId, photo, (multipartFiles != null ? multipartFiles.length : "null"));
 
         photoService.registerPhoto(photo.updateMemberId(memberId));
         attachmentService.saveAttachmentsWithThumbnail(multipartFiles, photo.getPostIdx(), AttachmentType.IMAGE);
@@ -104,8 +120,8 @@ public class PhotoController {
     /**
      * 사진 게시글 삭제
      *
-     * @param postIdx   게시글 번호
-     * @param memberId  회원 아이디
+     * @param postIdx  게시글 번호
+     * @param memberId 회원 아이디
      * @return 응답 본문이 없는 상태 코드 204 반환
      */
     @DeleteMapping("/api/photos/{postIdx}")

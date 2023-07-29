@@ -24,8 +24,9 @@ public class ManagerNoticeController {
 
     /**
      * 공지 게시글 등록
+     *
      * @param managerId 매니저 ID
-     * @param notice 등록할 공지 게시글 정보
+     * @param notice    등록할 공지 게시글 정보
      * @return 생성된 위치 URI로 응답
      */
     @PostMapping("/api/manager/notices")
@@ -38,10 +39,24 @@ public class ManagerNoticeController {
     }
 
     /**
+     * 수정 공지 게시글 응답
+     *
+     * @param postIdx 게시글 번호
+     * @return 공지 게시글 정보
+     */
+    @GetMapping("/api/manager/notices/{postIdx}/edit")
+    public ResponseEntity<Notice> getEditNotice(@PathVariable("postIdx") Long postIdx,
+                                                @RequestAttribute("id") String managerId) {
+        log.debug("getEditNotice 호출, postIdx : {}", postIdx);
+        return ResponseEntity.ok(managerNoticeService.getEditNotice(postIdx, managerId));
+    }
+
+
+    /**
      * 공지 게시글 수정
      *
      * @param postIdx       게시글 번호
-     * @param managerId 매니저 ID
+     * @param managerId     매니저 ID
      * @param updatedNotice 수정된 공지 게시글 정보
      * @return 수정된 게시글에 대한 CREATED 응답을 반환
      */

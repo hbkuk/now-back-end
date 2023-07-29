@@ -97,6 +97,21 @@ public class ManagerNoticeService {
     }
 
     /**
+     * 수정 공지 게시글 응답
+     *
+     * @param postIdx 게시글 번호
+     * @param managerId 매니저 아이디 
+     * @return 공지 게시글 정보
+     */
+    public Notice getEditNotice(Long postIdx, String managerId) {
+        Notice notice = getNotice(postIdx);
+        Manager manager = getManager(managerId);
+
+        notice.canUpdate(manager);
+        return notice;
+    }
+
+    /**
      * 매니저 객체 응답
      *
      * @param managerId 매니저 ID

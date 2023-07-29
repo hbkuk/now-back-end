@@ -127,5 +127,20 @@ public class CommunityService {
 
         return community;
     }
+
+    /**
+     * 커뮤니티 수정 게시글 응답
+     * 
+     * @param postIdx 게시글 번호
+     * @param memberId 회원 ID
+     * @return 커뮤니티 수정 게시글 정보
+     */
+    public Community getEditCommunity(Long postIdx, String memberId) {
+        Community community = getCommunity(postIdx);
+        Member member = getMember(memberId);
+        
+        community.canUpdate(member);
+        return community;
+    }
 }
 

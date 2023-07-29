@@ -10,13 +10,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
 
 /**
  * 회원 인증 관련 작업을 위한 컨트롤러
@@ -33,6 +32,7 @@ public class AuthenticationController {
      * 회원 정보를 조회 후 로그인 처리하는 핸들러 메서드
      *
      * @param member 조회할 회원 정보
+     * @param response 응답 객체
      * @return ResponseEntity 객체 (HTTP 응답)
      */
     @PostMapping("/api/sign-in")
@@ -42,8 +42,8 @@ public class AuthenticationController {
         Member authenticatedMember = memberService.validateCredentialsAndRetrieveMember(member);
         Token token = memberService.generateAuthToken(authenticatedMember);
 
-        response.addCookie(CookieUtil.generateHttpOnlyCookie("access_token", token.getAccessToken(), true));
-        response.addCookie(CookieUtil.generateHttpOnlyCookie("refresh_token", token.getRefreshToken(), true));
+        response.addCookie(CookieUtil.generateHttpOnlyCookie(JwtTokenService.ACCESS_TOKEN_KEY, token.getAccessToken(), true));
+        response.addCookie(CookieUtil.generateHttpOnlyCookie(JwtTokenService.REFRESH_TOKEN_KEY, token.getRefreshToken(), true));
 
         return ResponseEntity.ok().body(MemberProfile.from(authenticatedMember));
     }
@@ -52,23 +52,22 @@ public class AuthenticationController {
     /**
      * 토큰을 확인 후 AccessToken을 재발급 처리하는 핸들러 메서드
      *
-     * @param accessToken AccessToken
-     * @param refreshToken RefreshToken
+     * @param response 응답 객체
+     * @param refreshToken  RefreshToken
      * @return ResponseEntity 객체 (HTTP 응답)
      */
     @PostMapping("/api/refresh")
-    public ResponseEntity<HttpHeaders> refresh(@RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String accessToken,
-                                               @RequestHeader(name = JwtTokenService.REFRESH_TOKEN_HEADER_KEY, required = false) String refreshToken) {
+    public ResponseEntity<HttpHeaders> refresh(HttpServletResponse response,
+                                               @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
         log.debug("refresh 핸들러 메서드 호출");
 
-        jwtTokenService.validateTokensForRefresh(accessToken, refreshToken);
+        jwtTokenService.validateForRefresh(refreshToken);
 
         Token newTokens = jwtTokenService.refreshTokens(refreshToken);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(JwtTokenService.ACCESS_TOKEN_HEADER_KEY, newTokens.getAccessToken());
-        httpHeaders.add(JwtTokenService.REFRESH_TOKEN_HEADER_KEY, newTokens.getRefreshToken());
+        response.addCookie(CookieUtil.generateHttpOnlyCookie(JwtTokenService.ACCESS_TOKEN_KEY, newTokens.getAccessToken(), true));
+        response.addCookie(CookieUtil.generateHttpOnlyCookie(JwtTokenService.REFRESH_TOKEN_KEY, newTokens.getRefreshToken(), true));
 
-        return ResponseEntity.ok().headers(httpHeaders).build();
+        return ResponseEntity.ok().build();
     }
 }

@@ -28,8 +28,8 @@ public class JwtTokenService {
     private static final int ACCESS_TOKEN_EXPIRE_MINUTES = 60;
     private static final int REFRESH_TOKEN_EXPIRE_HOURS = 24;
 
-    public static final String ACCESS_TOKEN_HEADER_KEY = "Authorization";
-    public static final String REFRESH_TOKEN_HEADER_KEY = "Refresh-Token";
+    public static final String ACCESS_TOKEN_KEY = "access_token";
+    public static final String REFRESH_TOKEN_KEY = "refresh_token";
 
     @Value("${now.security.key}")
     private String securityKey;
@@ -189,16 +189,14 @@ public class JwtTokenService {
     /**
      * Refresh를 위한 토큰 검증을 수행
      *
-     * @param accessToken  엑세스 토큰
      * @param refreshToken 리프레시 토큰
      *
      * @throws InvalidAuthenticationException 토큰이 없거나 유효하지 않은 경우 해당 예외가 발생
      *                                       ErrorType.NOT_AUTHENTICATED: 인증되지 않은 토큰
-     *                                       ErrorType.ALREADY_AUTHENTICATED: 이미 인증정보가 존재
      *                                       ErrorType.EXPIRED_TOKEN: 유효하지 않은 토큰
      */
-    public void validateTokensForRefresh(String accessToken, String refreshToken) {
-        if (accessToken == null || refreshToken == null) {
+    public void validateForRefresh(String refreshToken) {
+        if (refreshToken == null) {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
 

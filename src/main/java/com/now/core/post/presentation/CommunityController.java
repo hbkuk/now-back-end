@@ -2,6 +2,7 @@ package com.now.core.post.presentation;
 
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.attachment.domain.constants.AttachmentType;
+import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.application.CommunityService;
 import com.now.core.post.domain.Community;
@@ -27,6 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommunityController {
 
+    private final JwtTokenService jwtTokenService;
     private final CommunityService communityService;
     private final AttachmentService attachmentService;
     private final CommentService commentService;
@@ -48,12 +50,25 @@ public class CommunityController {
      * 커뮤니티 게시글 응답
      *
      * @param postIdx 게시글 번호
-     * @return 공지 게시글 정보
+     * @return 커뮤니티 게시글 정보
      */
     @GetMapping("/api/communities/{postIdx}")
     public ResponseEntity<Community> getCommunity(@PathVariable("postIdx") Long postIdx) {
         log.debug("getCommunity 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(communityService.getCommunity(postIdx));
+    }
+
+    /**
+     * 수정 커뮤니티 게시글 응답
+     *
+     * @param postIdx 게시글 번호
+     * @return 커뮤니티 게시글 정보
+     */
+    @GetMapping("/api/communities/{postIdx}/edit")
+    public ResponseEntity<Community> getEditCommunity(@PathVariable("postIdx") Long postIdx,
+                                                      @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
+        log.debug("getEditCommunity 호출, postIdx : {}", postIdx);
+        return ResponseEntity.ok(communityService.getEditCommunity(postIdx, (String) jwtTokenService.getClaim(accessToken, "id")));
     }
 
     /**

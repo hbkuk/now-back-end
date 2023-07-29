@@ -1,10 +1,9 @@
 package com.now.core.authentication.application.util;
 
-import com.now.common.exception.ErrorType;
-
 import javax.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
 
 public class CookieUtil {
 
@@ -27,5 +26,20 @@ public class CookieUtil {
 
         cookie.setHttpOnly(httpOnlySetting);
         return cookie;
+    }
+
+    /**
+     * 쿠키 배열에서 주어진 키(key)에 해당하는 쿠키의 값을 반환, 없으면 null 반환
+     *
+     * @param cookies 쿠키 배열
+     * @param key     찾고자 하는 쿠키의 키(key)
+     * @return 주어진 키(key)에 해당하는 쿠키의 값, 해당하는 쿠키가 없는 경우에는 null 반환
+     */
+    public static String getValue(Cookie[] cookies, String key) {
+        return Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals(key))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
     }
 }
