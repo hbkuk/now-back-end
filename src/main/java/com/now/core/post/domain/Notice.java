@@ -31,15 +31,15 @@ public class Notice {
 
     private Long postIdx; // 공지 게시글의 고유 식별자
 
-    @NotNull(groups = {PostValidationGroup.saveNotice.class})
+    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "{post.category.notnull}")
     private final Category category; // 카테고리
 
     private String managerNickname; // 매니저 닉네임
 
-    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 100)
+    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 100, message = "{post.title.size}")
     private final String title; // 제목
 
-    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000)
+    @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000, message = "{post.content.size}")
     private final String content; // 내용
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -54,7 +54,7 @@ public class Notice {
 
     private final Integer dislikeCount; // 싫어요 수
 
-    @NotNull(groups = {PostValidationGroup.saveNotice.class})  // 상단 고정 여부 (true: 상단 고정)
+    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "{post.pinned.notnull}")  // 상단 고정 여부 (true: 상단 고정)
     private final Boolean pinned;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

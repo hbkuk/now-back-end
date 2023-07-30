@@ -5,10 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.MissingRequestCookieException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.now.common.exception.ErrorType.UNHANDLED_EXCEPTION;
 
@@ -53,13 +57,28 @@ public class GlobalExceptionAdvice {
     }
 
     /**
+     * MethodArgumentNotValidException 발생했을 때 처리하는 메소드
+     *
+     * @param e 발생한 MethodArgumentNotValidException 객체
+     * @return ErrorResponse 객체를 담은 ResponseEntity
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e) {
+        Map<String, String> errors = new HashMap<>();
+        e.getBindingResult().getAllErrors().forEach((error) -> {
+            errors.put(((FieldError) error).getField(), error.getDefaultMessage());
+        });
+        return ResponseEntity.unprocessableEntity().body(new ErrorResponse(ErrorType.UNPROCESSABLE_ENTITY.getCode(), errors.toString()));
+    }
+
+    /**
      * BindException 발생했을 때 처리하는 메소드
      *
      * @param e 발생한 BindException 객체
      * @return ErrorResponse 객체를 담은 ResponseEntity
      */
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<ErrorResponse> handleBindException(final BindException e){
+    public ResponseEntity<ErrorResponse> handleBindException(final BindException e) {
         String message = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         log.warn("BindException: {}", message);
         return ResponseEntity.badRequest().body(new ErrorResponse(ErrorType.REQUEST_EXCEPTION.getCode(), message));

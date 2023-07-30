@@ -13,6 +13,7 @@ import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,14 +36,15 @@ public class Photo {
 
     private Long postIdx;   // 게시글의 고유 식별자
 
+    @NotNull(groups = {PostValidationGroup.savePhoto.class}, message = "{post.category.notnull}")
     private final Category category; // 카테고리
 
     private String memberNickname;  // 회원의 닉네임
 
-    @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 100)
+    @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 100, message = "{post.title.size}")
     private final String title; // 게시글의 제목
 
-    @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 2000)
+    @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 2000, message = "{post.content.size}")
     private final String content;   // 게시글의 내용
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

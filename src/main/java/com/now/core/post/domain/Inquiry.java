@@ -38,15 +38,15 @@ public class Inquiry {
 
     private Long postIdx;   // 게시글의 고유 식별자
 
-    @NotNull(groups = {PostValidationGroup.saveInquiry.class})
+    @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.category.notnull}")
     private final Category category;    // 카테고리
 
     private String memberNickname;  // 회원의 닉네임
 
-    @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 100)
+    @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 100, message = "{post.title.size}")
     private final String title; // 게시글의 제목
 
-    @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 2000)
+    @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 2000, message = "{post.content.size}")
     private final String content;   // 게시글의 내용
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
@@ -64,7 +64,7 @@ public class Inquiry {
     @JsonIgnore
     private final Long inquiryIdx;  // 문의 게시글의 고유 식별자
 
-    @NotNull(groups = {PostValidationGroup.saveInquiry.class})
+    @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.secret.notnull}")
     private final Boolean secret;   // 비밀글 설정 여부 (true: 비밀글)
 
     @JsonIgnore
@@ -75,7 +75,7 @@ public class Inquiry {
 
     @Nullable
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 4, max = 15)
+    @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 4, max = 15, message = "{post.password.size}")
     private String password;    // 비밀글의 비밀번호
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

@@ -30,7 +30,7 @@ public class Comment {
 
     private String managerNickname; // 매니저 닉네임
 
-    @Size(groups = CommentValidationGroup.saveComment.class,max = 2000)
+    @Size(groups = CommentValidationGroup.saveComment.class, min = 1, max = 2000, message = "{comment.content.size}")
     private final String content; // 댓글의 내용
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

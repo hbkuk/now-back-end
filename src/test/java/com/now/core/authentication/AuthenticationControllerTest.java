@@ -11,8 +11,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.servlet.http.Cookie;
+
+import static com.now.common.snippet.RequestCookiesSnippet.cookieWithName;
+import static com.now.common.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
 import static com.now.config.fixtures.member.MemberFixture.createMember;
 import static com.now.config.fixtures.member.MemberFixture.createMemberProfile;
 import static org.mockito.BDDMockito.given;
@@ -30,7 +35,7 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
         String nickname = "Honi";
         String name = "김훈이";
 
-        String requestBody = "{\"id\": \"" + memberId +"\", \"password\": \"" + password + "\"}";
+        String requestBody = "{\"id\": \"" + memberId + "\", \"password\": \"" + password + "\"}";
         Member member = createMember(memberId, MemberFixture.SAMPLE_PASSWORD_1);
         Member memberProfile = createMemberProfile(memberId, nickname, name);
         Token token = Token.builder()
@@ -77,32 +82,32 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
     @Test
     @DisplayName("토큰 확인 후 AccessToken 재발급 처리")
     void refresh() throws Exception {
-        String accessToken = "AccessToken";
         String refreshToken = "RefreshToken";
-        Token token = Token.builder()
-                .accessToken("AccessToken")
-                .refreshToken("RefreshToken")
+        Token newToken = Token.builder()
+                .accessToken("newAccessToken")
+                .refreshToken(refreshToken)
                 .build();
 
-        given(jwtTokenService.refreshTokens(refreshToken)).willReturn(token);
+        given(jwtTokenService.refreshTokens(refreshToken)).willReturn(newToken);
 
-        ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.post("/api/refresh")
-                                .header(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)
-                                .header(JwtTokenService.REFRESH_TOKEN_KEY, refreshToken))
-                        .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.AUTHORIZATION))
-                        .andExpect(MockMvcResultMatchers.header().exists(JwtTokenService.REFRESH_TOKEN_KEY))
-                        .andExpect(status().isOk());
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/refresh")
+                        .with(request -> {
+                            request.setCookies(new Cookie(JwtTokenService.REFRESH_TOKEN_KEY, refreshToken));
+                            return request;
+                        }))
+                .andExpect(cookie().httpOnly("access_token", true))
+                .andExpect(cookie().httpOnly("refresh_token", true))
+                .andExpect(cookie().value("access_token", newToken.getAccessToken()))
+                .andExpect(cookie().value("refresh_token", newToken.getRefreshToken()))
+                .andExpect(status().isOk())
 
-        resultActions
                 .andDo(restDocs.document(
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken"),
-                                headerWithName(JwtTokenService.REFRESH_TOKEN_KEY).description("유효기간이 만료되지 않은 RefreshToken")
+                        customRequestHeaderCookies(
+                                cookieWithName("refresh_token").description("리프레시 토큰 쿠키 이름")
                         ),
                         responseHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("새로 발급된 AccessToken"),
-                                headerWithName(JwtTokenService.REFRESH_TOKEN_KEY).description("기존 RefreshToken")
+                                headerWithName("Set-Cookie")
+                                        .description("쿠키 정보 (access_token, refresh_token)")
                         )
                 ));
     }

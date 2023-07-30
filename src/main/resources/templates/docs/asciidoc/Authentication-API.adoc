@@ -3,8 +3,8 @@
 
 [[Authentication-Sign-In]]
 === Authentication Sign-In
-operation::authentication-controller-test/sign-in[snippets='http-request,request-body,request-fields,http-response,response-headers,response-fields']
+operation::authentication-controller-test/sign-in[snippets='http-request,cookie-request-headers,request-body,request-fields,http-response,response-headers,response-fields']
 
 [[Authentication-Refresh]]
 === Authentication Refresh
-operation::authentication-controller-test/refresh[snippets='http-request,request-headers,http-response,response-headers']
+operation::authentication-controller-test/refresh[snippets='http-request,cookie-request-headers,http-response,response-headers']

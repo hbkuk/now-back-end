@@ -22,7 +22,10 @@ public class Member {
     /**
      * 비밀번호 정규식
      */
-    private static final String PASSWORD_REGEX = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).*$";
+    private static final String ID_REGEX = "^[A-Za-z0-9]{1,50}$";
+    private static final String NICKNAME_REGEX = "^[a-zA-Z가-힣]{1,50}$";
+    private static final String NAME_REGEX = "^[a-zA-Z가-힣]{2,15}$";
+    private static final String PASSWORD_REGEX = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{4,15}$";
 
     /**
      * 회원의 고유 식별자
@@ -33,27 +36,27 @@ public class Member {
     /**
      * 회원의 아이디
      */
-    @Size(groups = {MemberValidationGroup.signup.class}, max = 50)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = ID_REGEX, message = "{member.id.pattern}")
     private final String id;
 
     /**
      * 회원의 닉네임
      */
-    @Size(groups = {MemberValidationGroup.signup.class}, max = 50)
+    @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = NICKNAME_REGEX, message = "{member.nickname.pattern}")
     private final String nickname;
 
     /**
      * 회원의 이름
      */
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Size(groups = {MemberValidationGroup.signup.class}, max = 15)
+    @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = NAME_REGEX, message = "{member.name.pattern}")
     private final String name;
 
     /**
      * 회원의 비밀번호
      */
-    @Size(groups = {MemberValidationGroup.signup.class}, min = 4, max = 15)
-    @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = PASSWORD_REGEX)
+    @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = PASSWORD_REGEX, message = "{member.password.pattern}")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 

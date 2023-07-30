@@ -37,7 +37,7 @@ public class Community {
 
     private Long postIdx; // 게시글의 고유 식별자
 
-    @NotNull(groups = {PostValidationGroup.saveCommunity.class})
+    @NotNull(groups = {PostValidationGroup.saveCommunity.class}, message = "{post.category.notnull}")
     private final Category category; // 카테고리
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
@@ -46,12 +46,10 @@ public class Community {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String memberNickname; // 회원의 닉네임
 
-    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 100)
-    @NotEmpty(groups = {PostValidationGroup.saveCommunity.class})
+    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 100, message = "{post.title.size}")
     private final String title; // 게시글의 제목
 
-    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 2000)
-    @NotEmpty(groups = {PostValidationGroup.saveCommunity.class})
+    @Size(groups = {PostValidationGroup.saveCommunity.class}, min = 1, max = 2000, message = "{post.content.size}")
     private final String content; // 게시글의 내용
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")

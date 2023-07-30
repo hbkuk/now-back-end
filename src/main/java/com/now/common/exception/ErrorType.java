@@ -46,6 +46,7 @@ public enum ErrorType {
 
     REQUEST_EXCEPTION(9001, "http 요청 에러입니다."),
     INVALID_PATH(9002, "잘못된 경로입니다."),
+    UNPROCESSABLE_ENTITY(9003, "요청 데이터가 유효하지 않습니다."),
     UNHANDLED_EXCEPTION(9999, "예상치 못한 예외입니다.");
 
     private final int code;
