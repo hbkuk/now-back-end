@@ -1,6 +1,7 @@
 package com.now.core.comment.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
+import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +11,10 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.servlet.http.Cookie;
+
+import static com.now.common.snippet.RequestCookiesSnippet.cookieWithName;
+import static com.now.common.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
 import static com.now.config.document.utils.RestDocsConfig.field;
 import static com.now.config.fixtures.comment.CommentFixture.createCommentForSave;
 import static com.now.config.fixtures.comment.CommentFixture.createCommentForUpdate;
@@ -35,15 +40,15 @@ class CommentControllerTest extends RestDocsTestSupport {
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.post("/api/posts/{postIdx}/comments", postIdx)
-                                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createCommentForSave())))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
 
         resultActions
                 .andDo(restDocs.document(
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("원글 ID")
@@ -70,15 +75,15 @@ class CommentControllerTest extends RestDocsTestSupport {
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.put("/api/posts/{postIdx}/comments/{commentIdx}", postIdx, commentIdx)
-                                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createCommentForUpdate(commentIdx))))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
 
         resultActions
                 .andDo(restDocs.document(
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("원글 ID"),
@@ -106,13 +111,13 @@ class CommentControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/posts/{postIdx}/comments/{commentIdx}", postIdx, commentIdx)
-                        .header(HttpHeaders.AUTHORIZATION, accessToken))
+                    .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         resultActions
                 .andDo(restDocs.document(
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("원글 ID"),

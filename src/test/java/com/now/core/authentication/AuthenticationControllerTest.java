@@ -7,12 +7,10 @@ import com.now.core.authentication.application.dto.Token;
 import com.now.core.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.servlet.http.Cookie;
 
@@ -21,7 +19,8 @@ import static com.now.common.snippet.RequestCookiesSnippet.customRequestHeaderCo
 import static com.now.config.fixtures.member.MemberFixture.createMember;
 import static com.now.config.fixtures.member.MemberFixture.createMemberProfile;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -91,10 +90,7 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.refreshTokens(refreshToken)).willReturn(newToken);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/refresh")
-                        .with(request -> {
-                            request.setCookies(new Cookie(JwtTokenService.REFRESH_TOKEN_KEY, refreshToken));
-                            return request;
-                        }))
+                        .cookie(new Cookie(JwtTokenService.REFRESH_TOKEN_KEY, refreshToken)))
                 .andExpect(cookie().httpOnly("access_token", true))
                 .andExpect(cookie().httpOnly("refresh_token", true))
                 .andExpect(cookie().value("access_token", newToken.getAccessToken()))

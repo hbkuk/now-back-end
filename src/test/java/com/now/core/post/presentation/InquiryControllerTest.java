@@ -2,6 +2,7 @@ package com.now.core.post.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
 import com.now.config.fixtures.post.InquiryFixture;
+import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.post.presentation.dto.Condition;
 import org.junit.jupiter.api.DisplayName;
@@ -12,13 +13,17 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.servlet.http.Cookie;
 import java.util.List;
 
+import static com.now.common.snippet.RequestCookiesSnippet.cookieWithName;
+import static com.now.common.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
 import static com.now.config.document.utils.RestDocsConfig.field;
 import static com.now.config.fixtures.post.InquiryFixture.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -128,14 +133,14 @@ class InquiryControllerTest extends RestDocsTestSupport {
         // given
         Long postIdx = 1L;
         String accessToken = "AccessToken";
-        given(jwtTokenService.getClaim(accessToken,"id")).willReturn("tester1");
+        given(jwtTokenService.getClaim(accessToken, "id")).willReturn("tester1");
         given(inquiryService.getInquiryWithSecretCheck(anyLong(), anyString(), any()))
                 .willReturn(createSecretInquiry(
                         1L, InquiryFixture.SAMPLE_NICKNAME_1, InquiryFixture.SAMPLE_TITLE_1, InquiryFixture.SAMPLE_CONTENT_1));
 
         // when, then
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/inquiries/secret/{postIdx}", postIdx)
-                        .header(HttpHeaders.AUTHORIZATION, accessToken)
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("password", "password"))
                 .andExpect(status().isOk());
@@ -145,8 +150,8 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         pathParameters(
                                 parameterWithName("postIdx").description("게시글 ID")
                         ),
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken").optional()
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParameters(
                                 parameterWithName("password").description("비밀글 설정 비밀번호").optional()
@@ -181,7 +186,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.post("/api/inquiries")
-                                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createInquiryForSave().updatePostIdx(1L))))
                         .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
@@ -189,8 +194,8 @@ class InquiryControllerTest extends RestDocsTestSupport {
 
         resultActions
                 .andDo(restDocs.document(
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestFields(
                                 fieldWithPath("postIdx").ignored(),
@@ -219,7 +224,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.put("/api/inquiries/{postIdx}", postIdx)
-                                .header(HttpHeaders.AUTHORIZATION, accessToken)
+                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createInquiryForSave().updatePostIdx(postIdx))))
                         .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
@@ -227,8 +232,8 @@ class InquiryControllerTest extends RestDocsTestSupport {
 
         resultActions
                 .andDo(restDocs.document(
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestFields(
                                 fieldWithPath("postIdx").description("게시글 번호"),
@@ -256,13 +261,13 @@ class InquiryControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/inquiries/{postIdx}", postIdx)
-                        .header(HttpHeaders.AUTHORIZATION, accessToken))
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         resultActions
                 .andDo(restDocs.document(
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("삭제할 게시글 번호")

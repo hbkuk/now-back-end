@@ -7,8 +7,8 @@ operation::comment-controller-test/register-comment[snippets='http-request,reque
 
 [[Comment-수정]]
 === Comment 수정
-operation::comment-controller-test/update-comment[snippets='http-request,request-body,request-fields,request-headers,http-response']
+operation::comment-controller-test/update-comment[snippets='http-request,cookie-request-headers,request-body,request-fields,http-response']
 
 [[Comment-삭제]]
 === Comment 삭제
-operation::comment-controller-test/delete-comment[snippets='http-request,request-headers,http-response']
+operation::comment-controller-test/delete-comment[snippets='http-request,cookie-request-headers,http-response']

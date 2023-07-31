@@ -11,12 +11,12 @@ operation::photo-controller-test/get-photo[snippets='http-request,path-parameter
 
 [[Photo-등록]]
 === Photo 등록
-operation::photo-controller-test/register-photo[snippets='http-request,request-parts,request-part-photo-fields,request-headers,http-response,response-headers']
+operation::photo-controller-test/register-photo[snippets='http-request,cookie-request-headers,request-parts,request-part-photo-fields,http-response,response-headers']
 
 [[Photo-수정]]
 === Photo 수정
-operation::photo-controller-test/update-photo[snippets='http-request,request-parts,request-part-photo-fields,request-headers,request-parameters,http-response,response-headers']
+operation::photo-controller-test/update-photo[snippets='http-request,cookie-request-headers,request-parts,request-part-photo-fields,request-parameters,http-response,response-headers']
 
 [[Photo-삭제]]
 === Photo 삭제
-operation::photo-controller-test/delete-photo[snippets='http-request,request-headers,http-response']
+operation::photo-controller-test/delete-photo[snippets='http-request,cookie-request-headers,http-response']

@@ -11,12 +11,12 @@ operation::notice-controller-test/get-notice[snippets='http-request,path-paramet
 
 [[Notice-등록]]
 === Notice 등록
-operation::notice-controller-test/register-notice[snippets='http-request,request-body,request-fields,request-headers,http-response,response-headers']
+operation::notice-controller-test/register-notice[snippets='http-request,cookie-request-headers,request-body,request-fields,http-response,response-headers']
 
 [[Notice-수정]]
 === Notice 수정
-operation::notice-controller-test/update-notice[snippets='http-request,request-body,request-fields,request-headers,http-response,response-headers']
+operation::notice-controller-test/update-notice[snippets='http-request,cookie-request-headers,request-body,request-fields,http-response,response-headers']
 
 [[Notice-삭제]]
 === Notice 삭제
-operation::notice-controller-test/delete-notice[snippets='http-request,request-headers,http-response']
+operation::notice-controller-test/delete-notice[snippets='http-request,cookie-request-headers,http-response']

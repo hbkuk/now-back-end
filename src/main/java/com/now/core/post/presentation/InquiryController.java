@@ -59,29 +59,29 @@ public class InquiryController {
     /**
      * 비밀글 설정된 문의 게시글 조회
      *
-     * @param postIdx 게시글 번호
-     * @param token   토큰
+     * @param postIdx     게시글 번호
+     * @param password    비밀글로 설정된 비밀번호
+     * @param accessToken 액세스 토큰
      * @return 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @PostMapping("/api/inquiries/secret/{postIdx}")
     public ResponseEntity<Inquiry> getSecretInquiry(@PathVariable("postIdx") Long postIdx,
                                                     @RequestParam(required = false) String password,
-                                                    @RequestHeader(name = HttpHeaders.AUTHORIZATION, required = false) String token) {
-        log.debug("getSecretInquiry 호출, postIdx : {}, password : {}, token : {}", postIdx, password, token);
+                                                    @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = false) String accessToken) {
+        log.debug("getSecretInquiry 호출, postIdx : {}, password : {}, token : {}", postIdx, password, accessToken);
 
         String memberId = null;
-        if (token != null) {
-            memberId = (String) jwtTokenService.getClaim(token, "id");
+        if (accessToken != null) {
+            memberId = (String) jwtTokenService.getClaim(accessToken, "id");
         }
 
         return ResponseEntity.ok(inquiryService.getInquiryWithSecretCheck(postIdx, memberId, password));
     }
 
-
     /**
      * 수정 문의 게시글 조회
-     *
      * @param postIdx 게시글 번호
+     * @param accessToken 액세스 토큰
      * @return 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/inquiries/{postIdx}/edit")

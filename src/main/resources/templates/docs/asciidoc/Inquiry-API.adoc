@@ -11,16 +11,16 @@ operation::inquiry-controller-test/get-inquiry[snippets='http-request,path-param
 
 [[Inquiry-비밀글-단건-조회]]
 === Inquiry 비밀글 단건 조회
-operation::inquiry-controller-test/get-secret-inquiry[snippets='http-request,request-headers,path-parameters,request-parameters,http-response,response-fields']
+operation::inquiry-controller-test/get-secret-inquiry[snippets='http-request,cookie-request-headers,path-parameters,request-parameters,http-response,response-fields']
 
 [[Inquiry-등록]]
 === Inquiry 등록
-operation::inquiry-controller-test/register-inquiry[snippets='http-request,request-body,request-fields,request-headers,http-response,response-headers']
+operation::inquiry-controller-test/register-inquiry[snippets='http-request,cookie-request-headers,request-body,request-fields,http-response,response-headers']
 
 [[Inquiry-수정]]
 === Inquiry 수정
-operation::inquiry-controller-test/update-inquiry[snippets='http-request,request-body,request-fields,request-headers,http-response,response-headers']
+operation::inquiry-controller-test/update-inquiry[snippets='http-request,cookie-request-headers,request-body,request-fields,http-response,response-headers']
 
 [[Inquiry-삭제]]
 === Inquiry 삭제
-operation::inquiry-controller-test/delete-inquiry[snippets='http-request,request-headers,http-response']
+operation::inquiry-controller-test/delete-inquiry[snippets='http-request,cookie-request-headers,http-response']

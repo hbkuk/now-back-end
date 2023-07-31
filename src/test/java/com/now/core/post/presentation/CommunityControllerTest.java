@@ -1,6 +1,7 @@
 package com.now.core.post.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
+import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.domain.Community;
@@ -16,14 +17,18 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import javax.servlet.http.Cookie;
 import java.util.List;
 
+import static com.now.common.snippet.RequestCookiesSnippet.cookieWithName;
+import static com.now.common.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
 import static com.now.config.document.utils.RestDocsConfig.field;
 import static com.now.config.fixtures.attachment.AttachmentFixture.createAttachments;
 import static com.now.config.fixtures.comment.CommentFixture.createComments;
 import static com.now.config.fixtures.post.CommunityFixture.*;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -142,10 +147,10 @@ class CommunityControllerTest extends RestDocsTestSupport {
     @DisplayName("커뮤니티 게시글 등록")
     void registerCommunity() throws Exception {
         String memberId = "tester1";
-        String token = "Bearer accessToken";
+        String accessToken = "Bearer accessToken";
         Community community = createCommunityForSave().updatePostIdx(1L);
-        given(jwtTokenService.getClaim(token, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(token, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         MockMultipartFile communityPart = new MockMultipartFile("community", "",
                 MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(community));
@@ -161,14 +166,14 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         .file(fileA)
                         .file(fileB)
                         .accept(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, token))
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
         resultActions
                 .andDo(restDocs.document(
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParts(
                                 partWithName("community").description("커뮤니티 게시글 정보"),
@@ -192,9 +197,9 @@ class CommunityControllerTest extends RestDocsTestSupport {
     void updateCommunity() throws Exception {
         Long postIdx = 1L;
         String memberId = "tester1";
-        String token = "Bearer accessToken";
-        given(jwtTokenService.getClaim(token, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(token, "role")).willReturn(Authority.MEMBER.getValue());
+        String accessToken = "Bearer accessToken";
+        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         Community updatedCommunity = Community.builder()
                 .category(Category.COMMUNITY_STUDY)
@@ -217,7 +222,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         .file(fileB)
                         .param("attachmentIdx", "1")
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                         .with(request -> {
                             request.setMethod(String.valueOf(HttpMethod.PUT)); // PUT 메서드로 변경
                             return request;
@@ -227,8 +232,8 @@ class CommunityControllerTest extends RestDocsTestSupport {
 
         resultActions
                 .andDo(restDocs.document(
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParts(
                                 partWithName("community").description("커뮤니티 게시글 정보"),
@@ -254,18 +259,18 @@ class CommunityControllerTest extends RestDocsTestSupport {
     void deleteCommunity() throws Exception {
         Long postIdx = 1L;
         String memberId = "tester1";
-        String token = "Bearer accessToken";
-        given(jwtTokenService.getClaim(token, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(token, "role")).willReturn(Authority.MEMBER.getValue());
+        String accessToken = "Bearer accessToken";
+        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/communities/{postIdx}", postIdx)
-                        .header(HttpHeaders.AUTHORIZATION, token))
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         resultActions
                 .andDo(restDocs.document(
-                        requestHeaders(
-                                headerWithName(HttpHeaders.AUTHORIZATION).description("AccessToken")
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("게시글 번호")

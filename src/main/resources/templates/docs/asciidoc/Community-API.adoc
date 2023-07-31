@@ -11,12 +11,12 @@ operation::community-controller-test/get-community[snippets='http-request,path-p
 
 [[Community-등록]]
 === Community 등록
-operation::community-controller-test/register-community[snippets='http-request,request-parts,request-part-community-fields,request-headers,http-response,response-headers']
+operation::community-controller-test/register-community[snippets='http-request,cookie-request-headers,request-parts,request-part-community-fields,http-response,response-headers']
 
 [[Community-수정]]
 === Community 수정
-operation::community-controller-test/update-community[snippets='http-request,request-parts,request-part-community-fields,request-headers,request-parameters,http-response,response-headers']
+operation::community-controller-test/update-community[snippets='http-request,cookie-request-headers,request-parts,request-part-community-fields,request-parameters,http-response,response-headers']
 
 [[Community-삭제]]
 === Community 삭제
-operation::community-controller-test/delete-community[snippets='http-request,request-headers,http-response']
+operation::community-controller-test/delete-community[snippets='http-request,cookie-request-headers,http-response']

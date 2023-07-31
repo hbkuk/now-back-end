@@ -58,8 +58,8 @@ public class ManagerInterceptor implements HandlerInterceptor {
             throw new InvalidAuthenticationException(ErrorType.FORBIDDEN);
         }
 
-        request.setAttribute("id", jwtTokenService.getClaim(request.getHeader("Authorization"), "id"));
-        request.setAttribute("role", jwtTokenService.getClaim(request.getHeader("Authorization"), "role"));
+        request.setAttribute("id", jwtTokenService.getClaim(accessToken, "id"));
+        request.setAttribute("role", jwtTokenService.getClaim(accessToken, "role"));
         return true;
     }
 }
