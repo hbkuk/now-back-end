@@ -1,4 +1,4 @@
-package com.now.core.authentication;
+package com.now.core.authentication.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
 import com.now.config.fixtures.member.MemberFixture;
@@ -79,8 +79,30 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
     }
 
     @Test
+    @DisplayName("토큰 정보가 담긴 쿠키의 만료 시간을 0으로 설정 후 해당 블랙리스트 등록")
+    void logout() throws Exception {
+        String accessToken = "AccessToken";
+        String refreshToken = "RefreshToken";
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/log-out")
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                        .cookie(new Cookie(JwtTokenService.REFRESH_TOKEN_KEY, refreshToken)))
+                .andExpect(cookie().maxAge("access_token", 0))
+                .andExpect(cookie().maxAge("refresh_token", 0))
+                .andExpect(status().isOk())
+
+                .andDo(restDocs.document(
+                        customRequestHeaderCookies(
+                                cookieWithName("access_token").description("액세스 토큰 쿠키 이름"),
+                                cookieWithName("refresh_token").description("리프레시 토큰 쿠키 이름")
+                        )
+                ));
+    }
+
+    @Test
     @DisplayName("토큰 확인 후 AccessToken 재발급 처리")
     void refresh() throws Exception {
+        String accessToken = "AccessToken";
         String refreshToken = "RefreshToken";
         Token newToken = Token.builder()
                 .accessToken("newAccessToken")
@@ -90,6 +112,7 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.refreshTokens(refreshToken)).willReturn(newToken);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/refresh")
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                         .cookie(new Cookie(JwtTokenService.REFRESH_TOKEN_KEY, refreshToken)))
                 .andExpect(cookie().httpOnly("access_token", true))
                 .andExpect(cookie().httpOnly("refresh_token", true))
@@ -99,6 +122,7 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
 
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
+                                cookieWithName("access_token").description("액세스 토큰 쿠키 이름"),
                                 cookieWithName("refresh_token").description("리프레시 토큰 쿠키 이름")
                         ),
                         responseHeaders(

@@ -2,6 +2,7 @@ package com.now.core.authentication.config;
 
 import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.TokenBlackList;
 import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.authentication.exception.InvalidAuthenticationException;
 import com.now.core.authentication.exception.InvalidTokenException;
@@ -23,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
     private final JwtTokenService jwtTokenService;
+    private final TokenBlackList tokenBlacklist;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -40,9 +42,16 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
         if (jwtTokenService.isTokenExpired(accessToken)) {
-            throw new InvalidTokenException(ErrorType.EXPIRED_TOKEN);
+            throw new InvalidTokenException(ErrorType.EXPIRED_ACCESS_TOKEN);
         }
-        
+        if (tokenBlacklist.isAccessTokenBlacklisted(accessToken)) {
+            throw new InvalidTokenException(ErrorType.LOGGED_OUT_TOKEN);
+        }
+        String refreshToken = CookieUtil.getValue(cookies, JwtTokenService.REFRESH_TOKEN_KEY);
+        if (tokenBlacklist.isRefreshTokenBlacklisted(refreshToken)) {
+            throw new InvalidTokenException(ErrorType.LOGGED_OUT_TOKEN);
+        }
+
         request.setAttribute("id", jwtTokenService.getClaim(accessToken, "id"));
         request.setAttribute("role", jwtTokenService.getClaim(accessToken, "role"));
         return true;

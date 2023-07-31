@@ -7,7 +7,9 @@ import com.now.core.admin.post.notice.application.ManagerNoticeService;
 import com.now.core.admin.post.notice.presentation.ManagerNoticeController;
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.attachment.presentation.AttachmentController;
+import com.now.core.authentication.application.AuthenticationService;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.TokenBlackList;
 import com.now.core.authentication.presentation.AuthenticationController;
 import com.now.core.category.presentation.CategoryController;
 import com.now.core.comment.application.CommentService;
@@ -83,6 +85,12 @@ public abstract class ControllerTest {
 
     @MockBean
     protected JwtTokenService jwtTokenService;
+
+    @MockBean
+    protected TokenBlackList tokenBlackList;
+
+    @MockBean
+    protected AuthenticationService authenticationService;
 
 
     protected OperationResponsePreprocessor getResponsePreprocessor() {

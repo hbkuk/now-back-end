@@ -29,6 +29,18 @@ public class CookieUtil {
     }
 
     /**
+     * 쿠키를 삭제
+     *
+     * @param key 쿠키의 이름 (key)
+     * @return 삭제되도록 만료 시간이 설정된 쿠키 객체
+     */
+    public static Cookie deleteCookie(String key) {
+        Cookie cookie = new Cookie(key, null);
+        cookie.setMaxAge(0); // 쿠키의 만료 시간을 0으로 설정
+        return cookie;
+    }
+
+    /**
      * 쿠키 배열에서 주어진 키(key)에 해당하는 쿠키의 값을 반환, 없으면 null 반환
      *
      * @param cookies 쿠키 배열

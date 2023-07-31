@@ -27,6 +27,7 @@ public class AuthenticationConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/manager/**")
                 .excludePathPatterns("/api/sign-up")
                 .excludePathPatterns("/api/sign-in")
+                .excludePathPatterns("/api/log-out")
                 .excludePathPatterns("/api/refresh")
                 .excludePathPatterns("/api/inquiry/secret/**");
 

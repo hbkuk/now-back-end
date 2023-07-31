@@ -2,6 +2,7 @@ package com.now.core.authentication.config;
 
 import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.TokenBlackList;
 import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.authentication.exception.InvalidAuthenticationException;
@@ -27,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ManagerInterceptor implements HandlerInterceptor {
 
     private final JwtTokenService jwtTokenService;
+    private final TokenBlackList tokenBlacklist;
 
     /**
      * 요청 처리 전에 실행되는 메서드
@@ -49,7 +51,15 @@ public class ManagerInterceptor implements HandlerInterceptor {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
         if (jwtTokenService.isTokenExpired(accessToken)) {
-            throw new InvalidTokenException(ErrorType.EXPIRED_TOKEN);
+            throw new InvalidTokenException(ErrorType.EXPIRED_ACCESS_TOKEN);
+        }
+
+        if (tokenBlacklist.isAccessTokenBlacklisted(accessToken)) {
+            throw new InvalidTokenException(ErrorType.LOGGED_OUT_TOKEN);
+        }
+        String refreshToken = CookieUtil.getValue(cookies, JwtTokenService.REFRESH_TOKEN_KEY);
+        if (tokenBlacklist.isRefreshTokenBlacklisted(refreshToken)) {
+            throw new InvalidTokenException(ErrorType.LOGGED_OUT_TOKEN);
         }
 
         Authority authority =

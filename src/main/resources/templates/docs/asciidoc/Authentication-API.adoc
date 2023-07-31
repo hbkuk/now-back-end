@@ -5,6 +5,10 @@
 === Authentication Sign-In
 operation::authentication-controller-test/sign-in[snippets='http-request,request-body,request-fields,http-response,response-headers,response-fields']
 
+[[Authentication-Log-out]]
+=== Authentication Log-out
+operation::authentication-controller-test/logout[snippets='http-request,cookie-request-headers,http-response']
+
 [[Authentication-Refresh]]
 === Authentication Refresh
 operation::authentication-controller-test/refresh[snippets='http-request,cookie-request-headers,http-response,response-headers']

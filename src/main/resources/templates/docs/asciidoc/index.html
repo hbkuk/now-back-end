@@ -454,6 +454,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Authentication-API">Authentication API</a>
 <ul class="sectlevel2">
 <li><a href="#Authentication-Sign-In">Authentication Sign-In</a></li>
+<li><a href="#Authentication-Log-out">Authentication Log-out</a></li>
 <li><a href="#Authentication-Refresh">Authentication Refresh</a></li>
 </ul>
 </li>
@@ -825,6 +826,55 @@ Content-Length: 73
 </div>
 </div>
 <div class="sect2">
+<h3 id="Authentication-Log-out"><a class="link" href="#Authentication-Log-out">Authentication Log-out</a></h3>
+<div class="sect3">
+<h4 id="Authentication-Log-out_http_request"><a class="link" href="#Authentication-Log-out_http_request">HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/log-out HTTP/1.1
+Host: my-host:80
+Cookie: access_token=AccessToken
+Cookie: refresh_token=RefreshToken</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Authentication-Log-out_cookie_request-headers"><a class="link" href="#Authentication-Log-out_cookie_request-headers">Cookie request-headers</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>access_token</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 쿠키 이름</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>refresh_token</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">리프레시 토큰 쿠키 이름</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="Authentication-Log-out_http_response"><a class="link" href="#Authentication-Log-out_http_response">HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 200 OK
+Set-Cookie: access_token=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT
+Set-Cookie: refresh_token=; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="Authentication-Refresh"><a class="link" href="#Authentication-Refresh">Authentication Refresh</a></h3>
 <div class="sect3">
 <h4 id="Authentication-Refresh_http_request"><a class="link" href="#Authentication-Refresh_http_request">HTTP request</a></h4>
@@ -832,6 +882,7 @@ Content-Length: 73
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/refresh HTTP/1.1
 Host: my-host:80
+Cookie: access_token=AccessToken
 Cookie: refresh_token=RefreshToken</code></pre>
 </div>
 </div>
@@ -850,6 +901,10 @@ Cookie: refresh_token=RefreshToken</code></pre>
 </tr>
 </thead>
 <tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>access_token</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">액세스 토큰 쿠키 이름</p></td>
+</tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>refresh_token</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">리프레시 토큰 쿠키 이름</p></td>

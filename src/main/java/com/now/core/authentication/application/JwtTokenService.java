@@ -25,8 +25,8 @@ public class JwtTokenService {
 
     private static final String BEARER_PREFIX_WITH_SPACE = "Bearer ";
 
-    private static final int ACCESS_TOKEN_EXPIRE_MINUTES = 60;
-    private static final int REFRESH_TOKEN_EXPIRE_HOURS = 24;
+    private static final int ACCESS_TOKEN_EXPIRE_MINUTES = 10;
+    private static final int REFRESH_TOKEN_EXPIRE_DAYS = 7;
 
     public static final String ACCESS_TOKEN_KEY = "access_token";
     public static final String REFRESH_TOKEN_KEY = "refresh_token";
@@ -71,10 +71,11 @@ public class JwtTokenService {
                     .setSigningKey(Base64.getEncoder().encodeToString(securityKey.getBytes()))
                     .parseClaimsJws(removeBearer(token))
                     .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new InvalidTokenException(ErrorType.EXPIRED_ACCESS_TOKEN);
         } catch (JwtException e) {
             throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
         }
-
         return claims.get(key);
     }
 
@@ -89,10 +90,16 @@ public class JwtTokenService {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
 
-        return Jwts.parser()
-                .setSigningKey(Base64.getEncoder().encodeToString(securityKey.getBytes()))
-                .parseClaimsJws(removeBearer(token))
-                .getBody();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(Base64.getEncoder().encodeToString(securityKey.getBytes()))
+                    .parseClaimsJws(removeBearer(token))
+                    .getBody();
+        } catch (ExpiredJwtException e) {
+            throw new InvalidTokenException(ErrorType.EXPIRED_ACCESS_TOKEN);
+        } catch (JwtException e) {
+            throw new InvalidTokenException(ErrorType.INVALID_TOKEN);
+        }
     }
 
     /**
@@ -133,7 +140,7 @@ public class JwtTokenService {
      * @return JWT 토큰을 생성 후 반환
      */
     private String buildRefreshToken(Map<String, Object> claims) {
-        String token = buildToken(claims, REFRESH_TOKEN_EXPIRE_HOURS, ChronoUnit.HOURS);
+        String token = buildToken(claims, REFRESH_TOKEN_EXPIRE_DAYS, ChronoUnit.DAYS);
         return addBearerPrefix(token);
     }
 
@@ -142,13 +149,13 @@ public class JwtTokenService {
      *
      * @param claims                  토큰에 담을 클레임 정보를 포함한 Map 객체
      * @param refreshTokenExpireHours Refresh 토큰의 유효 기간 (시간 단위)
-     * @param hours                   refreshTokenExpireHours 매개변수의 시간 단위 (예: ChronoUnit.HOURS)
+     * @param chronoUnit                   refreshTokenExpireHours 매개변수의 시간 단위 (예: ChronoUnit.HOURS)
      * @return 생성된 JWT 토큰
      */
-    private String buildToken(Map<String, Object> claims, int refreshTokenExpireHours, ChronoUnit hours) {
+    private String buildToken(Map<String, Object> claims, int refreshTokenExpireHours, ChronoUnit chronoUnit) {
         return Jwts.builder()
                 .setClaims(claims)
-                .setExpiration(Date.from(Instant.now().plus(refreshTokenExpireHours, hours)))
+                .setExpiration(Date.from(Instant.now().plus(refreshTokenExpireHours, chronoUnit)))
                 .signWith(SignatureAlgorithm.HS512, Base64.getEncoder().encodeToString(securityKey.getBytes()))
                 .compact();
     }
@@ -174,34 +181,30 @@ public class JwtTokenService {
     }
 
     /**
-     * 주어진 Refresh Token을 사용하여 새로운 Access Token과 Refresh Token을 반환
+     * 새로운 Access Token과 Refresh Token을 반환
      *
-     * @param refreshToken Refresh Token
+     * @param  accessToken 액세스 토큰
      * @return 새로 발급된 Access Token과 Refresh Token 정보를 담은 Token 객체
      */
-    public Token refreshTokens(String refreshToken) {
+    public Token refreshTokens(String accessToken) {
         return Token.builder()
-                .accessToken(createAccessToken(TokenClaims.create(getAllClaims(refreshToken))))
-                .refreshToken(refreshToken)
+                .accessToken(createAccessToken(TokenClaims.create(getAllClaims(accessToken))))
+                .refreshToken(createRefreshToken(TokenClaims.create(getAllClaims(accessToken))))
                 .build();
     }
 
     /**
-     * Refresh를 위한 토큰 검증을 수행
+     *Refresh를 위한 토큰 검증을 수행
      *
+     * @param accessToken 액세스 토큰
      * @param refreshToken 리프레시 토큰
-     *
-     * @throws InvalidAuthenticationException 토큰이 없거나 유효하지 않은 경우 해당 예외가 발생
-     *                                       ErrorType.NOT_AUTHENTICATED: 인증되지 않은 토큰
-     *                                       ErrorType.EXPIRED_TOKEN: 유효하지 않은 토큰
      */
-    public void validateForRefresh(String refreshToken) {
-        if (refreshToken == null) {
+    public void validateForRefresh(String accessToken, String refreshToken) {
+        if (accessToken == null || refreshToken == null) {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
-
         if (isTokenExpired(refreshToken)) {
-            throw new InvalidAuthenticationException(ErrorType.EXPIRED_TOKEN);
+            throw new InvalidAuthenticationException(ErrorType.EXPIRED_REFRESH_TOKEN);
         }
     }
 }
