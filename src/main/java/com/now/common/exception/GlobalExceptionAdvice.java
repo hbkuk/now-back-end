@@ -1,6 +1,7 @@
 package com.now.common.exception;
 
 import com.now.common.exception.dto.ErrorResponse;
+import com.now.common.exception.dto.ValidationErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -63,12 +64,12 @@ public class GlobalExceptionAdvice {
      * @return ErrorResponse 객체를 담은 ResponseEntity
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e) {
+    public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e)  {
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getAllErrors().forEach((error) -> {
             errors.put(((FieldError) error).getField(), error.getDefaultMessage());
         });
-        return ResponseEntity.unprocessableEntity().body(new ErrorResponse(ErrorType.UNPROCESSABLE_ENTITY.getCode(), errors.toString()));
+        return ResponseEntity.unprocessableEntity().body(new ValidationErrorResponse(ErrorType.UNPROCESSABLE_ENTITY.getCode(), errors));
     }
 
     /**
