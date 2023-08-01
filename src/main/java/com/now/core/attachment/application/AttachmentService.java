@@ -11,6 +11,7 @@ import com.now.core.attachment.domain.wrapped.AttachmentExtension;
 import com.now.core.attachment.domain.wrapped.AttachmentSize;
 import com.now.core.attachment.domain.wrapped.OriginalAttachmentName;
 import com.now.core.attachment.exception.InvalidAttachmentException;
+import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,8 +48,8 @@ public class AttachmentService {
      * @param attachmentIdx 첨부파일 번호
      * @return 첨부파일 객체
      */
-    public Attachment getAttachment(Long attachmentIdx) {
-        Attachment attachment = attachmentRepository.findByAttachmentIdx(attachmentIdx);
+    public AttachmentResponse getAttachment(Long attachmentIdx) {
+        AttachmentResponse attachment = attachmentRepository.findByAttachmentIdx(attachmentIdx);
         if(attachment == null) {
             throw new InvalidAttachmentException(ErrorType.NOT_FOUND_ATTACHMENT);
         }

@@ -3,6 +3,7 @@ package com.now.core.attachment.presentation;
 import com.now.common.utils.AttachmentUtils;
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.attachment.domain.Attachment;
+import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -35,7 +36,7 @@ public class AttachmentController {
         log.debug("serveDownloadFile 호출 -> 파일 번호 : {}", attachmentIdx);
 
         // 1. 파일 확인
-        Attachment attachment = attachmentService.getAttachment(attachmentIdx);
+        AttachmentResponse attachment = attachmentService.getAttachment(attachmentIdx);
 
         // 2. 파일을 바이트 배열로 변환
         byte[] attachmentContent = AttachmentUtils.convertByteArray(attachment.getSavedAttachmentName());
@@ -44,7 +45,7 @@ public class AttachmentController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment",
-                AttachmentUtils.generateEncodedName(attachment.getOriginalAttachmentName().getOriginalAttachmentName()));
+                AttachmentUtils.generateEncodedName(attachment.getOriginalAttachmentName()));
         headers.setContentLength(Objects.requireNonNull(attachmentContent).length);
 
         return ResponseEntity.ok().headers(headers).body(attachmentContent);

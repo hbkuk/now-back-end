@@ -22,7 +22,7 @@ public class AttachmentUtils {
     /**
      * 서버 디렉토리 저장소
      */
-    public static final String UPLOAD_PATH = "C:\\upload\\";
+    public static final String UPLOAD_PATH = "C:\\git\\now\\front\\now\\public\\file\\";
 
     /**
      * 첨부파일 이름에서 확장자 추출을 위한 정규식 패턴
@@ -184,5 +184,24 @@ public class AttachmentUtils {
                 .systemName(AttachmentUtils.generateSystemName(multipartFile.getOriginalFilename()))
                 .attachmentSize((int) multipartFile.getSize())
                 .build();
+    }
+
+    /**
+     * 지정된 MultipartFile을 MultipartFile 배열의 맨 앞으로 옮기는 유틸리티 메서드
+     *
+     * @param multipartFile    맨 앞으로 옮길 MultipartFile
+     * @param multipartFiles   대상 MultipartFile 배열
+     * @return 맨 앞으로 MultipartFile을 옮긴 후의 업데이트된 MultipartFile 배열
+     */
+    public static MultipartFile[] moveFileToFront(MultipartFile multipartFile, MultipartFile[] multipartFiles) {
+        if (multipartFile != null) {
+            MultipartFile[] updatedMultipartFiles = new MultipartFile[multipartFiles != null ? multipartFiles.length + 1 : 1];
+            updatedMultipartFiles[0] = multipartFile;
+            if (multipartFiles != null) {
+                System.arraycopy(multipartFiles, 0, updatedMultipartFiles, 1, multipartFiles.length);
+            }
+            multipartFiles = updatedMultipartFiles;
+        }
+        return multipartFiles;
     }
 }

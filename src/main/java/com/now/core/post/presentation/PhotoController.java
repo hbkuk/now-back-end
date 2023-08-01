@@ -21,6 +21,8 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
+import static com.now.common.utils.AttachmentUtils.moveFileToFront;
+
 /**
  * 게시글 관련 작업을 위한 컨트롤러
  */
@@ -80,13 +82,14 @@ public class PhotoController {
      */
     @PostMapping("/api/photos")
     public ResponseEntity<Void> registerPhoto(@RequestAttribute("id") String memberId,
-                                              @RequestPart(value = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo photo,
-                                              @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles) {
-        log.debug("registerPhoto 호출, memberId : {}, Community : {}, Multipart : {}",
-                memberId, photo, (multipartFiles != null ? multipartFiles.length : "null"));
+                                              @RequestPart(name = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo photo,
+                                              @RequestPart(name = "thumbnail", required = false) MultipartFile thumbnail,
+                                              @RequestPart(name = "attachments", required = false) MultipartFile[] photos) {
+        log.debug("registerPhoto 호출, memberId : {}, Community : {}, MultipartFile : {}, MultipartFile[] : {}",
+                memberId, photo, (thumbnail != null ? thumbnail : "null"), (photos != null ? photos.length : "null"));
 
         photoService.registerPhoto(photo.updateMemberId(memberId));
-        attachmentService.saveAttachmentsWithThumbnail(multipartFiles, photo.getPostIdx(), AttachmentType.IMAGE);
+        attachmentService.saveAttachmentsWithThumbnail(moveFileToFront(thumbnail, photos), photo.getPostIdx(), AttachmentType.IMAGE);
 
         return ResponseEntity.created(URI.create("/api/photos/" + photo.getPostIdx())).build();
     }
@@ -104,7 +107,7 @@ public class PhotoController {
     @PutMapping("/api/photos/{postIdx}")
     public ResponseEntity<Void> updatePhoto(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
                                             @Validated(PostValidationGroup.savePhoto.class) @RequestPart(value = "photo") Photo updatePhoto,
-                                            @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles,
+                                            @RequestPart(value = "attachments", required = false) MultipartFile[] multipartFiles,
                                             @RequestParam(value = "attachmentIdx", required = false) List<Long> previouslyUploadedIndexes) {
         log.debug("updatePhoto 호출,  Update Photo : {}, Multipart Files Size: {}, previouslyUploadedIndexes size : {}",
                 updatePhoto, (multipartFiles != null ? multipartFiles.length : "null"), (previouslyUploadedIndexes != null ? previouslyUploadedIndexes.size() : "null"));

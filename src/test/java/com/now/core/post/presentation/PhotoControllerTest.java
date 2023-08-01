@@ -159,16 +159,20 @@ class PhotoControllerTest extends RestDocsTestSupport {
         MockMultipartFile communityPart = new MockMultipartFile("photo", "",
                 MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(photo));
 
-        MockMultipartFile fileA = new MockMultipartFile("attachment", "file1.png",
+        MockMultipartFile fileA = new MockMultipartFile("attachments", "file1.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file1 content".getBytes());
 
-        MockMultipartFile fileB = new MockMultipartFile("attachment", "file2.png",
+        MockMultipartFile fileB = new MockMultipartFile("attachments", "file2.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file2 content".getBytes());
+
+        MockMultipartFile fileC = new MockMultipartFile("thumbnail", "file3.png",
+                MediaType.MULTIPART_FORM_DATA_VALUE, "file3 content".getBytes());
 
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/photos")
                         .file(communityPart)
                         .file(fileA)
                         .file(fileB)
+                        .file(fileC)
                         .accept(MediaType.APPLICATION_JSON)
                 .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
@@ -181,7 +185,9 @@ class PhotoControllerTest extends RestDocsTestSupport {
                         ),
                         requestParts(
                                 partWithName("photo").description("사진 게시글 정보"),
-                                partWithName("attachment").description("첨부파일 (다중 파일 업로드 가능)").optional()
+                                partWithName("attachments").description("첨부파일 (다중 파일 업로드 가능)").optional(),
+                                partWithName("thumbnail").description("대표이미지 첨부파일").optional()
+
                         ),
                         requestPartFields("photo",
                                 fieldWithPath("postGroup").ignored(),
@@ -250,7 +256,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
                                 fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하")),
-                                fieldWithPath("thumbnailAttachmentIdx").description("대표 이미지로 설정된 첨부파일 ID")
+                                fieldWithPath("thumbnailAttachmentIdx").ignored().description("대표 이미지로 설정된 첨부파일 ID")
                         ),
                         requestParameters(
                                 parameterWithName("attachmentIdx").description("이전에 업로드된 첨부파일 ID").optional()

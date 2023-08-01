@@ -36,9 +36,11 @@ public class Notice {
 
     private String managerNickname; // 매니저 닉네임
 
+    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "{post.title.notnull}" )
     @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 100, message = "{post.title.size}")
     private final String title; // 제목
 
+    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "{post.content.notnull}" )
     @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000, message = "{post.content.size}")
     private final String content; // 내용
 

@@ -1,6 +1,7 @@
 package com.now.core.attachment.domain;
 
 import com.now.core.attachment.application.dto.ThumbNail;
+import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -31,7 +32,7 @@ public class AttachmentRepository {
      * @param attachmentIdx 첨부파일 번호
      * @return 첨부파일 객체
      */
-    public Attachment findByAttachmentIdx(Long attachmentIdx) {
+    public AttachmentResponse findByAttachmentIdx(Long attachmentIdx) {
         return attachmentMapper.findByAttachmentIdx(attachmentIdx);
     }
 

@@ -21,7 +21,6 @@ public class ManagerNoticeController {
 
     private final ManagerNoticeService managerNoticeService;
 
-
     /**
      * 공지 게시글 등록
      *

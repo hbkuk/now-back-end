@@ -82,7 +82,7 @@ public class CommunityController {
     @PostMapping("/api/communities")
     public ResponseEntity<Void> registerCommunity(@RequestAttribute("id") String memberId,
                                                   @RequestPart(value = "community") @Validated(PostValidationGroup.saveCommunity.class) Community community,
-                                                  @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles) {
+                                                  @RequestPart(value = "attachments", required = false) MultipartFile[] multipartFiles) {
         log.debug("registerCommunity 호출, memberId : {}, Community : {}, Multipart : {}",
                                         memberId, community, (multipartFiles != null ? multipartFiles.length : "null"));
 
@@ -105,7 +105,7 @@ public class CommunityController {
     @PutMapping("/api/communities/{postIdx}")
     public ResponseEntity<Void> updateCommunity(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
                                                 @Validated(PostValidationGroup.saveNotice.class) @RequestPart(value = "community") Community updatedCommunity,
-                                                @RequestPart(value = "attachment", required = false) MultipartFile[] multipartFiles,
+                                                @RequestPart(value = "attachments", required = false) MultipartFile[] multipartFiles,
                                                 @RequestParam(value = "attachmentIdx", required = false) List<Long> previouslyUploadedIndexes) {
         log.debug("updateCommunity 호출,  Update Community : {}, Multipart Files Size: {}, previouslyUploadedIndexes size : {}",
                 updatedCommunity, (multipartFiles != null ? multipartFiles.length : "null"), (previouslyUploadedIndexes != null ? previouslyUploadedIndexes.size() : "null"));

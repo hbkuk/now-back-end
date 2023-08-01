@@ -155,10 +155,10 @@ class CommunityControllerTest extends RestDocsTestSupport {
         MockMultipartFile communityPart = new MockMultipartFile("community", "",
                 MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(community));
 
-        MockMultipartFile fileA = new MockMultipartFile("attachment", "file1.png",
+        MockMultipartFile fileA = new MockMultipartFile("attachments", "file1.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file1 content".getBytes());
 
-        MockMultipartFile fileB = new MockMultipartFile("attachment", "file2.png",
+        MockMultipartFile fileB = new MockMultipartFile("attachments", "file2.png",
                 MediaType.MULTIPART_FORM_DATA_VALUE, "file2 content".getBytes());
 
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/communities")
@@ -177,7 +177,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         ),
                         requestParts(
                                 partWithName("community").description("커뮤니티 게시글 정보"),
-                                partWithName("attachment").description("첨부파일 (다중 파일 업로드 가능)").optional()
+                                partWithName("attachments").description("첨부파일 (다중 파일 업로드 가능)").optional()
                         ),
                         requestPartFields("community",
                                 fieldWithPath("postGroup").ignored(),

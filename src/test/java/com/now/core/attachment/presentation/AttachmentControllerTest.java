@@ -2,6 +2,7 @@ package com.now.core.attachment.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
 import com.now.core.attachment.domain.Attachment;
+import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -10,7 +11,7 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static com.now.config.fixtures.attachment.AttachmentFixture.createAttachment;
+import static com.now.config.fixtures.attachment.AttachmentFixture.*;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -24,7 +25,7 @@ class AttachmentControllerTest extends RestDocsTestSupport {
     @DisplayName("바이너리 다운로드 응답")
     void serveDownloadFile() throws Exception {
         Long attachmentIdx = 1L;
-        Attachment attachment = createAttachment("NOW_ERD.PNG");
+        AttachmentResponse attachment = createAttachmentResponseForBinaryDownload("NOW_ERD.PNG");
         given(attachmentService.getAttachment(anyLong())).willReturn(attachment);
 
         ResultActions resultActions =

@@ -25,13 +25,14 @@ public class AttachmentFixture {
                 .build();
     }
 
-    public static Attachment createAttachment(String attachmentName) {
-        return Attachment.builder()
+    public static AttachmentResponse createAttachmentResponseForBinaryDownload(String attachmentName) {
+        return AttachmentResponse.builder()
                 .attachmentIdx(1L)
-                .attachmentSize(new AttachmentSize(7777))
+                .attachmentSize(7777)
+                .originalAttachmentName(attachmentName)
                 .savedAttachmentName(attachmentName)
-                .originalAttachmentName(new OriginalAttachmentName(attachmentName))
-                .attachmentExtension(new AttachmentExtension(AttachmentUtils.extractFileExtension(attachmentName)))
+                .attachmentExtension(AttachmentUtils.extractFileExtension(attachmentName))
+                .postIdx(1L)
                 .build();
     }
 }

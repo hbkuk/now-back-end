@@ -43,9 +43,11 @@ public class Inquiry {
 
     private String memberNickname;  // 회원의 닉네임
 
+    @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.title.notnull}" )
     @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 100, message = "{post.title.size}")
     private final String title; // 게시글의 제목
 
+    @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.content.notnull}" )
     @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 2000, message = "{post.content.size}")
     private final String content;   // 게시글의 내용
 
@@ -200,7 +202,7 @@ public class Inquiry {
      */
     @JsonIgnore
     public boolean isSecretInquiryWithoutPassword() {
-        return this.getSecret() && this.getPassword() != null;
+        return this.getSecret() && this.getPassword() == null;
     }
 
     /**

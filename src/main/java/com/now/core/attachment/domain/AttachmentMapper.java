@@ -1,6 +1,7 @@
 package com.now.core.attachment.domain;
 
 import com.now.core.attachment.application.dto.ThumbNail;
+import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface AttachmentMapper {
      * @param attachmentIdx 첨부파일 번호
      * @return 첨부파일 객체
      */
-    Attachment findByAttachmentIdx(Long attachmentIdx);
+    AttachmentResponse findByAttachmentIdx(Long attachmentIdx);
 
     /**
      * 첨부파일 저장

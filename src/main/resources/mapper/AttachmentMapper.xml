@@ -19,7 +19,7 @@
         WHERE post_idx = #{postIdx}
     </select>
 
-    <select id="findByAttachmentIdx" parameterType="Long">
+    <select id="findByAttachmentIdx" parameterType="Long" resultMap="attachmentTableCollectionMapping">
         SELECT *
         FROM tb_attachment
         WHERE attachment_idx = #{attachmentIdx}
@@ -60,5 +60,14 @@
         FROM tb_thumbnail
         WHERE post_idx = #{postIdx}
     </delete>
+
+    <resultMap id="attachmentTableCollectionMapping" type="AttachmentResponse">
+        <id property="attachmentIdx" column="attachment_idx"/>
+        <result property="originalAttachmentName" column="original_attachment_name"/>
+        <result property="savedAttachmentName" column="saved_attachment_name"/>
+        <result property="attachmentExtension" column="attachment_extension"/>
+        <result property="attachmentSize" column="attachment_size"/>
+        <result property="postIdx" column="post_idx"/>
+    </resultMap>
 
 </mapper>
