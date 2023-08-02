@@ -247,7 +247,7 @@ public class PostRepository {
      * @param postIdx 게시글 번호
      */
     public void deleteInquiry(Long postIdx) {
-        postMapper.deletePost(postIdx);
         postMapper.deleteInquiry(postIdx);
+        postMapper.deletePost(postIdx);
     }
 }

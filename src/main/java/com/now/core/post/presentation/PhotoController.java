@@ -107,8 +107,8 @@ public class PhotoController {
     @PutMapping("/api/photos/{postIdx}")
     public ResponseEntity<Void> updatePhoto(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
                                             @Validated(PostValidationGroup.savePhoto.class) @RequestPart(value = "photo") Photo updatePhoto,
-                                            @RequestPart(value = "attachments", required = false) MultipartFile[] multipartFiles,
-                                            @RequestParam(value = "attachmentIdx", required = false) List<Long> previouslyUploadedIndexes) {
+                                            @RequestPart(name = "attachments", required = false) MultipartFile[] multipartFiles,
+                                            @RequestParam(name = "attachmentIdx", required = false) List<Long> previouslyUploadedIndexes) {
         log.debug("updatePhoto 호출,  Update Photo : {}, Multipart Files Size: {}, previouslyUploadedIndexes size : {}",
                 updatePhoto, (multipartFiles != null ? multipartFiles.length : "null"), (previouslyUploadedIndexes != null ? previouslyUploadedIndexes.size() : "null"));
 

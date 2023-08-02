@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.member.domain.Member;
+import com.now.core.post.domain.PostValidationGroup;
 import lombok.*;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 
@@ -30,6 +32,7 @@ public class Comment {
 
     private String managerNickname; // 매니저 닉네임
 
+    @NotNull(groups = {CommentValidationGroup.saveComment.class}, message = "{comment.content.notnull}")
     @Size(groups = CommentValidationGroup.saveComment.class, min = 1, max = 2000, message = "{comment.content.size}")
     private final String content; // 댓글의 내용
 
@@ -79,7 +82,7 @@ public class Comment {
         this.postIdx = postIdx;
         return this;
     }
-    
+
     /**
      * 회원 아이디 업데이트
      *

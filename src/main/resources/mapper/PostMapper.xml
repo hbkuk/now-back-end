@@ -370,11 +370,15 @@
     </sql>
 
     <sql id="selectMaxMemberAndManagerInfoOfCommentTableColumn">
+        MAX(com.id) AS com_id,
+        MAX(coma.id) AS coma_id,
         MAX(com.nickname) AS com_nickname,
         MAX(coma.nickname) AS coma_nickname
     </sql>
 
     <sql id="selectMemberAndManagerInfoOfCommentTableColumn">
+        com.id AS com_id,
+        coma.id AS coma_id,
         com.nickname AS com_nickname,
         coma.nickname AS coma_nickname
     </sql>
@@ -449,7 +453,9 @@
     <!-- Comment 컬렉션 매핑 -->
     <resultMap id="commentTableCollectionMapping" type="Comment">
         <id property="commentIdx" column="co_comment_idx"/>
+        <result property="memberId" column="com_id"/>
         <result property="memberNickname" column="com_nickname"/>
+        <result property="managerId" column="coma_id"/>
         <result property="managerNickname" column="coma_nickname"/>
         <result property="regDate" column="co_reg_date"/>
         <result property="content" column="co_content"/>

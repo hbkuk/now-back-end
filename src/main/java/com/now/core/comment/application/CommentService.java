@@ -47,7 +47,7 @@ public class CommentService {
     public void registerCommentByMember(Comment comment) {
         Member member = getMember(comment.getMemberId());
 
-        if (isExistPost(comment.getPostIdx())) {
+        if (!isExistPost(comment.getPostIdx())) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }
 
