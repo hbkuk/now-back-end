@@ -120,7 +120,7 @@ public class PhotoController {
         photoService.hasUpdateAccess(postIdx, memberId);
 
         photoService.updatePhoto(updatePhoto.updatePostIdx(postIdx).updateMemberId(memberId));
-        attachmentService.updateAttachmentsWithThumbnail(updateOption, AddNewAttachments.of(newThumbnail, newAttachments),
+        attachmentService.updateAttachmentsWithVerifiedIndexes(updateOption, AddNewAttachments.of(newThumbnail, newAttachments),
                 UpdateExistingAttachments.of(thumbnailAttachmentIdx, notDeletedIndexes), postIdx, AttachmentType.IMAGE);
 
         return ResponseEntity.created(URI.create("/api/photos/" + updatePhoto.getPostIdx())).build();

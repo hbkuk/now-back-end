@@ -14,6 +14,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@EqualsAndHashCode
 public class Attachment {
 
     /**

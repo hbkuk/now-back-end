@@ -25,6 +25,17 @@ public class AttachmentFixture {
                 .build();
     }
 
+    public static AttachmentResponse createAttachmentResponseByAttachmentIdx(Long attachmentIdx) {
+        return AttachmentResponse.builder()
+                .attachmentIdx(attachmentIdx)
+                .attachmentSize(7777)
+                .originalAttachmentName("sample1.png")
+                .savedAttachmentName("sample1.png")
+                .attachmentExtension(AttachmentUtils.extractFileExtension("sample1.png"))
+                .postIdx(1L)
+                .build();
+    }
+
     public static AttachmentResponse createAttachmentResponseForBinaryDownload(String attachmentName) {
         return AttachmentResponse.builder()
                 .attachmentIdx(1L)
@@ -36,14 +47,10 @@ public class AttachmentFixture {
                 .build();
     }
 
-    public static Attachment createAttachmentForMocking() {
+    public static Attachment createAttachment(Long attachmentIdx, Long postIdx) {
         return Attachment.builder()
-                .attachmentIdx(1L)
-                .attachmentSize(new AttachmentSize(7777))
-                .originalAttachmentName(new OriginalAttachmentName("MockAttachmentName.jpg"))
-                .savedAttachmentName(AttachmentUtils.generateSystemName("MockAttachmentName.jpg"))
-                .attachmentExtension(new AttachmentExtension(AttachmentUtils.extractFileExtension("MockAttachmentName.jpg")))
-                .postIdx(1L)
+                .attachmentIdx(attachmentIdx)
+                .postIdx(postIdx)
                 .build();
     }
 }
