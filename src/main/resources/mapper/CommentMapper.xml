@@ -17,10 +17,10 @@
 
 
     <!-- Member, Comment 저장 쿼리 -->
-    <update id="updateComment" parameterType="Comment">
+    <insert id="updateComment" parameterType="Comment">
         INSERT INTO tb_comment (content)
         VALUES (#{content})
-    </update>
+    </insert>
 
 
 

@@ -12,11 +12,15 @@ import com.now.core.attachment.domain.wrapped.AttachmentSize;
 import com.now.core.attachment.domain.wrapped.OriginalAttachmentName;
 import com.now.core.attachment.exception.InvalidAttachmentException;
 import com.now.core.attachment.presentation.dto.AttachmentResponse;
+import com.now.core.post.application.dto.AddNewAttachments;
+import com.now.core.post.application.dto.UpdateExistingAttachments;
+import com.now.core.post.domain.constants.UpdateOption;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +35,16 @@ import java.util.stream.Collectors;
 public class AttachmentService {
 
     private final AttachmentRepository attachmentRepository;
+
+    /**
+     * 업로드된 파일이 있는지 확인
+     *
+     * @param multipartFiles 업로드된 파일 배열
+     * @return 업로드된 파일 여부
+     */
+    private static boolean hasExistUploadFile(MultipartFile[] multipartFiles) {
+        return multipartFiles != null && multipartFiles.length > 0;
+    }
 
     /**
      * 게시물 번호를 인자로 받아 해당하는 첨부파일 번호 목록을 반환
@@ -49,8 +63,8 @@ public class AttachmentService {
      * @return 첨부파일 객체
      */
     public AttachmentResponse getAttachment(Long attachmentIdx) {
-        AttachmentResponse attachment = attachmentRepository.findByAttachmentIdx(attachmentIdx);
-        if(attachment == null) {
+        AttachmentResponse attachment = attachmentRepository.findAttachmentResponseByAttachmentIdx(attachmentIdx);
+        if (attachment == null) {
             throw new InvalidAttachmentException(ErrorType.NOT_FOUND_ATTACHMENT);
         }
 
@@ -69,16 +83,74 @@ public class AttachmentService {
     /**
      * 첨부파일을 서버 디렉토리에 업로드 후 데이터베이스에 첨부파일 저장
      *
+     * @param thumbnailAttachmentIdx 대표 이미지로 설정할 기존 첨부파일 번호
+     * @param multipartFiles         MultipartFile[] 객체
+     * @param postIdx                게시글 번호
+     * @param attachmentType         첨부파일 업로드 타입
+     */
+    public void saveAttachments(Long thumbnailAttachmentIdx, MultipartFile[] multipartFiles, Long postIdx, AttachmentType attachmentType) {
+        if (!hasExistUploadFile(multipartFiles) && thumbnailAttachmentIdx != null) {
+            attachmentRepository.saveThumbNail(attachmentRepository.findAttachmentByAttachmentIdx(thumbnailAttachmentIdx));
+            return;
+        }
+        List<Attachment> attachments = uploadedAttachments(multipartFiles, attachmentType);
+        attachments.forEach(attachment -> saveAttachment(attachment.updateMemberPostIdx(postIdx)));
+        attachmentRepository.saveThumbNail(attachmentRepository.findAttachmentByAttachmentIdx(thumbnailAttachmentIdx));
+    }
+
+    /**
+     * 첨부파일을 서버 디렉토리에 업로드 후 데이터베이스에 첨부파일 저장
+     *
      * @param multipartFiles MultipartFile[] 객체
      * @param postIdx        게시글 번호
      * @param attachmentType 첨부파일 업로드 타입
      */
     public void saveAttachments(MultipartFile[] multipartFiles, Long postIdx, AttachmentType attachmentType) {
-        if(!hasExistUploadFile(multipartFiles)) {
+        if (!hasExistUploadFile(multipartFiles)) {
             return;
         }
-        List<Attachment> attachments = uploadedAttachment(multipartFiles, attachmentType);
+        List<Attachment> attachments = uploadedAttachments(multipartFiles, attachmentType);
         attachments.forEach(attachment -> saveAttachment(attachment.updateMemberPostIdx(postIdx)));
+    }
+
+    /**
+     * 첨부파일을 서버 디렉토리에 업로드 후 데이터베이스에 첨부파일 저장
+     *
+     * @param multipartFile  MultipartFile 객체
+     * @param postIdx        게시글 번호
+     * @param attachmentType 첨부파일 업로드 타입
+     */
+    public void saveAttachment(MultipartFile multipartFile, Long postIdx, AttachmentType attachmentType) {
+        if (multipartFile.isEmpty()) {
+            return;
+        }
+        Attachment attachment = uploadedAttachment(multipartFile, attachmentType);
+        saveAttachment(attachment.updateMemberPostIdx(postIdx));
+    }
+
+    /**
+     * 첨부파일을 서버 디렉토리에 업로드 후 데이터베이스에 첨부파일 저장
+     *
+     * @param multipartFile  MultipartFile 객체
+     * @param postIdx        게시글 번호
+     * @param attachmentType 첨부파일 업로드 타입
+     */
+    public void saveThumbnail(MultipartFile multipartFile, Long postIdx, AttachmentType attachmentType) {
+        if (multipartFile.isEmpty()) {
+            return;
+        }
+        Attachment thumbNailAttachment = uploadedAttachment(multipartFile, attachmentType);
+        attachmentRepository.saveThumbNail(thumbNailAttachment.updateMemberPostIdx(postIdx));
+    }
+
+    // TODO: javadoc
+    public void updateThumbnail(MultipartFile multipartFile, Long postIdx, AttachmentType attachmentType) {
+        if (multipartFile.isEmpty()) {
+            return;
+        }
+        Attachment thumbNailAttachment = uploadedAttachment(multipartFile, attachmentType);
+        saveAttachment(thumbNailAttachment.updateMemberPostIdx(postIdx));
+        attachmentRepository.updateThumbnail(thumbNailAttachment);
     }
 
     /**
@@ -89,12 +161,24 @@ public class AttachmentService {
      * @param attachmentType 첨부파일 업로드 타입
      */
     public void saveAttachmentsWithThumbnail(MultipartFile[] multipartFiles, Long postIdx, AttachmentType attachmentType) {
-        if(!hasExistUploadFile(multipartFiles)) {
+        if (!hasExistUploadFile(multipartFiles)) {
             return;
         }
-        List<Attachment> attachments = uploadedAttachment(multipartFiles, attachmentType);
+        List<Attachment> attachments = uploadedAttachments(multipartFiles, attachmentType);
         attachments.forEach(attachment -> saveAttachment(attachment.updateMemberPostIdx(postIdx)));
         attachmentRepository.saveThumbNail(attachments.get(0));
+    }
+
+    public void saveAttachmentsWithThumbnail(AddNewAttachments addNewAttachments, Long postIdx, AttachmentType attachmentType) {
+        if (!hasExistUploadFile(addNewAttachments.getAllMultipartFiles())) {
+            return;
+        }
+        List<Attachment> attachments = uploadedAttachments(addNewAttachments.getNewAttachments(), attachmentType);
+        attachments.forEach(attachment -> saveAttachment(attachment.updateMemberPostIdx(postIdx)));
+
+        Attachment thumbNailAttachment = uploadedAttachment(addNewAttachments.getNewThumbnail(), attachmentType);
+        saveAttachment(thumbNailAttachment.updateMemberPostIdx(postIdx));
+        attachmentRepository.saveThumbNail(thumbNailAttachment);
     }
 
     /**
@@ -104,12 +188,23 @@ public class AttachmentService {
      * @param uploadType     첨부파일 업로드 타입을 정의한 {@link AttachmentType} 객체
      * @return 업로드된 첨부파일 목록
      */
-    public List<Attachment> uploadedAttachment(MultipartFile[] multipartFiles, AttachmentType uploadType) {
+    public List<Attachment> uploadedAttachments(MultipartFile[] multipartFiles, AttachmentType uploadType) {
         return Arrays.stream(multipartFiles)
                 .limit(uploadType.getMaxUploadCount())
                 .map(multipartFile -> convertToAttachment(AttachmentUtils.processServerUploadFile(multipartFile), uploadType))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 첨부파일을 업로드 하고, 업로드된 첨부파일 목록을 반환
+     *
+     * @param multipartFiles 업로드할 {@link MultipartFile} 배열
+     * @param uploadType     첨부파일 업로드 타입을 정의한 {@link AttachmentType} 객체
+     * @return 업로드된 첨부파일 목록
+     */
+    public Attachment uploadedAttachment(MultipartFile multipartFiles, AttachmentType uploadType) {
+        return convertToAttachment(AttachmentUtils.processServerUploadFile(multipartFiles), uploadType);
     }
 
     /**
@@ -123,13 +218,13 @@ public class AttachmentService {
     public void updateAttachments(MultipartFile[] multipartFiles, List<Long> previouslyUploadedIndexes,
                                   Long postIdx, AttachmentType attachmentType) {
         List<Long> indexesToDelete = getAllIndexesByPostIdx(postIdx);
-        if(indexesToDelete.isEmpty()) {
+        if (indexesToDelete.isEmpty()) {
             saveAttachments(multipartFiles, postIdx, attachmentType);
             return;
         }
 
         indexesToDelete.removeAll(previouslyUploadedIndexes);
-        deleteByAttachmentIndexes(indexesToDelete);
+        deleteOnlyAttachments(indexesToDelete);
         saveAttachments(multipartFiles, postIdx, attachmentType);
     }
 
@@ -152,35 +247,168 @@ public class AttachmentService {
         return attachmentRepository.findThumbnailByPostIdx(postIdx);
     }
 
-    /**
-     * 새로운 첨부파일들과 이전에 업로드된 첨부파일 인덱스 목록을 기준으로 첨부파일을 저장 또는 삭제
-     *
-     * @param multipartFiles            업로드할 {@link MultipartFile} 배열
-     * @param previouslyUploadedIndexes 이전에 업로드된 첨부파일 번호 목록
-     * @param postIdx                   게시글 번호
-     * @param attachmentType            첨부파일 업로드 타입을 정의한 {@link AttachmentType} 객체
-     */
-    public void updateAttachmentsWithThumbnail(MultipartFile[] multipartFiles, List<Long> previouslyUploadedIndexes, Long postIdx, AttachmentType attachmentType) {
-        List<Long> indexesToDelete = getAllIndexesByPostIdx(postIdx);
-        if(indexesToDelete.isEmpty()) {
-            saveAttachments(multipartFiles, postIdx, attachmentType);
+
+    public void updateAttachmentsWithThumbnail(UpdateOption updateOption,
+                                               AddNewAttachments addNewAttachments, UpdateExistingAttachments updateExistingAttachments,
+                                               Long postIdx, AttachmentType attachmentType) {
+        if (UpdateOption.EDIT_EXISTING == updateOption) {
+            updateExistingAttachments(updateExistingAttachments, postIdx);
+        }
+        if (UpdateOption.ADD_NEW == updateOption) {
+            if (addNewAttachments.isAllNotNull()) { // 1. 새로운 대표 이미지 업로드와 이미지 업로드
+                uploadAndUpdateAttachments(addNewAttachments, postIdx, attachmentType);
+            }
+
+            if (addNewAttachments.isNewThumbnailNotNull()) { // 2. 새로운 대표 이미지만 업로드
+                uploadOnlyThumbnail(addNewAttachments, postIdx, attachmentType);
+            }
+
+            if (addNewAttachments.isNewAttachmentsNotEmpty()) { // 3. 새로운 이미지 업로드
+                uploadOnlyAttachments(addNewAttachments, postIdx, attachmentType);
+            }
+        }
+    }
+
+    private void uploadOnlyAttachments(AddNewAttachments addNewAttachments, Long postIdx, AttachmentType attachmentType) {
+        saveAttachments(addNewAttachments.getNewAttachments(), postIdx, attachmentType);
+    }
+
+    private void uploadOnlyThumbnail(AddNewAttachments addNewAttachments, Long postIdx, AttachmentType attachmentType) {
+        // 1-1. 기존에 대표 이미지가 업로드 되지 않았다면
+        if (attachmentRepository.findThumbnailByPostIdx(postIdx) == null) {
+            saveThumbnail(addNewAttachments.getNewThumbnail(), postIdx, attachmentType);
+        }
+        // 1-2. 기존에 대표 이미지가 업로드 되었다면
+        if (attachmentRepository.findThumbnailByPostIdx(postIdx) != null) {
+            updateThumbnail(addNewAttachments.getNewThumbnail(), postIdx, attachmentType);
+            ;
+        }
+    }
+
+    private void uploadAndUpdateAttachments(AddNewAttachments addNewAttachments, Long postIdx, AttachmentType attachmentType) {
+        // 1-1. 기존에 대표 이미지가 업로드 되지 않았다면
+        if (attachmentRepository.findThumbnailByPostIdx(postIdx) == null) {
+            saveAttachments(addNewAttachments.getNewAttachments(), postIdx, attachmentType);
+            saveThumbnail(addNewAttachments.getNewThumbnail(), postIdx, attachmentType);
+        }
+
+        // 1-2. 기존에 대표 이미지가 업로드 되었다면
+        if (attachmentRepository.findThumbnailByPostIdx(postIdx) != null) {
+            saveAttachments(addNewAttachments.getNewAttachments(), postIdx, attachmentType);
+            updateThumbnail(addNewAttachments.getNewThumbnail(), postIdx, attachmentType);
+        }
+    }
+
+    public void updateExistingAttachments(UpdateExistingAttachments updateExistingAttachments, Long postIdx) {
+        List<Long> existingAttachmentIndexes = getAllIndexesByPostIdx(postIdx);
+        if (existingAttachmentIndexes.isEmpty()) {
             return;
         }
 
-        indexesToDelete.removeAll(previouslyUploadedIndexes);
+        List<Long> deleteAttachmentIndexes = new ArrayList<>(existingAttachmentIndexes); // 삭제할 파일 목록
+        List<Long> notDeletedAttachmentIndexes = updateExistingAttachments.getNotDeletedAttachmentIndexes();
+        deleteAttachmentIndexes.removeAll(notDeletedAttachmentIndexes);
 
-        ThumbNail thumbNail = getThumbnailByPostIdx(postIdx);
+        // 2-1. 파일 삭제와 대표 이미지 변경
+        if (!deleteAttachmentIndexes.isEmpty() &&
+                !Objects.equals(updateExistingAttachments.getThumbnailAttachmentIdx(), getThumbnailByPostIdx(postIdx).getThumbNailIdx())) {
 
-        if (indexesToDelete.contains(thumbNail.getAttachmentIdx())) {
-            deleteThumbNail(thumbNail.getAttachmentIdx());
-            deleteByAttachmentIndexes(indexesToDelete);
-            saveAttachments(multipartFiles, postIdx, attachmentType);
+            // 2-2. 파일 삭제 및 대표 이미지 변경(초기화)
+            if(!deleteAttachmentIndexes.contains(getThumbnailByPostIdx(postIdx).getThumbNailIdx())) {
+                deleteAttachmentsAndUpdateThumbnail(updateExistingAttachments, postIdx, existingAttachmentIndexes, deleteAttachmentIndexes, notDeletedAttachmentIndexes);
+            }
+
+            // 2-2. 파일 삭제 + 대표이미지 삭제 + 대표 이미지 초기화
+            if(deleteAttachmentIndexes.contains(getThumbnailByPostIdx(postIdx).getThumbNailIdx())) {
+                deleteAttachmentsAndClearThumbnail(postIdx, deleteAttachmentIndexes);
+            }
         }
 
-        if(!indexesToDelete.contains(thumbNail.getAttachmentIdx())) {
-            deleteByAttachmentIndexes(indexesToDelete);
-            saveAttachments(multipartFiles, postIdx, attachmentType);
+
+        // 2-3. 대표이미지만 변경
+        if (deleteAttachmentIndexes.isEmpty() &&
+                !Objects.equals(updateExistingAttachments.getThumbnailAttachmentIdx(), getThumbnailByPostIdx(postIdx).getThumbNailIdx())) {
+
+            // 2-3-1. 대표이미지 초기화
+            if(updateExistingAttachments.getThumbnailAttachmentIdx() == 0) {
+                attachmentRepository.clearThumbnail(postIdx);
+            }
+
+            // 2-3-2. 대표이미지 변경
+            if(attachmentRepository.findAllIndexesByPostIdx(postIdx).contains(updateExistingAttachments.getThumbnailAttachmentIdx())) {
+                attachmentRepository.updateThumbnail(Attachment.builder()
+                                .attachmentIdx(updateExistingAttachments.getThumbnailAttachmentIdx())
+                                .postIdx(postIdx)
+                                .build());
+            }
+
+            // 2-3-3. 미친놈이 이상한걸로 바꾼다면 초기화
+            if(!attachmentRepository.findAllIndexesByPostIdx(postIdx).contains(updateExistingAttachments.getThumbnailAttachmentIdx())) {
+                attachmentRepository.clearThumbnail(postIdx);
+            }
         }
+
+        // 2-4. 파일 삭제만
+        if (!deleteAttachmentIndexes.isEmpty() &&
+                Objects.equals(updateExistingAttachments.getThumbnailAttachmentIdx(), getThumbnailByPostIdx(postIdx).getThumbNailIdx())) {
+            deleteOnlyAttachments(deleteAttachmentIndexes);
+        }
+    }
+
+    private void updateOnlyThumbnail(UpdateExistingAttachments updateExistingAttachments, Long postIdx) {
+        // 2-3-1. 대표 이미지를 선택하지 않음.
+        if (updateExistingAttachments.getThumbnailAttachmentIdx() == 0) {
+            attachmentRepository.clearThumbnail(postIdx);
+        }
+
+        // 2-3-2. 대표 이미지를 변경함.
+        if (updateExistingAttachments.getThumbnailAttachmentIdx() == 0) {
+            attachmentRepository.updateThumbnail(Attachment.builder()
+                    .attachmentIdx(updateExistingAttachments.getThumbnailAttachmentIdx())
+                    .postIdx(postIdx)
+                    .build());
+        }
+    }
+
+    private void deleteAttachmentsAndUpdateThumbnail(UpdateExistingAttachments updateExistingAttachments, Long postIdx,
+                                                     List<Long> existingAttachmentIndexes, List<Long> deleteAttachmentIndexes,
+                                                     List<Long> notDeletedAttachmentIndexes) {
+        // 2-1-1. 대표 이미지를 선택하지 않음.
+        if (!updateExistingAttachments.hasSelectedThumbnailIdx()) {
+            attachmentRepository.clearThumbnail(postIdx);
+        }
+
+        // 2-1-2. 대표 이미지를 변경함.
+        if (updateExistingAttachments.hasSelectedThumbnailIdx()) {
+
+            // 2-1-2-1. 삭제되지 않은 인덱스를 확인
+            List<Long> notDeletedIndexes = existingAttachmentIndexes.stream()
+                    .filter(idx -> !notDeletedAttachmentIndexes.contains(idx))
+                    .collect(Collectors.toList());
+
+            // 미친놈이. 이상한걸로 바꾸려고 한다면 .. thumbnail을 초기화
+            if (!notDeletedIndexes.contains(updateExistingAttachments.getThumbnailAttachmentIdx())) {
+                attachmentRepository.clearThumbnail(postIdx);
+            }
+
+            // 대표 이미지 업데이트
+            if (notDeletedIndexes.contains(updateExistingAttachments.getThumbnailAttachmentIdx())) {
+                attachmentRepository.updateThumbnail(Attachment.builder()
+                        .attachmentIdx(updateExistingAttachments.getThumbnailAttachmentIdx())
+                        .postIdx(postIdx)
+                        .build());
+            }
+        }
+        // 파일삭제
+        deleteOnlyAttachments(deleteAttachmentIndexes);
+    }
+
+    private void deleteAttachmentsAndClearThumbnail(Long postIdx, List<Long> deleteAttachmentIndexes) {
+        // 대표이미지 클리어
+        attachmentRepository.clearThumbnail(postIdx);
+
+        // 파일삭제
+        deleteOnlyAttachments(deleteAttachmentIndexes);
     }
 
     /**
@@ -188,7 +416,7 @@ public class AttachmentService {
      *
      * @param attachmentIndexes 첨부파일 번호 목록
      */
-    public void deleteByAttachmentIndexes(List<Long> attachmentIndexes) {
+    public void deleteOnlyAttachments(List<Long> attachmentIndexes) {
         attachmentIndexes.forEach(this::deleteAttachment);
     }
 
@@ -209,7 +437,7 @@ public class AttachmentService {
      */
     public void deleteAllByPostIdx(Long postIdx) {
         attachmentRepository.findAllIndexesByPostIdx(postIdx)
-                                .forEach(this::deleteAttachment);
+                .forEach(this::deleteAttachment);
     }
 
     /**
@@ -247,16 +475,6 @@ public class AttachmentService {
             AttachmentUtils.deleteUploadedFile(uploadedAttachment.getSystemName());
             return null;
         }
-    }
-
-    /**
-     * 업로드된 파일이 있는지 확인
-     *
-     * @param multipartFiles 업로드된 파일 배열
-     * @return 업로드된 파일 여부
-     */
-    private static boolean hasExistUploadFile(MultipartFile[] multipartFiles) {
-        return multipartFiles != null && multipartFiles.length > 0;
     }
 }
 

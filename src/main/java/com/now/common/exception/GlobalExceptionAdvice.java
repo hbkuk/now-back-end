@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestCookieException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
@@ -96,6 +97,19 @@ public class GlobalExceptionAdvice {
         log.error("NoHandlerFoundException", e);
         return ResponseEntity.badRequest().body(new ErrorResponse(ErrorType.INVALID_PATH.getCode(), ErrorType.INVALID_PATH.getMessage()));
     }
+
+    /**
+     * MissingRequestCookieException이 발생했을 때 처리하는 메소드
+     *
+     * @param e 발생한 UnauthorizedException 객체
+     * @return ErrorResponse 객체를 담은 ResponseEntity
+     */
+    @ExceptionHandler(MissingRequestCookieException.class)
+    public ResponseEntity<ErrorResponse> missingRequestCookieExceptionExceptionHandler(final MissingRequestCookieException e) {
+        log.warn("Unauthorized Exception", e);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(ErrorType.NOT_AUTHENTICATED.getCode(), e.getMessage()));
+    }
+
 
     /**
      * 예외 처리되지 않은 다른 예외들을 처리하는 메소드

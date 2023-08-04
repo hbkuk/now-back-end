@@ -249,13 +249,15 @@
         <include refid="selectAttachmentTableColumn"/>,
         <include refid="selectCommentTableColumn"/>,
         <include refid="selectMemberTableColumn"/>,
-        <include refid="selectMemberAndManagerInfoOfCommentTableColumn"/>
+        <include refid="selectMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="selectThumbnailTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
         LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
         LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
         WHERE p.post_group = 'PHOTO' AND p.post_idx = #{postIdx}
     </select>
 
@@ -430,7 +432,8 @@
         m.id AS m_id
     </sql>
 
-    <!-- Member 테이블의 컬럼 매핑 -->
+
+    <!-- thumbnail 테이블의 컬럼 매핑 -->
     <sql id="selectThumbnailTableColumn">
         th.attachment_idx AS th_thumbnail_attachment_idx
     </sql>

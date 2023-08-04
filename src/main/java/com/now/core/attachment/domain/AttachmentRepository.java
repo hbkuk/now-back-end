@@ -32,8 +32,18 @@ public class AttachmentRepository {
      * @param attachmentIdx 첨부파일 번호
      * @return 첨부파일 객체
      */
-    public AttachmentResponse findByAttachmentIdx(Long attachmentIdx) {
-        return attachmentMapper.findByAttachmentIdx(attachmentIdx);
+    public AttachmentResponse findAttachmentResponseByAttachmentIdx(Long attachmentIdx) {
+        return attachmentMapper.findAttachmentResponseByAttachmentIdx(attachmentIdx);
+    }
+
+    /**
+     * 첨부파일 번호를 인자로 받아 해당 첨부파일 객체를 반환
+     *
+     * @param attachmentIdx 첨부파일 번호
+     * @return 첨부파일 객체
+     */
+    public Attachment findAttachmentByAttachmentIdx(Long attachmentIdx) {
+        return attachmentMapper.findAttachmentByAttachmentIdx(attachmentIdx);
     }
 
     /**
@@ -89,5 +99,23 @@ public class AttachmentRepository {
      */
     public void deleteThumbNailByPostIdx(Long postIdx) {
         attachmentMapper.deleteThumbNailByPostIdx(postIdx);
+    }
+
+    /**
+     * 해당 게시글 번호의 `attachment_idx` 컬럼을 null로 설정
+     *
+     * @param postIdx 게시글 번호
+     */
+    public void clearThumbnail(Long postIdx) {
+        attachmentMapper.clearThumbnail(postIdx);
+    }
+
+    /**
+     * 대표 이미지 정보 수정
+     *
+     * @param attachment 수정할 대표 이미지 정보
+     */
+    public void updateThumbnail(Attachment attachment) {
+        attachmentMapper.updateThumbnail(attachment);
     }
 }

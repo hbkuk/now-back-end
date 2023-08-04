@@ -106,7 +106,7 @@ public class CommunityController {
     public ResponseEntity<Void> updateCommunity(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
                                                 @Validated(PostValidationGroup.saveNotice.class) @RequestPart(name = "community") Community updatedCommunity,
                                                 @RequestPart(name = "attachments", required = false) MultipartFile[] multipartFiles,
-                                                @RequestParam(name = "attachmentIdx", required = false) List<Long> previouslyUploadedIndexes) {
+                                                @RequestParam(name = "attachmentIndexes", required = false) List<Long> previouslyUploadedIndexes) {
         log.debug("updateCommunity 호출,  Update Community : {}, Multipart Files Size: {}, previouslyUploadedIndexes size : {}",
                 updatedCommunity, (multipartFiles != null ? multipartFiles.length : "null"), (previouslyUploadedIndexes != null ? previouslyUploadedIndexes.size() : "null"));
 

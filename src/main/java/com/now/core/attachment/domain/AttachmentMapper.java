@@ -26,7 +26,15 @@ public interface AttachmentMapper {
      * @param attachmentIdx 첨부파일 번호
      * @return 첨부파일 객체
      */
-    AttachmentResponse findByAttachmentIdx(Long attachmentIdx);
+    AttachmentResponse findAttachmentResponseByAttachmentIdx(Long attachmentIdx);
+
+    /**
+     * 첨부파일 번호를 인자로 받아 해당 첨부파일 객체를 반환
+     *
+     * @param attachmentIdx 첨부파일 번호
+     * @return 첨부파일 객체
+     */
+    Attachment findAttachmentByAttachmentIdx(Long attachmentIdx);
 
     /**
      * 첨부파일 저장
@@ -77,4 +85,19 @@ public interface AttachmentMapper {
      * @param postIdx 게시글 번호
      */
     void deleteThumbNailByPostIdx(Long postIdx);
+
+
+    /**
+     * 해당 게시글 번호의 `attachment_idx` 컬럼을 null로 설정
+     *
+     * @param postIdx 게시글 번호
+     */
+    void clearThumbnail(Long postIdx);
+
+    /**
+     * 대표 이미지 정보 수정
+     * 
+     * @param attachment 수정할 대표 이미지 정보
+     */
+    void updateThumbnail(Attachment attachment);
 }

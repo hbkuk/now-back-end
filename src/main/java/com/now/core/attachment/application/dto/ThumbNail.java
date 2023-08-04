@@ -13,6 +13,6 @@ import lombok.*;
 public class ThumbNail {
 
     private final Long thumbNailIdx;
-    private final Long memberPostIdx;
+    private final Long postIdx;
     private final Long attachmentIdx;
 }

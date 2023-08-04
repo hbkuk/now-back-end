@@ -35,4 +35,15 @@ public class AttachmentFixture {
                 .postIdx(1L)
                 .build();
     }
+
+    public static Attachment createAttachmentForMocking() {
+        return Attachment.builder()
+                .attachmentIdx(1L)
+                .attachmentSize(new AttachmentSize(7777))
+                .originalAttachmentName(new OriginalAttachmentName("MockAttachmentName.jpg"))
+                .savedAttachmentName(AttachmentUtils.generateSystemName("MockAttachmentName.jpg"))
+                .attachmentExtension(new AttachmentExtension(AttachmentUtils.extractFileExtension("MockAttachmentName.jpg")))
+                .postIdx(1L)
+                .build();
+    }
 }
