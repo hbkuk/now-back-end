@@ -23,8 +23,6 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
-import static com.now.common.utils.AttachmentUtils.moveFileToFront;
-
 /**
  * 게시글 관련 작업을 위한 컨트롤러
  */
@@ -78,20 +76,23 @@ public class PhotoController {
     /**
      * 사진 게시글 등록
      *
-     * @param memberId 작성자의 회원 ID
-     * @param photo    등록할 사진 게시글 정보
+     * @param memberId    작성자의 회원 ID
+     * @param photo       등록할 사진 게시글 정보
+     * @param thumbnail   등록할 대표 이미지 정보
+     * @param attachments 등록할 이미지 정보
      * @return 생성된 위치 URI로 응답
      */
     @PostMapping("/api/photos")
     public ResponseEntity<Void> registerPhoto(@RequestAttribute("id") String memberId,
                                               @RequestPart(name = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo photo,
                                               @RequestPart(name = "thumbnail", required = false) MultipartFile thumbnail,
-                                              @RequestPart(name = "attachments", required = false) MultipartFile[] photos) {
-        log.debug("registerPhoto 호출, memberId : {}, Community : {}, thumbnail : {}, photos : {}",
-                memberId, photo, (thumbnail != null ? thumbnail : "null"), (photos != null ? photos.length : "null"));
+                                              @RequestPart(name = "attachments", required = false) MultipartFile[] attachments) {
+        log.debug("registerPhoto 호출, memberId : {}, Photo : {}, Thumbnail : {}, Attachments : {}",
+                memberId, photo, (thumbnail != null ? thumbnail : "null"), (attachments != null ? attachments.length : "null"));
 
         photoService.registerPhoto(photo.updateMemberId(memberId));
-        attachmentService.saveAttachmentsWithThumbnail(moveFileToFront(thumbnail, photos), photo.getPostIdx(), AttachmentType.IMAGE);
+        attachmentService.saveAttachmentsWithThumbnail(AddNewAttachments.of(thumbnail, attachments),
+                photo.getPostIdx(), AttachmentType.IMAGE);
 
         return ResponseEntity.created(URI.create("/api/photos/" + photo.getPostIdx())).build();
     }
@@ -99,23 +100,27 @@ public class PhotoController {
     /**
      * 사진 게시글 수정
      *
-     * @param postIdx                   게시글 번호
-     * @param memberId                  회원 아이디
-     * @param updatePhoto               삭제할 커뮤니티 게시글 정보
-     * @param newAttachments            MultipartFile[] 객체
-     * @param notDeletedIndexes 이전에 업로드된 파일 번호 목록
-     * @return 생성된 위치 URI로 응답
+     * @param postIdx                게시글 번호
+     * @param memberId               회원 아이디
+     * @param updateOption           수정 타입
+     * @param updatePhoto            수정할 사진 게시글 정보
+     * @param newThumbnail           새로운 대표 이미지 정보
+     * @param newAttachments         새로운 이미지 정보
+     * @param thumbnailAttachmentIdx 수정할 대표 이미지로 지정할 첨부 파일 번호
+     * @param notDeletedIndexes      삭제하지 않을 파일 번호 목록
+     * @return
      */
     @PutMapping("/api/photos/{postIdx}")
     public ResponseEntity<Void> updatePhoto(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
                                             @RequestPart(name = "updateOption", required = true) UpdateOption updateOption,
-                                            @RequestPart(value = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo updatePhoto,
-                                            @RequestPart(name = "newThumbnail", required = false) MultipartFile newThumbnail,
+                                            @RequestPart(name = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo updatePhoto,
+                                            @RequestPart(name = "thumbnail", required = false) MultipartFile newThumbnail,
                                             @RequestPart(name = "attachments", required = false) MultipartFile[] newAttachments,
                                             @RequestParam(name = "thumbnailAttachmentIdx", required = false) Long thumbnailAttachmentIdx,
                                             @RequestParam(name = "notDeletedIndexes", required = false) List<Long> notDeletedIndexes) {
-        log.debug("updatePhoto 호출,  UpdateOption : {}, Update Photo : {}, newThumbnail : {},  newAttachments : {}, thumbnailIdx : {}, previouslyUploadedIndexes size : {}",
-                updateOption, updatePhoto, (newThumbnail != null ? newThumbnail : "null"), (newAttachments != null ? newAttachments.length : "null"), thumbnailAttachmentIdx != null ? thumbnailAttachmentIdx : 0, (notDeletedIndexes != null ? notDeletedIndexes.size() : "null"));
+        log.debug("updatePhoto 호출,  Update Option : {}, Update Photo : {}, New Thumbnail : {},  New Attachments : {}, Thumbnail AttachmentIdx : {}, Not Deleted Indexes size : {}",
+                updateOption, updatePhoto, (newThumbnail != null ? newThumbnail : "null"), (newAttachments != null ? newAttachments.length : "null"),
+                thumbnailAttachmentIdx != null ? thumbnailAttachmentIdx : 0, (notDeletedIndexes != null ? notDeletedIndexes.size() : "null"));
 
         photoService.hasUpdateAccess(postIdx, memberId);
 

@@ -6,6 +6,7 @@ import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.domain.Photo;
+import com.now.core.post.domain.constants.UpdateOption;
 import com.now.core.post.presentation.dto.Condition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -204,8 +205,8 @@ class PhotoControllerTest extends RestDocsTestSupport {
     }
 
     @Test
-    @DisplayName("사진 게시글 수정")
-    void updatePhoto() throws Exception {
+    @DisplayName("사진 게시글 수정(기존 이미지 수정)")
+    void updatePhoto_EditExisting() throws Exception {
         Long postIdx = 1L;
         String memberId = "tester1";
         String accessToken = "Bearer accessToken";
@@ -219,20 +220,17 @@ class PhotoControllerTest extends RestDocsTestSupport {
                 .thumbnailAttachmentIdx(1L)
                 .build();
 
+        MockMultipartFile updateOptionPart = new MockMultipartFile("updateOption", "",
+                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(UpdateOption.EDIT_EXISTING));
+
         MockMultipartFile communityPart = new MockMultipartFile("photo", "",
                 MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(updatedPhoto));
 
-        MockMultipartFile fileA = new MockMultipartFile("attachment", "file1.png",
-                MediaType.MULTIPART_FORM_DATA_VALUE, "file1 content".getBytes());
-
-        MockMultipartFile fileB = new MockMultipartFile("attachment", "file2.png",
-                MediaType.MULTIPART_FORM_DATA_VALUE, "file2 content".getBytes());
-
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/photos/{postIdx}", postIdx)
+                        .file(updateOptionPart)
                         .file(communityPart)
-                        .file(fileA)
-                        .file(fileB)
-                        .param("attachmentIdx", "1")
+                        .param("thumbnailAttachmentIdx", "1")
+                        .param("notDeletedIndexes", "1", "2")
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                         .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                         .with(request -> {
@@ -248,8 +246,8 @@ class PhotoControllerTest extends RestDocsTestSupport {
                                 cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParts(
-                                partWithName("photo").description("사진 게시글 정보"),
-                                partWithName("attachment").description("첨부파일 (다중 파일 업로드 가능)").optional()
+                                partWithName("updateOption").description("사진 게시글 수정 타입"),
+                                partWithName("photo").description("사진 게시글 정보")
                         ),
                         requestPartFields("photo",
                                 fieldWithPath("postGroup").ignored(),
@@ -259,7 +257,78 @@ class PhotoControllerTest extends RestDocsTestSupport {
                                 fieldWithPath("thumbnailAttachmentIdx").ignored().description("대표 이미지로 설정된 첨부파일 ID")
                         ),
                         requestParameters(
-                                parameterWithName("attachmentIdx").description("이전에 업로드된 첨부파일 ID").optional()
+                                parameterWithName("thumbnailAttachmentIdx").description("수정할 대표 이미지로 지정할 첨부 파일 번호").optional(),
+                                parameterWithName("notDeletedIndexes").description("삭제하지 않을 첨부 파일 번호 목록").optional()
+                        ),
+                        responseHeaders(
+                                headerWithName(HttpHeaders.LOCATION).description("생성된 위치 URI")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("사진 게시글 수정")
+    void updatePhotoAddNew() throws Exception {
+        Long postIdx = 1L;
+        String memberId = "tester1";
+        String accessToken = "Bearer accessToken";
+        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+
+        Photo updatedPhoto = Photo.builder()
+                .category(Category.ARTWORK)
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .thumbnailAttachmentIdx(1L)
+                .build();
+
+        MockMultipartFile updateOptionPart = new MockMultipartFile("updateOption", "",
+                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(UpdateOption.ADD_NEW));
+
+        MockMultipartFile communityPart = new MockMultipartFile("photo", "",
+                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(updatedPhoto));
+
+        MockMultipartFile fileA = new MockMultipartFile("attachment", "file1.png",
+                MediaType.MULTIPART_FORM_DATA_VALUE, "file1 content".getBytes());
+
+        MockMultipartFile fileB = new MockMultipartFile("attachment", "file2.png",
+                MediaType.MULTIPART_FORM_DATA_VALUE, "file2 content".getBytes());
+
+        MockMultipartFile fileC = new MockMultipartFile("thumbnail", "file3.png",
+                MediaType.MULTIPART_FORM_DATA_VALUE, "file3 content".getBytes());
+
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.multipart("/api/photos/{postIdx}", postIdx)
+                        .file(updateOptionPart)
+                        .file(communityPart)
+                        .file(fileA)
+                        .file(fileB)
+                        .file(fileC)
+                        .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                        .with(request -> {
+                            request.setMethod(String.valueOf(HttpMethod.PUT)); // PUT 메서드로 변경
+                            return request;
+                        }))
+                .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+
+        resultActions
+                .andDo(restDocs.document(
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                        ),
+                        requestParts(
+                                partWithName("updateOption").description("사진 게시글 수정 타입"),
+                                partWithName("photo").description("사진 게시글 정보"),
+                                partWithName("thumbnail").description("대표이미지 첨부파일").optional(),
+                                partWithName("attachment").description("첨부파일 (다중 파일 업로드 가능)").optional()
+                        ),
+                        requestPartFields("photo",
+                                fieldWithPath("postGroup").ignored(),
+                                fieldWithPath("category").description("카테고리"),
+                                fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
+                                fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하")),
+                                fieldWithPath("thumbnailAttachmentIdx").ignored().description("대표 이미지로 설정된 첨부파일 ID")
                         ),
                         responseHeaders(
                                 headerWithName(HttpHeaders.LOCATION).description("생성된 위치 URI")

@@ -5,6 +5,8 @@ import com.now.core.attachment.domain.constants.AttachmentType;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.application.CommunityService;
+import com.now.core.post.application.dto.AddNewAttachments;
+import com.now.core.post.application.dto.UpdateExistingAttachments;
 import com.now.core.post.domain.Community;
 import com.now.core.post.domain.PostValidationGroup;
 import com.now.core.post.presentation.dto.Condition;
@@ -74,54 +76,55 @@ public class CommunityController {
     /**
      * 커뮤니티 게시글 등록
      *
-     * @param memberId       회원 아이디
-     * @param community      등록할 커뮤니티 게시글 정보
-     * @param multipartFiles MultipartFile[] 객체
+     * @param memberId    회원 아이디
+     * @param community   등록할 커뮤니티 게시글 정보
+     * @param attachments MultipartFile[] 객체
      * @return 생성된 위치 URI로 응답
      */
     @PostMapping("/api/communities")
     public ResponseEntity<Void> registerCommunity(@RequestAttribute("id") String memberId,
                                                   @RequestPart(name = "community") @Validated(PostValidationGroup.saveCommunity.class) Community community,
-                                                  @RequestPart(name = "attachments", required = false) MultipartFile[] multipartFiles) {
-        log.debug("registerCommunity 호출, memberId : {}, Community : {}, Multipart : {}",
-                                        memberId, community, (multipartFiles != null ? multipartFiles.length : "null"));
+                                                  @RequestPart(name = "attachments", required = false) MultipartFile[] attachments) {
+        log.debug("registerCommunity 호출, memberId : {}, Community : {}, Attachments : {}",
+                memberId, community, (attachments != null ? attachments.length : "null"));
 
         communityService.registerCommunity(community.updateMemberId(memberId));
-        attachmentService.saveAttachments(multipartFiles, community.getPostIdx(), AttachmentType.FILE);
+        attachmentService.saveAttachments(attachments, community.getPostIdx(), AttachmentType.FILE);
 
         return ResponseEntity.created(URI.create("/api/communities/" + community.getPostIdx())).build();
     }
-    
+
     /**
      * 커뮤니티 게시글 수정
      *
-     * @param postIdx                   게시글 번호
-     * @param memberId                  회원 아이디
-     * @param updatedCommunity          수정할 커뮤니티 게시글 정보
-     * @param multipartFiles            MultipartFile[] 객체
-     * @param previouslyUploadedIndexes 이전에 업로드된 파일 번호 목록
+     * @param postIdx           게시글 번호
+     * @param memberId          회원 아이디
+     * @param updatedCommunity  수정할 커뮤니티 게시글 정보
+     * @param attachments       MultipartFile[] 객체
+     * @param notDeletedIndexes 삭제하지 않을 파일 번호 목록
      * @return 생성된 위치 URI로 응답
      */
     @PutMapping("/api/communities/{postIdx}")
     public ResponseEntity<Void> updateCommunity(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
                                                 @Validated(PostValidationGroup.saveNotice.class) @RequestPart(name = "community") Community updatedCommunity,
-                                                @RequestPart(name = "attachments", required = false) MultipartFile[] multipartFiles,
-                                                @RequestParam(name = "attachmentIndexes", required = false) List<Long> previouslyUploadedIndexes) {
-        log.debug("updateCommunity 호출,  Update Community : {}, Multipart Files Size: {}, previouslyUploadedIndexes size : {}",
-                updatedCommunity, (multipartFiles != null ? multipartFiles.length : "null"), (previouslyUploadedIndexes != null ? previouslyUploadedIndexes.size() : "null"));
+                                                @RequestPart(name = "attachments", required = false) MultipartFile[] attachments,
+                                                @RequestParam(name = "notDeletedIndexes", required = false) List<Long> notDeletedIndexes) {
+        log.debug("updateCommunity 호출,  Update Community : {}, Attachments Size: {}, Not Deleted Indexes size : {}",
+                updatedCommunity, (attachments != null ? attachments.length : "null"), (notDeletedIndexes != null ? notDeletedIndexes.size() : "null"));
 
         communityService.hasUpdateAccess(postIdx, memberId);
 
         communityService.updateCommunity(updatedCommunity.updatePostIdx(postIdx).updateMemberId(memberId));
-        attachmentService.updateAttachments(multipartFiles, previouslyUploadedIndexes, postIdx, AttachmentType.FILE);
+        attachmentService.updateAttachments(AddNewAttachments.of(null, attachments),
+                UpdateExistingAttachments.of(null, notDeletedIndexes), postIdx, AttachmentType.FILE);
 
         return ResponseEntity.created(URI.create("/api/communities/" + updatedCommunity.getPostIdx())).build();
     }
-    
+
     /**
      * 커뮤니티 게시글 삭제
      *
-     * @param postIdx 게시글 번호
+     * @param postIdx  게시글 번호
      * @param memberId 회원 아이디
      * @return 응답 본문이 없는 상태 코드 204 반환
      */

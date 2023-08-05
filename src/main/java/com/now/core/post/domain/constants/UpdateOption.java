@@ -24,7 +24,7 @@ public enum UpdateOption {
     @JsonCreator //  JSON 값을 열거형으로 변환할 때 사용
     public static UpdateOption from(String value) {
         for (UpdateOption updateOption : UpdateOption.values()) {
-            if (updateOption.optionValue.equals(value)) {
+            if (updateOption.name().equals(value)) {
                 return updateOption;
             }
         }

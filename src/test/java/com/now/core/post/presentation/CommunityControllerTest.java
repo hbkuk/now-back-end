@@ -16,9 +16,13 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.Cookie;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static com.now.common.snippet.RequestCookiesSnippet.cookieWithName;
 import static com.now.common.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
@@ -32,6 +36,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.responseH
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class CommunityControllerTest extends RestDocsTestSupport {
@@ -220,7 +225,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         .file(communityPart)
                         .file(fileA)
                         .file(fileB)
-                        .param("attachmentIdx", "1")
+                        .param("notDeletedIndexes", "1", "2", "3")
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                         .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                         .with(request -> {
@@ -240,7 +245,8 @@ class CommunityControllerTest extends RestDocsTestSupport {
                                 partWithName("attachment").description("첨부파일 (다중 파일 업로드 가능)").optional()
                         ),
                         requestParameters(
-                                parameterWithName("attachmentIdx").description("이전에 업로드된 첨부파일 ID").optional()
+                                parameterWithName("notDeletedIndexes").description("삭제하지 않을 파일 번호 목록")
+                                        .optional().attributes(key("type").value("String[]"))
                         ),
                         requestPartFields("community",
                                 fieldWithPath("postGroup").ignored(),

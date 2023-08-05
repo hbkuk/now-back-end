@@ -1,15 +1,13 @@
 package com.now.core.post.application.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 
+@Builder
 @Getter
-@ToString()
+@ToString
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class AddNewAttachments {
@@ -32,15 +30,15 @@ public class AddNewAttachments {
         return allMultipartFiles;
     }
 
-    public boolean isNewThumbnailNotNull() {
+    public boolean hasOnlyNewThumbnail() {
         return newThumbnail != null;
     }
 
-    public boolean isNewAttachmentsNotEmpty() {
+    public boolean hasNewAttachmentsWithoutNewThumbnail() {
         return newAttachments != null && newAttachments.length > 0;
     }
 
-    public boolean isAllNotNull() {
-        return isNewThumbnailNotNull() && isNewAttachmentsNotEmpty();
+    public boolean hasNewAttachments() {
+        return hasOnlyNewThumbnail() && hasNewAttachmentsWithoutNewThumbnail();
     }
 }

@@ -16,12 +16,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static com.now.config.fixtures.attachment.AttachmentFixture.createAttachment;
-import static com.now.config.fixtures.attachment.AttachmentFixture.createAttachmentResponseByAttachmentIdx;
+import static com.now.config.fixtures.attachment.AttachmentFixture.*;
 import static com.now.config.fixtures.member.MemberFixture.createMember;
 import static com.now.config.fixtures.post.CommunityFixture.createCommunity;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -242,6 +243,137 @@ class AttachmentServiceTest {
                     verify(attachmentRepository, times(1)).deleteAttachmentIdx(3L);
                     verify(attachmentRepository, times(1)).deleteAttachmentIdx(4L);
                 }
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("새롭게 업로드된 첨부 파일 추가")
+    class AddNew_of {
+
+        @Nested
+        @DisplayName("업로드된 새로운 첨부 파일이 없을 때,")
+        class NoAttachmentsFoundTest {
+
+            @Test
+            @DisplayName("아무런 메서드가 실행되지 않는다")
+            void testAddNewAttachments_NoAttachments() {
+                Long postIdx = 1L;
+                Attachment attachment = createAttachment(1L, postIdx);
+                AddNewAttachments addNewAttachments = AddNewAttachments.builder()
+                        .newThumbnail(null)
+                        .newAttachments(null)
+                        .build();
+
+                attachmentService.updateAttachmentsWithVerifiedIndexes(UpdateOption.ADD_NEW, addNewAttachments,
+                        new UpdateExistingAttachments(), postIdx, AttachmentType.IMAGE);
+
+                verify(attachmentRepository, never()).saveAttachment(attachment);
+                verify(attachmentRepository, never()).updateThumbnail(attachment);
+            }
+        }
+
+        @Nested
+        @DisplayName("업로드된 새로운 첨부파일 있을 때,")
+        class NewAttachments {
+
+            @Nested
+            @DisplayName("게시물 번호에 해당하는 대표 이미지 정보가 없다면")
+            class NotExistingThumbnail {
+
+                @Test
+                @DisplayName("새로운 대표 이미지와 첨부 파일 목록이라면, saveAttachmentsWithUpdateThumbnail 메서드가 실행된다")
+                void testAddNewAttachments() {
+                    Long postIdx = 1L;
+                    AddNewAttachments addNewAttachments = AddNewAttachments.builder()
+                            .newThumbnail(createMockMultipartFile("thumbnail.jpg"))
+                            .newAttachments(new MultipartFile[]{createMockMultipartFile("attachment2.jpg"), createMockMultipartFile("attachment2.jpg")})
+                            .build();
+
+                    given(attachmentRepository.findThumbnailByPostIdx(postIdx)).willReturn(null);
+
+                    attachmentService.updateAttachmentsWithVerifiedIndexes(UpdateOption.ADD_NEW, addNewAttachments,
+                            new UpdateExistingAttachments(), postIdx, AttachmentType.IMAGE);
+
+                    verify(attachmentRepository, times(3)).saveAttachment(any());
+                    verify(attachmentRepository, times(1)).saveThumbNail(any());
+                }
+
+                @Test
+                @DisplayName("새로운 대표 이미지만 업로드 되었다면, updateThumbnail 메서드가 실행된다")
+                void testAddOnlyNewThumbnail() {
+                    Long postIdx = 1L;
+                    AddNewAttachments addNewAttachments = AddNewAttachments.builder()
+                            .newThumbnail(createMockMultipartFile("thumbnail.jpg"))
+                            .build();
+
+                    given(attachmentRepository.findThumbnailByPostIdx(postIdx)).willReturn(null);
+
+                    attachmentService.updateAttachmentsWithVerifiedIndexes(UpdateOption.ADD_NEW, addNewAttachments,
+                            new UpdateExistingAttachments(), postIdx, AttachmentType.IMAGE);
+
+                    verify(attachmentRepository, times(1)).saveAttachment(any());
+                    verify(attachmentRepository, times(1)).saveThumbNail(any());
+                }
+
+
+            }
+
+            @Nested
+            @DisplayName("게시물 번호에 해당하는 대표 이미지 정보가 있다면")
+            class ExistingThumbnail {
+
+                @Test
+                @DisplayName("새로운 대표 이미지와 첨부 파일 목록이라면, saveAttachmentsWithUpdateThumbnail 메서드가 실행된다")
+                void testAddNewAttachments() {
+                    Long postIdx = 1L;
+                    AddNewAttachments addNewAttachments = AddNewAttachments.builder()
+                            .newThumbnail(createMockMultipartFile("thumbnail.jpg"))
+                            .newAttachments(new MultipartFile[]{createMockMultipartFile("attachment2.jpg"), createMockMultipartFile("attachment2.jpg")})
+                            .build();
+
+                    given(attachmentRepository.findThumbnailByPostIdx(postIdx))
+                                        .willReturn(new ThumbNail(1L, postIdx, 3L));
+
+                    attachmentService.updateAttachmentsWithVerifiedIndexes(UpdateOption.ADD_NEW, addNewAttachments,
+                            new UpdateExistingAttachments(), postIdx, AttachmentType.IMAGE);
+
+                    verify(attachmentRepository, times(3)).saveAttachment(any());
+                    verify(attachmentRepository, times(1)).updateThumbnail(any());
+                }
+
+                @Test
+                @DisplayName("새로운 대표 이미지만 업로드 되었다면, updateThumbnail 메서드가 실행된다")
+                void testAddOnlyNewThumbnail() {
+                    Long postIdx = 1L;
+                    AddNewAttachments addNewAttachments = AddNewAttachments.builder()
+                            .newThumbnail(createMockMultipartFile("thumbnail.jpg"))
+                            .build();
+
+                    given(attachmentRepository.findThumbnailByPostIdx(postIdx))
+                                            .willReturn(new ThumbNail(1L, postIdx, 3L));
+
+                    attachmentService.updateAttachmentsWithVerifiedIndexes(UpdateOption.ADD_NEW, addNewAttachments,
+                            new UpdateExistingAttachments(), postIdx, AttachmentType.IMAGE);
+
+                    verify(attachmentRepository, times(1)).saveAttachment(any());
+                    verify(attachmentRepository, times(1)).updateThumbnail(any());
+                }
+
+            }
+
+            @Test
+            @DisplayName("새로운 첨부 파일만 업로드 되었다면, saveAttachments 메서드가 실행된다")
+            void testAddNewAttachmentsWithoutThumbnail() {
+                Long postIdx = 1L;
+                AddNewAttachments addNewAttachments = AddNewAttachments.builder()
+                        .newAttachments(new MultipartFile[]{createMockMultipartFile("attachment2.jpg"), createMockMultipartFile("attachment2.jpg")})
+                        .build();
+
+                attachmentService.updateAttachmentsWithVerifiedIndexes(UpdateOption.ADD_NEW, addNewAttachments,
+                        new UpdateExistingAttachments(), postIdx, AttachmentType.IMAGE);
+
+                verify(attachmentRepository, times(2)).saveAttachment(any());
             }
         }
     }

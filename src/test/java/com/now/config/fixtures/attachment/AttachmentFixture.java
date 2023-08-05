@@ -6,6 +6,8 @@ import com.now.core.attachment.domain.wrapped.AttachmentExtension;
 import com.now.core.attachment.domain.wrapped.AttachmentSize;
 import com.now.core.attachment.domain.wrapped.OriginalAttachmentName;
 import com.now.core.attachment.presentation.dto.AttachmentResponse;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -52,5 +54,9 @@ public class AttachmentFixture {
                 .attachmentIdx(attachmentIdx)
                 .postIdx(postIdx)
                 .build();
+    }
+
+    public static MultipartFile createMockMultipartFile(String name) {
+        return new MockMultipartFile("attachment", name, null, new byte[7777]);
     }
 }
