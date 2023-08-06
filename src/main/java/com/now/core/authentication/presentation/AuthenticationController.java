@@ -1,9 +1,12 @@
 package com.now.core.authentication.presentation;
 
+import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.AuthenticationService;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.TokenBlackList;
 import com.now.core.authentication.application.dto.Token;
 import com.now.core.authentication.application.util.CookieUtil;
+import com.now.core.authentication.exception.InvalidTokenException;
 import com.now.core.member.application.MemberService;
 import com.now.core.member.domain.Member;
 import com.now.core.member.presentation.dto.MemberProfile;
@@ -11,10 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -93,5 +93,36 @@ public class AuthenticationController {
         response.addCookie(CookieUtil.generateHttpOnlyCookie(JwtTokenService.REFRESH_TOKEN_KEY, newTokens.getRefreshToken(), true));
 
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 토큰 확인 후 회원 정보를 전달하는 핸들러 메서드
+     *
+     * @return ResponseEntity 객체 (HTTP 응답)
+     */
+    @PostMapping("/api/member/me")
+    public ResponseEntity<MemberProfile> me(@CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = false) String accessToken) {
+        log.debug("me 핸들러 메서드 호출");
+
+        authenticationService.isAccessTokenBlacklisted(accessToken);
+
+        String memberId = extractMemberIdFromToken(accessToken);
+        return ResponseEntity.ok().body(MemberProfile.from(memberService.getMember(memberId)));
+    }
+
+    /**
+     * 액세스 토큰으로부터 회원 아이디를 추출 후 반환
+     * 
+     * @param accessToken 액세스 토큰
+     * @return 회원 아이디
+     */
+    private String extractMemberIdFromToken(String accessToken) {
+        String memberId = null;
+        try {
+            memberId = (String) jwtTokenService.getClaim(accessToken, "id");
+        } catch (Exception e) {
+            throw new InvalidTokenException(ErrorType.NOT_FOUND_TOKEN);
+        }
+        return memberId;
     }
 }

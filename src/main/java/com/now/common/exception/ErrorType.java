@@ -15,6 +15,7 @@ public enum ErrorType {
     EXPIRED_REFRESH_TOKEN(1005, "유효기간이 만료된 리프레시 토큰입니다."),
     FORBIDDEN(1006, "권한이 없습니다."),
     LOGGED_OUT_TOKEN(1007, "로그아웃된 토큰입니다."),
+    NOT_FOUND_TOKEN(1008, "토큰 정보가 존재하지 않습니다."),
 
     NOT_FOUND_MEMBER(2001, "존재하지 않는 회원입니다."),
     DUPLICATE_MEMBER_INFO_ID(2002, "중복된 회원 아이디입니다."),
@@ -45,7 +46,7 @@ public enum ErrorType {
     INVALID_ATTACHMENT_SIZE(8002, "허용하지 않은 첨부 파일의 크기입니다."),
     INVALID_ATTACHMENT_ORIGINAL_NAME(8003, "허용하지 않은 첨부 파일명입니다."),
     NOT_FOUND_ATTACHMENT(8004, "존재하지 않는 첨부파일입니다."),
-    CAN_NOT_UPDATE_THUMBNAIL(8004, "대표 이미지를 수정할 수 없습니다."),
+    CAN_NOT_UPDATE_THUMBNAIL(8005, "대표 이미지를 수정할 수 없습니다."),
 
     REQUEST_EXCEPTION(9001, "http 요청 에러입니다."),
     INVALID_PATH(9002, "잘못된 경로입니다."),
