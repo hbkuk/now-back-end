@@ -49,7 +49,7 @@ public class ManagerInquiryService {
             throw new InvalidManagerException(ErrorType.NOT_FOUND_MANAGER);
         }
 
-        postRepository.saveAnswer(answer.updateAnswerManaegrIdx(manager.getManagerIdx()));
+        postRepository.saveAnswer(answer.updateAnswerManagerIdx(manager.getManagerIdx()));
     }
 }
 

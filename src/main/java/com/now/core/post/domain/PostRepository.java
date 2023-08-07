@@ -2,7 +2,9 @@ package com.now.core.post.domain;
 
 import com.now.core.post.presentation.dto.Answer;
 import com.now.core.post.presentation.dto.Condition;
+import com.now.core.post.presentation.dto.Posts;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -10,11 +12,32 @@ import java.util.List;
 /**
  * 게시글 관련 정보를 관리하는 레포지토리
  */
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class PostRepository {
 
     public final PostMapper postMapper;
+
+    /**
+     * 모든 게시글 정보를 조회 후 반환
+     *
+     * @param condition 게시물 제한 정보를 담은 객체
+     * @return 게시글 정보 리스트
+     */
+    public List<Posts> findAllPosts(Condition condition) {
+        return postMapper.findAllPosts(condition);
+    }
+
+    /**
+     * 조건에 맞는 게시물을 조회 후 수량 반환
+     *
+     * @param condition 조건 객체
+     * @return 조건에 맞는 게시물을 조회 후 수량 반환
+     */
+    public Long findTotalPostCount(Condition condition) {
+        return postMapper.findTotalPostCount(condition);
+    }
 
     /**
      * 모든 공지사항 게시글 정보를 조회 후 반환

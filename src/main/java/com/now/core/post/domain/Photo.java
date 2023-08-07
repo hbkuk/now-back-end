@@ -41,6 +41,8 @@ public class Photo {
 
     private String memberNickname;  // 회원의 닉네임
 
+    private String managerNickname;  // 매니저 닉네임
+
     @NotNull(groups = {PostValidationGroup.savePhoto.class}, message = "{post.title.notnull}" )
     @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 100, message = "{post.title.size}")
     private final String title; // 게시글의 제목

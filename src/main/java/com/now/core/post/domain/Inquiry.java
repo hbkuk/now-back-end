@@ -43,6 +43,8 @@ public class Inquiry {
 
     private String memberNickname;  // 회원의 닉네임
 
+    private String managerNickname;  // 매니저 닉네임
+
     @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.title.notnull}" )
     @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 100, message = "{post.title.size}")
     private final String title; // 게시글의 제목

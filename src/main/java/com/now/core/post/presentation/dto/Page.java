@@ -1,83 +1,79 @@
 package com.now.core.post.presentation.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
-import org.springframework.lang.Nullable;
-
-import javax.validation.constraints.Min;
 
 /**
- * 페이지 정보를 담는 객체
+ * 페이지 정보를 담는 데이터 전송 객체
  */
 @Data
-public class PageCondition {
+public class Page {
 
     /**
      * 페이지당 레코드 수
      */
-    @JsonProperty
-    private final Integer recordsPerPage = 5;
+    private final Integer recordsPerPage = 10;
 
     /**
      * 블록당 페이지 수
      */
-    @JsonProperty
     private final Integer blockPerPage = 5;
 
     /**
      * 페이지 번호
      */
-    @Nullable
-    @Min(value = 1, message = "페이지 번호는 1보다 큰 숫자여야 합니다")
     private Integer pageNo;
 
     /**
      * 레코드 시작 인덱스
      */
-    @JsonProperty
     private Integer recordStartIndex;
 
     /**
      * 최대 페이지 수
      */
-    @JsonProperty
     private Integer maxPage;
 
     /**
      * 시작 페이지
      */
-    @JsonProperty
     private Integer startPage;
 
     /**
      * 종료 페이지
      */
-    @JsonProperty
     private Integer endPage;
 
     /**
-     * 페이지 번호를 기반으로 Page 객체 생성
-     *
-     * @param pageNo 페이지 번호
+     * 정적 팩토리 메서드 사용으로 인한 기본 생성자를 private 설정
      */
-    public PageCondition(Integer pageNo) {
-        if( pageNo != null ) {
-            this.pageNo = pageNo;
-            this.recordStartIndex = (pageNo - 1) * this.recordsPerPage;
-        }
-        if( pageNo == null ) {
-            this.pageNo = 1;
-            this.recordStartIndex = 0;
-        }
+    private Page() {
     }
 
     /**
-     * 전체 게시글 수를 기반으로 페이지 정보를 계산
+     * 페이지 번호 기반으로 Page 객체 생성 후 반환
+     *
+     * @param pageNo 페이지 번호
+     * @return 페이지 번호 기반으로 Page 객체 생성 후 반환
+     */
+    public static Page of(Integer pageNo) {
+        Page page = new Page();
+        if (pageNo != null) {
+            page.setPageNo(pageNo);
+            page.setRecordStartIndex((pageNo - 1) * page.getRecordsPerPage());
+        } else {
+            page.setPageNo(1);
+            page.setRecordStartIndex(0);
+        }
+        return page;
+    }
+
+    /**
+     * 전체 게시글 수를 기반으로 페이지 정보 업데이트 한 객체 반환
      *
      * @param totalBoardCount 전체 게시글 수
-     * @return 계산된 페이지 정보를 포함한 현재 객체
+     * @return 전체 게시글 수를 기반으로 페이지 정보 업데이트 한 객체 반환
      */
-    public PageCondition calculatePaginationInfo(int totalBoardCount) {
+    public Page calculatePaginationInfo(Long totalBoardCount) {
         this.maxPage = updateMaxPage(totalBoardCount);
         this.startPage = updateStartPage();
         this.endPage = updateEndPage();
@@ -85,9 +81,9 @@ public class PageCondition {
     }
 
     /**
-     * 종료 페이지를 업데이트
+     * 종료 페이지 수 반환
      *
-     * @return 업데이트된 종료 페이지
+     * @return 종료 페이지 수 반환
      */
     private int updateEndPage() {
         int endPage = startPage + this.blockPerPage - 1;
@@ -98,19 +94,19 @@ public class PageCondition {
     }
 
     /**
-     * 시작 페이지를 업데이트
+     * 시작 페이지 수 반환
      *
-     * @return 업데이트된 시작 페이지
+     * @return 시작 페이지 수 반환
      */
     private int updateStartPage() {
         return (((int) (Math.ceil((double) pageNo / this.blockPerPage))) - 1) * this.blockPerPage + 1;
     }
 
     /**
-     * 최대 페이지 수를 업데이트
+     * 최대 페이지 수 반환
      *
      * @param totalBoardCount 전체 게시글 수
-     * @return 업데이트된 최대 페이지 수
+     * @return 최대 페이지 수 반환
      */
     private int updateMaxPage(double totalBoardCount) {
         return (int) (Math.ceil(totalBoardCount / this.recordsPerPage));

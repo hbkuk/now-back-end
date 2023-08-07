@@ -3,13 +3,15 @@ package com.now.core.post.presentation;
 import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.post.application.InquiryService;
+import com.now.core.post.application.PostService;
 import com.now.core.post.domain.Inquiry;
 import com.now.core.post.domain.PostValidationGroup;
 import com.now.core.post.exception.CannotCreatePostException;
+import com.now.core.post.presentation.dto.CommunitiesResponse;
 import com.now.core.post.presentation.dto.Condition;
+import com.now.core.post.presentation.dto.InquiriesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InquiryController {
 
+    private final PostService postService;
     private final InquiryService inquiryService;
     private final JwtTokenService jwtTokenService;
 
@@ -37,10 +40,15 @@ public class InquiryController {
      * @return 모든 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/inquiries")
-    public ResponseEntity<List<Inquiry>> getAllInquiries(@Valid @ModelAttribute Condition condition) {
+    public ResponseEntity<InquiriesResponse> getAllInquiries(@Valid @ModelAttribute Condition condition) {
         log.debug("getAllInquiries 호출, condition : {}", condition);
 
-        return new ResponseEntity<>(inquiryService.getAllInquiries(condition), HttpStatus.OK);
+        InquiriesResponse inquiriesResponse = InquiriesResponse.builder()
+                .inquiries(inquiryService.getAllInquiries(condition.updatePage()))
+                .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
+                .build();
+
+        return new ResponseEntity<>(inquiriesResponse, HttpStatus.OK);
     }
 
     /**

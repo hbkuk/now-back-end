@@ -5,11 +5,14 @@ import com.now.core.attachment.domain.constants.AttachmentType;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.application.CommunityService;
+import com.now.core.post.application.PostService;
 import com.now.core.post.application.dto.AddNewAttachments;
 import com.now.core.post.application.dto.UpdateExistingAttachments;
 import com.now.core.post.domain.Community;
 import com.now.core.post.domain.PostValidationGroup;
+import com.now.core.post.presentation.dto.CommunitiesResponse;
 import com.now.core.post.presentation.dto.Condition;
+import com.now.core.post.presentation.dto.PostsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -30,6 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommunityController {
 
+    private final PostService postService;
     private final JwtTokenService jwtTokenService;
     private final CommunityService communityService;
     private final AttachmentService attachmentService;
@@ -42,10 +46,15 @@ public class CommunityController {
      * @return 모든 커뮤니티 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/communities")
-    public ResponseEntity<List<Community>> getAllCommunities(@Valid @ModelAttribute Condition condition) {
+    public ResponseEntity<CommunitiesResponse> getAllCommunities(@Valid @ModelAttribute Condition condition) {
         log.debug("getAllCommunities 호출, condition : {}", condition);
 
-        return new ResponseEntity<>(communityService.getAllCommunities(condition), HttpStatus.OK);
+        CommunitiesResponse communitiesResponse = CommunitiesResponse.builder()
+                .communities(communityService.getAllCommunities(condition.updatePage()))
+                .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
+                .build();
+
+        return new ResponseEntity<>(communitiesResponse, HttpStatus.OK);
     }
 
     /**

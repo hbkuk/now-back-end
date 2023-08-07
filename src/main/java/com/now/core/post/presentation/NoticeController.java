@@ -1,8 +1,11 @@
 package com.now.core.post.presentation;
 
 import com.now.core.post.application.NoticeService;
+import com.now.core.post.application.PostService;
 import com.now.core.post.domain.Notice;
+import com.now.core.post.presentation.dto.CommunitiesResponse;
 import com.now.core.post.presentation.dto.Condition;
+import com.now.core.post.presentation.dto.NoticesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NoticeController {
 
+    private final PostService postService;
     private final NoticeService noticeService;
 
     /**
@@ -32,10 +36,15 @@ public class NoticeController {
      * @return 모든 공지 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/notices")
-    public ResponseEntity<List<Notice>> retrieveAllNotices(@Valid @ModelAttribute Condition condition) {
+    public ResponseEntity<NoticesResponse> retrieveAllNotices(@Valid @ModelAttribute Condition condition) {
         log.debug("retrieveAllNotices 호출, condition : {}", condition);
 
-        return new ResponseEntity<>(noticeService.getAllNotices(condition), HttpStatus.OK);
+        NoticesResponse noticesResponse = NoticesResponse.builder()
+                .notices(noticeService.getAllNotices(condition.updatePage()))
+                .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
+                .build();
+
+        return new ResponseEntity<>(noticesResponse, HttpStatus.OK);
     }
 
     /**

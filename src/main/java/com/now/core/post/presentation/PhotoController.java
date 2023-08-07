@@ -5,12 +5,14 @@ import com.now.core.attachment.domain.constants.AttachmentType;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.application.PhotoService;
+import com.now.core.post.application.PostService;
 import com.now.core.post.application.dto.AddNewAttachments;
 import com.now.core.post.application.dto.UpdateExistingAttachments;
 import com.now.core.post.domain.Photo;
 import com.now.core.post.domain.PostValidationGroup;
 import com.now.core.post.domain.constants.UpdateOption;
 import com.now.core.post.presentation.dto.Condition;
+import com.now.core.post.presentation.dto.PhotosResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PhotoController {
 
+    private final PostService postService;
     private final JwtTokenService jwtTokenService;
     private final PhotoService photoService;
     private final AttachmentService attachmentService;
@@ -43,9 +46,15 @@ public class PhotoController {
      * @return 모든 사진 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/photos")
-    public ResponseEntity<List<Photo>> getAllPhotos(@Valid @ModelAttribute Condition condition) {
+    public ResponseEntity<PhotosResponse> getAllPhotos(@Valid @ModelAttribute Condition condition) {
         log.debug("getAllPhotos 호출, condition : {}", condition);
-        return new ResponseEntity<>(photoService.getAllPhotos(condition), HttpStatus.OK);
+
+        PhotosResponse photosResponse = PhotosResponse.builder()
+                .photos(photoService.getAllPhotos(condition.updatePage()))
+                .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
+                .build();
+
+        return new ResponseEntity<>(photosResponse, HttpStatus.OK);
     }
 
     /**

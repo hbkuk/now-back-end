@@ -121,88 +121,258 @@
 
 
 
+    <!-- 모든 게시글 조회 쿼리 -->
+    <select id="findAllPosts" parameterType="Condition" resultMap="posts" useCache="false" flushCache="true">
+        SELECT * FROM (
+        SELECT
+        <include refid="selectPostTableColumnWithoutContent"/>,
+        <include refid="selectMaxAttachmentTableColumn"/>,
+        <include refid="selectMemberTableColumn"/>,
+        <include refid="selectMaxInquiriesWithNonSecretInfo"/>,
+        <include refid="selectMaxCommentTableColumn"/>,
+        <include refid="selectMaxManagerTableColumn"/>,
+        <include refid="selectMaxThumbnailTableColumn"/>,
+        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="selectMaxManagerInfoOfInquiryTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+        LEFT OUTER JOIN tb_manager ima ON p.manager_idx = ima.manager_idx
+        WHERE p.post_group = 'NOTICE'
+        GROUP BY p.post_idx
+        ORDER BY p.post_idx DESC
+
+        <include refid="maxNumberOfPosts"/>
+
+        ) AS notice_posts
+
+        UNION
+
+        SELECT * FROM (
+        SELECT
+        <include refid="selectPostTableColumnWithoutContent"/>,
+        <include refid="selectMaxAttachmentTableColumn"/>,
+        <include refid="selectMemberTableColumn"/>,
+        <include refid="selectMaxInquiriesWithNonSecretInfo"/>,
+        <include refid="selectMaxCommentTableColumn"/>,
+        <include refid="selectMaxManagerTableColumn"/>,
+        <include refid="selectMaxThumbnailTableColumn"/>,
+        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="selectMaxManagerInfoOfInquiryTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+        LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
+        WHERE p.post_group = 'COMMUNITY'
+        GROUP BY p.post_idx
+        ORDER BY p.post_idx DESC
+
+        <include refid="maxNumberOfPosts"/>
+
+        ) AS community_posts
+
+        UNION
+
+        SELECT * FROM (
+        SELECT
+        <include refid="selectPostTableColumnWithoutContent"/>,
+        <include refid="selectMaxAttachmentTableColumn"/>,
+        <include refid="selectMemberTableColumn"/>,
+        <include refid="selectMaxInquiriesWithNonSecretInfo"/>,
+        <include refid="selectMaxCommentTableColumn"/>,
+        <include refid="selectMaxManagerTableColumn"/>,
+        <include refid="selectMaxThumbnailTableColumn"/>,
+        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="selectMaxManagerInfoOfInquiryTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+        LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
+        WHERE p.post_group = 'PHOTO'
+        GROUP BY p.post_idx
+        ORDER BY p.post_idx DESC
+
+        <include refid="maxNumberOfPosts"/>
+
+        ) AS photo_posts
+
+        UNION
+
+        SELECT * FROM (
+        SELECT
+        <include refid="selectPostTableColumnWithoutContent"/>,
+        <include refid="selectMaxAttachmentTableColumn"/>,
+        <include refid="selectMemberTableColumn"/>,
+        <include refid="selectMaxInquiriesWithNonSecretInfo"/>,
+        <include refid="selectMaxCommentTableColumn"/>,
+        <include refid="selectMaxManagerTableColumn"/>,
+        <include refid="selectMaxThumbnailTableColumn"/>,
+        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="selectMaxManagerInfoOfInquiryTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+        LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
+        WHERE p.post_group = 'INQUIRY'
+        GROUP BY p.post_idx
+        ORDER BY p.post_idx DESC
+
+        <include refid="maxNumberOfPosts"/>
+
+        ) AS inquiry_posts
+    </select>
+
+
+    <!-- Posts resultMap -->
+    <resultMap id="posts" type="Posts">
+        <discriminator javaType="string" column="p_post_group">
+            <case value="NOTICE">
+                <association property="notice" resultMap="notice" />
+            </case>
+            <case value="COMMUNITY">
+                <association property="community" resultMap="community" />
+            </case>
+            <case value="PHOTO">
+                <association property="photo" resultMap="photo" />
+            </case>
+            <case value="INQUIRY">
+                <association property="inquiry" resultMap="inquiry" />
+            </case>
+        </discriminator>
+    </resultMap>
+
+
+
+    <select id="findTotalPostCount" parameterType="Condition" useCache="false" flushCache="true">
+        SELECT
+            count(p.post_idx)
+        FROM tb_post p
+            LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+            LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+            LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+            LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        <include refid="postGroupWithWhere"/>
+        <include refid="conditionWithoutPostGroup"/>
+    </select>
+
+
+
+
 
 
     <!-- 모든 공지사항 조회 쿼리 -->
     <select id="findAllNotices" parameterType="Condition" resultMap="notice" useCache="false" flushCache="true">
         SELECT
-        <include refid="selectPostTableColumn"/>,
-        <include refid="selectManagerTableColumn"/>,
-        <include refid="selectMaxCommentTableColumn"/>,
-        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
+            <include refid="selectPostTableColumn"/>,
+            <include refid="selectManagerTableColumn"/>,
+            <include refid="selectMaxCommentTableColumn"/>,
+            <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
-        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
-        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
-        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
-        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+            LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+            LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+            LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+            LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+            LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'NOTICE'
+        <include refid="conditionWithoutPostGroup"/>
         GROUP BY p.post_idx
-        ORDER BY p.post_idx DESC
-        <include refid="condition"/>
+        <include refid="sort"/>
+        <include refid="page"/>
     </select>
 
     <!-- 모든 커뮤니티 게시글 조회 쿼리 -->
     <select id="findAllCommunity" parameterType="Condition" resultMap="community" useCache="false" flushCache="true">
         SELECT
-        <include refid="selectPostTableColumn"/>,
-        <include refid="selectMaxAttachmentTableColumn"/>,
-        <include refid="selectMaxCommentTableColumn"/>,
-        <include refid="selectMemberTableColumn"/>,
-        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
+            <include refid="selectPostTableColumn"/>,
+            <include refid="selectMaxAttachmentTableColumn"/>,
+            <include refid="selectMaxCommentTableColumn"/>,
+            <include refid="selectMemberTableColumn"/>,
+            <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
-        LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
-        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
-        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
-        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
-        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+            LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
+            LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+            LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+            LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+
+            LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+            LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'COMMUNITY'
+        <include refid="conditionWithoutPostGroup"/>
         GROUP BY p.post_idx
-        ORDER BY p.post_idx DESC
-        <include refid="condition"/>
+        <include refid="sort"/>
+        <include refid="page"/>
     </select>
 
     <!-- 모든 사진 게시글 조회 쿼리 -->
     <select id="findAllPhotos" parameterType="Condition" resultMap="photo" useCache="false" flushCache="true">
         SELECT
-        <include refid="selectPostTableColumn"/>,
-        <include refid="selectMaxAttachmentTableColumn"/>,
-        <include refid="selectMaxCommentTableColumn"/>,
-        <include refid="selectMemberTableColumn"/>,
-        <include refid="selectMaxThumbnailTableColumn"/>,
-        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
+            <include refid="selectPostTableColumn"/>,
+            <include refid="selectMaxAttachmentTableColumn"/>,
+            <include refid="selectMaxCommentTableColumn"/>,
+            <include refid="selectMemberTableColumn"/>,
+            <include refid="selectMaxThumbnailTableColumn"/>,
+            <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p
-        LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
-        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
-        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
-        LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
-        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
-        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+            LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
+            LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+            LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+            LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+            LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+            LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+            LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'PHOTO'
+        <include refid="conditionWithoutPostGroup"/>
         GROUP BY p.post_idx
-        ORDER BY p.post_idx DESC
-        <include refid="condition"/>
+        <include refid="sort"/>
+        <include refid="page"/>
     </select>
 
     <!-- 모든 문의 게시글 조회 쿼리, content 제외 -->
     <select id="findAllInquiries" parameterType="Condition" resultMap="inquiry" useCache="false" flushCache="true">
         SELECT
-        <include refid="selectPostTableColumnWithoutContent"/>,
-        <include refid="selectMemberTableColumn"/>,
-        <include refid="selectMaxInquiriesWithNonSecretInfo"/>,
-        <include refid="selectMaxCommentTableColumn"/>,
-        <include refid="selectMaxManagerTableColumn"/>,
-        <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
+            <include refid="selectPostTableColumnWithoutContent"/>,
+            <include refid="selectMemberTableColumn"/>,
+            <include refid="selectMaxInquiriesWithNonSecretInfo"/>,
+            <include refid="selectMaxCommentTableColumn"/>,
+            <include refid="selectMaxManagerTableColumn"/>,
+            <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>,
+            <include refid="selectMaxManagerInfoOfInquiryTableColumn"/>
         FROM tb_post p
-        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
-        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
-        LEFT OUTER JOIN tb_manager ma ON ma.manager_idx = i.answer_manager_idx
-        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
-        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
-        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
-        WHERE p.post_group = 'INQUIRY'
+            LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+            LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+            LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+            LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
+            LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+            LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+            LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        <include refid="conditionWithoutPostGroup"/>
         GROUP BY p.post_idx
-        ORDER BY p.post_idx DESC
-        <include refid="condition"/>
+        <include refid="sort"/>
+        <include refid="page"/>
     </select>
 
 
@@ -237,6 +407,7 @@
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
         LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
         LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         WHERE p.post_group = 'COMMUNITY' AND p.post_idx = #{postIdx}
@@ -255,6 +426,7 @@
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
         LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
         LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
@@ -269,11 +441,13 @@
         <include refid="selectInquiryTableColumn"/>,
         <include refid="selectCommentTableColumn"/>,
         <include refid="selectManagerTableColumn"/>,
-        <include refid="selectMemberAndManagerInfoOfCommentTableColumn"/>
+        <include refid="selectMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="selectManagerInfoOfInquiryTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
         LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
-        LEFT OUTER JOIN tb_manager ma ON ma.manager_idx = i.answer_manager_idx
+        LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
 
         LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
@@ -297,6 +471,7 @@
     <!-- Post 테이블의 컬럼 매핑 -->
     <sql id="selectPostTableColumn">
         p.post_idx AS p_post_idx,
+        p.post_group AS p_post_group,
         p.category AS p_category,
         p.title AS p_title,
         p.member_idx AS p_member_idx,
@@ -313,6 +488,7 @@
     <!-- Post 테이블의 컬럼 매핑, content 제외 -->
     <sql id="selectPostTableColumnWithoutContent">
         p.post_idx AS p_post_idx,
+        p.post_group AS p_post_group,
         p.category AS p_category,
         p.title AS p_title,
         p.member_idx AS p_member_idx,
@@ -412,6 +588,14 @@
 
 
 
+    <sql id="selectMaxManagerInfoOfInquiryTableColumn">
+        MAX(ima.nickname) AS ima_nickname
+    </sql>
+
+    <sql id="selectManagerInfoOfInquiryTableColumn">
+        ima.nickname AS ima_nickname
+    </sql>
+
 
 
 
@@ -489,6 +673,7 @@
         <result property="title" column="p_title"/>
         <result property="memberId" column="m_id"/>
         <result property="memberNickname" column="m_nickname"/>
+        <result property="managerNickname" column="ma_nickname"/>
         <result property="regDate" column="p_reg_date"/>
         <result property="modDate" column="p_mod_date"/>
         <result property="content" column="p_content"/>
@@ -507,6 +692,7 @@
         <result property="title" column="p_title"/>
         <result property="memberId" column="m_id"/>
         <result property="memberNickname" column="m_nickname"/>
+        <result property="managerNickname" column="ma_nickname"/>
         <result property="regDate" column="p_reg_date"/>
         <result property="modDate" column="p_mod_date"/>
         <result property="content" column="p_content"/>
@@ -525,6 +711,7 @@
         <result property="category" column="p_category" javaType="com.now.core.category.domain.constants.Category"/>
         <result property="title" column="p_title"/>
         <result property="memberNickname" column="m_nickname"/>
+        <result property="managerNickname" column="ma_nickname"/>
         <result property="memberId" column="m_id"/>
         <result property="regDate" column="p_reg_date"/>
         <result property="modDate" column="p_mod_date"/>
@@ -533,7 +720,7 @@
         <result property="likeCount" column="p_like_count"/>
         <result property="dislikeCount" column="p_dislike_count"/>
         <result property="secret" column="i_secret"/>
-        <result property="answerManagerNickname" column="ma_nickname"/>
+        <result property="answerManagerNickname" column="ima_nickname"/>
         <result property="answerContent" column="i_answer_content"/>
         <result property="answerRegDate" column="i_answer_reg_date"/>
         <result property="password" column="i_password"/>
@@ -541,10 +728,65 @@
         <collection property="comments" resultMap="commentTableCollectionMapping" />
     </resultMap>
 
-    <!-- 검색 조건에 따른 WHERE 절 SQL -->
-    <sql id="condition">
+    <sql id="maxNumberOfPosts">
         <if test="maxNumberOfPosts != null">
             LIMIT 0, #{maxNumberOfPosts}
         </if>
     </sql>
+
+    <sql id="postGroupWithWhere">
+        <if test="postGroup != null">
+            WHERE p.post_group = #{postGroup.name}
+        </if>
+    </sql>
+
+
+    <!-- 검색 조건에 따른 WHERE 절 SQL -->
+    <sql id="conditionWithoutPostGroup">
+
+        <if test="startDate != null">
+            AND DATE(p.reg_date) >= DATE(DATE_FORMAT(#{startDate}, '%Y-%m-%d'))
+        </if>
+
+        <if test="endDate != null">
+            AND DATE(DATE_FORMAT(#{endDate}, '%Y-%m-%d')) >= DATE(p.reg_date)
+        </if>
+
+        <if test="category != null">
+            AND p.category = #{category.name}
+        </if>
+
+        <if test="keyword != null">
+            AND
+                (p.title LIKE CONCAT('%', #{keyword}, '%')
+                OR m.nickname LIKE CONCAT('%', #{keyword}, '%')
+                OR ma.nickname LIKE CONCAT('%', #{keyword}, '%')
+                OR p.content LIKE
+            CONCAT('%', #{keyword}, '%'))
+        </if>
+
+    </sql>
+
+    <sql id="sort">
+        <choose>
+            <when test="sort.name == 'LATEST'">
+                ORDER BY p.post_idx DESC
+            </when>
+            <when test="sort.name == 'RECOMMENDED'">
+                ORDER BY p.like_count DESC
+            </when>
+            <when test="sort.name == 'MOST_VIEWED'">
+                ORDER BY p.view_count DESC
+            </when>
+            <otherwise>
+                ORDER BY p.post_idx DESC
+            </otherwise>
+        </choose>
+    </sql>
+
+    <sql id="page">
+        LIMIT #{page.recordStartIndex}, #{page.recordsPerPage}
+    </sql>
+
+
 </mapper>
