@@ -37,15 +37,15 @@ public class Condition {
     private String keyword; // 키워드
 
     @Nullable
-    @Max(value = 30, message = "{condition.maxNum.size}")
-    private Integer maxNumberOfPosts; // 게시물 개수 제한
-
-    @Nullable
     private Sort sort; // 정렬
 
     @Nullable
+    @Max(value = 50, message = "{condition.maxNum.size}")
+    private Integer maxNumberOfPosts = 10; // 게시물 개수 제한 기본값은 10으로 설정
+
+    @Nullable
     @Min(value = 1, message = "{condition.pageNo.size}")
-    private Integer pageNo; // 페이지 번호
+    private Integer pageNo = 1; // 페이지 번호 기본값은 1로 설정
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Page page; // 페이지 객체
@@ -56,7 +56,7 @@ public class Condition {
      * @return 업데이트된 Condition 객체
      */
     public Condition updatePage() {
-        this.page = Page.of(this.pageNo);
+        this.page = Page.of(this.maxNumberOfPosts, this.pageNo);
         return this;
     }
 }

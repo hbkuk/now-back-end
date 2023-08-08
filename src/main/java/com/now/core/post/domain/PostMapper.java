@@ -31,6 +31,16 @@ public interface PostMapper {
      */
     Long findTotalPostCount(Condition condition);
 
+
+    /**
+     * 상단에 고정된 공지 게시물과 조건에 맞는 게시물 정보를 조회 후 반환
+     *
+     * @param condition 게시물 제한 정보를 담은 객체
+     * @return 공지사항 게시글 정보 리스트
+     */
+    List<Notice> findAllNoticesWithPin(Condition condition);
+
+
     /**
      * 모든 공지사항 게시글 정보를 조회 후 반환
      *

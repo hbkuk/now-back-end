@@ -9,14 +9,14 @@ import lombok.Data;
 public class Page {
 
     /**
-     * 페이지당 레코드 수
-     */
-    private final Integer recordsPerPage = 10;
-
-    /**
      * 블록당 페이지 수
      */
     private final Integer blockPerPage = 5;
+
+    /**
+     * 페이지당 레코드 수
+     */
+    private Integer recordsPerPage;
 
     /**
      * 페이지 번호
@@ -50,33 +50,33 @@ public class Page {
     }
 
     /**
-     * 페이지 번호 기반으로 Page 객체 생성 후 반환
+     * 전달된 페이지 번호, 페이지당 레코드 수를 기반으로 Page 객체 생성 후 반환
      *
-     * @param pageNo 페이지 번호
-     * @return 페이지 번호 기반으로 Page 객체 생성 후 반환
+     * @param recordsPerPage 페이지당 레코드 수
+     * @param pageNo         페이지 번호
+     * @return Page 객체 생성 후 반환
      */
-    public static Page of(Integer pageNo) {
+    public static Page of(Integer recordsPerPage, Integer pageNo) {
         Page page = new Page();
-        if (pageNo != null) {
-            page.setPageNo(pageNo);
-            page.setRecordStartIndex((pageNo - 1) * page.getRecordsPerPage());
-        } else {
-            page.setPageNo(1);
-            page.setRecordStartIndex(0);
-        }
+
+        page.setPageNo(pageNo);
+        page.setRecordsPerPage(recordsPerPage);
+        page.setRecordStartIndex((pageNo - 1) * recordsPerPage);
         return page;
     }
 
     /**
      * 전체 게시글 수를 기반으로 페이지 정보 업데이트 한 객체 반환
      *
-     * @param totalBoardCount 전체 게시글 수
+     * @param totalPostCount 전체 게시글 수
      * @return 전체 게시글 수를 기반으로 페이지 정보 업데이트 한 객체 반환
      */
-    public Page calculatePaginationInfo(Long totalBoardCount) {
-        this.maxPage = updateMaxPage(totalBoardCount);
+    public Page calculatePaginationInfo(Long totalPostCount) {
+        this.maxPage = updateMaxPage(totalPostCount);
+        this.pageNo = Math.min(pageNo, maxPage);
         this.startPage = updateStartPage();
         this.endPage = updateEndPage();
+
         return this;
     }
 

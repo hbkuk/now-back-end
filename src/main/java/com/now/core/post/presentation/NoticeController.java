@@ -40,7 +40,7 @@ public class NoticeController {
         log.debug("retrieveAllNotices 호출, condition : {}", condition);
 
         NoticesResponse noticesResponse = NoticesResponse.builder()
-                .notices(noticeService.getAllNotices(condition.updatePage()))
+                .notices(noticeService.getAllNoticesWithPin(condition.updatePage()))
                 .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
                 .build();
 

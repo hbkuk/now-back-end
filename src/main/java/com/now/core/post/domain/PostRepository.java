@@ -81,6 +81,17 @@ public class PostRepository {
 
 
     /**
+     * 상단에 고정된 공지 게시물과 조건에 맞는 게시물 정보를 조회 후 반환
+     *
+     * @param condition 게시물 제한 정보를 담은 객체
+     * @return 공지사항 게시글 정보 리스트
+     */
+    public List<Notice> findAllNoticesWithPin(Condition condition) {
+        return postMapper.findAllNoticesWithPin(condition);
+    }
+
+
+    /**
      * 공지 게시글 정보를 조회 후 반환
      *
      * @param postIdx 게시글 번호
@@ -131,14 +142,10 @@ public class PostRepository {
     }
 
 
-
-
-
-    
     /**
      * 공지 게시글 등록
-     * 
-     * @param notice  등록할 공지 게시글 정보
+     *
+     * @param notice 등록할 공지 게시글 정보
      */
     public void saveNotice(Notice notice) {
         postMapper.saveNotice(notice);
@@ -156,7 +163,7 @@ public class PostRepository {
     /**
      * 사진 게시글 등록
      *
-     * @param photo  등록할 사진 게시글 정보
+     * @param photo 등록할 사진 게시글 정보
      */
     public void savePhoto(Photo photo) {
         postMapper.savePhoto(photo);
@@ -165,7 +172,7 @@ public class PostRepository {
     /**
      * 문의 게시글 등록
      *
-     * @param inquiry  등록할 문의 게시글 정보
+     * @param inquiry 등록할 문의 게시글 정보
      */
     public void saveInquiry(Inquiry inquiry) {
         postMapper.saveInquiry(inquiry);
@@ -175,15 +182,11 @@ public class PostRepository {
     /**
      * 문의 게시글의 답변 등록
      *
-     * @param answer  등록할 문의 게시글의 답변 정보
+     * @param answer 등록할 문의 게시글의 답변 정보
      */
     public void saveAnswer(Answer answer) {
         postMapper.saveAnswer(answer);
     }
-
-
-
-
 
 
     /**
@@ -226,15 +229,11 @@ public class PostRepository {
     /**
      * 문의 게시글의 답변 수정
      *
-     * @param answer  등록할 문의 게시글의 답변 정보
+     * @param answer 등록할 문의 게시글의 답변 정보
      */
     public void updateAnswer(Answer answer) {
         postMapper.updateAnswer(answer);
     }
-
-
-
-
 
 
     /**

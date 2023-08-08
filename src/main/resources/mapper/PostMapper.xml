@@ -304,6 +304,50 @@
         <include refid="page"/>
     </select>
 
+
+    <!-- 모든 공지사항 조회 쿼리 -->
+    <select id="findAllNoticesWithPin" parameterType="Condition" resultMap="notice" useCache="false" flushCache="true">
+        SELECT
+            <include refid="selectPostTableColumn"/>,
+            <include refid="selectManagerTableColumn"/>,
+            <include refid="selectMaxCommentTableColumn"/>,
+            <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
+        FROM tb_post p
+            LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+            LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+            LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+            LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+            LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        WHERE p.post_group = 'NOTICE'
+            AND p.pinned = true
+        GROUP BY p.post_idx
+
+        UNION ALL
+
+        (
+
+        SELECT
+            <include refid="selectPostTableColumn"/>,
+            <include refid="selectManagerTableColumn"/>,
+            <include refid="selectMaxCommentTableColumn"/>,
+            <include refid="selectMaxMemberAndManagerInfoOfCommentTableColumn"/>
+        FROM tb_post p
+            LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+            LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+            LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+            LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+            LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        WHERE p.post_group = 'NOTICE'
+            AND p.pinned = false
+            <include refid="conditionWithoutPostGroup"/>
+        GROUP BY p.post_idx
+            <include refid="sort"/>
+            <include refid="page"/>
+        )
+    </select>
+
+
+
     <!-- 모든 커뮤니티 게시글 조회 쿼리 -->
     <select id="findAllCommunity" parameterType="Condition" resultMap="community" useCache="false" flushCache="true">
         SELECT
@@ -369,6 +413,7 @@
             LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
             LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
             LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        WHERE p.post_group = 'INQUIRY'
         <include refid="conditionWithoutPostGroup"/>
         GROUP BY p.post_idx
         <include refid="sort"/>
