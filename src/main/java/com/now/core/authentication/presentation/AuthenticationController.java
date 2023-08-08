@@ -3,7 +3,6 @@ package com.now.core.authentication.presentation;
 import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.AuthenticationService;
 import com.now.core.authentication.application.JwtTokenService;
-import com.now.core.authentication.application.TokenBlackList;
 import com.now.core.authentication.application.dto.Token;
 import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.authentication.exception.InvalidTokenException;
@@ -44,8 +43,12 @@ public class AuthenticationController {
         Member authenticatedMember = memberService.validateCredentialsAndRetrieveMember(member);
         Token token = memberService.generateAuthToken(authenticatedMember);
 
-        response.addCookie(CookieUtil.generateHttpOnlyCookie(JwtTokenService.ACCESS_TOKEN_KEY, token.getAccessToken(), true));
-        response.addCookie(CookieUtil.generateHttpOnlyCookie(JwtTokenService.REFRESH_TOKEN_KEY, token.getRefreshToken(), true));
+        response.addCookie(CookieUtil.createCookieWithHttpOnly(JwtTokenService.ACCESS_TOKEN_KEY,
+                                                token.getAccessToken(), true));
+        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
+                                                token.getRefreshToken(), "/api/refresh", true));
+        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
+                                                token.getRefreshToken(), "/api/log-out", true));
 
         return ResponseEntity.ok().body(MemberProfile.from(authenticatedMember));
     }
@@ -58,8 +61,8 @@ public class AuthenticationController {
      */
     @PostMapping("/api/log-out")
     public ResponseEntity<Void> logout(HttpServletResponse response,
-                                       @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken,
-                                       @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
+                       @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken,
+                       @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
         log.debug("logout 핸들러 메서드 호출");
 
         authenticationService.logout(accessToken, refreshToken);
@@ -80,8 +83,8 @@ public class AuthenticationController {
      */
     @PostMapping("/api/refresh")
     public ResponseEntity<HttpHeaders> refresh(HttpServletResponse response,
-                                               @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken,
-                                               @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
+                           @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken,
+                           @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
         log.debug("refresh 핸들러 메서드 호출");
 
         jwtTokenService.validateForRefresh(accessToken, refreshToken);
@@ -89,8 +92,12 @@ public class AuthenticationController {
         authenticationService.logout(accessToken, refreshToken);
 
         Token newTokens = jwtTokenService.refreshTokens(refreshToken);
-        response.addCookie(CookieUtil.generateHttpOnlyCookie(JwtTokenService.ACCESS_TOKEN_KEY, newTokens.getAccessToken(), true));
-        response.addCookie(CookieUtil.generateHttpOnlyCookie(JwtTokenService.REFRESH_TOKEN_KEY, newTokens.getRefreshToken(), true));
+        response.addCookie(CookieUtil.createCookieWithHttpOnly(JwtTokenService.ACCESS_TOKEN_KEY,
+                                                newTokens.getAccessToken(), true));
+        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
+                                                newTokens.getRefreshToken(), "/api/refresh", true));
+        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
+                                                newTokens.getRefreshToken(), "/api/log-out", true));
 
         return ResponseEntity.ok().build();
     }
@@ -101,7 +108,8 @@ public class AuthenticationController {
      * @return ResponseEntity 객체 (HTTP 응답)
      */
     @PostMapping("/api/member/me")
-    public ResponseEntity<MemberProfile> me(@CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = false) String accessToken) {
+    public ResponseEntity<MemberProfile> me(
+                        @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = false) String accessToken) {
         log.debug("me 핸들러 메서드 호출");
 
         authenticationService.isAccessTokenBlacklisted(accessToken);

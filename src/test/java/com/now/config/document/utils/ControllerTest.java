@@ -16,14 +16,8 @@ import com.now.core.comment.application.CommentService;
 import com.now.core.comment.presentation.CommentController;
 import com.now.core.member.application.MemberService;
 import com.now.core.member.presentation.MemberController;
-import com.now.core.post.application.CommunityService;
-import com.now.core.post.application.InquiryService;
-import com.now.core.post.application.NoticeService;
-import com.now.core.post.application.PhotoService;
-import com.now.core.post.presentation.CommunityController;
-import com.now.core.post.presentation.InquiryController;
-import com.now.core.post.presentation.NoticeController;
-import com.now.core.post.presentation.PhotoController;
+import com.now.core.post.application.*;
+import com.now.core.post.presentation.*;
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -39,6 +33,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
         ManagerNoticeController.class,
         AuthenticationController.class,
         MemberController.class,
+        PostController.class,
         NoticeController.class,
         CommunityController.class,
         PhotoController.class,
@@ -55,6 +50,9 @@ public abstract class ControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
+
+    @MockBean
+    protected PostService postService;
 
     @MockBean
     protected ManagerNoticeService managerNoticeService;

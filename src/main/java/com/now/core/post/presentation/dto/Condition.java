@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.post.presentation.dto.constants.Sort;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
@@ -16,6 +17,7 @@ import javax.validation.constraints.Size;
  * 조건 정보를 담는 데이터 전송 객체
  */
 @Data
+@Builder
 public class Condition {
 
     @Nullable

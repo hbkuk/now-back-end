@@ -31,6 +31,7 @@ import static com.now.config.fixtures.post.CommunityFixture.SAMPLE_NICKNAME_1;
 import static com.now.config.fixtures.post.CommunityFixture.SAMPLE_NICKNAME_2;
 import static com.now.config.fixtures.post.PhotoFixture.createPhoto;
 import static com.now.config.fixtures.post.PhotoFixture.createPhotoForSave;
+import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
@@ -44,56 +45,77 @@ class PhotoControllerTest extends RestDocsTestSupport {
     @DisplayName("모든 사진 게시글 조회")
     void getAllPhotos() throws Exception {
         // given
-        Condition condition = new Condition(5);
-        given(photoService.getAllPhotos(condition))
+        Condition condition = createCondition(Category.DAILY_LIFE);
+        given(photoService.getAllPhotos(condition.updatePage()))
                 .willReturn(List.of(
                         createPhoto(1L, SAMPLE_NICKNAME_1, PhotoFixture.SAMPLE_TITLE_1, PhotoFixture.SAMPLE_CONTENT_1, createAttachments(), createComments()),
                         createPhoto(2L, SAMPLE_NICKNAME_2, PhotoFixture.SAMPLE_TITLE_2, PhotoFixture.SAMPLE_CONTENT_2, createAttachments(), createComments())
                 ));
+        given(postService.getTotalPostCount(condition)).willReturn(2L);
 
         // when, then
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.get("/api/photos")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .param("maxNumberOfPosts", String.valueOf(condition.getMaxNumberOfPosts())))
+                                .param("startDate", condition.getStartDate())
+                                .param("endDate", condition.getEndDate())
+                                .param("category", condition.getCategory().name())
+                                .param("keyword", condition.getKeyword())
+                                .param("sort", condition.getSort().name())
+                                .param("maxNumberOfPosts", String.valueOf(condition.getMaxNumberOfPosts()))
+                                .param("pageNo", String.valueOf(condition.getPageNo())))
                         .andExpect(status().isOk());
 
         // then
         resultActions
                 .andDo(restDocs.document(
                         requestParameters(
-                                parameterWithName("maxNumberOfPosts").description("페이지 개수 제한").optional()
+                                parameterWithName("startDate").description("시작 날짜").optional(),
+                                parameterWithName("endDate").description("종료 날짜").optional(),
+                                parameterWithName("category").description("카테고리").optional(),
+                                parameterWithName("keyword").description("키워드").optional(),
+                                parameterWithName("sort").description("정렬").optional(),
+                                parameterWithName("maxNumberOfPosts").description("페이지 개수 제한").optional(),
+                                parameterWithName("pageNo").description("페이지 번호").optional()
                         ),
                         responseFields(
-                                fieldWithPath("[]").type(ARRAY).description("사진 게시글 목록"),
-                                fieldWithPath("[].postGroup").type(STRING).description("게시물 그룹 코드"),
-                                fieldWithPath("[].postIdx").type(NUMBER).description("게시글 ID"),
-                                fieldWithPath("[].title").type(STRING).description("제목"),
-                                fieldWithPath("[].memberNickname").type(STRING).description("회원 닉네임"),
-                                fieldWithPath("[].regDate").type(STRING).description("등록일"),
-                                fieldWithPath("[].modDate").type(STRING).optional().description("수정일(null 가능)"),
-                                fieldWithPath("[].content").type(STRING).description("내용"),
-                                fieldWithPath("[].viewCount").type(NUMBER).description("조회수"),
-                                fieldWithPath("[].likeCount").type(NUMBER).description("좋아요 수"),
-                                fieldWithPath("[].dislikeCount").type(NUMBER).description("싫어요 수"),
-                                fieldWithPath("[].category").type(STRING).description("카테고리"),
-                                fieldWithPath("[].thumbnailAttachmentIdx").type(NUMBER).description("대표 이미지로 설정된 첨부파일 ID"),
+                                fieldWithPath("photos[]").type(ARRAY).description("사진 게시글 목록"),
+                                fieldWithPath("photos[].postGroup").type(STRING).description("게시물 그룹 코드"),
+                                fieldWithPath("photos[].postIdx").type(NUMBER).description("게시글 ID"),
+                                fieldWithPath("photos[].title").type(STRING).description("제목"),
+                                fieldWithPath("photos[].memberNickname").type(STRING).description("회원 닉네임"),
+                                fieldWithPath("photos[].regDate").type(STRING).description("등록일"),
+                                fieldWithPath("photos[].modDate").type(STRING).optional().description("수정일(null 가능)"),
+                                fieldWithPath("photos[].content").type(STRING).description("내용"),
+                                fieldWithPath("photos[].viewCount").type(NUMBER).description("조회수"),
+                                fieldWithPath("photos[].likeCount").type(NUMBER).description("좋아요 수"),
+                                fieldWithPath("photos[].dislikeCount").type(NUMBER).description("싫어요 수"),
+                                fieldWithPath("photos[].category").type(STRING).description("카테고리"),
+                                fieldWithPath("photos[].thumbnailAttachmentIdx").type(NUMBER).description("대표 이미지로 설정된 첨부파일 ID"),
 
-                                fieldWithPath("[].attachments").type(ARRAY).optional().description("첨부파일 목록"),
-                                fieldWithPath("[].attachments[].attachmentIdx").type(NUMBER).optional().description("첨부파일 ID"),
-                                fieldWithPath("[].attachments[].originalAttachmentName").type(STRING).optional().description("원본 첨부파일 이름"),
-                                fieldWithPath("[].attachments[].savedAttachmentName").type(STRING).optional().description("저장된 첨부파일 이름"),
-                                fieldWithPath("[].attachments[].attachmentExtension").type(STRING).optional().description("첨부파일 확장자"),
-                                fieldWithPath("[].attachments[].attachmentSize").type(NUMBER).optional().description("첨부파일 크기"),
-                                fieldWithPath("[].attachments[].postIdx").type(NUMBER).optional().description("원글의 ID"),
+                                fieldWithPath("photos[].attachments").type(ARRAY).optional().description("첨부파일 목록"),
+                                fieldWithPath("photos[].attachments[].attachmentIdx").type(NUMBER).optional().description("첨부파일 ID"),
+                                fieldWithPath("photos[].attachments[].originalAttachmentName").type(STRING).optional().description("원본 첨부파일 이름"),
+                                fieldWithPath("photos[].attachments[].savedAttachmentName").type(STRING).optional().description("저장된 첨부파일 이름"),
+                                fieldWithPath("photos[].attachments[].attachmentExtension").type(STRING).optional().description("첨부파일 확장자"),
+                                fieldWithPath("photos[].attachments[].attachmentSize").type(NUMBER).optional().description("첨부파일 크기"),
+                                fieldWithPath("photos[].attachments[].postIdx").type(NUMBER).optional().description("원글의 ID"),
 
-                                fieldWithPath("[].comments").type(ARRAY).optional().description("댓글 목록"),
-                                fieldWithPath("[].comments[].commentIdx").type(NUMBER).optional().description("댓글 ID"),
-                                fieldWithPath("[].comments[].memberNickname").type(STRING).optional().description("회원 닉네임"),
-                                fieldWithPath("[].comments[].managerNickname").type(STRING).optional().description("매니저 닉네임"),
-                                fieldWithPath("[].comments[].regDate").type(STRING).optional().description("댓글 등록일"),
-                                fieldWithPath("[].comments[].content").type(STRING).optional().description("댓글 내용"),
-                                fieldWithPath("[].comments[].postIdx").type(NUMBER).optional().description("원글의 ID")
+                                fieldWithPath("photos[].comments").type(ARRAY).optional().description("댓글 목록"),
+                                fieldWithPath("photos[].comments[].commentIdx").type(NUMBER).optional().description("댓글 ID"),
+                                fieldWithPath("photos[].comments[].memberNickname").type(STRING).optional().description("회원 닉네임"),
+                                fieldWithPath("photos[].comments[].managerNickname").type(STRING).optional().description("매니저 닉네임"),
+                                fieldWithPath("photos[].comments[].regDate").type(STRING).optional().description("댓글 등록일"),
+                                fieldWithPath("photos[].comments[].content").type(STRING).optional().description("댓글 내용"),
+                                fieldWithPath("photos[].comments[].postIdx").type(NUMBER).optional().description("원글의 ID"),
+
+                                fieldWithPath("page.blockPerPage").type(NUMBER).description("블록당 페이지 수"),
+                                fieldWithPath("page.recordsPerPage").type(NUMBER).description("페이지당 레코드 수"),
+                                fieldWithPath("page.pageNo").type(NUMBER).description("페이지 번호"),
+                                fieldWithPath("page.recordStartIndex").type(NUMBER).description("레코드 시작 인덱스"),
+                                fieldWithPath("page.maxPage").type(NUMBER).description("최대 페이지 수"),
+                                fieldWithPath("page.startPage").type(NUMBER).description("시작 페이지"),
+                                fieldWithPath("page.endPage").type(NUMBER).description("종료 페이지")
                         )));
     }
 

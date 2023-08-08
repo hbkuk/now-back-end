@@ -3,33 +3,45 @@ package com.now.core.authentication.application.util;
 import javax.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class CookieUtil {
 
     /**
-     * HttpOnly 설정을 포함한 HttpOnly 쿠키를 생성
+     * HttpOnly 설정을 포함한 쿠키 생성
      *
      * @param key            쿠키의 이름 (key)
      * @param value          쿠키의 값 (value)
-     * @param httpOnlySetting HttpOnly 설정 여부. true인 경우 HttpOnly로 설정됩니다.
+     * @param httpOnlySetting HttpOnly 설정 여부. true인 경우 HttpOnly로 설정
      * @return 생성된 HttpOnly 쿠키 객체
      */
-    public static Cookie generateHttpOnlyCookie(String key, String value, boolean httpOnlySetting) {
-
-        Cookie cookie = null;
-        try {
-            cookie = new Cookie(key, URLEncoder.encode( value, "UTF-8" ));
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
+    public static Cookie createCookieWithHttpOnly(String key, String value, boolean httpOnlySetting) {
+        Cookie cookie = new Cookie(key, URLEncoder.encode( value, StandardCharsets.UTF_8));
 
         cookie.setHttpOnly(httpOnlySetting);
         return cookie;
     }
 
+
     /**
-     * 쿠키를 삭제
+     * HttpOnly 설정과 경로 설정을 포함한 쿠키 생성
+     *
+     * @param key              쿠키의 이름 (key)
+     * @param value            쿠키의 값 (value)
+     * @param path             쿠키의 경로 (path)
+     * @param httpOnlySetting  HttpOnly 설정 여부. true인 경우 HttpOnly로 설정
+     * @return 생성된 쿠키 객체
+     */
+    public static Cookie createCookieWithPathAndHttpOnly(String key, String value, String path, boolean httpOnlySetting) {
+        Cookie cookie = new Cookie(key, URLEncoder.encode(value, StandardCharsets.UTF_8));
+
+        cookie.setPath(path);
+        cookie.setHttpOnly(httpOnlySetting);
+        return cookie;
+    }
+    /**
+     * 쿠키 삭제
      *
      * @param key 쿠키의 이름 (key)
      * @return 삭제되도록 만료 시간이 설정된 쿠키 객체
