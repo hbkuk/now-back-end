@@ -2,7 +2,7 @@
 
 ![home](https://github.com/hbkuk/now-back-end/assets/109803585/5e96cfb3-70b1-4273-8443-f2fd836185a8)
 
-- **NOW**는 공지사항, 커뮤니티, 사진 및 문의 게시판을 통해 정보를 공유 및 소통하는 플랫폼
+- **NOW**는 공지사항, 커뮤니티, 사진 및 문의 게시판을 통해 정보를 공유 및 소통하는 플랫폼입니다.
 
 <br>
 
@@ -17,6 +17,7 @@
 - [SpringBoot에서 존재하지 않는 API 요청의 응답](https://starting-coding.tistory.com/654)
 - [SpringBoot 환경에서의 사용자 정의 예외 처리](https://starting-coding.tistory.com/652)
 - [빈번하게 변경되지 않는 게시글 카테고리를 Enum으로 관리](https://starting-coding.tistory.com/659)
+- [토큰 기반 인증을 선택한 이유](https://starting-coding.tistory.com/664)
 
 #### 클린코드
 - [빌더 패턴(Builder Pattern)](https://starting-coding.tistory.com/638)
