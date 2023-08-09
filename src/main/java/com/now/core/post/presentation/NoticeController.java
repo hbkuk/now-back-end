@@ -36,7 +36,7 @@ public class NoticeController {
      * @return 모든 공지 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/notices")
-    public ResponseEntity<NoticesResponse> retrieveAllNotices(@Valid @ModelAttribute Condition condition) {
+    public ResponseEntity<NoticesResponse> retrieveAllNotices(@Valid Condition condition) {
         NoticesResponse noticesResponse = NoticesResponse.builder()
                 .notices(noticeService.getAllNoticesWithPin(condition.updatePage()))
                 .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))

@@ -10,7 +10,7 @@ import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
-import com.now.core.post.domain.Community;
+import com.now.core.post.domain.Photo;
 import com.now.core.post.domain.PostRepository;
 import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
@@ -25,30 +25,34 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 
 import static com.now.config.fixtures.member.MemberFixture.createMember;
-import static com.now.config.fixtures.post.CommunityFixture.createCommunity;
+import static com.now.config.fixtures.post.PhotoFixture.createPhoto;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = NowApplication.class)
-@DisplayName("커뮤니티 서비스 객체는")
-class CommunityServiceTest {
+@DisplayName("사진 서비스 객체는")
+class PhotoServiceTest {
 
-    @Autowired private CommunityService communityService;
-    @MockBean private PostRepository postRepository;
-    @MockBean private MemberRepository memberRepository;
-    @MockBean private CommentRepository commentRepository;
+    @Autowired
+    private PhotoService photoService;
+    @MockBean
+    private PostRepository postRepository;
+    @MockBean
+    private MemberRepository memberRepository;
+    @MockBean
+    private CommentRepository commentRepository;
 
     @Test
-    @DisplayName("커뮤니티 게시글을 찾을때 게시물 번호에 해당하는 게시물이 없다면 InvalidPostException 을 던진다")
-    void getCommunity() {
+    @DisplayName("사진 게시글을 찾을때 게시물 번호에 해당하는 게시물이 없다면 InvalidPostException 을 던진다")
+    void getPhoto() {
         Long postIdx = 1L;
-        when(postRepository.findCommunity(postIdx)).thenReturn(null);
+        when(postRepository.findPhoto(postIdx)).thenReturn(null);
 
         assertThatExceptionOfType(InvalidPostException.class)
                 .isThrownBy(() -> {
-                    communityService.getCommunity(postIdx);
+                    photoService.getPhoto(postIdx);
                 })
                 .withMessage(ErrorType.NOT_FOUND_POST.getMessage());
     }
@@ -62,12 +66,12 @@ class CommunityServiceTest {
         void hasUpdateAccess() {
             Long postIdx = 1L;
             Member member = createMember("tester1");
-            Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
+            Photo photo = createPhoto("tester1", Category.ARTWORK);
 
-            when(postRepository.findCommunity(postIdx)).thenReturn(community);
+            when(postRepository.findPhoto(postIdx)).thenReturn(photo);
             when(memberRepository.findById("tester1")).thenReturn(member);
 
-            communityService.hasUpdateAccess(postIdx, "tester1");
+            photoService.hasUpdateAccess(postIdx, "tester1");
         }
 
         @Test
@@ -75,14 +79,14 @@ class CommunityServiceTest {
         void hasUpdateAccess_throw_CannotUpdatePostException() {
             Long postIdx = 1L;
             Member member = createMember("tester2");
-            Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
+            Photo photo = createPhoto("tester1", Category.ARTWORK);
 
-            when(postRepository.findCommunity(anyLong())).thenReturn(community);
+            when(postRepository.findPhoto(anyLong())).thenReturn(photo);
             when(memberRepository.findById(anyString())).thenReturn(member);
 
             assertThatExceptionOfType(CannotUpdatePostException.class)
                     .isThrownBy(() -> {
-                        communityService.hasUpdateAccess(postIdx, "tester2");
+                        photoService.hasUpdateAccess(postIdx, "tester2");
                     })
                     .withMessage(ErrorType.CAN_NOT_UPDATE_OTHER_MEMBER_POST.getMessage());
         }
@@ -97,12 +101,12 @@ class CommunityServiceTest {
         void hasDeleteAccess() {
             Long postIdx = 1L;
             Member member = createMember("tester1");
-            Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
+            Photo photo = createPhoto("tester1", Category.ARTWORK);
 
-            when(postRepository.findCommunity(postIdx)).thenReturn(community);
+            when(postRepository.findPhoto(postIdx)).thenReturn(photo);
             when(memberRepository.findById("tester1")).thenReturn(member);
 
-            communityService.hasDeleteAccess(postIdx, "tester1");
+            photoService.hasDeleteAccess(postIdx, "tester1");
         }
 
         @Test
@@ -110,14 +114,14 @@ class CommunityServiceTest {
         void hasDeleteAccess_throw_CannotDeletePostException() {
             Long postIdx = 1L;
             Member member = createMember("tester2");
-            Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
+            Photo photo = createPhoto("tester1", Category.ARTWORK);
 
-            when(postRepository.findCommunity(anyLong())).thenReturn(community);
+            when(postRepository.findPhoto(anyLong())).thenReturn(photo);
             when(memberRepository.findById(anyString())).thenReturn(member);
 
             assertThatExceptionOfType(CannotDeletePostException.class)
                     .isThrownBy(() -> {
-                        communityService.hasDeleteAccess(postIdx, "tester2");
+                        photoService.hasDeleteAccess(postIdx, "tester2");
                     })
                     .withMessage(ErrorType.CAN_NOT_DELETE_OTHER_MEMBER_POST.getMessage());
         }
@@ -127,16 +131,16 @@ class CommunityServiceTest {
         void hasDeleteAccess_throw_CannotDeletePostException_2() {
             Long postIdx = 1L;
             Member member = createMember("tester1");
-            Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
+            Photo photo = createPhoto("tester1", Category.ARTWORK);
             List<Comment> comments = List.of(CommentFixture.createCommentByMemberId("tester3"));
 
-            when(postRepository.findCommunity(anyLong())).thenReturn(community);
+            when(postRepository.findPhoto(anyLong())).thenReturn(photo);
             when(memberRepository.findById(anyString())).thenReturn(member);
             when(commentRepository.findAllByPostIdx(anyLong())).thenReturn(comments);
 
             assertThatExceptionOfType(CannotDeletePostException.class)
                     .isThrownBy(() -> {
-                        communityService.hasDeleteAccess(postIdx, "tester1");
+                        photoService.hasDeleteAccess(postIdx, "tester1");
                     })
                     .withMessage(ErrorType.CAN_NOT_DELETE_POST_WITH_OTHER_MEMBER_COMMENTS.getMessage());
         }
@@ -144,47 +148,47 @@ class CommunityServiceTest {
 
     @DisplayName("게시글 등록 메서드는")
     @Nested
-    class RegisterCommunity_of {
+    class RegisterPhoto_of {
 
         @Test
         @DisplayName("회원 정보가 있어야하고, 허용되는 카테고리여야 한다")
-        void registerCommunity() {
+        void registerPhoto() {
             Long postIdx = 1L;
             Member member = createMember("tester1");
-            Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
+            Photo photo = createPhoto("tester1", Category.ARTWORK);
 
             when(memberRepository.findById("tester1")).thenReturn(member);
 
-            communityService.registerCommunity(community);
+            photoService.registerPhoto(photo);
         }
 
         @Test
         @DisplayName("회원 정보가 없다면 InvalidMemberException 을 던진다")
-        void registerCommunity_throw_eInvalidMemberException() {
+        void registerPhoto_throw_eInvalidMemberException() {
             Long postIdx = 1L;
-            Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
+            Photo photo = createPhoto("tester1", Category.ARTWORK);
 
             when(memberRepository.findById("tester1")).thenReturn(null);
 
             assertThatExceptionOfType(InvalidMemberException.class)
                     .isThrownBy(() -> {
-                        communityService.registerCommunity(community);
+                        photoService.registerPhoto(photo);
                     })
                     .withMessage(ErrorType.NOT_FOUND_MEMBER.getMessage());
         }
 
         @Test
         @DisplayName("허용되지 않는 카테고리일 경우 InvalidCategoryException 을 던진다")
-        void registerCommunity_throw_InvalidCategoryException() {
+        void registerPhoto_throw_InvalidCategoryException() {
             Long postIdx = 1L;
             Member member = createMember("tester1");
-            Community community = createCommunity("tester1", Category.NEWS);
+            Photo photo = createPhoto("tester1", Category.NEWS);
 
             when(memberRepository.findById("tester1")).thenReturn(member);
 
             assertThatExceptionOfType(InvalidCategoryException.class)
                     .isThrownBy(() -> {
-                        communityService.registerCommunity(community);
+                        photoService.registerPhoto(photo);
                     })
                     .withMessage(ErrorType.INVALID_CATEGORY.getMessage());
         }
@@ -192,47 +196,47 @@ class CommunityServiceTest {
 
     @DisplayName("게시글 수정 메서드는")
     @Nested
-    class UpdateCommunity_of {
+    class UpdatePhoto_of {
 
         @Test
         @DisplayName("회원 정보가 있어야하고, 허용되는 카테고리여야 한다")
-        void registerCommunity() {
+        void registerPhoto() {
             Long postIdx = 1L;
             Member member = createMember("tester1");
-            Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
+            Photo photo = createPhoto("tester1", Category.ARTWORK);
 
             when(memberRepository.findById("tester1")).thenReturn(member);
 
-            communityService.updateCommunity(community);
+            photoService.updatePhoto(photo);
         }
 
         @Test
         @DisplayName("회원 정보가 없다면 InvalidMemberException 을 던진다")
-        void registerCommunity_throw_eInvalidMemberException() {
+        void registerPhoto_throw_eInvalidMemberException() {
             Long postIdx = 1L;
-            Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
+            Photo photo = createPhoto("tester1", Category.ARTWORK);
 
             when(memberRepository.findById("tester1")).thenReturn(null);
 
             assertThatExceptionOfType(InvalidMemberException.class)
                     .isThrownBy(() -> {
-                        communityService.updateCommunity(community);
+                        photoService.updatePhoto(photo);
                     })
                     .withMessage(ErrorType.NOT_FOUND_MEMBER.getMessage());
         }
 
         @Test
         @DisplayName("허용되지 않는 카테고리일 경우 InvalidCategoryException 을 던진다")
-        void registerCommunity_throw_InvalidCategoryException() {
+        void registerPhoto_throw_InvalidCategoryException() {
             Long postIdx = 1L;
             Member member = createMember("tester1");
-            Community community = createCommunity("tester1", Category.NEWS);
+            Photo photo = createPhoto("tester1", Category.NEWS);
 
             when(memberRepository.findById("tester1")).thenReturn(member);
 
             assertThatExceptionOfType(InvalidCategoryException.class)
                     .isThrownBy(() -> {
-                        communityService.updateCommunity(community);
+                        photoService.updatePhoto(photo);
                     })
                     .withMessage(ErrorType.INVALID_CATEGORY.getMessage());
         }

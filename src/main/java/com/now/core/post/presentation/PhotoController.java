@@ -46,7 +46,7 @@ public class PhotoController {
      * @return 모든 사진 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/photos")
-    public ResponseEntity<PhotosResponse> getAllPhotos(@Valid @ModelAttribute Condition condition) {
+    public ResponseEntity<PhotosResponse> getAllPhotos(@Valid Condition condition) {
         PhotosResponse photosResponse = PhotosResponse.builder()
                 .photos(photoService.getAllPhotos(condition.updatePage()))
                 .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))

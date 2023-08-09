@@ -2,6 +2,7 @@ package com.now.core.post.application;
 
 import com.now.common.exception.ErrorType;
 import com.now.core.category.domain.constants.PostGroup;
+import com.now.core.category.exception.InvalidCategoryException;
 import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
@@ -49,7 +50,7 @@ public class PhotoService {
         Member member = getMember(photo.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.PHOTO, photo.getCategory())) {
-            throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
+            throw new InvalidCategoryException(ErrorType.INVALID_CATEGORY);
         }
 
         postRepository.savePhoto(photo.updateMemberIdx(member.getMemberIdx()));
@@ -64,7 +65,7 @@ public class PhotoService {
         Member member = getMember(photo.getMemberId());
 
         if (!PostGroup.isCategoryInGroup(PostGroup.PHOTO, photo.getCategory())) {
-            throw new CannotUpdatePostException(ErrorType.CAN_NOT_UPDATE_POST);
+            throw new InvalidCategoryException(ErrorType.INVALID_CATEGORY);
         }
 
         postRepository.updatePhoto(photo.updateMemberIdx(member.getMemberIdx()));

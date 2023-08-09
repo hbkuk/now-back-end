@@ -1,6 +1,7 @@
 package com.now.core.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.admin.manager.domain.Manager;
@@ -25,47 +26,44 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Notice {
 
-    // TODO: 게시글 등록, 수정 객체 별도 관리
-
     private final PostGroup postGroup = PostGroup.NOTICE;
 
-    private Long postIdx; // 공지 게시글의 고유 식별자
+    private Long postIdx;
 
     @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "{post.category.notnull}")
-    private final Category category; // 카테고리
-
-    private String managerNickname; // 매니저 닉네임
+    private final Category category;
 
     @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "{post.title.notnull}" )
     @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 100, message = "{post.title.size}")
-    private final String title; // 제목
+    private final String title;
 
     @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "{post.content.notnull}" )
     @Size(groups = {PostValidationGroup.saveNotice.class}, min = 1, max = 2000, message = "{post.content.size}")
-    private final String content; // 내용
+    private final String content;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime regDate; // 등록일자
+    private final LocalDateTime regDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime modDate; // 수정일자
+    private final LocalDateTime modDate;
 
-    private final Integer viewCount; // 조회수
+    private final Integer viewCount;
 
-    private final Integer likeCount; // 좋아요 수
+    private final Integer likeCount;
 
-    private final Integer dislikeCount; // 싫어요 수
+    private final Integer dislikeCount;
 
-    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "{post.pinned.notnull}")  // 상단 고정 여부 (true: 상단 고정)
+    @NotNull(groups = {PostValidationGroup.saveNotice.class}, message = "{post.pinned.notnull}")
     private final Boolean pinned;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private final List<Comment> comments; // 댓글 (comment 테이블에서 가져옴)
+    private final List<Comment> comments;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // 매니저 고유 식별자
+    private String managerNickname;
+
+    @JsonIgnore
     private Integer managerIdx;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // 매니저 아이디
+    @JsonIgnore
     private String managerId;
 
     /**

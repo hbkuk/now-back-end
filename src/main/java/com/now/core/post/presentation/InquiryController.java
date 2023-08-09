@@ -40,7 +40,7 @@ public class InquiryController {
      * @return 모든 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/inquiries")
-    public ResponseEntity<InquiriesResponse> getAllInquiries(@Valid @ModelAttribute Condition condition) {
+    public ResponseEntity<InquiriesResponse> getAllInquiries(@Valid Condition condition) {
         InquiriesResponse inquiriesResponse = InquiriesResponse.builder()
                 .inquiries(inquiryService.getAllInquiries(condition.updatePage()))
                 .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))

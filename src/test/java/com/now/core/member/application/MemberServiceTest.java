@@ -27,6 +27,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest(classes = NowApplication.class)
+@DisplayName("회원 서비스 객체")
 public class MemberServiceTest {
 
     @Autowired private MemberService memberService;

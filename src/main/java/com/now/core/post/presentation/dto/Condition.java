@@ -3,15 +3,13 @@ package com.now.core.post.presentation.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
+import com.now.core.post.domain.PostValidationGroup;
 import com.now.core.post.presentation.dto.constants.Sort;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 /**
  * 조건 정보를 담는 데이터 전송 객체
@@ -38,16 +36,17 @@ public class Condition {
     @Size(max = 20, message = "{condition.keyword.size}")
     private String keyword; // 키워드
 
-    @Nullable
+    @NotNull(message = "{condition.sort.notnull}")
     private Sort sort; // 정렬
 
     @Nullable
     @Max(value = 50, message = "{condition.maxNum.size}")
-    private Integer maxNumberOfPosts = 10; // 게시물 개수 제한 기본값은 10으로 설정
+    @Max(value = 5, groups = PostValidationGroup.getAllPosts.class, message = "condition.posts.maxNum.size")
+    private Integer maxNumberOfPosts;
 
     @Nullable
     @Min(value = 1, message = "{condition.pageNo.size}")
-    private Integer pageNo = 1; // 페이지 번호 기본값은 1로 설정
+    private Integer pageNo;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Page page; // 페이지 객체
@@ -58,6 +57,13 @@ public class Condition {
      * @return 업데이트된 Condition 객체
      */
     public Condition updatePage() {
+        if( this.maxNumberOfPosts == null) {
+            this.maxNumberOfPosts = 10;
+        }
+        if(this.pageNo == null) {
+            this.pageNo = 1;
+        }
+
         this.page = Page.of(this.maxNumberOfPosts, this.pageNo);
         return this;
     }

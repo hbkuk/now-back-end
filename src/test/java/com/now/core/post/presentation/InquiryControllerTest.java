@@ -32,6 +32,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@DisplayName("문의 컨트롤러는")
 class InquiryControllerTest extends RestDocsTestSupport {
 
     @Test

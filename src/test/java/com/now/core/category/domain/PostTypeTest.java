@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@DisplayName("게시글 타입은")
 public class PostTypeTest {
 
     @Test

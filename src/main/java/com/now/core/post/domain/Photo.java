@@ -1,6 +1,7 @@
 package com.now.core.post.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.common.exception.ErrorType;
@@ -29,51 +30,54 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Photo {
 
-    // TODO: 첨부파일 설정에 대한 로직
-    // TODO: 게시글 등록, 수정 객체 별도 관리
-
     private final PostGroup postGroup = PostGroup.PHOTO;
 
-    private Long postIdx;   // 게시글의 고유 식별자
+    private Long postIdx;
 
     @NotNull(groups = {PostValidationGroup.savePhoto.class}, message = "{post.category.notnull}")
-    private final Category category; // 카테고리
-
-    private String memberNickname;  // 회원의 닉네임
-
-    private String managerNickname;  // 매니저 닉네임
+    private final Category category;
 
     @NotNull(groups = {PostValidationGroup.savePhoto.class}, message = "{post.title.notnull}" )
     @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 100, message = "{post.title.size}")
-    private final String title; // 게시글의 제목
+    private final String title;
 
     @NotNull(groups = {PostValidationGroup.savePhoto.class}, message = "{post.content.notnull}" )
     @Size(groups = {PostValidationGroup.savePhoto.class}, min = 1, max = 2000, message = "{post.content.size}")
-    private final String content;   // 게시글의 내용
+    private final String content;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime regDate;    // 게시글 등록일자
+    private final LocalDateTime regDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private final LocalDateTime modDate;    // 게시글 수정일자
+    private final LocalDateTime modDate;
 
-    private final Integer viewCount;    // 게시글의 조회수
+    private final Integer viewCount;
 
-    private final Integer likeCount;    // 게시글의 좋아요 수
+    private final Integer likeCount;
 
-    private final Integer dislikeCount; // 게시글 싫어요 수
+    private final Integer dislikeCount;
 
-    private final List<AttachmentResponse> attachments; // 파일 (attachment 테이블에서 가져옴)
+    private final List<AttachmentResponse> attachments;
 
-    private final List<Comment> comments;   // 댓글 (comment 테이블에서 가져옴)
+    private final List<Comment> comments;
 
-    private final Long thumbnailAttachmentIdx;  // 대표 사진으로 설정된 파일의 고유 식별자
+    private final Long thumbnailAttachmentIdx;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private Long memberIdx; // 회원의 고유 식별자
+    private String memberNickname;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String memberId;    // 회원의 아이디
+    @JsonIgnore
+    private Long memberIdx;
+
+    @JsonIgnore
+    private String memberId;
+
+    private String managerNickname;
+
+    @JsonIgnore
+    private Long managerIdx;
+
+    @JsonIgnore
+    private String managerId;
 
     /**
      * 회원의 식별자를 업데이트

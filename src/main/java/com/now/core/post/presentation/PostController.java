@@ -1,12 +1,14 @@
 package com.now.core.post.presentation;
 
 import com.now.core.post.application.PostService;
+import com.now.core.post.domain.PostValidationGroup;
 import com.now.core.post.presentation.dto.Condition;
 import com.now.core.post.presentation.dto.PostsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +28,7 @@ public class PostController {
      * @return 모든 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/posts")
-    public ResponseEntity<PostsResponse> getAllPosts(@Valid @ModelAttribute("Condition")Condition condition) {
+    public ResponseEntity<PostsResponse> getAllPosts(@Validated(PostValidationGroup.getAllPosts.class) Condition condition) {
         return new ResponseEntity<>(PostsResponse.convertToPostsResponse(postService.getAllPosts(condition)), HttpStatus.OK);
     }
 }

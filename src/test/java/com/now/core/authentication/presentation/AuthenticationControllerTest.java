@@ -24,6 +24,7 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.responseH
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@DisplayName("인증 컨트롤러는")
 class AuthenticationControllerTest extends RestDocsTestSupport {
 
     @Test

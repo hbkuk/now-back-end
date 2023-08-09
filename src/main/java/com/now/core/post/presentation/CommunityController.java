@@ -46,7 +46,7 @@ public class CommunityController {
      * @return 모든 커뮤니티 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/communities")
-    public ResponseEntity<CommunitiesResponse> getAllCommunities(@Valid @ModelAttribute Condition condition) {
+    public ResponseEntity<CommunitiesResponse> getAllCommunities(@Valid Condition condition) {
         CommunitiesResponse communitiesResponse = CommunitiesResponse.builder()
                 .communities(communityService.getAllCommunities(condition.updatePage()))
                 .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))

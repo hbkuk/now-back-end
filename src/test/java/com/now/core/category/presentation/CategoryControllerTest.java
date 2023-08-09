@@ -18,6 +18,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@DisplayName("카테고리 컨트롤러는")
 class CategoryControllerTest extends RestDocsTestSupport {
 
     @Test

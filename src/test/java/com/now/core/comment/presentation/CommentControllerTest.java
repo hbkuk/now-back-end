@@ -26,6 +26,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 
+@DisplayName("댓글 컨트롤러는")
 class CommentControllerTest extends RestDocsTestSupport {
 
     @Test

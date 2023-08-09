@@ -9,6 +9,8 @@ import org.springframework.validation.annotation.Validated;
  */
 public interface PostValidationGroup {
 
+    interface getAllPosts {}
+
     interface saveNotice {}
 
     interface saveCommunity {}

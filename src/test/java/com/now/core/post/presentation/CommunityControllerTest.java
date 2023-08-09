@@ -40,6 +40,7 @@ import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@DisplayName("커뮤니티 컨트롤러는")
 class CommunityControllerTest extends RestDocsTestSupport {
 
     @Test

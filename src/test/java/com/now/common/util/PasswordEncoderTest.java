@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@DisplayName("Password Encoder 객체")
 public class PasswordEncoderTest {
 
     @Autowired
