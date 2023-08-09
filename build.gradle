@@ -68,6 +68,10 @@ dependencies {
     asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    implementation 'com.slack.api:slack-api-client:1.29.0'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 ext {
