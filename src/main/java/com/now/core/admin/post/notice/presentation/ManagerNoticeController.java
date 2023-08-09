@@ -31,8 +31,6 @@ public class ManagerNoticeController {
     @PostMapping("/api/manager/notices")
     public ResponseEntity<Void> registerNotice(@RequestAttribute("id") String managerId,
                                                @RequestBody @Validated(PostValidationGroup.saveNotice.class) Notice notice) {
-        log.debug("registerNotice 호출, managerId : {}, notice : {}", managerId, notice);
-
         managerNoticeService.registerNotice(notice.updateManagerId(managerId));
         return ResponseEntity.created(URI.create("/api/notice/" + notice.getPostIdx())).build();
     }
@@ -46,7 +44,6 @@ public class ManagerNoticeController {
     @GetMapping("/api/manager/notices/{postIdx}/edit")
     public ResponseEntity<Notice> getEditNotice(@PathVariable("postIdx") Long postIdx,
                                                 @RequestAttribute("id") String managerId) {
-        log.debug("getEditNotice 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(managerNoticeService.getEditNotice(postIdx, managerId));
     }
 
@@ -63,8 +60,6 @@ public class ManagerNoticeController {
     public ResponseEntity<Void> updateNotice(@PathVariable("postIdx") Long postIdx,
                                              @RequestAttribute("id") String managerId,
                                              @RequestBody @Validated(PostValidationGroup.saveNotice.class) Notice updatedNotice) {
-        log.debug("updateNotice 호출,  Updated Notice : {}", updatedNotice);
-
         managerNoticeService.updateNotice(updatedNotice.updatePostIdx(postIdx).updateManagerId(managerId));
         return ResponseEntity.created(URI.create("/api/notice/" + updatedNotice.getPostIdx())).build();
     }
@@ -79,8 +74,6 @@ public class ManagerNoticeController {
     @DeleteMapping("/api/manager/notices/{postIdx}")
     public ResponseEntity<Void> deleteNotice(@PathVariable("postIdx") Long postIdx,
                                              @RequestAttribute("id") String managerId) {
-        log.debug("deleteNotice 호출");
-
         managerNoticeService.deleteNotice(postIdx, managerId);
         return ResponseEntity.noContent().build();
     }

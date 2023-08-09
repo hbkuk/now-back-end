@@ -33,15 +33,10 @@ public class AttachmentController {
      */
     @GetMapping("/attachments/{attachmentIdx}")
     public ResponseEntity<byte[]> serveDownloadFile(@PathVariable("attachmentIdx") Long attachmentIdx) {
-        log.debug("serveDownloadFile 호출 -> 파일 번호 : {}", attachmentIdx);
-
-        // 1. 파일 확인
         AttachmentResponse attachment = attachmentService.getAttachment(attachmentIdx);
 
-        // 2. 파일을 바이트 배열로 변환
         byte[] attachmentContent = AttachmentUtils.convertByteArray(attachment.getSavedAttachmentName());
 
-        // 3. 다운로드 응답 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment",

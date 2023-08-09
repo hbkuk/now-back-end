@@ -31,8 +31,6 @@ public class MemberController {
     @PostMapping("/api/sign-up")
     public ResponseEntity<Void> signUp(@RequestBody
                                                @Validated(MemberValidationGroup.signup.class) Member member) {
-        log.debug("signUp 핸들러 메서드 호출, Member : {}", member);
-
         memberService.registerMember(member);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

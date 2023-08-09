@@ -47,8 +47,6 @@ public class PhotoController {
      */
     @GetMapping("/api/photos")
     public ResponseEntity<PhotosResponse> getAllPhotos(@Valid @ModelAttribute Condition condition) {
-        log.debug("getAllPhotos 호출, condition : {}", condition);
-
         PhotosResponse photosResponse = PhotosResponse.builder()
                 .photos(photoService.getAllPhotos(condition.updatePage()))
                 .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
@@ -65,7 +63,6 @@ public class PhotoController {
      */
     @GetMapping("/api/photos/{postIdx}")
     public ResponseEntity<Photo> getPhoto(@PathVariable("postIdx") Long postIdx) {
-        log.debug("getPhoto 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(photoService.getPhoto(postIdx));
     }
 
@@ -78,7 +75,6 @@ public class PhotoController {
     @GetMapping("/api/photos/{postIdx}/edit")
     public ResponseEntity<Photo> getEditPhoto(@PathVariable("postIdx") Long postIdx,
                                               @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
-        log.debug("getEditPhoto 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(photoService.getEditPhoto(postIdx, (String) jwtTokenService.getClaim(accessToken, "id")));
     }
 
@@ -96,9 +92,6 @@ public class PhotoController {
                                               @RequestPart(name = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo photo,
                                               @RequestPart(name = "thumbnail", required = false) MultipartFile thumbnail,
                                               @RequestPart(name = "attachments", required = false) MultipartFile[] attachments) {
-        log.debug("registerPhoto 호출, memberId : {}, Photo : {}, Thumbnail : {}, Attachments : {}",
-                memberId, photo, (thumbnail != null ? thumbnail : "null"), (attachments != null ? attachments.length : "null"));
-
         photoService.registerPhoto(photo.updateMemberId(memberId));
         attachmentService.saveAttachmentsWithThumbnail(AddNewAttachments.of(thumbnail, attachments),
                 photo.getPostIdx(), AttachmentType.IMAGE);
@@ -117,7 +110,7 @@ public class PhotoController {
      * @param newAttachments         새로운 이미지 정보
      * @param thumbnailAttachmentIdx 수정할 대표 이미지로 지정할 첨부 파일 번호
      * @param notDeletedIndexes      삭제하지 않을 파일 번호 목록
-     * @return
+     * @return 생성된 위치 URI로 응답
      */
     @PutMapping("/api/photos/{postIdx}")
     public ResponseEntity<Void> updatePhoto(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
@@ -127,10 +120,6 @@ public class PhotoController {
                                             @RequestPart(name = "attachments", required = false) MultipartFile[] newAttachments,
                                             @RequestParam(name = "thumbnailAttachmentIdx", required = false) Long thumbnailAttachmentIdx,
                                             @RequestParam(name = "notDeletedIndexes", required = false) List<Long> notDeletedIndexes) {
-        log.debug("updatePhoto 호출,  Update Option : {}, Update Photo : {}, New Thumbnail : {},  New Attachments : {}, Thumbnail AttachmentIdx : {}, Not Deleted Indexes size : {}",
-                updateOption, updatePhoto, (newThumbnail != null ? newThumbnail : "null"), (newAttachments != null ? newAttachments.length : "null"),
-                thumbnailAttachmentIdx != null ? thumbnailAttachmentIdx : 0, (notDeletedIndexes != null ? notDeletedIndexes.size() : "null"));
-
         photoService.hasUpdateAccess(postIdx, memberId);
 
         photoService.updatePhoto(updatePhoto.updatePostIdx(postIdx).updateMemberId(memberId));
@@ -150,8 +139,6 @@ public class PhotoController {
     @DeleteMapping("/api/photos/{postIdx}")
     public ResponseEntity<Void> deletePhoto(@PathVariable("postIdx") Long postIdx,
                                             @RequestAttribute("id") String memberId) {
-        log.debug("deleteCommunity 호출");
-
         photoService.hasDeleteAccess(postIdx, memberId);
 
         commentService.deleteAllByPostIdx(postIdx);

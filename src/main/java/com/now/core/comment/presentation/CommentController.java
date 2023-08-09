@@ -32,8 +32,6 @@ public class CommentController {
     public ResponseEntity<Void> registerComment(@PathVariable("postIdx") Long postIdx,
                                                 @RequestAttribute("id") String memberId,
                                                 @RequestBody @Validated({CommentValidationGroup.saveComment.class}) Comment comment) {
-        log.debug("registerComment 호출, postIdx : {}, memberId : {}, comment : {}", postIdx, memberId, comment);
-
         commentService.registerCommentByMember(comment.updatePostIdx(postIdx).updateMemberId(memberId));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -51,8 +49,6 @@ public class CommentController {
                                               @PathVariable("commentIdx") Long commentIdx,
                                               @RequestAttribute("id") String memberId,
                                               @RequestBody @Validated({CommentValidationGroup.saveComment.class}) Comment comment) {
-        log.debug("updateComment 호출, postIdx : {}, memberId : {}, comment : {}", postIdx, memberId, comment);
-
         commentService.updateCommentByMember(comment.updatePostIdx(postIdx).updateMemberId(memberId).updateCommentIdx(commentIdx));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
@@ -69,8 +65,6 @@ public class CommentController {
     public ResponseEntity<Void> deleteComment(@PathVariable("postIdx") Long postIdx,
                                               @PathVariable("commentIdx") Long commentIdx,
                                               @RequestAttribute("id") String memberId) {
-        log.debug("deleteComment 호출, postIdx : {}, memberId : {}", postIdx, memberId);
-
         commentService.deleteCommentByMember(postIdx, commentIdx, memberId);
         return ResponseEntity.noContent().build();
     }

@@ -38,8 +38,6 @@ public class AuthenticationController {
      */
     @PostMapping("/api/sign-in")
     public ResponseEntity<MemberProfile> signIn(@RequestBody Member member, HttpServletResponse response) {
-        log.debug("signIn 핸들러 메서드 호출, Member : {}", member);
-
         Member authenticatedMember = memberService.validateCredentialsAndRetrieveMember(member);
         Token token = memberService.generateAuthToken(authenticatedMember);
 
@@ -63,8 +61,6 @@ public class AuthenticationController {
     public ResponseEntity<Void> logout(HttpServletResponse response,
                        @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken,
                        @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
-        log.debug("logout 핸들러 메서드 호출");
-
         authenticationService.logout(accessToken, refreshToken);
 
         response.addCookie(CookieUtil.deleteCookie(JwtTokenService.ACCESS_TOKEN_KEY));
@@ -85,8 +81,6 @@ public class AuthenticationController {
     public ResponseEntity<HttpHeaders> refresh(HttpServletResponse response,
                            @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken,
                            @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
-        log.debug("refresh 핸들러 메서드 호출");
-
         jwtTokenService.validateForRefresh(accessToken, refreshToken);
 
         authenticationService.logout(accessToken, refreshToken);
@@ -110,8 +104,6 @@ public class AuthenticationController {
     @PostMapping("/api/member/me")
     public ResponseEntity<MemberProfile> me(
                         @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = false) String accessToken) {
-        log.debug("me 핸들러 메서드 호출");
-
         authenticationService.isAccessTokenBlacklisted(accessToken);
 
         String memberId = extractMemberIdFromToken(accessToken);

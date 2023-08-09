@@ -1,4 +1,4 @@
-package com.now.core.category.presentation;
+package com.now.core.category.presentation.dto;
 
 import lombok.Data;
 

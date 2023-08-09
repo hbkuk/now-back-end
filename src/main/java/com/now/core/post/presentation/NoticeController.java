@@ -37,8 +37,6 @@ public class NoticeController {
      */
     @GetMapping("/api/notices")
     public ResponseEntity<NoticesResponse> retrieveAllNotices(@Valid @ModelAttribute Condition condition) {
-        log.debug("retrieveAllNotices 호출, condition : {}", condition);
-
         NoticesResponse noticesResponse = NoticesResponse.builder()
                 .notices(noticeService.getAllNoticesWithPin(condition.updatePage()))
                 .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
@@ -55,8 +53,6 @@ public class NoticeController {
      */
     @GetMapping("/api/notices/{postIdx}")
     public ResponseEntity<Notice> getNotice(@PathVariable("postIdx") Long postIdx) {
-        log.debug("getNotice 호출, postIdx : {}", postIdx);
-
         return ResponseEntity.ok(noticeService.getNotice(postIdx));
     }
 }

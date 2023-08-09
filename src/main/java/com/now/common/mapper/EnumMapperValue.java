@@ -1,6 +1,6 @@
 package com.now.common.mapper;
 
-import com.now.core.category.presentation.SubCodeGroup;
+import com.now.core.category.presentation.dto.SubCodeGroup;
 import lombok.ToString;
 
 import java.util.List;

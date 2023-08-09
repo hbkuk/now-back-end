@@ -27,8 +27,6 @@ public class ManagerController {
      */
     @GetMapping("/api/manager/isManager")
     public ResponseEntity<Void> isManager(@RequestAttribute("id") String managerId) {
-        log.debug("isManager 핸들러 메서드 호출, ManagerId : {}", managerId);
-
         managerService.findManagerById(managerId);
 
         return ResponseEntity.ok().build();
@@ -42,8 +40,6 @@ public class ManagerController {
      */
     @PostMapping("/api/manager/login")
     public ResponseEntity<HttpHeaders> loginManager(@RequestBody Manager manager) {
-        log.debug("loginManager 핸들러 메서드 호출, Manager : {}", manager);
-
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization", managerService.generateAuthToken(manager));
 

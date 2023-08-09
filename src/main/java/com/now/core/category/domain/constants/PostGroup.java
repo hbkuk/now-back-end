@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.now.common.exception.ErrorType;
 import com.now.common.mapper.EnumMapperType;
 import com.now.core.category.exception.InvalidCategoryException;
-import com.now.core.category.presentation.SubCodeGroup;
+import com.now.core.category.presentation.dto.SubCodeGroup;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

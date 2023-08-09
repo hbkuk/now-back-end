@@ -41,8 +41,6 @@ public class InquiryController {
      */
     @GetMapping("/api/inquiries")
     public ResponseEntity<InquiriesResponse> getAllInquiries(@Valid @ModelAttribute Condition condition) {
-        log.debug("getAllInquiries 호출, condition : {}", condition);
-
         InquiriesResponse inquiriesResponse = InquiriesResponse.builder()
                 .inquiries(inquiryService.getAllInquiries(condition.updatePage()))
                 .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
@@ -59,8 +57,6 @@ public class InquiryController {
      */
     @GetMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx) {
-        log.debug("getInquiry 호출, postIdx : {}", postIdx);
-
         return ResponseEntity.ok(inquiryService.getInquiryWithSecretCheck(postIdx));
     }
 
@@ -76,8 +72,6 @@ public class InquiryController {
     public ResponseEntity<Inquiry> getSecretInquiry(@PathVariable("postIdx") Long postIdx,
                                                     @RequestParam(required = false) String password,
                                                     @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = false) String accessToken) {
-        log.debug("getSecretInquiry 호출, postIdx : {}, password : {}, token : {}", postIdx, password, accessToken);
-
         String memberId = null;
         if (accessToken != null) {
             memberId = (String) jwtTokenService.getClaim(accessToken, "id");
@@ -95,8 +89,6 @@ public class InquiryController {
     @GetMapping("/api/inquiries/{postIdx}/edit")
     public ResponseEntity<Inquiry> getEditInquiry(@PathVariable("postIdx") Long postIdx,
                                                   @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
-        log.debug("getEditInquiry 호출, postIdx : {}", postIdx);
-
         return ResponseEntity.ok(inquiryService.getEditInquiry(postIdx, (String) jwtTokenService.getClaim(accessToken, "id")));
     }
 
@@ -110,8 +102,6 @@ public class InquiryController {
     @PostMapping("/api/inquiries")
     public ResponseEntity<Void> registerInquiry(@RequestAttribute("id") String memberId,
                                                 @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry inquiry) {
-        log.debug("registerInquiry 호출, memberId : {}, inquiry : {}", memberId, inquiry);
-
         if (inquiry.isSecretInquiryWithoutPassword()) {
             throw new CannotCreatePostException(ErrorType.INVALID_SECRET);
         }
@@ -131,8 +121,6 @@ public class InquiryController {
     public ResponseEntity<Void> updateInquiry(@PathVariable("postIdx") Long postIdx,
                                               @RequestAttribute("id") String memberId,
                                               @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry updateInquiry) {
-        log.debug("updateInquiry 호출, memberId : {}, inquiry : {}", memberId, updateInquiry);
-
         inquiryService.hasUpdateAccess(postIdx, memberId);
 
         inquiryService.updateInquiry(updateInquiry.updateMemberId(memberId));
@@ -148,8 +136,6 @@ public class InquiryController {
     @DeleteMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Void> deleteInquiry(@PathVariable("postIdx") Long postIdx,
                                               @RequestAttribute("id") String memberId) {
-        log.debug("deleteInquiry 호출");
-
         inquiryService.hasDeleteAccess(postIdx, memberId);
 
         inquiryService.deleteInquiry(postIdx, memberId);

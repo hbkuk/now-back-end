@@ -27,8 +27,6 @@ public class PostController {
      */
     @GetMapping("/api/posts")
     public ResponseEntity<PostsResponse> getAllPosts(@Valid @ModelAttribute("Condition")Condition condition) {
-        log.debug("getAllPosts 호출");
-
         return new ResponseEntity<>(PostsResponse.convertToPostsResponse(postService.getAllPosts(condition)), HttpStatus.OK);
     }
 }

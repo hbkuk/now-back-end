@@ -1,7 +1,7 @@
 package com.now.common.mapper;
 
 
-import com.now.core.category.presentation.SubCodeGroup;
+import com.now.core.category.presentation.dto.SubCodeGroup;
 
 import java.util.List;
 

@@ -47,8 +47,6 @@ public class CommunityController {
      */
     @GetMapping("/api/communities")
     public ResponseEntity<CommunitiesResponse> getAllCommunities(@Valid @ModelAttribute Condition condition) {
-        log.debug("getAllCommunities 호출, condition : {}", condition);
-
         CommunitiesResponse communitiesResponse = CommunitiesResponse.builder()
                 .communities(communityService.getAllCommunities(condition.updatePage()))
                 .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
@@ -65,7 +63,6 @@ public class CommunityController {
      */
     @GetMapping("/api/communities/{postIdx}")
     public ResponseEntity<Community> getCommunity(@PathVariable("postIdx") Long postIdx) {
-        log.debug("getCommunity 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(communityService.getCommunity(postIdx));
     }
 
@@ -78,7 +75,6 @@ public class CommunityController {
     @GetMapping("/api/communities/{postIdx}/edit")
     public ResponseEntity<Community> getEditCommunity(@PathVariable("postIdx") Long postIdx,
                                                       @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
-        log.debug("getEditCommunity 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(communityService.getEditCommunity(postIdx, (String) jwtTokenService.getClaim(accessToken, "id")));
     }
 
@@ -94,9 +90,6 @@ public class CommunityController {
     public ResponseEntity<Void> registerCommunity(@RequestAttribute("id") String memberId,
                                                   @RequestPart(name = "community") @Validated(PostValidationGroup.saveCommunity.class) Community community,
                                                   @RequestPart(name = "attachments", required = false) MultipartFile[] attachments) {
-        log.debug("registerCommunity 호출, memberId : {}, Community : {}, Attachments : {}",
-                memberId, community, (attachments != null ? attachments.length : "null"));
-
         communityService.registerCommunity(community.updateMemberId(memberId));
         attachmentService.saveAttachments(attachments, community.getPostIdx(), AttachmentType.FILE);
 
@@ -118,9 +111,6 @@ public class CommunityController {
                                                 @Validated(PostValidationGroup.saveNotice.class) @RequestPart(name = "community") Community updatedCommunity,
                                                 @RequestPart(name = "attachments", required = false) MultipartFile[] attachments,
                                                 @RequestParam(name = "notDeletedIndexes", required = false) List<Long> notDeletedIndexes) {
-        log.debug("updateCommunity 호출,  Update Community : {}, Attachments Size: {}, Not Deleted Indexes size : {}",
-                updatedCommunity, (attachments != null ? attachments.length : "null"), (notDeletedIndexes != null ? notDeletedIndexes.size() : "null"));
-
         communityService.hasUpdateAccess(postIdx, memberId);
 
         communityService.updateCommunity(updatedCommunity.updatePostIdx(postIdx).updateMemberId(memberId));
@@ -140,8 +130,6 @@ public class CommunityController {
     @DeleteMapping("/api/communities/{postIdx}")
     public ResponseEntity<Void> deleteCommunity(@PathVariable("postIdx") Long postIdx,
                                                 @RequestAttribute("id") String memberId) {
-        log.debug("deleteCommunity 호출");
-
         communityService.hasDeleteAccess(postIdx, memberId);
 
         commentService.deleteAllByPostIdx(postIdx);

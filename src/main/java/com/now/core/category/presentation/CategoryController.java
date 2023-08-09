@@ -27,8 +27,6 @@ public class CategoryController {
      */
     @GetMapping("/api/categories")
     public ResponseEntity<List<EnumMapperValue>> getAllCategories() {
-        log.debug("getAllCategories 핸들러 메서드 호출");
-
         return ResponseEntity.ok(enumMapperFactory.get("PostGroup"));
     }
 }

@@ -30,7 +30,6 @@ public class ManagerInquiryController {
      */
     @GetMapping("/api/manager/inquiries/{postIdx}")
     public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx) {
-        log.debug("getInquiry 호출, postIdx : {}", postIdx);
         return ResponseEntity.ok(managerInquiryService.getInquiry(postIdx));
     }
 
@@ -40,8 +39,6 @@ public class ManagerInquiryController {
     @PostMapping("/api/manager/answers/{postIdx}")
     public ResponseEntity<Void> registerAnswer(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String managerId,
                                                @RequestBody @Validated({PostValidationGroup.saveAnswer.class}) Answer answer) {
-        log.debug("registerInquiry 호출, memberId : {}, answer : {}", managerId, answer);
-
         managerInquiryService.registerAnswer(answer.updatePostIdx(postIdx).updateAnswerManagerId(managerId));
 
         return ResponseEntity.created(URI.create("/api/answer/" + postIdx)).build();
