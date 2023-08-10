@@ -24,29 +24,10 @@ public class DatabaseContextLoaderListener {
      * @return DataSourceInitializer 객체
      */
     @Bean
-    @Profile("!test")  // test 프로파일이 아닌 경우에만 dataSourceInitializer() 메서드가 실행
+    @Profile("test")  // test 프로파일이 아닌 경우에만 dataSourceInitializer() 메서드가 실행
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScript(new ClassPathResource("initdb.sql"));
-
-        DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(dataSource);
-        initializer.setDatabasePopulator(populator);
-
-        return initializer;
-    }
-
-    /**
-     * 데이터베이스 초기화를 위한 testDataSourceInitializer 생성하여 반환
-     *
-     * @param dataSource DataSource 객체
-     * @return DataSourceInitializer 객체
-     */
-    @Bean
-    @Profile("test")    // test 프로파일인 경우에만 dataSourceInitializer() 메서드가 실행
-    public DataSourceInitializer testDataSourceInitializer(DataSource dataSource) {
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("testdb.sql"));
 
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
