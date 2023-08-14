@@ -1,13 +1,15 @@
-# NOW 프로젝트
+# NOW
 
 ![home](https://github.com/hbkuk/now-back-end/assets/109803585/5e96cfb3-70b1-4273-8443-f2fd836185a8)
 
-- **NOW**는 공지사항, 커뮤니티, 사진 및 문의 게시판을 통해 정보를 공유 및 소통하는 플랫폼입니다.
-- 2024년까지의 테스트 기간을 거쳐 정식 서비스를 시작하고자 합니다. 이 기간 동안 사용자들의 피드백을 수집하고 기능을 개선하며, 더 나은 사용자 경험을 위해 노력하겠습니다.
+- [NOW(https://www.nowtoday.net)](https://www.nowtoday.net)는 공지사항, 커뮤니티, 사진 및 문의 게시판을 통해 정보를 공유 및 소통하는 플랫폼입니다.
+- 2024년까지의 테스트 기간을 거쳐 정식 서비스를 시작할 계획이 있으며, 이 기간 동안 사용자들의 피드백을 수집하고 기능을 개선하며 더 나은 사용자 경험을 위해 노력하고자 합니다.
 
 
 ## Architecture
-![Architecture]()
+<p align="center">
+  <img src="https://github.com/hbkuk/now-back-end/assets/109803585/c3e81bb2-ac89-4f8d-96bf-6df12ca417bf" alt="Architecture" width="number" />
+</p>
 
 
 ## ERD(Entity Relationship Diagram)
@@ -15,7 +17,7 @@
 
 
 ## Skill
-![SKill]()
+![SKill](https://github.com/hbkuk/now-back-end/assets/109803585/6077e4e5-2946-44b0-b65d-a135f1af6cd6)
 
 
 ## 기록
