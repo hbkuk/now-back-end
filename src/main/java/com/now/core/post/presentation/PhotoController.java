@@ -3,6 +3,7 @@ package com.now.core.post.presentation;
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.attachment.domain.constants.AttachmentType;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.presentation.AuthenticationPrincipal;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.application.PhotoService;
 import com.now.core.post.application.PostService;
@@ -88,7 +89,7 @@ public class PhotoController {
      * @return 생성된 위치 URI로 응답
      */
     @PostMapping("/api/photos")
-    public ResponseEntity<Void> registerPhoto(@RequestAttribute("id") String memberId,
+    public ResponseEntity<Void> registerPhoto(@AuthenticationPrincipal String memberId,
                                               @RequestPart(name = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo photo,
                                               @RequestPart(name = "thumbnail", required = false) MultipartFile thumbnail,
                                               @RequestPart(name = "attachments", required = false) MultipartFile[] attachments) {
@@ -113,7 +114,8 @@ public class PhotoController {
      * @return 생성된 위치 URI로 응답
      */
     @PutMapping("/api/photos/{postIdx}")
-    public ResponseEntity<Void> updatePhoto(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
+    public ResponseEntity<Void> updatePhoto(@PathVariable("postIdx") Long postIdx,
+                                            @AuthenticationPrincipal String memberId,
                                             @RequestPart(name = "updateOption", required = true) UpdateOption updateOption,
                                             @RequestPart(name = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo updatePhoto,
                                             @RequestPart(name = "thumbnail", required = false) MultipartFile newThumbnail,
@@ -138,7 +140,7 @@ public class PhotoController {
      */
     @DeleteMapping("/api/photos/{postIdx}")
     public ResponseEntity<Void> deletePhoto(@PathVariable("postIdx") Long postIdx,
-                                            @RequestAttribute("id") String memberId) {
+                                            @AuthenticationPrincipal String memberId) {
         photoService.hasDeleteAccess(postIdx, memberId);
 
         commentService.deleteAllByPostIdx(postIdx);

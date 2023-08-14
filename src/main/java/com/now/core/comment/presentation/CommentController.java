@@ -1,5 +1,6 @@
 package com.now.core.comment.presentation;
 
+import com.now.core.authentication.presentation.AuthenticationPrincipal;
 import com.now.core.comment.application.CommentService;
 import com.now.core.comment.domain.Comment;
 import com.now.core.comment.domain.CommentValidationGroup;
@@ -30,7 +31,7 @@ public class CommentController {
      */
     @PostMapping("/api/posts/{postIdx}/comments")
     public ResponseEntity<Void> registerComment(@PathVariable("postIdx") Long postIdx,
-                                                @RequestAttribute("id") String memberId,
+                                                @AuthenticationPrincipal String memberId,
                                                 @RequestBody @Validated({CommentValidationGroup.saveComment.class}) Comment comment) {
         commentService.registerCommentByMember(comment.updatePostIdx(postIdx).updateMemberId(memberId));
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -47,7 +48,7 @@ public class CommentController {
     @PutMapping("/api/posts/{postIdx}/comments/{commentIdx}")
     public ResponseEntity<Void> updateComment(@PathVariable("postIdx") Long postIdx,
                                               @PathVariable("commentIdx") Long commentIdx,
-                                              @RequestAttribute("id") String memberId,
+                                              @AuthenticationPrincipal String memberId,
                                               @RequestBody @Validated({CommentValidationGroup.saveComment.class}) Comment comment) {
         commentService.updateCommentByMember(comment.updatePostIdx(postIdx).updateMemberId(memberId).updateCommentIdx(commentIdx));
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -64,7 +65,7 @@ public class CommentController {
     @DeleteMapping("/api/posts/{postIdx}/comments/{commentIdx}")
     public ResponseEntity<Void> deleteComment(@PathVariable("postIdx") Long postIdx,
                                               @PathVariable("commentIdx") Long commentIdx,
-                                              @RequestAttribute("id") String memberId) {
+                                              @AuthenticationPrincipal String memberId) {
         commentService.deleteCommentByMember(postIdx, commentIdx, memberId);
         return ResponseEntity.noContent().build();
     }

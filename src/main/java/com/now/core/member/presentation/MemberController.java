@@ -29,8 +29,7 @@ public class MemberController {
      * @return ResponseEntity 객체 (HTTP 응답)
      */
     @PostMapping("/api/sign-up")
-    public ResponseEntity<Void> signUp(@RequestBody
-                                               @Validated(MemberValidationGroup.signup.class) Member member) {
+    public ResponseEntity<Void> signUp(@RequestBody @Validated(MemberValidationGroup.signup.class) Member member) {
         memberService.registerMember(member);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }

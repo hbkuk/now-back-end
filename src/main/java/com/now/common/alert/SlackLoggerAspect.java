@@ -45,7 +45,7 @@ public class SlackLoggerAspect {
             return;
         }
 
-        if (args[0] instanceof SlackAlarmFailedEvent) {
+        if (args[0] instanceof SlackAlarmFailedEvent) { // TODO: Event 발행 추가 
             alertSender.send(MessageGenerator.generateFailedAlarmMessage((SlackAlarmFailedEvent) args[0]));
         }
     }
@@ -58,7 +58,7 @@ public class SlackLoggerAspect {
      */
     private String extractMember() {
         try {
-            return String.valueOf(authenticationContext.getPrincipal());
+            return authenticationContext.getPrincipal();
         } catch (InvalidAuthenticationException e) {
             return "NO AUTH";
         }

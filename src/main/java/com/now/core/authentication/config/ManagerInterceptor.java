@@ -15,6 +15,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+// TODO: 매니저 API 우선 보류
 /**
  * 매니저 권한 인터셉터
  *

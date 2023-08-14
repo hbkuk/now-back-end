@@ -3,6 +3,7 @@ package com.now.core.post.presentation;
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.attachment.domain.constants.AttachmentType;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.presentation.AuthenticationPrincipal;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.application.CommunityService;
 import com.now.core.post.application.PostService;
@@ -87,7 +88,7 @@ public class CommunityController {
      * @return 생성된 위치 URI로 응답
      */
     @PostMapping("/api/communities")
-    public ResponseEntity<Void> registerCommunity(@RequestAttribute("id") String memberId,
+    public ResponseEntity<Void> registerCommunity(@AuthenticationPrincipal String memberId,
                                                   @RequestPart(name = "community") @Validated(PostValidationGroup.saveCommunity.class) Community community,
                                                   @RequestPart(name = "attachments", required = false) MultipartFile[] attachments) {
         communityService.registerCommunity(community.updateMemberId(memberId));
@@ -107,7 +108,8 @@ public class CommunityController {
      * @return 생성된 위치 URI로 응답
      */
     @PutMapping("/api/communities/{postIdx}")
-    public ResponseEntity<Void> updateCommunity(@PathVariable("postIdx") Long postIdx, @RequestAttribute("id") String memberId,
+    public ResponseEntity<Void> updateCommunity(@PathVariable("postIdx") Long postIdx,
+                                                @AuthenticationPrincipal String memberId,
                                                 @Validated(PostValidationGroup.saveNotice.class) @RequestPart(name = "community") Community updatedCommunity,
                                                 @RequestPart(name = "attachments", required = false) MultipartFile[] attachments,
                                                 @RequestParam(name = "notDeletedIndexes", required = false) List<Long> notDeletedIndexes) {
@@ -129,7 +131,7 @@ public class CommunityController {
      */
     @DeleteMapping("/api/communities/{postIdx}")
     public ResponseEntity<Void> deleteCommunity(@PathVariable("postIdx") Long postIdx,
-                                                @RequestAttribute("id") String memberId) {
+                                                @AuthenticationPrincipal String memberId) {
         communityService.hasDeleteAccess(postIdx, memberId);
 
         commentService.deleteAllByPostIdx(postIdx);

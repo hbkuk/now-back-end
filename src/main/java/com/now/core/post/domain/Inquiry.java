@@ -72,7 +72,6 @@ public class Inquiry {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final String answerManagerNickname;
 
-    @Nullable
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 4, max = 15, message = "{post.password.size}")
     private String password;

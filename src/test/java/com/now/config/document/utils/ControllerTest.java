@@ -1,6 +1,5 @@
 package com.now.config.document.utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.now.common.mapper.EnumMapperFactory;
 import com.now.core.admin.post.notice.application.ManagerNoticeService;
@@ -10,6 +9,8 @@ import com.now.core.attachment.presentation.AttachmentController;
 import com.now.core.authentication.application.AuthenticationService;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.application.TokenBlackList;
+import com.now.core.authentication.config.AuthenticationConfig;
+import com.now.core.authentication.presentation.AuthenticationContext;
 import com.now.core.authentication.presentation.AuthenticationController;
 import com.now.core.category.presentation.CategoryController;
 import com.now.core.comment.application.CommentService;
@@ -22,12 +23,7 @@ import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.restdocs.operation.preprocess.OperationRequestPreprocessor;
-import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor;
-import org.springframework.restdocs.operation.preprocess.Preprocessors;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 
 @WebMvcTest({
         ManagerNoticeController.class,
@@ -90,16 +86,6 @@ public abstract class ControllerTest {
     @MockBean
     protected AuthenticationService authenticationService;
 
-
-    protected OperationResponsePreprocessor getResponsePreprocessor() {
-        return Preprocessors.preprocessResponse(prettyPrint());
-    }
-
-    protected OperationRequestPreprocessor getRequestPreprocessor() {
-        return Preprocessors.preprocessRequest(prettyPrint());
-    }
-
-    protected String createJson(Object dto) throws JsonProcessingException {
-        return objectMapper.writeValueAsString(dto);
-    }
+    @MockBean
+    protected AuthenticationContext authenticationContext;
 }

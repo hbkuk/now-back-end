@@ -201,7 +201,6 @@ class InquiryControllerTest extends RestDocsTestSupport {
     }
 
     // password 필드에 @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) 로 인한 테스트 실패
-    @Disabled
     @Test
     @DisplayName("문의 게시글 등록")
     void registerInquiry() throws Exception {

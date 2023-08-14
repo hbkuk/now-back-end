@@ -2,6 +2,7 @@ package com.now.core.post.presentation;
 
 import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.presentation.AuthenticationPrincipal;
 import com.now.core.post.application.InquiryService;
 import com.now.core.post.application.PostService;
 import com.now.core.post.domain.Inquiry;
@@ -100,7 +101,7 @@ public class InquiryController {
      * @return 생성된 게시글에 대한 CREATED 응답을 반환
      */
     @PostMapping("/api/inquiries")
-    public ResponseEntity<Void> registerInquiry(@RequestAttribute("id") String memberId,
+    public ResponseEntity<Void> registerInquiry(@AuthenticationPrincipal String memberId,
                                                 @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry inquiry) {
         if (inquiry.isSecretInquiryWithoutPassword()) {
             throw new CannotCreatePostException(ErrorType.INVALID_SECRET);
@@ -119,7 +120,7 @@ public class InquiryController {
      */
     @PutMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Void> updateInquiry(@PathVariable("postIdx") Long postIdx,
-                                              @RequestAttribute("id") String memberId,
+                                              @AuthenticationPrincipal String memberId,
                                               @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry updateInquiry) {
         inquiryService.hasUpdateAccess(postIdx, memberId);
 
@@ -135,7 +136,7 @@ public class InquiryController {
      */
     @DeleteMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Void> deleteInquiry(@PathVariable("postIdx") Long postIdx,
-                                              @RequestAttribute("id") String memberId) {
+                                              @AuthenticationPrincipal String memberId) {
         inquiryService.hasDeleteAccess(postIdx, memberId);
 
         inquiryService.deleteInquiry(postIdx, memberId);

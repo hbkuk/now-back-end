@@ -13,14 +13,14 @@ import org.springframework.web.context.annotation.RequestScope;
 @RequestScope
 public class AuthenticationContext {
 
-    private Long principal;
+    private String principal;
 
     /**
      * 현재 사용자의 주체(principal) 정보를 반환
      *
      * @return 현재 사용자의 주체(principal) 정보
      */
-    public Long getPrincipal() {
+    public String getPrincipal() {
         if (principal == null) {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
@@ -32,7 +32,7 @@ public class AuthenticationContext {
      *
      * @param principal 사용자의 주체(principal) 정보
      */
-    public void setPrincipal(final Long principal) {
+    public void setPrincipal(final String principal) {
         if (this.principal != null) {
             throw new InvalidAuthenticationException(ErrorType.ALREADY_AUTHENTICATED);
         }
