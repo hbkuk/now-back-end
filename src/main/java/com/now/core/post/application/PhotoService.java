@@ -16,6 +16,8 @@ import com.now.core.post.exception.InvalidPostException;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +39,7 @@ public class PhotoService {
      *
      * @return 사진 게시글 정보 리스트
      */
+    @Cacheable(value = "photoCache", key="#condition.hashCode()")
     public List<Photo> getAllPhotos(Condition condition) {
         return postRepository.findAllPhotos(condition);
     }
@@ -46,6 +49,7 @@ public class PhotoService {
      *
      * @param photo 등록할 사진 게시글 정보
      */
+    @CacheEvict(value = {"postCache", "photoCache"}, allEntries = true)
     public void registerPhoto(Photo photo) {
         Member member = getMember(photo.getMemberId());
 
@@ -61,6 +65,7 @@ public class PhotoService {
      *
      * @param photo 수정할 사진 게시글 정보
      */
+    @CacheEvict(value = {"postCache", "photoCache"}, allEntries = true)
     public void updatePhoto(Photo photo) {
         Member member = getMember(photo.getMemberId());
 
@@ -75,6 +80,7 @@ public class PhotoService {
      *
      * @param postIdx 게시글 번호
      */
+    @CacheEvict(value = {"postCache", "photoCache"}, allEntries = true)
     public void deletePhoto(Long postIdx) {
         postRepository.deletePhoto(postIdx);
     }
@@ -121,6 +127,7 @@ public class PhotoService {
      * @param postIdx 게시글 번호
      * @return 사진 게시글 정보
      */
+    @Cacheable(value = "postCache", key="#postIdx")
     public Photo getPhoto(Long postIdx) {
         Photo photo = postRepository.findPhoto(postIdx);
         if (photo == null) {

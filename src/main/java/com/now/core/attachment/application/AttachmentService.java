@@ -161,7 +161,7 @@ public class AttachmentService {
                                                     updateExistingAttachments.toString(), postIdx);
 
         List<Long> existingAttachmentIndexes = getAllIndexesByPostIdx(postIdx);
-        if (existingAttachmentIndexes == null) {
+        if (existingAttachmentIndexes == null || existingAttachmentIndexes.isEmpty()) {
             return;
         }
 

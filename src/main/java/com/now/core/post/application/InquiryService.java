@@ -15,6 +15,8 @@ import com.now.core.post.exception.InvalidPostException;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,6 +39,7 @@ public class InquiryService {
      *
      * @return 문의 게시글 정보 리스트
      */
+    @Cacheable(value = "inquiryCache", key="#condition.hashCode()")
     public List<Inquiry> getAllInquiries(Condition condition) {
         return postRepository.findAllInquiries(condition);
     }
@@ -47,6 +50,7 @@ public class InquiryService {
      * @param postIdx 게시글 번호
      * @return 문의 게시글 정보
      */
+    @Cacheable(value = "postCache", key="#postIdx")
     public Inquiry getInquiryWithSecretCheck(Long postIdx) {
         Inquiry inquiry = getInquiry(postIdx);
 
@@ -80,6 +84,7 @@ public class InquiryService {
      *
      * @param inquiry 등록할 문의 게시글 정보
      */
+    @CacheEvict(value = {"postCache", "inquiryCache"}, allEntries = true)
     public void registerInquiry(Inquiry inquiry) {
         Member member = getMember(inquiry.getMemberId());
 
@@ -96,6 +101,7 @@ public class InquiryService {
      *
      * @param updateInquiry 수정할 문의 게시글 정보
      */
+    @CacheEvict(value = {"postCache", "inquiryCache"}, allEntries = true)
     public void updateInquiry(Inquiry updateInquiry) {
         Member member = getMember(updateInquiry.getMemberId());
 
@@ -111,6 +117,7 @@ public class InquiryService {
      * @param postIdx  삭제할 게시글 번호
      * @param memberId 회원 아이디
      */
+    @CacheEvict(value = {"postCache", "inquiryCache"}, allEntries = true)
     public void deleteInquiry(Long postIdx, String memberId) {
         Member member = getMember(memberId);
 

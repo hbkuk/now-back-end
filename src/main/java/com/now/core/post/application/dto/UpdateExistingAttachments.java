@@ -46,7 +46,7 @@ public class UpdateExistingAttachments {
      */
     public UpdateExistingAttachments updateExistingAttachmentsAndThumbnail(List<Long> existingAttachmentIndexes, Long existingThumbnailAttachmentIdx) {
         List<Long> verifiedDeletedAttachmentIndexes = new ArrayList<>(existingAttachmentIndexes);
-        verifiedDeletedAttachmentIndexes.removeAll(Objects.requireNonNull(this.unverifiedClientExcludedIndexes));
+        verifiedDeletedAttachmentIndexes.removeAll(this.unverifiedClientExcludedIndexes);
 
         this.existingAttachmentIndexes = existingAttachmentIndexes;
         this.verifiedDeletedAttachmentIndexes = verifiedDeletedAttachmentIndexes;

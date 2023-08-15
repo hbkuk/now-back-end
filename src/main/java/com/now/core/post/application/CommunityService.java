@@ -13,6 +13,8 @@ import com.now.core.post.exception.InvalidPostException;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,7 +36,9 @@ public class CommunityService {
      *
      * @return 커뮤니티 게시글 정보 리스트
      */
+    @Cacheable(value = "communityCache", key="#condition.hashCode()")
     public List<Community> getAllCommunities(Condition condition) {
+        log.debug("Fetching posts from the database...");
         return postRepository.findAllCommunity(condition);
     }
 
@@ -43,6 +47,7 @@ public class CommunityService {
      *
      * @param community 등록할 커뮤니티 게시글 정보
      */
+    @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public void registerCommunity(Community community) {
         Member member = getMember(community.getMemberId());
 
@@ -58,6 +63,7 @@ public class CommunityService {
      *
      * @param community 수정할 커뮤니티 게시글 정보
      */
+    @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public void updateCommunity(Community community) {
         Member member = getMember(community.getMemberId());
 
@@ -73,6 +79,7 @@ public class CommunityService {
      *
      * @param postIdx 게시글 번호
      */
+    @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public void deleteCommunity(Long postIdx) {
         postRepository.deleteCommunity(postIdx);
     }
@@ -119,6 +126,7 @@ public class CommunityService {
      * @param postIdx 게시글 번호
      * @return 공지 게시글 정보
      */
+    @Cacheable(value = "postCache", key="#postIdx")
     public Community getCommunity(Long postIdx) {
         Community community = postRepository.findCommunity(postIdx);
         if (community == null) {

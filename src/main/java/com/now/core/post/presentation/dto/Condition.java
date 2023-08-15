@@ -7,6 +7,7 @@ import com.now.core.post.domain.PostValidationGroup;
 import com.now.core.post.presentation.dto.constants.Sort;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.*;
@@ -16,6 +17,7 @@ import javax.validation.constraints.*;
  */
 @Data
 @Builder
+@EqualsAndHashCode
 public class Condition {
 
     @Nullable

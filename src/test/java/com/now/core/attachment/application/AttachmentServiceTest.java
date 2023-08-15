@@ -67,6 +67,29 @@ class AttachmentServiceTest {
                 verify(attachmentRepository, never()).saveAttachment(attachment);
                 verify(attachmentRepository, never()).saveThumbNail(attachment);
             }
+
+            @Test
+            @DisplayName("아무런 메서드가 실행되지 않는다")
+            void testUpdateAttachmentsWithThumbnail_NoAttachments_2() {
+                Long postIdx = 1L;
+                Attachment attachment = createAttachment(1L, postIdx);
+                UpdateExistingAttachments updateExistingAttachments = UpdateExistingAttachments.builder()
+                        .unverifiedClientThumbnailAttachmentIdx(null)
+                        .unverifiedClientExcludedIndexes(null)
+
+                        .existingThumbnailAttachmentIdx(null)
+                        .verifiedDeletedAttachmentIndexes(null)
+                        .build();
+                given(attachmentRepository.findAllIndexesByPostIdx(postIdx)).willReturn(null);
+                given(attachmentRepository.findThumbnailByPostIdx(postIdx)).willReturn(null);
+
+                attachmentService.updateAttachmentsWithVerifiedIndexes(UpdateOption.EDIT_EXISTING, new AddNewAttachments(),
+                        updateExistingAttachments, postIdx, AttachmentType.IMAGE);
+
+                verify(attachmentRepository, never()).clearThumbnail(postIdx);
+                verify(attachmentRepository, never()).saveAttachment(attachment);
+                verify(attachmentRepository, never()).saveThumbNail(attachment);
+            }
         }
 
         @Nested

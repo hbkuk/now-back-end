@@ -122,7 +122,7 @@
 
 
     <!-- 모든 게시글 조회 쿼리 -->
-    <select id="findAllPosts" parameterType="Condition" resultMap="posts" useCache="false" flushCache="true">
+    <select id="findAllPosts" parameterType="Condition" resultMap="posts">
         SELECT * FROM (
         SELECT
         <include refid="selectPostTableColumnWithoutContent"/>,
@@ -267,7 +267,7 @@
 
 
 
-    <select id="findTotalPostCount" parameterType="Condition" useCache="false" flushCache="true">
+    <select id="findTotalPostCount" parameterType="Condition">
         SELECT
             count(p.post_idx)
         FROM tb_post p
@@ -285,7 +285,7 @@
 
 
     <!-- 모든 공지사항 조회 쿼리 -->
-    <select id="findAllNotices" parameterType="Condition" resultMap="notice" useCache="false" flushCache="true">
+    <select id="findAllNotices" parameterType="Condition" resultMap="notice">
         SELECT
             <include refid="selectPostTableColumn"/>,
             <include refid="selectManagerTableColumn"/>,
@@ -306,7 +306,7 @@
 
 
     <!-- 모든 공지사항 조회 쿼리 -->
-    <select id="findAllNoticesWithPin" parameterType="Condition" resultMap="notice" useCache="false" flushCache="true">
+    <select id="findAllNoticesWithPin" parameterType="Condition" resultMap="notice">
         SELECT
             <include refid="selectPostTableColumn"/>,
             <include refid="selectManagerTableColumn"/>,
@@ -349,7 +349,7 @@
 
 
     <!-- 모든 커뮤니티 게시글 조회 쿼리 -->
-    <select id="findAllCommunity" parameterType="Condition" resultMap="community" useCache="false" flushCache="true">
+    <select id="findAllCommunity" parameterType="Condition" resultMap="community">
         SELECT
             <include refid="selectPostTableColumn"/>,
             <include refid="selectMaxAttachmentTableColumn"/>,
@@ -372,7 +372,7 @@
     </select>
 
     <!-- 모든 사진 게시글 조회 쿼리 -->
-    <select id="findAllPhotos" parameterType="Condition" resultMap="photo" useCache="false" flushCache="true">
+    <select id="findAllPhotos" parameterType="Condition" resultMap="photo">
         SELECT
             <include refid="selectPostTableColumn"/>,
             <include refid="selectMaxAttachmentTableColumn"/>,
@@ -396,7 +396,7 @@
     </select>
 
     <!-- 모든 문의 게시글 조회 쿼리, content 제외 -->
-    <select id="findAllInquiries" parameterType="Condition" resultMap="inquiry" useCache="false" flushCache="true">
+    <select id="findAllInquiries" parameterType="Condition" resultMap="inquiry">
         SELECT
             <include refid="selectPostTableColumnWithoutContent"/>,
             <include refid="selectMemberTableColumn"/>,
@@ -426,7 +426,7 @@
 
 
     <!-- 단일 공지사항 조회 쿼리 -->
-    <select id="findNotice" parameterType="Long" resultMap="notice" useCache="false" flushCache="true">
+    <select id="findNotice" parameterType="Long" resultMap="notice">
         SELECT
         <include refid="selectPostTableColumn"/>,
         <include refid="selectManagerTableColumn"/>,
@@ -441,7 +441,7 @@
     </select>
 
     <!-- 단일 커뮤니티 게시글 조회 쿼리 -->
-    <select id="findCommunity" parameterType="Long" resultMap="community" useCache="false" flushCache="true">
+    <select id="findCommunity" parameterType="Long" resultMap="community">
         SELECT
         <include refid="selectPostTableColumn"/>,
         <include refid="selectAttachmentTableColumn"/>,
@@ -459,7 +459,7 @@
     </select>
 
     <!-- 단일 사진 게시글 조회 쿼리 -->
-    <select id="findPhoto" parameterType="Long" resultMap="photo" useCache="false" flushCache="true">
+    <select id="findPhoto" parameterType="Long" resultMap="photo">
         SELECT
         <include refid="selectPostTableColumn"/>,
         <include refid="selectAttachmentTableColumn"/>,
@@ -479,7 +479,7 @@
     </select>
 
     <!-- 단일 문의 게시글 조회 쿼리 -->
-    <select id="findInquiry" parameterType="Long" resultMap="inquiry" useCache="false" flushCache="true">
+    <select id="findInquiry" parameterType="Long" resultMap="inquiry">
         SELECT
         <include refid="selectPostTableColumn"/>,
         <include refid="selectMemberTableColumn"/>,

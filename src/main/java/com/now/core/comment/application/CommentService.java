@@ -13,6 +13,7 @@ import com.now.core.post.domain.PostRepository;
 import com.now.core.post.exception.InvalidPostException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,20 +31,11 @@ public class CommentService {
     private final CommentRepository commentRepository;
 
     /**
-     * 게시글 번호에 해당하는 댓글 정보 조회 후 반환
-     *
-     * @param postIdx 게시글 번호
-     * @return 댓글 정보 리스트
-     */
-    public List<Comment> getAllByPostIdx(Long postIdx) {
-        return commentRepository.findAllByPostIdx(postIdx);
-    }
-
-    /**
      * 댓글 등록
      *
      * @param comment 등록할 댓글 정보
      */
+    @CacheEvict(value = {"postCache", "noticeCache", "communityCache", "photoCache", "inquiryCache"}, allEntries = true)
     public void registerCommentByMember(Comment comment) {
         Member member = getMember(comment.getMemberId());
 
@@ -59,6 +51,7 @@ public class CommentService {
      *
      * @param updatedComment 수정할 댓글 정보
      */
+    @CacheEvict(value = "postCache", key ="#updatedComment.postIdx")
     public void updateCommentByMember(Comment updatedComment) {
         Member member = getMember(updatedComment.getMemberId());
 
@@ -90,6 +83,7 @@ public class CommentService {
      * @param commentIdx 댓글 번호
      * @param memberId   회원 아이디
      */
+    @CacheEvict(value = {"postCache", "noticeCache", "communityCache", "photoCache", "inquiryCache"}, allEntries = true)
     public void deleteCommentByMember(Long postIdx, Long commentIdx, String memberId) {
         Member member = getMember(memberId);
 
@@ -142,4 +136,10 @@ public class CommentService {
         }
         return comment;
     }
+
+    /* 해당 메서드(게시글 번호에 해당하는 댓글 정보 조회 후 반환)는 사용안함
+    public List<Comment> getAllByPostIdx(Long postIdx) {
+        return commentRepository.findAllByPostIdx(postIdx);
+    }
+    */
 }

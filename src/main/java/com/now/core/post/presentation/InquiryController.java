@@ -124,7 +124,7 @@ public class InquiryController {
                                               @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry updateInquiry) {
         inquiryService.hasUpdateAccess(postIdx, memberId);
 
-        inquiryService.updateInquiry(updateInquiry.updateMemberId(memberId));
+        inquiryService.updateInquiry(updateInquiry.updateMemberId(memberId).updatePostIdx(postIdx));
         return ResponseEntity.created(URI.create("/api/inquiries/" + updateInquiry.getPostIdx())).build();
     }
 
