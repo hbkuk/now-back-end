@@ -3,7 +3,7 @@ package com.now.core.post.presentation.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
-import com.now.core.post.domain.PostValidationGroup;
+import com.now.core.post.domain.constants.PostValidationGroup;
 import com.now.core.post.presentation.dto.constants.Sort;
 import lombok.Builder;
 import lombok.Data;

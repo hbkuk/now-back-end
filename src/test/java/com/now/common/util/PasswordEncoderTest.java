@@ -1,5 +1,6 @@
 package com.now.common.util;
 
+import com.now.config.document.utils.BeanTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -10,9 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 @DisplayName("Password Encoder 객체")
-public class PasswordEncoderTest {
+public class PasswordEncoderTest extends BeanTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;

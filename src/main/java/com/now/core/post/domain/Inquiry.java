@@ -9,11 +9,11 @@ import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.comment.domain.Comment;
 import com.now.core.member.domain.Member;
+import com.now.core.post.domain.constants.PostValidationGroup;
 import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
 import com.now.core.post.exception.CannotViewInquiryException;
 import lombok.*;
-import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

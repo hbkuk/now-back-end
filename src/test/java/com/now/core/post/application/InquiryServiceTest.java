@@ -1,8 +1,8 @@
 package com.now.core.post.application;
 
-import com.now.NowApplication;
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
+import com.now.config.document.utils.BeanTest;
 import com.now.config.fixtures.comment.CommentFixture;
 import com.now.config.fixtures.post.InquiryFixture;
 import com.now.core.category.domain.constants.Category;
@@ -11,7 +11,7 @@ import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.post.domain.Inquiry;
-import com.now.core.post.domain.PostRepository;
+import com.now.core.post.domain.repository.InquiryRepository;
 import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
 import com.now.core.post.exception.CannotViewInquiryException;
@@ -20,7 +20,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
@@ -32,12 +31,11 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = NowApplication.class)
 @DisplayName("문의 서비스 객체는")
-class InquiryServiceTest {
+class InquiryServiceTest extends BeanTest {
 
     @Autowired private InquiryService inquiryService;
-    @MockBean private PostRepository postRepository;
+    @MockBean private InquiryRepository inquiryRepository;
     @MockBean private MemberRepository memberRepository;
     @MockBean private CommentRepository commentRepository;
     @MockBean private PasswordSecurityManager passwordSecurityManager;
@@ -46,7 +44,7 @@ class InquiryServiceTest {
     @DisplayName("문의 게시글을 찾을때 게시물 번호에 해당하는 게시물이 없다면 InvalidPostException 을 던진다")
     void getCommunity() {
         Long postIdx = 1L;
-        when(postRepository.findInquiry(postIdx)).thenReturn(null);
+        when(inquiryRepository.findInquiry(postIdx)).thenReturn(null);
 
         assertThatExceptionOfType(InvalidPostException.class)
                 .isThrownBy(() -> {
@@ -65,7 +63,7 @@ class InquiryServiceTest {
             Long postIdx = 1L;
             Inquiry inquiry = InquiryFixture.createNonSecretInquiry("tester1", Category.SERVICE);
 
-            when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
 
             inquiryService.getInquiryWithSecretCheck(postIdx, "tester1", "token");
         }
@@ -80,7 +78,7 @@ class InquiryServiceTest {
                 Long postIdx = 1L;
                 Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
-                when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
+                when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
                 when(passwordSecurityManager.matchesWithSalt(anyString(), anyString())).thenReturn(true);
 
                 inquiryService.getInquiryWithSecretCheck(postIdx, null, "testPassword");
@@ -93,7 +91,7 @@ class InquiryServiceTest {
                 Member member = createMember("tester1");
                 Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
-                when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
+                when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
                 when(memberRepository.findById(anyString())).thenReturn(member);
 
                 inquiryService.getInquiryWithSecretCheck(postIdx, "tester1", null);
@@ -106,7 +104,7 @@ class InquiryServiceTest {
                 Member member = createMember("tester2");
                 Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
-                when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
+                when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
                 when(memberRepository.findById(anyString())).thenReturn(member);
 
                 assertThatExceptionOfType(CannotViewInquiryException.class)
@@ -129,7 +127,7 @@ class InquiryServiceTest {
             Member member = createMember("tester1");
             Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
-            when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById("tester1")).thenReturn(member);
 
             inquiryService.hasUpdateAccess(postIdx, "tester1");
@@ -142,7 +140,7 @@ class InquiryServiceTest {
             Member member = createMember("tester2");
             Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
-            when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById(anyString())).thenReturn(member);
 
             assertThatExceptionOfType(CannotUpdatePostException.class)
@@ -164,7 +162,7 @@ class InquiryServiceTest {
             Member member = createMember("tester1");
             Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
-            when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById("tester1")).thenReturn(member);
 
             inquiryService.hasDeleteAccess(postIdx, "tester1");
@@ -177,7 +175,7 @@ class InquiryServiceTest {
             Member member = createMember("tester2");
             Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
 
-            when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById(anyString())).thenReturn(member);
 
             assertThatExceptionOfType(CannotDeletePostException.class)
@@ -195,7 +193,7 @@ class InquiryServiceTest {
             Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
             List<Comment> comments = List.of(CommentFixture.createCommentByMemberId("tester3"));
 
-            when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById(anyString())).thenReturn(member);
             when(commentRepository.findAllByPostIdx(anyLong())).thenReturn(comments);
 
@@ -214,7 +212,7 @@ class InquiryServiceTest {
             Inquiry inquiry = createSecretInquiryWithAnswer("tester1", Category.SERVICE);
             List<Comment> comments = List.of(CommentFixture.createCommentByMemberId("tester1"));
 
-            when(postRepository.findInquiry(postIdx)).thenReturn(inquiry);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById(anyString())).thenReturn(member);
             when(commentRepository.findAllByPostIdx(anyLong())).thenReturn(comments);
 

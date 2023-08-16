@@ -1,7 +1,7 @@
 package com.now.core.post.application;
 
-import com.now.NowApplication;
 import com.now.common.exception.ErrorType;
+import com.now.config.document.utils.BeanTest;
 import com.now.config.fixtures.comment.CommentFixture;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.exception.InvalidCategoryException;
@@ -11,7 +11,7 @@ import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
 import com.now.core.post.domain.Photo;
-import com.now.core.post.domain.PostRepository;
+import com.now.core.post.domain.repository.PhotoRepository;
 import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
 import com.now.core.post.exception.InvalidPostException;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
@@ -31,14 +30,13 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = NowApplication.class)
 @DisplayName("사진 서비스 객체는")
-class PhotoServiceTest {
+class PhotoServiceTest extends BeanTest {
 
     @Autowired
     private PhotoService photoService;
     @MockBean
-    private PostRepository postRepository;
+    private PhotoRepository photoRepository;
     @MockBean
     private MemberRepository memberRepository;
     @MockBean
@@ -48,7 +46,7 @@ class PhotoServiceTest {
     @DisplayName("사진 게시글을 찾을때 게시물 번호에 해당하는 게시물이 없다면 InvalidPostException 을 던진다")
     void getPhoto() {
         Long postIdx = 1L;
-        when(postRepository.findPhoto(postIdx)).thenReturn(null);
+        when(photoRepository.findPhoto(postIdx)).thenReturn(null);
 
         assertThatExceptionOfType(InvalidPostException.class)
                 .isThrownBy(() -> {
@@ -68,7 +66,7 @@ class PhotoServiceTest {
             Member member = createMember("tester1");
             Photo photo = createPhoto("tester1", Category.ARTWORK);
 
-            when(postRepository.findPhoto(postIdx)).thenReturn(photo);
+            when(photoRepository.findPhoto(postIdx)).thenReturn(photo);
             when(memberRepository.findById("tester1")).thenReturn(member);
 
             photoService.hasUpdateAccess(postIdx, "tester1");
@@ -81,7 +79,7 @@ class PhotoServiceTest {
             Member member = createMember("tester2");
             Photo photo = createPhoto("tester1", Category.ARTWORK);
 
-            when(postRepository.findPhoto(anyLong())).thenReturn(photo);
+            when(photoRepository.findPhoto(anyLong())).thenReturn(photo);
             when(memberRepository.findById(anyString())).thenReturn(member);
 
             assertThatExceptionOfType(CannotUpdatePostException.class)
@@ -103,7 +101,7 @@ class PhotoServiceTest {
             Member member = createMember("tester1");
             Photo photo = createPhoto("tester1", Category.ARTWORK);
 
-            when(postRepository.findPhoto(postIdx)).thenReturn(photo);
+            when(photoRepository.findPhoto(postIdx)).thenReturn(photo);
             when(memberRepository.findById("tester1")).thenReturn(member);
 
             photoService.hasDeleteAccess(postIdx, "tester1");
@@ -116,7 +114,7 @@ class PhotoServiceTest {
             Member member = createMember("tester2");
             Photo photo = createPhoto("tester1", Category.ARTWORK);
 
-            when(postRepository.findPhoto(anyLong())).thenReturn(photo);
+            when(photoRepository.findPhoto(anyLong())).thenReturn(photo);
             when(memberRepository.findById(anyString())).thenReturn(member);
 
             assertThatExceptionOfType(CannotDeletePostException.class)
@@ -134,7 +132,7 @@ class PhotoServiceTest {
             Photo photo = createPhoto("tester1", Category.ARTWORK);
             List<Comment> comments = List.of(CommentFixture.createCommentByMemberId("tester3"));
 
-            when(postRepository.findPhoto(anyLong())).thenReturn(photo);
+            when(photoRepository.findPhoto(anyLong())).thenReturn(photo);
             when(memberRepository.findById(anyString())).thenReturn(member);
             when(commentRepository.findAllByPostIdx(anyLong())).thenReturn(comments);
 

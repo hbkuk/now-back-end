@@ -7,11 +7,8 @@ import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
-import com.now.core.post.domain.Community;
 import com.now.core.post.domain.Photo;
-import com.now.core.post.domain.PostRepository;
-import com.now.core.post.exception.CannotCreatePostException;
-import com.now.core.post.exception.CannotUpdatePostException;
+import com.now.core.post.domain.repository.PhotoRepository;
 import com.now.core.post.exception.InvalidPostException;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PhotoService {
 
-    private final PostRepository postRepository;
+    private final PhotoRepository photoRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
 
@@ -41,7 +38,7 @@ public class PhotoService {
      */
     @Cacheable(value = "photoCache", key="#condition.hashCode()")
     public List<Photo> getAllPhotos(Condition condition) {
-        return postRepository.findAllPhotos(condition);
+        return photoRepository.findAllPhotos(condition);
     }
 
     /**
@@ -57,7 +54,7 @@ public class PhotoService {
             throw new InvalidCategoryException(ErrorType.INVALID_CATEGORY);
         }
 
-        postRepository.savePhoto(photo.updateMemberIdx(member.getMemberIdx()));
+        photoRepository.savePhoto(photo.updateMemberIdx(member.getMemberIdx()));
     }
 
     /**
@@ -73,7 +70,7 @@ public class PhotoService {
             throw new InvalidCategoryException(ErrorType.INVALID_CATEGORY);
         }
 
-        postRepository.updatePhoto(photo.updateMemberIdx(member.getMemberIdx()));
+        photoRepository.updatePhoto(photo.updateMemberIdx(member.getMemberIdx()));
     }
     /**
      * 사진 게시글 삭제
@@ -82,7 +79,7 @@ public class PhotoService {
      */
     @CacheEvict(value = {"postCache", "photoCache"}, allEntries = true)
     public void deletePhoto(Long postIdx) {
-        postRepository.deletePhoto(postIdx);
+        photoRepository.deletePhoto(postIdx);
     }
 
     /**
@@ -92,7 +89,7 @@ public class PhotoService {
      * @param memberId 회원 아이디
      */
     public void hasUpdateAccess(Long postIdx, String memberId) {
-        Photo photo = postRepository.findPhoto(postIdx);
+        Photo photo = photoRepository.findPhoto(postIdx);
         photo.canUpdate(getMember(memberId));
     }
 
@@ -103,7 +100,7 @@ public class PhotoService {
      * @param memberId 회원 아이디
      */
     public void hasDeleteAccess(Long postIdx, String memberId) {
-        Photo photo = postRepository.findPhoto(postIdx);
+        Photo photo = photoRepository.findPhoto(postIdx);
         photo.canDelete(getMember(memberId), commentRepository.findAllByPostIdx(postIdx));
     }
 
@@ -129,7 +126,7 @@ public class PhotoService {
      */
     @Cacheable(value = "postCache", key="#postIdx")
     public Photo getPhoto(Long postIdx) {
-        Photo photo = postRepository.findPhoto(postIdx);
+        Photo photo = photoRepository.findPhoto(postIdx);
         if (photo == null) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }

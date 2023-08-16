@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.now.core.post.domain.mapper.PostMapper">
+
+
+    <!-- 모든 게시글 조회 쿼리 -->
+    <select id="findAllPosts" parameterType="Condition" resultMap="posts">
+        SELECT * FROM (
+        SELECT
+        <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
+        <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
+        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxInquiriesWithNonSecretInfo"/>,
+        <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerTableColumn"/>,
+        <include refid="CommonColumnMappings.maxThumbnailTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerInfoOfInquiryTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+        LEFT OUTER JOIN tb_manager ima ON p.manager_idx = ima.manager_idx
+        WHERE p.post_group = 'NOTICE'
+        GROUP BY p.post_idx
+        ORDER BY p.post_idx DESC
+
+        <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
+
+        ) AS notice_posts
+
+        UNION
+
+        SELECT * FROM (
+        SELECT
+        <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
+        <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
+        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxInquiriesWithNonSecretInfo"/>,
+        <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerTableColumn"/>,
+        <include refid="CommonColumnMappings.maxThumbnailTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerInfoOfInquiryTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+        LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
+        WHERE p.post_group = 'COMMUNITY'
+        GROUP BY p.post_idx
+        ORDER BY p.post_idx DESC
+
+        <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
+
+        ) AS community_posts
+
+        UNION
+
+        SELECT * FROM (
+        SELECT
+        <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
+        <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
+        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxInquiriesWithNonSecretInfo"/>,
+        <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerTableColumn"/>,
+        <include refid="CommonColumnMappings.maxThumbnailTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerInfoOfInquiryTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+        LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
+        WHERE p.post_group = 'PHOTO'
+        GROUP BY p.post_idx
+        ORDER BY p.post_idx DESC
+
+        <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
+
+        ) AS photo_posts
+
+        UNION
+
+        SELECT * FROM (
+        SELECT
+        <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
+        <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
+        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxInquiriesWithNonSecretInfo"/>,
+        <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerTableColumn"/>,
+        <include refid="CommonColumnMappings.maxThumbnailTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerInfoOfInquiryTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+        LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
+        WHERE p.post_group = 'INQUIRY'
+        GROUP BY p.post_idx
+        ORDER BY p.post_idx DESC
+
+        <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
+
+        ) AS inquiry_posts
+    </select>
+
+
+    <select id="findTotalPostCount" parameterType="Condition">
+        SELECT
+            count(p.post_idx)
+        FROM tb_post p
+            LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+            LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+            LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+            LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        <include refid="DynamicQueryMapper.postGroupWithWhere"/>
+        <include refid="DynamicQueryMapper.conditionWithoutPostGroup"/>
+    </select>
+
+
+    <select id="existPostByPostId" parameterType="Long" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM tb_post
+        WHERE post_idx = #{postIdx}
+    </select>
+
+
+    <!-- Posts resultMap -->
+    <resultMap id="posts" type="Posts">
+        <discriminator javaType="string" column="p_post_group">
+            <case value="NOTICE">
+                <association property="notice" resultMap="com.now.core.post.domain.mapper.NoticeMapper.notice" />
+            </case>
+            <case value="COMMUNITY">
+                <association property="community" resultMap="com.now.core.post.domain.mapper.CommunityMapper.community" />
+            </case>
+            <case value="PHOTO">
+                <association property="photo" resultMap="com.now.core.post.domain.mapper.PhotoMapper.photo" />
+            </case>
+            <case value="INQUIRY">
+                <association property="inquiry" resultMap="com.now.core.post.domain.mapper.InquiryMapper.inquiry" />
+            </case>
+        </discriminator>
+    </resultMap>
+
+
+</mapper>

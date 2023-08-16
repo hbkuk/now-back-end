@@ -2,6 +2,7 @@ package com.now.core.attachment.application;
 
 import com.now.NowApplication;
 import com.now.common.exception.ErrorType;
+import com.now.config.document.utils.BeanTest;
 import com.now.core.attachment.application.dto.ThumbNail;
 import com.now.core.attachment.domain.Attachment;
 import com.now.core.attachment.domain.AttachmentRepository;
@@ -30,9 +31,8 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = NowApplication.class)
 @DisplayName("첨부 파일 서비스 객체")
-class AttachmentServiceTest {
+class AttachmentServiceTest extends BeanTest {
 
     @Autowired private AttachmentService attachmentService;
     @MockBean private AttachmentRepository attachmentRepository;

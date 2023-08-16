@@ -19,13 +19,13 @@
         WHERE post_idx = #{postIdx}
     </select>
 
-    <select id="findAttachmentResponseByAttachmentIdx" parameterType="Long" resultMap="attachmentResponseTableCollectionMapping">
+    <select id="findAttachmentResponseByAttachmentIdx" parameterType="Long" resultMap="attachmentResponseResultMap">
         SELECT *
         FROM tb_attachment
         WHERE attachment_idx = #{attachmentIdx}
     </select>
 
-    <select id="findAttachmentByAttachmentIdx" parameterType="Long" resultMap="attachmentTableCollectionMapping">
+    <select id="findAttachmentByAttachmentIdx" parameterType="Long" resultMap="attachmentResultMap">
         SELECT *
         FROM tb_attachment
         WHERE attachment_idx = #{attachmentIdx}
@@ -81,7 +81,7 @@
         WHERE post_idx = #{postIdx}
     </delete>
 
-    <resultMap id="attachmentResponseTableCollectionMapping" type="AttachmentResponse">
+    <resultMap id="attachmentResponseResultMap" type="AttachmentResponse">
         <id property="attachmentIdx" column="attachment_idx"/>
         <result property="originalAttachmentName" column="original_attachment_name"/>
         <result property="savedAttachmentName" column="saved_attachment_name"/>
@@ -90,7 +90,8 @@
         <result property="postIdx" column="post_idx"/>
     </resultMap>
 
-    <resultMap id="attachmentTableCollectionMapping" type="Attachment">
+
+    <resultMap id="attachmentResultMap" type="Attachment">
         <id property="attachmentIdx" column="attachment_idx"/>
         <result property="originalAttachmentName.originalAttachmentName" column="original_attachment_name"/>
         <result property="savedAttachmentName" column="saved_attachment_name"/>
@@ -98,5 +99,6 @@
         <result property="attachmentSize.attachmentSize" column="attachment_size"/>
         <result property="postIdx" column="post_idx"/>
     </resultMap>
+
 
 </mapper>

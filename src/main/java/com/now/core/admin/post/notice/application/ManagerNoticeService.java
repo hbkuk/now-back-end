@@ -7,7 +7,7 @@ import com.now.core.admin.manager.domain.ManagerRepository;
 import com.now.core.admin.manager.exception.InvalidManagerException;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.post.domain.Notice;
-import com.now.core.post.domain.PostRepository;
+import com.now.core.post.domain.repository.NoticeRepository;
 import com.now.core.post.exception.CannotCreatePostException;
 import com.now.core.post.exception.InvalidPostException;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ManagerNoticeService {
 
-    private final PostRepository postRepository;
+    private final NoticeRepository noticeRepository;
     private final ManagerRepository managerRepository;
 
     /**
@@ -37,7 +37,7 @@ public class ManagerNoticeService {
             throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
 
-        postRepository.saveNotice(notice.updateManagerIdx(manager.getManagerIdx()));
+        noticeRepository.saveNotice(notice.updateManagerIdx(manager.getManagerIdx()));
     }
 
 
@@ -60,7 +60,7 @@ public class ManagerNoticeService {
             throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
 
-        postRepository.updateNotice(updatedNotice);
+        noticeRepository.updateNotice(updatedNotice);
     }
 
     // TODO: 매니저별 권한 부여 -> Notice 도메인 객체에서 canDelete(Authority authority) 선언
@@ -78,7 +78,7 @@ public class ManagerNoticeService {
             throw new ForbiddenException(ErrorType.FORBIDDEN);
         }
 
-        postRepository.deleteNotice(postIdx);
+        noticeRepository.deleteNotice(postIdx);
     }
 
     /**
@@ -88,7 +88,7 @@ public class ManagerNoticeService {
      * @return 공지 게시글 정보
      */
     public Notice getNotice(Long postIdx) {
-        Notice notice = postRepository.findNotice(postIdx);
+        Notice notice = noticeRepository.findNotice(postIdx);
         if (notice == null) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }

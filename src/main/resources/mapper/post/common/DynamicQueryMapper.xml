@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="DynamicQueryMapper">
+
+    <!-- 최대 게시글 개수 -->
+    <sql id="maxNumberOfPosts">
+        <if test="maxNumberOfPosts != null">
+            LIMIT 0, #{maxNumberOfPosts}
+        </if>
+    </sql>
+
+
+    <!-- WHERE 절과 게시물 그룹 -->
+    <sql id="postGroupWithWhere">
+        <if test="postGroup != null">
+            WHERE p.post_group = #{postGroup.name}
+        </if>
+    </sql>
+
+
+    <!-- 검색 조건에 따른 WHERE 절 SQL -->
+    <sql id="conditionWithoutPostGroup">
+
+        <if test="startDate != null">
+            AND DATE(p.reg_date) >= DATE(DATE_FORMAT(#{startDate}, '%Y-%m-%d'))
+        </if>
+
+        <if test="endDate != null">
+            AND DATE(DATE_FORMAT(#{endDate}, '%Y-%m-%d')) >= DATE(p.reg_date)
+        </if>
+
+        <if test="category != null">
+            AND p.category = #{category.name}
+        </if>
+
+        <if test="keyword != null">
+            AND
+            (p.title LIKE CONCAT('%', #{keyword}, '%')
+            OR m.nickname LIKE CONCAT('%', #{keyword}, '%')
+            OR ma.nickname LIKE CONCAT('%', #{keyword}, '%')
+            OR p.content LIKE
+            CONCAT('%', #{keyword}, '%'))
+        </if>
+
+    </sql>
+
+
+    <!-- 정렬 -->
+    <sql id="sort">
+        <choose>
+            <when test="sort.name == 'LATEST'">
+                ORDER BY p.post_idx DESC
+            </when>
+            <when test="sort.name == 'RECOMMENDED'">
+                ORDER BY p.like_count DESC
+            </when>
+            <when test="sort.name == 'MOST_VIEWED'">
+                ORDER BY p.view_count DESC
+            </when>
+            <otherwise>
+                ORDER BY p.post_idx DESC
+            </otherwise>
+        </choose>
+    </sql>
+
+
+    <!-- 페이지 -->
+    <sql id="page">
+        LIMIT #{page.recordStartIndex}, #{page.recordsPerPage}
+    </sql>
+
+</mapper>

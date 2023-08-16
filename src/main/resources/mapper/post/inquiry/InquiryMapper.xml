@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.now.core.post.domain.mapper.InquiryMapper">
+
+    <!-- 모든 문의 게시글 조회 쿼리, content 제외 -->
+    <select id="findAllInquiries" parameterType="Condition" resultMap="inquiry">
+        SELECT
+        <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
+        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxInquiriesWithNonSecretInfo"/>,
+        <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerInfoOfInquiryTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+        LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        WHERE p.post_group = 'INQUIRY'
+        <include refid="DynamicQueryMapper.conditionWithoutPostGroup"/>
+        GROUP BY p.post_idx
+        <include refid="DynamicQueryMapper.sort"/>
+        <include refid="DynamicQueryMapper.page"/>
+    </select>
+
+
+    <!-- 단일 문의 게시글 조회 쿼리 -->
+    <select id="findInquiry" parameterType="Long" resultMap="inquiry">
+        SELECT
+        <include refid="CommonColumnMappings.postTableColumn"/>,
+        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.inquiryTableColumn"/>,
+        <include refid="CommonColumnMappings.commentTableColumn"/>,
+        <include refid="CommonColumnMappings.managerTableColumn"/>,
+        <include refid="CommonColumnMappings.memberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.managerInfoOfInquiryTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
+        LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        WHERE p.post_group = 'INQUIRY' AND p.post_idx = #{postIdx}
+    </select>
+
+
+    <!-- Inquiry Post 저장 쿼리 -->
+    <insert id="saveInquiry" parameterType="Inquiry" useGeneratedKeys="true" keyProperty="postIdx">
+        INSERT INTO tb_post (post_group, category, title, member_idx, reg_date, mod_date, content, view_count, like_count, dislike_count)
+        VALUES (#{postGroup}, #{category.name}, #{title}, #{memberIdx}, now(), null, #{content}, 0, 0, 0)
+    </insert>
+
+
+    <!-- Inquiry의 비밀글 설정 저장 쿼리 -->
+    <insert id="saveInquirySecretSetting" parameterType="Inquiry" useGeneratedKeys="true" keyProperty="inquiryIdx">
+        INSERT INTO tb_inquiry (post_idx, secret, password)
+        VALUES (#{postIdx}, #{secret}, #{password})
+    </insert>
+
+
+    <!-- Inquiry에 대한 답변 저장 쿼리 -->
+    <update id="saveAnswer" parameterType="Answer">
+        UPDATE tb_inquiry
+        SET answer_manager_idx = #{answerManagerIdx},
+            answer_content     = #{answerContent},
+            answer_reg_date    = NOW()
+        WHERE post_idx = #{postIdx}
+    </update>
+
+
+    <!-- Inquiry Post 수정 쿼리-->
+    <update id="updateInquiryPost" parameterType="Inquiry">
+        UPDATE tb_post
+        SET category = #{category.name},
+            title   = #{title},
+            mod_date = NOW(),
+            content = #{content}
+        WHERE post_idx = #{postIdx}
+    </update>
+
+
+    <!-- Inquiry 테이블 수정 쿼리-->
+    <update id="updateInquiry" parameterType="Inquiry">
+        UPDATE tb_inquiry
+        SET secret   = #{secret},
+            password = #{password}
+        WHERE post_idx = #{postIdx}
+    </update>
+
+
+    <!-- tb_inquiry Answer 수정 쿼리-->
+    <update id="updateAnswer" parameterType="Answer">
+        UPDATE tb_inquiry
+        SET answer_content     = #{answerContent},
+            answer_reg_date    = NOW()
+        WHERE post_idx = #{postIdx}
+    </update>
+
+
+    <!-- Post 테이블 게시글 삭제 쿼리 -->
+    <delete id="deleteInquiryOfPost" parameterType="Long">
+        DELETE
+        FROM tb_post
+        WHERE post_idx = #{postIdx}
+    </delete>
+
+
+    <!-- Inquiry 테이블 삭제 쿼리 -->
+    <delete id="deleteInquiry" parameterType="Long">
+        DELETE
+        FROM tb_inquiry
+        WHERE post_idx = #{postIdx}
+    </delete>
+
+
+    <!-- 문의 게시글 결과 매핑 -->
+    <resultMap id="inquiry" type="Inquiry">
+        <id property="postIdx" column="p_post_idx"/>
+        <result property="category" column="p_category" javaType="com.now.core.category.domain.constants.Category"/>
+        <result property="title" column="p_title"/>
+        <result property="memberNickname" column="m_nickname"/>
+        <result property="managerNickname" column="ma_nickname"/>
+        <result property="memberId" column="m_id"/>
+        <result property="regDate" column="p_reg_date"/>
+        <result property="modDate" column="p_mod_date"/>
+        <result property="content" column="p_content"/>
+        <result property="viewCount" column="p_view_count"/>
+        <result property="likeCount" column="p_like_count"/>
+        <result property="dislikeCount" column="p_dislike_count"/>
+        <result property="secret" column="i_secret"/>
+        <result property="answerManagerNickname" column="ima_nickname"/>
+        <result property="answerContent" column="i_answer_content"/>
+        <result property="answerRegDate" column="i_answer_reg_date"/>
+        <result property="password" column="i_password"/>
+        <!-- 공통 컬렉션 매핑 -->
+        <collection property="comments" resultMap="com.now.core.comment.domain.CommentMapper.commentResultMap" />
+    </resultMap>
+
+</mapper>

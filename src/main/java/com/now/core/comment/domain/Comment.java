@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.member.domain.Member;
-import com.now.core.post.domain.PostValidationGroup;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;

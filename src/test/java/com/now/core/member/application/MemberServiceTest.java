@@ -3,6 +3,7 @@ package com.now.core.member.application;
 import com.now.NowApplication;
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
+import com.now.config.document.utils.BeanTest;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.application.dto.TokenClaims;
 import com.now.core.authentication.constants.Authority;
@@ -26,9 +27,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest(classes = NowApplication.class)
 @DisplayName("회원 서비스 객체")
-public class MemberServiceTest {
+public class MemberServiceTest extends BeanTest {
 
     @Autowired private MemberService memberService;
     @MockBean private MemberRepository memberRepository;

@@ -2,7 +2,7 @@ package com.now.core.admin.post.notice.presentation;
 
 import com.now.core.admin.post.notice.application.ManagerNoticeService;
 import com.now.core.post.domain.Notice;
-import com.now.core.post.domain.PostValidationGroup;
+import com.now.core.post.domain.constants.PostValidationGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

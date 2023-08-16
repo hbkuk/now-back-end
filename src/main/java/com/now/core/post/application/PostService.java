@@ -1,6 +1,6 @@
 package com.now.core.post.application;
 
-import com.now.core.post.domain.PostRepository;
+import com.now.core.post.domain.repository.PostRepository;
 import com.now.core.post.presentation.dto.Condition;
 import com.now.core.post.presentation.dto.Posts;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +16,6 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-
 public class PostService {
 
     private final PostRepository postRepository;

@@ -30,6 +30,15 @@ public class CommentFixture {
                 .build();
     }
 
+    public static Comment createCommentByMemberId(Long postIdx, Long memberIdx, String memberId) {
+        return Comment.builder()
+                .content("contents")
+                .postIdx(postIdx)
+                .memberIdx(memberIdx)
+                .memberId(memberId)
+                .build();
+    }
+
     public static Comment createCommentForSave() {
         return Comment.builder()
                 .memberNickname("Shark")

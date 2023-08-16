@@ -12,7 +12,7 @@
     <!-- Manager, Comment 저장 쿼리 -->
     <insert id="saveCommentByManager" parameterType="Comment" useGeneratedKeys="true" keyProperty="commentIdx">
         INSERT INTO tb_comment (manager_idx, post_idx, content, reg_date)
-        VALUES ( #{managerIdx}, #{postIdx}, #{content}, NOW())
+        VALUES (#{managerIdx}, #{postIdx}, #{content}, NOW())
     </insert>
 
 
@@ -23,17 +23,16 @@
     </insert>
 
 
-
     <!-- 게시물 번호, 모든 댓글 확인 -->
-    <select id="findAllByPostIdx" parameterType="Long" resultMap="comment">
+    <select id="findAllByPostIdx" parameterType="Long" resultMap="commentResultMap">
         SELECT co.comment_idx AS co_comment_idx,
                co.reg_date    AS co_reg_date,
                co.content     AS co_content,
                co.post_idx    AS co_post_idx,
 
-               com.id  AS com_id,
-               com.nickname  AS com_nickname,
-               coma.id  AS coma_id,
+               com.id         AS com_id,
+               com.nickname   AS com_nickname,
+               coma.id        AS coma_id,
                coma.nickname  AS coma_nickname
         FROM tb_comment co
                  LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
@@ -43,15 +42,15 @@
 
 
     <!-- 게시물 번호, 댓글 확인 -->
-    <select id="findComment" parameterType="Long" resultMap="comment">
+    <select id="findComment" parameterType="Long" resultMap="commentResultMap">
         SELECT co.comment_idx AS co_comment_idx,
                co.reg_date    AS co_reg_date,
                co.content     AS co_content,
                co.post_idx    AS co_post_idx,
 
-               com.id  AS com_id,
-               com.nickname  AS com_nickname,
-               coma.id  AS coma_id,
+               com.id         AS com_id,
+               com.nickname   AS com_nickname,
+               coma.id        AS coma_id,
                coma.nickname  AS coma_nickname
         FROM tb_comment co
                  LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
@@ -72,16 +71,15 @@
         WHERE comment_idx = #{commentIdx}
     </delete>
 
-    <!-- Comment 컬렉션 매핑 -->
-    <resultMap id="comment" type="Comment">
+    <resultMap id="commentResultMap" type="Comment">
         <id property="commentIdx" column="co_comment_idx"/>
-        <result property="regDate" column="co_reg_date"/>
-        <result property="content" column="co_content"/>
-        <result property="postIdx" column="co_post_idx"/>
-
         <result property="memberId" column="com_id"/>
         <result property="memberNickname" column="com_nickname"/>
         <result property="managerId" column="coma_id"/>
         <result property="managerNickname" column="coma_nickname"/>
+        <result property="regDate" column="co_reg_date"/>
+        <result property="content" column="co_content"/>
+        <result property="postIdx" column="co_post_idx"/>
     </resultMap>
+
 </mapper>

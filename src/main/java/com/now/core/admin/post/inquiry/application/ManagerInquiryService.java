@@ -5,7 +5,7 @@ import com.now.core.admin.manager.domain.Manager;
 import com.now.core.admin.manager.domain.ManagerRepository;
 import com.now.core.admin.manager.exception.InvalidManagerException;
 import com.now.core.post.domain.Inquiry;
-import com.now.core.post.domain.PostRepository;
+import com.now.core.post.domain.repository.InquiryRepository;
 import com.now.core.post.exception.InvalidPostException;
 import com.now.core.post.presentation.dto.Answer;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ManagerInquiryService {
 
-    private final PostRepository postRepository;
+    private final InquiryRepository inquiryRepository;
     private final ManagerRepository managerRepository;
 
     /**
@@ -30,7 +30,7 @@ public class ManagerInquiryService {
      * @return 문의 게시글 정보
      */
     public Inquiry getInquiry(Long postIdx) {
-        Inquiry inquiry = postRepository.findInquiry(postIdx);
+        Inquiry inquiry = inquiryRepository.findInquiry(postIdx);
         if (inquiry == null) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }
@@ -49,7 +49,7 @@ public class ManagerInquiryService {
             throw new InvalidManagerException(ErrorType.NOT_FOUND_MANAGER);
         }
 
-        postRepository.saveAnswer(answer.updateAnswerManagerIdx(manager.getManagerIdx()));
+        inquiryRepository.saveAnswer(answer.updateAnswerManagerIdx(manager.getManagerIdx()));
     }
 }
 

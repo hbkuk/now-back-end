@@ -9,7 +9,6 @@ import com.now.core.attachment.presentation.AttachmentController;
 import com.now.core.authentication.application.AuthenticationService;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.application.TokenBlackList;
-import com.now.core.authentication.config.AuthenticationConfig;
 import com.now.core.authentication.presentation.AuthenticationContext;
 import com.now.core.authentication.presentation.AuthenticationController;
 import com.now.core.category.presentation.CategoryController;
@@ -18,11 +17,13 @@ import com.now.core.comment.presentation.CommentController;
 import com.now.core.member.application.MemberService;
 import com.now.core.member.presentation.MemberController;
 import com.now.core.post.application.*;
+import com.now.core.post.application.integrated.CommunityIntegratedService;
 import com.now.core.post.presentation.*;
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest({
@@ -39,6 +40,7 @@ import org.springframework.test.web.servlet.MockMvc;
         AttachmentController.class
 })
 @AutoConfigureMybatis
+@ActiveProfiles("test")
 public abstract class ControllerTest {
 
     @Autowired
@@ -46,6 +48,9 @@ public abstract class ControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
+
+    @MockBean
+    protected CommunityIntegratedService integratedService;
 
     @MockBean
     protected PostService postService;

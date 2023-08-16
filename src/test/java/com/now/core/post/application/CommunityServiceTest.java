@@ -1,7 +1,7 @@
 package com.now.core.post.application;
 
-import com.now.NowApplication;
 import com.now.common.exception.ErrorType;
+import com.now.config.document.utils.BeanTest;
 import com.now.config.fixtures.comment.CommentFixture;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.exception.InvalidCategoryException;
@@ -11,7 +11,7 @@ import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
 import com.now.core.post.domain.Community;
-import com.now.core.post.domain.PostRepository;
+import com.now.core.post.domain.repository.CommunityRepository;
 import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
 import com.now.core.post.exception.InvalidPostException;
@@ -19,7 +19,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
@@ -31,12 +30,11 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = NowApplication.class)
 @DisplayName("커뮤니티 서비스 객체는")
-class CommunityServiceTest {
+class CommunityServiceTest extends BeanTest {
 
     @Autowired private CommunityService communityService;
-    @MockBean private PostRepository postRepository;
+    @MockBean private CommunityRepository communityRepository;
     @MockBean private MemberRepository memberRepository;
     @MockBean private CommentRepository commentRepository;
 
@@ -44,7 +42,7 @@ class CommunityServiceTest {
     @DisplayName("커뮤니티 게시글을 찾을때 게시물 번호에 해당하는 게시물이 없다면 InvalidPostException 을 던진다")
     void getCommunity() {
         Long postIdx = 1L;
-        when(postRepository.findCommunity(postIdx)).thenReturn(null);
+        when(communityRepository.findCommunity(postIdx)).thenReturn(null);
 
         assertThatExceptionOfType(InvalidPostException.class)
                 .isThrownBy(() -> {
@@ -64,7 +62,7 @@ class CommunityServiceTest {
             Member member = createMember("tester1");
             Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
 
-            when(postRepository.findCommunity(postIdx)).thenReturn(community);
+            when(communityRepository.findCommunity(postIdx)).thenReturn(community);
             when(memberRepository.findById("tester1")).thenReturn(member);
 
             communityService.hasUpdateAccess(postIdx, "tester1");
@@ -77,7 +75,7 @@ class CommunityServiceTest {
             Member member = createMember("tester2");
             Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
 
-            when(postRepository.findCommunity(anyLong())).thenReturn(community);
+            when(communityRepository.findCommunity(anyLong())).thenReturn(community);
             when(memberRepository.findById(anyString())).thenReturn(member);
 
             assertThatExceptionOfType(CannotUpdatePostException.class)
@@ -99,7 +97,7 @@ class CommunityServiceTest {
             Member member = createMember("tester1");
             Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
 
-            when(postRepository.findCommunity(postIdx)).thenReturn(community);
+            when(communityRepository.findCommunity(postIdx)).thenReturn(community);
             when(memberRepository.findById("tester1")).thenReturn(member);
 
             communityService.hasDeleteAccess(postIdx, "tester1");
@@ -112,7 +110,7 @@ class CommunityServiceTest {
             Member member = createMember("tester2");
             Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
 
-            when(postRepository.findCommunity(anyLong())).thenReturn(community);
+            when(communityRepository.findCommunity(anyLong())).thenReturn(community);
             when(memberRepository.findById(anyString())).thenReturn(member);
 
             assertThatExceptionOfType(CannotDeletePostException.class)
@@ -130,7 +128,7 @@ class CommunityServiceTest {
             Community community = createCommunity("tester1", Category.COMMUNITY_STUDY);
             List<Comment> comments = List.of(CommentFixture.createCommentByMemberId("tester3"));
 
-            when(postRepository.findCommunity(anyLong())).thenReturn(community);
+            when(communityRepository.findCommunity(anyLong())).thenReturn(community);
             when(memberRepository.findById(anyString())).thenReturn(member);
             when(commentRepository.findAllByPostIdx(anyLong())).thenReturn(comments);
 

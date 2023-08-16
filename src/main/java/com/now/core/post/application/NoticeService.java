@@ -2,7 +2,7 @@ package com.now.core.post.application;
 
 import com.now.common.exception.ErrorType;
 import com.now.core.post.domain.Notice;
-import com.now.core.post.domain.PostRepository;
+import com.now.core.post.domain.repository.NoticeRepository;
 import com.now.core.post.exception.InvalidPostException;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class NoticeService {
 
-    private final PostRepository postRepository;
+    private final NoticeRepository noticeRepository;
 
     /**
      * 상단에 고정된 공지 게시물과 조건에 맞는 게시물 정보를 조회 후 반환
@@ -30,7 +30,7 @@ public class NoticeService {
      */
     @Cacheable(value = "noticeCache", key="#condition.hashCode()")
     public List<Notice> getAllNoticesWithPin(Condition condition) {
-        return postRepository.findAllNoticesWithPin(condition);
+        return noticeRepository.findAllNoticesWithPin(condition);
     }
 
     /**
@@ -41,7 +41,7 @@ public class NoticeService {
      */
     @Cacheable(value = "postCache", key="#postIdx")
     public Notice getNotice(Long postIdx) {
-        Notice notice = postRepository.findNotice(postIdx);
+        Notice notice = noticeRepository.findNotice(postIdx);
         if (notice == null) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }

@@ -18,6 +18,10 @@ public class CommunityFixture {
     public static final String SAMPLE_TITLE_2 = "개인 프로젝트 및 포트폴리오 구축";
     public static final String SAMPLE_CONTENT_2 = "자신이 배운 것들을 실제로 활용할 수 있는 개인 프로젝트를 진행해보세요. 개인 프로젝트를 통해 자신의 능력을 증명할 수 있고, 포트폴리오를 구축하는 데 도움이 됩니다.";
 
+    public static final String SAMPLE_UPDATE_NICKNAME_2 = "kibum";
+    public static final String SAMPLE_UPDATE_TITLE_2 = "(수정)개인 프로젝트 및 포트폴리오 구축";
+    public static final String SAMPLE_UPDATE_CONTENT_2 = "(수정)자신이 배운 것들을 실제로 활용할 수 있는 개인 프로젝트를 진행해보세요. 개인 프로젝트를 통해 자신의 능력을 증명할 수 있고, 포트폴리오를 구축하는 데 도움이 됩니다.";
+
     public static Community createCommunity(Long postIdx, String nickName, String title, String content,
                                             List<AttachmentResponse> attachments, List<Comment> comments) {
         return Community.builder()
@@ -57,6 +61,25 @@ public class CommunityFixture {
                 .category(Category.COMMUNITY_STUDY)
                 .title(SAMPLE_TITLE_1)
                 .content(SAMPLE_CONTENT_1)
+                .build();
+    }
+
+    public static Community createCommunityForSave(String memberId) {
+        return Community.builder()
+                .category(Category.COMMUNITY_STUDY)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .memberId(memberId)
+                .build();
+    }
+
+    public static Community createCommunityForUpdate(Long postIdx, String memberId) {
+        return Community.builder()
+                .postIdx(postIdx)
+                .category(Category.COMMUNITY_STUDY)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .memberId(memberId)
                 .build();
     }
 

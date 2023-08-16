@@ -10,7 +10,7 @@ import com.now.core.post.application.PostService;
 import com.now.core.post.application.dto.AddNewAttachments;
 import com.now.core.post.application.dto.UpdateExistingAttachments;
 import com.now.core.post.domain.Photo;
-import com.now.core.post.domain.PostValidationGroup;
+import com.now.core.post.domain.constants.PostValidationGroup;
 import com.now.core.post.domain.constants.UpdateOption;
 import com.now.core.post.presentation.dto.Condition;
 import com.now.core.post.presentation.dto.PhotosResponse;

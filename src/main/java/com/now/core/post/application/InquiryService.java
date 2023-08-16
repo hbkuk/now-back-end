@@ -8,7 +8,7 @@ import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
 import com.now.core.post.domain.Inquiry;
-import com.now.core.post.domain.PostRepository;
+import com.now.core.post.domain.repository.InquiryRepository;
 import com.now.core.post.exception.CannotCreatePostException;
 import com.now.core.post.exception.CannotViewInquiryException;
 import com.now.core.post.exception.InvalidPostException;
@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InquiryService {
 
-    private final PostRepository postRepository;
+    private final InquiryRepository inquiryRepository;
     private final CommentRepository commentRepository;
     private final MemberRepository memberRepository;
     private final PasswordSecurityManager passwordSecurityManager;
@@ -41,7 +41,7 @@ public class InquiryService {
      */
     @Cacheable(value = "inquiryCache", key="#condition.hashCode()")
     public List<Inquiry> getAllInquiries(Condition condition) {
-        return postRepository.findAllInquiries(condition);
+        return inquiryRepository.findAllInquiries(condition);
     }
 
     /**
@@ -92,7 +92,7 @@ public class InquiryService {
             throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
 
-        postRepository.saveInquiry(inquiry.updateMemberIdx(member.getMemberIdx())
+        inquiryRepository.saveInquiry(inquiry.updateMemberIdx(member.getMemberIdx())
                                             .updatePassword(passwordSecurityManager.encodeWithSalt(inquiry.getPassword())));
     }
 
@@ -108,7 +108,7 @@ public class InquiryService {
         if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, updateInquiry.getCategory())) {
             throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
-        postRepository.updateInquiry(updateInquiry.updateMemberIdx(member.getMemberIdx()));
+        inquiryRepository.updateInquiry(updateInquiry.updateMemberIdx(member.getMemberIdx()));
     }
 
     /**
@@ -121,7 +121,7 @@ public class InquiryService {
     public void deleteInquiry(Long postIdx, String memberId) {
         Member member = getMember(memberId);
 
-        postRepository.deleteInquiry(postIdx);
+        inquiryRepository.deleteInquiry(postIdx);
     }
 
     /**
@@ -153,7 +153,7 @@ public class InquiryService {
      * @return 문의 게시글
      */
     public Inquiry getInquiry(Long postIdx) {
-        Inquiry inquiry = postRepository.findInquiry(postIdx);
+        Inquiry inquiry = inquiryRepository.findInquiry(postIdx);
         if (inquiry == null) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }

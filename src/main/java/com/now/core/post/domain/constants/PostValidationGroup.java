@@ -1,4 +1,4 @@
-package com.now.core.post.domain;
+package com.now.core.post.domain.constants;
 
 import org.springframework.validation.annotation.Validated;
 

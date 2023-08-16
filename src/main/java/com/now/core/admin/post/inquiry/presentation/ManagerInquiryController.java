@@ -2,7 +2,7 @@ package com.now.core.admin.post.inquiry.presentation;
 
 import com.now.core.admin.post.inquiry.application.ManagerInquiryService;
 import com.now.core.post.domain.Inquiry;
-import com.now.core.post.domain.PostValidationGroup;
+import com.now.core.post.domain.constants.PostValidationGroup;
 import com.now.core.post.presentation.dto.Answer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -9,14 +9,12 @@ import com.now.core.comment.exception.InvalidCommentException;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
-import com.now.core.post.domain.PostRepository;
+import com.now.core.post.domain.repository.PostRepository;
 import com.now.core.post.exception.InvalidPostException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 댓글 관련 비즈니스 로직을 처리하는 서비스

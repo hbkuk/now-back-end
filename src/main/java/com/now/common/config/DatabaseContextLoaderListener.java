@@ -15,7 +15,7 @@ import javax.sql.DataSource;
  */
 @Slf4j
 @Configuration
-@Profile("test")
+@Profile({"local", "dev"})
 public class DatabaseContextLoaderListener {
 
     /**
@@ -27,7 +27,7 @@ public class DatabaseContextLoaderListener {
     @Bean
     public DataSourceInitializer dataSourceInitializer(DataSource dataSource) {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScript(new ClassPathResource("testdb.sql"));
+        populator.addScript(new ClassPathResource("initdb.sql"));
 
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
@@ -35,5 +35,4 @@ public class DatabaseContextLoaderListener {
 
         return initializer;
     }
-
 }

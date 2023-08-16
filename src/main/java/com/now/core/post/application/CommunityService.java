@@ -8,7 +8,8 @@ import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
 import com.now.core.post.domain.Community;
-import com.now.core.post.domain.PostRepository;
+import com.now.core.post.domain.repository.CommunityRepository;
+import com.now.core.post.domain.repository.PostRepository;
 import com.now.core.post.exception.InvalidPostException;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -27,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommunityService {
 
-    private final PostRepository postRepository;
+    private final CommunityRepository communityRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
 
@@ -36,10 +38,11 @@ public class CommunityService {
      *
      * @return 커뮤니티 게시글 정보 리스트
      */
+    @Transactional(readOnly = true)
     @Cacheable(value = "communityCache", key="#condition.hashCode()")
     public List<Community> getAllCommunities(Condition condition) {
         log.debug("Fetching posts from the database...");
-        return postRepository.findAllCommunity(condition);
+        return communityRepository.findAllCommunity(condition);
     }
 
     /**
@@ -55,7 +58,7 @@ public class CommunityService {
             throw new InvalidCategoryException(ErrorType.INVALID_CATEGORY);
         }
 
-        postRepository.saveCommunity(community.updateMemberIdx(member.getMemberIdx()));
+        communityRepository.saveCommunity(community.updateMemberIdx(member.getMemberIdx()));
     }
 
     /**
@@ -71,7 +74,7 @@ public class CommunityService {
             throw new InvalidCategoryException(ErrorType.INVALID_CATEGORY);
         }
 
-        postRepository.updateCommunity(community.updateMemberIdx(member.getMemberIdx()));
+        communityRepository.updateCommunity(community.updateMemberIdx(member.getMemberIdx()));
     }
 
     /**
@@ -81,7 +84,7 @@ public class CommunityService {
      */
     @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public void deleteCommunity(Long postIdx) {
-        postRepository.deleteCommunity(postIdx);
+        communityRepository.deleteCommunity(postIdx);
     }
 
     /**
@@ -126,9 +129,10 @@ public class CommunityService {
      * @param postIdx 게시글 번호
      * @return 공지 게시글 정보
      */
+    @Transactional(readOnly = true)
     @Cacheable(value = "postCache", key="#postIdx")
     public Community getCommunity(Long postIdx) {
-        Community community = postRepository.findCommunity(postIdx);
+        Community community = communityRepository.findCommunity(postIdx);
         if (community == null) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }

@@ -1,19 +1,16 @@
 package com.now.core.post.presentation;
 
-import com.now.core.attachment.application.AttachmentService;
-import com.now.core.attachment.domain.constants.AttachmentType;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.presentation.AuthenticationPrincipal;
-import com.now.core.comment.application.CommentService;
 import com.now.core.post.application.CommunityService;
 import com.now.core.post.application.PostService;
 import com.now.core.post.application.dto.AddNewAttachments;
 import com.now.core.post.application.dto.UpdateExistingAttachments;
+import com.now.core.post.application.integrated.CommunityIntegratedService;
 import com.now.core.post.domain.Community;
-import com.now.core.post.domain.PostValidationGroup;
+import com.now.core.post.domain.constants.PostValidationGroup;
 import com.now.core.post.presentation.dto.CommunitiesResponse;
 import com.now.core.post.presentation.dto.Condition;
-import com.now.core.post.presentation.dto.PostsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,11 +31,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommunityController {
 
+    private final CommunityIntegratedService postManagementService;
     private final PostService postService;
     private final JwtTokenService jwtTokenService;
     private final CommunityService communityService;
-    private final AttachmentService attachmentService;
-    private final CommentService commentService;
 
     /**
      * 모든 커뮤니티 게시글 정보를 조회
@@ -72,7 +68,7 @@ public class CommunityController {
      *
      * @param postIdx 게시글 번호
      * @return 커뮤니티 게시글 정보
-     */
+    ion in registerCommunity")).when(communityService).registerCommunity(community);  */
     @GetMapping("/api/communities/{postIdx}/edit")
     public ResponseEntity<Community> getEditCommunity(@PathVariable("postIdx") Long postIdx,
                                                       @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
@@ -91,9 +87,8 @@ public class CommunityController {
     public ResponseEntity<Void> registerCommunity(@AuthenticationPrincipal String memberId,
                                                   @RequestPart(name = "community") @Validated(PostValidationGroup.saveCommunity.class) Community community,
                                                   @RequestPart(name = "attachments", required = false) MultipartFile[] attachments) {
-        communityService.registerCommunity(community.updateMemberId(memberId));
-        attachmentService.saveAttachments(attachments, community.getPostIdx(), AttachmentType.FILE);
 
+        postManagementService.registerCommunity(community.updateMemberId(memberId), attachments);
         return ResponseEntity.created(URI.create("/api/communities/" + community.getPostIdx())).build();
     }
 
@@ -113,11 +108,10 @@ public class CommunityController {
                                                 @Validated(PostValidationGroup.saveNotice.class) @RequestPart(name = "community") Community updatedCommunity,
                                                 @RequestPart(name = "attachments", required = false) MultipartFile[] attachments,
                                                 @RequestParam(name = "notDeletedIndexes", required = false) List<Long> notDeletedIndexes) {
-        communityService.hasUpdateAccess(postIdx, memberId);
 
-        communityService.updateCommunity(updatedCommunity.updatePostIdx(postIdx).updateMemberId(memberId));
-        attachmentService.updateAttachments(AddNewAttachments.of(null, attachments),
-                UpdateExistingAttachments.of(null, notDeletedIndexes), postIdx, AttachmentType.FILE);
+        postManagementService.updateCommunity(updatedCommunity.updatePostIdx(postIdx).updateMemberId(memberId),
+                AddNewAttachments.of(null, attachments),
+                UpdateExistingAttachments.of(null, notDeletedIndexes));
 
         return ResponseEntity.created(URI.create("/api/communities/" + updatedCommunity.getPostIdx())).build();
     }
@@ -132,12 +126,8 @@ public class CommunityController {
     @DeleteMapping("/api/communities/{postIdx}")
     public ResponseEntity<Void> deleteCommunity(@PathVariable("postIdx") Long postIdx,
                                                 @AuthenticationPrincipal String memberId) {
-        communityService.hasDeleteAccess(postIdx, memberId);
 
-        commentService.deleteAllByPostIdx(postIdx);
-        attachmentService.deleteAllByPostIdx(postIdx);
-        communityService.deleteCommunity(postIdx);
-
+        postManagementService.deleteCommunity(postIdx, memberId);
         return ResponseEntity.noContent().build();
     }
 }

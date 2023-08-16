@@ -6,9 +6,8 @@ import com.now.core.authentication.presentation.AuthenticationPrincipal;
 import com.now.core.post.application.InquiryService;
 import com.now.core.post.application.PostService;
 import com.now.core.post.domain.Inquiry;
-import com.now.core.post.domain.PostValidationGroup;
+import com.now.core.post.domain.constants.PostValidationGroup;
 import com.now.core.post.exception.CannotCreatePostException;
-import com.now.core.post.presentation.dto.CommunitiesResponse;
 import com.now.core.post.presentation.dto.Condition;
 import com.now.core.post.presentation.dto.InquiriesResponse;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 
 /**
  * 문의 게시글 관련 작업을 위한 컨트롤러

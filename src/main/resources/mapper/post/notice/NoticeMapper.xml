@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.now.core.post.domain.mapper.NoticeMapper">
+
+    <!-- 모든 공지사항 조회 쿼리 -->
+    <select id="findAllNotices" parameterType="Condition" resultMap="notice">
+        SELECT
+        <include refid="CommonColumnMappings.postTableColumn"/>,
+        <include refid="CommonColumnMappings.managerTableColumn"/>,
+        <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        WHERE p.post_group = 'NOTICE'
+        <include refid="DynamicQueryMapper.conditionWithoutPostGroup"/>
+        GROUP BY p.post_idx
+        <include refid="DynamicQueryMapper.sort"/>
+        <include refid="DynamicQueryMapper.page"/>
+    </select>
+
+
+    <!-- 모든 공지사항 조회 쿼리, 핀 설정 포함 -->
+    <select id="findAllNoticesWithPin" parameterType="Condition" resultMap="notice">
+        SELECT
+        <include refid="CommonColumnMappings.postTableColumn"/>,
+        <include refid="CommonColumnMappings.managerTableColumn"/>,
+        <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        WHERE p.post_group = 'NOTICE'
+        AND p.pinned = true
+        GROUP BY p.post_idx
+
+        UNION ALL
+
+        (
+
+        SELECT
+        <include refid="CommonColumnMappings.postTableColumn"/>,
+        <include refid="CommonColumnMappings.managerTableColumn"/>,
+        <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_member m ON p.member_idx = m.member_idx
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        WHERE p.post_group = 'NOTICE'
+        AND p.pinned = false
+        <include refid="DynamicQueryMapper.conditionWithoutPostGroup"/>
+        GROUP BY p.post_idx
+        <include refid="DynamicQueryMapper.sort"/>
+        <include refid="DynamicQueryMapper.page"/>
+        )
+    </select>
+
+
+    <!-- 단일 공지사항 조회 쿼리 -->
+    <select id="findNotice" parameterType="Long" resultMap="notice">
+        SELECT
+        <include refid="CommonColumnMappings.postTableColumn"/>,
+        <include refid="CommonColumnMappings.managerTableColumn"/>,
+        <include refid="CommonColumnMappings.commentTableColumn"/>,
+        <include refid="CommonColumnMappings.memberAndManagerInfoOfCommentTableColumn"/>
+        FROM tb_post p
+        LEFT OUTER JOIN tb_manager ma ON p.manager_idx = ma.manager_idx
+        LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
+        LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
+        LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        WHERE p.post_group = 'NOTICE' AND p.post_idx = #{postIdx}
+    </select>
+
+
+    <!-- Notice 저장 쿼리 -->
+    <insert id="saveNotice" parameterType="Notice" useGeneratedKeys="true" keyProperty="postIdx">
+        INSERT INTO tb_post (post_group, category, title, manager_idx, reg_date, mod_date, content, view_count,
+                             like_count, dislike_count, pinned)
+        VALUES (#{postGroup}, #{category.name}, #{title}, #{managerIdx}, now(), null, #{content}, 0, 0, 0, #{pinned})
+    </insert>
+
+
+    <!-- Notice 수정 쿼리-->
+    <update id="updateNotice" parameterType="Notice">
+        UPDATE tb_post
+        SET category = #{category.name},
+            title    = #{title},
+            mod_date = NOW(),
+            content  = #{content},
+            pinned   = #{pinned}
+        WHERE post_idx = #{postIdx}
+    </update>
+
+
+    <!-- Notice 삭제 쿼리-->
+    <delete id="deleteNotice" parameterType="Long">
+        DELETE
+        FROM tb_post
+        WHERE post_idx = #{postIdx}
+    </delete>
+
+
+    <!-- 공지사항 결과 매핑 -->
+    <resultMap id="notice" type="Notice">
+        <id property="postIdx" column="p_post_idx"/>
+        <result property="category" column="p_category" javaType="com.now.core.category.domain.constants.Category"/>
+        <result property="title" column="p_title"/>
+        <result property="managerNickname" column="ma_nickname"/>
+        <result property="regDate" column="p_reg_date"/>
+        <result property="modDate" column="p_mod_date"/>
+        <result property="content" column="p_content"/>
+        <result property="viewCount" column="p_view_count"/>
+        <result property="likeCount" column="p_like_count"/>
+        <result property="dislikeCount" column="p_dislike_count"/>
+        <result property="pinned" column="p_pinned"/>
+        <!-- 공통 컬렉션 매핑 -->
+        <collection property="comments"
+                    resultMap="com.now.core.comment.domain.CommentMapper.commentResultMap"/>
+    </resultMap>
+
+
+</mapper>
