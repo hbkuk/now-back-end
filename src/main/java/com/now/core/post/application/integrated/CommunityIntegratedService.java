@@ -2,11 +2,15 @@ package com.now.core.post.application.integrated;
 
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.attachment.domain.constants.AttachmentType;
+import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.application.CommunityService;
+import com.now.core.post.application.PostService;
 import com.now.core.post.application.dto.AddNewAttachments;
 import com.now.core.post.application.dto.UpdateExistingAttachments;
 import com.now.core.post.domain.Community;
+import com.now.core.post.presentation.dto.CommunitiesResponse;
+import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,15 +23,68 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class CommunityIntegratedService {
 
+    private final PostService postService;
     private final CommunityService communityService;
     private final AttachmentService attachmentService;
     private final CommentService commentService;
+    private final JwtTokenService jwtTokenService;
 
+    /**
+     * 조건에 따라 페이지 정보와 함께 모든 커뮤니티 게시글 목록 반환
+     *
+     * @param condition 조회 조건
+     * @return 커뮤니티 게시글 목록과 페이지 정보
+     */
+    @Transactional(readOnly = true)
+    public CommunitiesResponse getAllCommunitiesWithPageInfo(Condition condition) {
+        return CommunitiesResponse.builder()
+                .communities(communityService.getAllCommunities(condition.updatePage()))
+                .page(condition.getPage().calculatePageInfo(postService.getTotalPostCount(condition)))
+                .build();
+    }
+
+    /**
+     * 커뮤니티 게시글을 조회하고 조회수를 증가시킨 뒤 반환
+     *
+     * @param postIdx 게시글 번호
+     * @return 조회된 커뮤니티 게시글
+     */
+    public Community getCommunityAndIncrementViewCount(Long postIdx) {
+        Community community = communityService.getCommunity(postIdx);
+        postService.incrementViewCount(postIdx);
+        return community;
+    }
+
+    /**
+     * 액세스 토큰 확인 후 커뮤니티 게시글을 조회하여 반환
+     *
+     * @param postIdx     게시글 번호
+     * @param accessToken 엑세스 토큰
+     * @return 조회된 커뮤니티 게시글
+     */
+    @Transactional(readOnly = true)
+    public Community getEditCommunity(Long postIdx, String accessToken) {
+        return communityService.getEditCommunity(postIdx, (String) jwtTokenService.getClaim(accessToken, "id"));
+    }
+
+    /**
+     * 커뮤니티 게시글과 함께 새로운 첨부 파일 등록
+     *
+     * @param community   커뮤니티 게시글
+     * @param attachments 첨부 파일 배열
+     */
     public void registerCommunity(Community community, MultipartFile[] attachments) {
         communityService.registerCommunity(community);
         attachmentService.saveAttachments(attachments, community.getPostIdx(), AttachmentType.FILE);
     }
 
+    /**
+     * 커뮤니티 게시글 업데이트 후 첨부 파일 수정
+     *
+     * @param updatedCommunity          업데이트된 커뮤니티 게시글
+     * @param addNewAttachments         새로 추가되는 첨부 파일
+     * @param updateExistingAttachments 기존 첨부 파일 업데이트 정보
+     */
     public void updateCommunity(Community updatedCommunity,
                                 AddNewAttachments addNewAttachments, UpdateExistingAttachments updateExistingAttachments) {
         communityService.hasUpdateAccess(updatedCommunity.getPostIdx(), updatedCommunity.getMemberId());
@@ -37,6 +94,12 @@ public class CommunityIntegratedService {
                 updatedCommunity.getPostIdx(), AttachmentType.FILE);
     }
 
+    /**
+     * 커뮤니티 게시글 삭제 후 관련된 댓글 및 첨부 파일 삭제
+     *
+     * @param postIdx  게시글 번호
+     * @param memberId 멤버 아이디
+     */
     public void deleteCommunity(Long postIdx, String memberId) {
         communityService.hasDeleteAccess(postIdx, memberId);
 

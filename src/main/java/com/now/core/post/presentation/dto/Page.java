@@ -67,7 +67,7 @@ public class Page {
      * @param totalPostCount 전체 게시글 수
      * @return 전체 게시글 수를 기반으로 페이지 정보 업데이트 한 객체 반환
      */
-    public Page calculatePaginationInfo(Long totalPostCount) {
+    public Page calculatePageInfo(Long totalPostCount) {
         this.maxPage = updateMaxPage(totalPostCount);
         this.pageNo = Math.min(pageNo, maxPage);
         this.startPage = updateStartPage();

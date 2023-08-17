@@ -38,7 +38,6 @@ public class CommunityService {
      *
      * @return 커뮤니티 게시글 정보 리스트
      */
-    @Transactional(readOnly = true)
     @Cacheable(value = "communityCache", key="#condition.hashCode()")
     public List<Community> getAllCommunities(Condition condition) {
         log.debug("Fetching posts from the database...");
@@ -59,6 +58,37 @@ public class CommunityService {
         }
 
         communityRepository.saveCommunity(community.updateMemberIdx(member.getMemberIdx()));
+    }
+
+    /**
+     * 커뮤니티 게시글 응답
+     *
+     * @param postIdx 게시글 번호
+     * @return 공지 게시글 정보
+     */
+    public Community getCommunity(Long postIdx) {
+        Community community = communityRepository.findCommunity(postIdx);
+        if (community == null) {
+            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
+        }
+
+        return community;
+    }
+
+
+    /**
+     * 커뮤니티 수정 게시글 응답
+     *
+     * @param postIdx 게시글 번호
+     * @param memberId 회원 ID
+     * @return 커뮤니티 수정 게시글 정보
+     */
+    public Community getEditCommunity(Long postIdx, String memberId) {
+        Community community = getCommunity(postIdx);
+        Member member = getMember(memberId);
+
+        community.canUpdate(member);
+        return community;
     }
 
     /**
@@ -121,38 +151,6 @@ public class CommunityService {
             throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
         }
         return member;
-    }
-
-    /**
-     * 커뮤니티 게시글 응답
-     *
-     * @param postIdx 게시글 번호
-     * @return 공지 게시글 정보
-     */
-    @Transactional(readOnly = true)
-    @Cacheable(value = "postCache", key="#postIdx")
-    public Community getCommunity(Long postIdx) {
-        Community community = communityRepository.findCommunity(postIdx);
-        if (community == null) {
-            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
-        }
-
-        return community;
-    }
-
-    /**
-     * 커뮤니티 수정 게시글 응답
-     * 
-     * @param postIdx 게시글 번호
-     * @param memberId 회원 ID
-     * @return 커뮤니티 수정 게시글 정보
-     */
-    public Community getEditCommunity(Long postIdx, String memberId) {
-        Community community = getCommunity(postIdx);
-        Member member = getMember(memberId);
-        
-        community.canUpdate(member);
-        return community;
     }
 }
 

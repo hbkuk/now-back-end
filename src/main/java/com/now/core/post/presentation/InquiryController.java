@@ -42,7 +42,7 @@ public class InquiryController {
     public ResponseEntity<InquiriesResponse> getAllInquiries(@Valid Condition condition) {
         InquiriesResponse inquiriesResponse = InquiriesResponse.builder()
                 .inquiries(inquiryService.getAllInquiries(condition.updatePage()))
-                .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
+                .page(condition.getPage().calculatePageInfo(postService.getTotalPostCount(condition)))
                 .build();
 
         return new ResponseEntity<>(inquiriesResponse, HttpStatus.OK);

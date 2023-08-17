@@ -50,7 +50,7 @@ public class PhotoController {
     public ResponseEntity<PhotosResponse> getAllPhotos(@Valid Condition condition) {
         PhotosResponse photosResponse = PhotosResponse.builder()
                 .photos(photoService.getAllPhotos(condition.updatePage()))
-                .page(condition.getPage().calculatePaginationInfo(postService.getTotalPostCount(condition)))
+                .page(condition.getPage().calculatePageInfo(postService.getTotalPostCount(condition)))
                 .build();
 
         return new ResponseEntity<>(photosResponse, HttpStatus.OK);

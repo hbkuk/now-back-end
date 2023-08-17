@@ -56,6 +56,15 @@ public class PostService {
     }
 
     /**
+     * 게시글 번호에 해당하는 게시글의 조회수를 증가
+     *
+     * @param postIdx 게시글 번호
+     */
+    public void incrementViewCount(Long postIdx) {
+        postRepository.incrementViewCount(postIdx);
+    }
+
+    /**
      * 반응 정보 업데이트
      *
      * @param newPostReaction 업데이트할 반응 정보를 포함하는 객체
