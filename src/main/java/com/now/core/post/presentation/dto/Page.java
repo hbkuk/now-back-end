@@ -1,11 +1,12 @@
 package com.now.core.post.presentation.dto;
 
-import lombok.Data;
+import lombok.*;
 
 /**
  * 페이지 정보를 담는 데이터 전송 객체
  */
-@Data
+@Getter
+@ToString
 public class Page {
 
     /**
@@ -57,12 +58,7 @@ public class Page {
      * @return Page 객체 생성 후 반환
      */
     public static Page of(Integer recordsPerPage, Integer pageNo) {
-        Page page = new Page();
-
-        page.setPageNo(pageNo);
-        page.setRecordsPerPage(recordsPerPage);
-        page.setRecordStartIndex((pageNo - 1) * recordsPerPage);
-        return page;
+        return createDefaultPage(recordsPerPage, pageNo);
     }
 
     /**
@@ -78,6 +74,49 @@ public class Page {
         this.endPage = updateEndPage();
 
         return this;
+    }
+
+    /**
+     * Page 객체를 생성하고 기본 설정 값을 적용한 후 해당 객체 반환
+     *
+     * @param recordsPerPage 페이지당 레코드 수
+     * @param pageNo 페이지 번호
+     * @return Page 객체 생성 후 반환
+     */
+    private static Page createDefaultPage(Integer recordsPerPage, Integer pageNo) {
+        Page page = new Page();
+
+        page.updatePageNo(pageNo);
+        page.updateRecordsPerPage(recordsPerPage);
+        page.updateRecordStartIndex(recordsPerPage);
+        return page;
+    }
+
+    /**
+     * 페이지 번호를 업데이트
+     *
+     * @param pageNo 페이지 번호
+     */
+    private void updatePageNo(Integer pageNo) {
+        this.pageNo = pageNo;
+    }
+
+    /**
+     * 페이지당 레코드 수 업데이트
+     * 
+     * @param recordsPerPage 페이지당 레코드 수 
+     */
+    private void updateRecordsPerPage(Integer recordsPerPage) {
+        this.recordsPerPage = recordsPerPage;
+    }
+
+    /**
+     * 레코드 시작 인덱스 업데이트 
+     * 
+     * @param recordsPerPage 페이지당 레코드 수
+     */
+    private void updateRecordStartIndex(int recordsPerPage) {
+        this.recordStartIndex = (pageNo - 1) * recordsPerPage;
     }
 
     /**

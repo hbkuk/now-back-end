@@ -1,9 +1,8 @@
 package com.now.core.member.application;
 
-import com.now.NowApplication;
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
-import com.now.config.document.utils.BeanTest;
+import com.now.config.annotations.ApplicationTest;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.application.dto.TokenClaims;
 import com.now.core.authentication.constants.Authority;
@@ -15,20 +14,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+@ApplicationTest
 @DisplayName("회원 서비스 객체")
-public class MemberServiceTest extends BeanTest {
+public class MemberServiceTest {
 
     @Autowired private MemberService memberService;
     @MockBean private MemberRepository memberRepository;

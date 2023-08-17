@@ -1,7 +1,7 @@
 package com.now.core.post.application;
 
 import com.now.common.exception.ErrorType;
-import com.now.config.document.utils.BeanTest;
+import com.now.config.annotations.ApplicationTest;
 import com.now.config.fixtures.comment.CommentFixture;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.exception.InvalidCategoryException;
@@ -30,8 +30,9 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+@ApplicationTest
 @DisplayName("커뮤니티 서비스 객체는")
-class CommunityServiceTest extends BeanTest {
+class CommunityServiceTest {
 
     @Autowired private CommunityService communityService;
     @MockBean private CommunityRepository communityRepository;

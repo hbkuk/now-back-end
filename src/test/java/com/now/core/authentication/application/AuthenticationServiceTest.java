@@ -1,18 +1,17 @@
 package com.now.core.authentication.application;
 
-import com.now.NowApplication;
-import com.now.config.document.utils.BeanTest;
+import com.now.config.annotations.ApplicationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@ApplicationTest
 @DisplayName("인증 서비스 객체는")
-class AuthenticationServiceTest extends BeanTest {
+class AuthenticationServiceTest {
 
     @Autowired AuthenticationService authenticationService;
     @MockBean TokenBlackList tokenBlacklist;

@@ -1,6 +1,6 @@
 package com.now.core.post.application.integrated;
 
-import com.now.config.document.utils.BeanTest;
+import com.now.config.annotations.RepositoryTest;
 import com.now.core.attachment.domain.AttachmentRepository;
 import com.now.core.comment.domain.Comment;
 import com.now.core.comment.domain.CommentRepository;
@@ -15,7 +15,6 @@ import com.now.core.post.presentation.dto.constants.Sort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
@@ -28,9 +27,9 @@ import static com.now.config.fixtures.post.CommunityFixture.createCommunityForSa
 import static com.now.config.fixtures.post.CommunityFixture.createCommunityForUpdate;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Sql("classpath:testdb.sql")
+@RepositoryTest
 @DisplayName("커뮤니티 통합 서비스 객체")
-class CommunityIntegratedServiceTest extends BeanTest {
+class CommunityIntegratedServiceTest {
 
     @Autowired
     private CommunityIntegratedService communityIntegratedService;

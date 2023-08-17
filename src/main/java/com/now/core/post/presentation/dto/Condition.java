@@ -5,9 +5,7 @@ import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.post.domain.constants.PostValidationGroup;
 import com.now.core.post.presentation.dto.constants.Sort;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.*;
@@ -15,8 +13,11 @@ import javax.validation.constraints.*;
 /**
  * 조건 정보를 담는 데이터 전송 객체
  */
-@Data
-@Builder
+@Builder(toBuilder = true)
+@Getter
+@ToString(callSuper = true)
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
 @EqualsAndHashCode
 public class Condition {
 

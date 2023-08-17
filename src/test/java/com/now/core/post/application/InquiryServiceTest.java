@@ -2,7 +2,7 @@ package com.now.core.post.application;
 
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
-import com.now.config.document.utils.BeanTest;
+import com.now.config.annotations.ApplicationTest;
 import com.now.config.fixtures.comment.CommentFixture;
 import com.now.config.fixtures.post.InquiryFixture;
 import com.now.core.category.domain.constants.Category;
@@ -31,8 +31,9 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+@ApplicationTest
 @DisplayName("문의 서비스 객체는")
-class InquiryServiceTest extends BeanTest {
+class InquiryServiceTest {
 
     @Autowired private InquiryService inquiryService;
     @MockBean private InquiryRepository inquiryRepository;

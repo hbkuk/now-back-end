@@ -1,8 +1,7 @@
 package com.now.core.attachment.application;
 
-import com.now.NowApplication;
 import com.now.common.exception.ErrorType;
-import com.now.config.document.utils.BeanTest;
+import com.now.config.annotations.ApplicationTest;
 import com.now.core.attachment.application.dto.ThumbNail;
 import com.now.core.attachment.domain.Attachment;
 import com.now.core.attachment.domain.AttachmentRepository;
@@ -15,24 +14,20 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static com.now.config.fixtures.attachment.AttachmentFixture.*;
-import static com.now.config.fixtures.member.MemberFixture.createMember;
-import static com.now.config.fixtures.post.CommunityFixture.createCommunity;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
+@ApplicationTest
 @DisplayName("첨부 파일 서비스 객체")
-class AttachmentServiceTest extends BeanTest {
+class AttachmentServiceTest {
 
     @Autowired private AttachmentService attachmentService;
     @MockBean private AttachmentRepository attachmentRepository;

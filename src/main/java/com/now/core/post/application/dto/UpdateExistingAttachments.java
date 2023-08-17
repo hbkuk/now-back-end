@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 @Builder
 @Getter
-@ToString()
+@ToString
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class UpdateExistingAttachments {
