@@ -2,6 +2,7 @@ package com.now.core.post.domain.repository;
 
 import com.now.core.post.domain.mapper.PostMapper;
 import com.now.core.post.presentation.dto.Condition;
+import com.now.core.post.presentation.dto.PostReaction;
 import com.now.core.post.presentation.dto.Posts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +40,81 @@ public class PostRepository {
         return postMapper.findTotalPostCount(condition);
     }
 
+    /**
+     * 게시글 번호에 해당하는 게시글의 조회수를 증가
+     *
+     * @param postIdx 게시글 번호
+     */
+    public void incrementViewCount(Long postIdx) {
+        postMapper.incrementViewCount(postIdx);
+    }
+
+    /**
+     * 게시글 번호에 해당하는 게시글의 좋아요 증가
+     *
+     * @param postIdx 게시글 번호
+     */
+    public void incrementLikeCount(Long postIdx) {
+        postMapper.incrementLikeCount(postIdx);
+    }
+
+    /**
+     * 게시글 번호에 해당하는 게시글의 좋아요 감소
+     *
+     * @param postIdx 게시글 번호
+     */
+    public void decrementLikeCount(Long postIdx) {
+        postMapper.decrementLikeCount(postIdx);
+    }
+
+    /**
+     * 게시글 번호에 해당하는 게시글의 싫어요 증가
+     *
+     * @param postIdx 게시글 번호
+     */
+    public void incrementDislikeCount(Long postIdx) {
+        postMapper.incrementDislikeCount(postIdx);
+    }
+
+    /**
+     * 게시글 번호에 해당하는 게시글의 싫어요 감소
+     *
+     * @param postIdx 게시글 번호
+     */
+    public void decrementDislikeCount(Long postIdx) {
+        postMapper.decrementDislikeCount(postIdx);
+    }
+
+    
+    /**
+     * 게시글 번호에 해당하는 게시글의 반응 저장
+     *
+     * @param postReaction 리액션 정보
+     */
+    public void savePostReaction(PostReaction postReaction) {
+        postMapper.savePostReaction(postReaction);
+    }
+
+    
+    /**
+     * 게시글 번호에 해당하는 게시글의 반응 수정
+     *
+     * @param postReaction 리액션 정보
+     */
+    public void updatePostReaction(PostReaction postReaction) {
+        postMapper.updatePostReaction(postReaction);
+    }
+
+
+    /**
+     * 게시글 번호에 해당하는 게시글의 반응 조회 후 반환
+     *
+     * @param postReaction 게시글 반응 정보
+     * @return 게시글 번호에 해당하는 게시글의 반응 조회 후 반환
+     */
+    public PostReaction getPostReaction(PostReaction postReaction) {
+        return postMapper.getPostReaction(postReaction);
+    }
 
     /**
      * 게시글 번호에 해당하는 게시글이 있다면 true 반환, 그렇지 않다면 false 반환

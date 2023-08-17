@@ -7,7 +7,7 @@
     <select id="findAllNotices" parameterType="Condition" resultMap="notice">
         SELECT
         <include refid="CommonColumnMappings.postTableColumn"/>,
-        <include refid="CommonColumnMappings.managerTableColumn"/>,
+        <include refid="CommonColumnMappings.maxManagerTableColumn"/>,
         <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
         <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p

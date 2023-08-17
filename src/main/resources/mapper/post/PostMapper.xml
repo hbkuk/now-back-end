@@ -10,7 +10,7 @@
         SELECT
         <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
         <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
-        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberTableColumn"/>,
         <include refid="CommonColumnMappings.maxInquiriesWithNonSecretInfo"/>,
         <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
         <include refid="CommonColumnMappings.maxManagerTableColumn"/>,
@@ -41,7 +41,7 @@
         SELECT
         <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
         <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
-        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberTableColumn"/>,
         <include refid="CommonColumnMappings.maxInquiriesWithNonSecretInfo"/>,
         <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
         <include refid="CommonColumnMappings.maxManagerTableColumn"/>,
@@ -72,7 +72,7 @@
         SELECT
         <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
         <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
-        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberTableColumn"/>,
         <include refid="CommonColumnMappings.maxInquiriesWithNonSecretInfo"/>,
         <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
         <include refid="CommonColumnMappings.maxManagerTableColumn"/>,
@@ -103,7 +103,7 @@
         SELECT
         <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
         <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
-        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberTableColumn"/>,
         <include refid="CommonColumnMappings.maxInquiriesWithNonSecretInfo"/>,
         <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
         <include refid="CommonColumnMappings.maxManagerTableColumn"/>,
@@ -130,6 +130,7 @@
     </select>
 
 
+    <!-- 모든 게시글의 개수 확인 -->
     <select id="findTotalPostCount" parameterType="Condition">
         SELECT
             count(p.post_idx)
@@ -143,9 +144,80 @@
     </select>
 
 
+    <!-- 게시글의 조회수 증가 쿼리 -->
+    <update id="incrementViewCount" parameterType="Long">
+        UPDATE tb_post
+            SET view_count = view_count + 1
+        WHERE post_Idx = #{postIdx}
+    </update>
+
+
+    <!-- 게시글의 좋아요 증가 쿼리 -->
+    <update id="incrementLikeCount" parameterType="Long">
+        UPDATE tb_post
+            SET like_count = like_count + 1
+        WHERE post_Idx = #{postIdx}
+    </update>
+
+
+    <!-- 게시글의 좋아요 감소 쿼리 -->
+    <update id="decrementLikeCount" parameterType="Long">
+        UPDATE tb_post
+            SET like_count = like_count - 1
+        WHERE post_Idx = #{postIdx}
+    </update>
+
+
+    <!-- 게시글의 싫어요 증가 쿼리 -->
+    <update id="incrementDislikeCount" parameterType="Long">
+        UPDATE tb_post
+            SET dislike_count = dislike_count + 1
+        WHERE post_Idx = #{postIdx}
+    </update>
+
+
+    <!-- 게시글의 싫어요 감소 쿼리 -->
+    <update id="decrementDislikeCount" parameterType="Long">
+        UPDATE tb_post
+            SET dislike_count = dislike_count - 1
+        WHERE post_Idx = #{postIdx}
+    </update>
+
+    <!-- 게시글의 리액션 수정 쿼리 -->
+    <insert id="savePostReaction" parameterType="PostReaction">
+        INSERT INTO tb_post_reaction (post_idx, member_idx, manager_idx, reaction)
+        VALUES (#{postIdx}, #{memberIdx}, #{managerIdx}, #{reaction.name})
+    </insert>
+
+
+
+    <!-- 게시글의 리액션 수정 쿼리 -->
+    <update id="updatePostReaction" parameterType="PostReaction">
+        UPDATE tb_post_reaction
+            SET reaction = #{reaction.name}
+        WHERE post_Idx = #{postIdx}
+    </update>
+
+
+    <!-- 기존 리액션 저장 여부 확인 쿼리 -->
+    <select id="getReaction" parameterType="PostReaction" resultMap="postReaction">
+        SELECT
+        <include refid="CommonColumnMappings.postReactionTableColumn"/>,
+        <include refid="CommonColumnMappings.managerInfoOfPostReactionTableColumn"/>,
+        <include refid="CommonColumnMappings.memberInfoOfPostReactionTableColumn"/>
+            FROM tb_post_reaction prea
+            LEFT OUTER JOIN tb_member pream ON prea.member_idx = pream.member_idx
+            LEFT OUTER JOIN tb_manager preama ON prea.manager_idx = preama.manager_idx
+        WHERE prea.post_idx = #{postIdx}
+            AND prea.member_idx = ${memberIdx}
+            OR pream.manager_idx = ${managerIdx}
+    </select>
+
+
+    <!-- 게시글의 존재 여부 확인 쿼리 -->
     <select id="existPostByPostId" parameterType="Long" resultType="boolean">
         SELECT COUNT(*) > 0
-        FROM tb_post
+            FROM tb_post
         WHERE post_idx = #{postIdx}
     </select>
 
@@ -154,19 +226,28 @@
     <resultMap id="posts" type="Posts">
         <discriminator javaType="string" column="p_post_group">
             <case value="NOTICE">
-                <association property="notice" resultMap="com.now.core.post.domain.mapper.NoticeMapper.notice" />
+                <association property="notice" resultMap="com.now.core.post.domain.mapper.NoticeMapper.notice"/>
             </case>
             <case value="COMMUNITY">
-                <association property="community" resultMap="com.now.core.post.domain.mapper.CommunityMapper.community" />
+                <association property="community" resultMap="com.now.core.post.domain.mapper.CommunityMapper.community"/>
             </case>
             <case value="PHOTO">
-                <association property="photo" resultMap="com.now.core.post.domain.mapper.PhotoMapper.photo" />
+                <association property="photo" resultMap="com.now.core.post.domain.mapper.PhotoMapper.photo"/>
             </case>
             <case value="INQUIRY">
-                <association property="inquiry" resultMap="com.now.core.post.domain.mapper.InquiryMapper.inquiry" />
+                <association property="inquiry" resultMap="com.now.core.post.domain.mapper.InquiryMapper.inquiry"/>
             </case>
         </discriminator>
     </resultMap>
 
+
+    <!-- 게시글의 리액션 결과 매핑 -->
+    <resultMap id="postReaction" type="PostReaction">
+        <id property="postReactionIdx" column="prea_post_reaction_idx"/>
+        <result property="postIdx" column="prea_post_idx"/>
+        <result property="memberNickname" column="pream_nickname"/>
+        <result property="managerNickname" column="preama_nickname"/>
+        <result property="reaction" column="prea_reaction" javaType="com.now.core.post.presentation.dto.constants.Reaction"/>
+    </resultMap>
 
 </mapper>

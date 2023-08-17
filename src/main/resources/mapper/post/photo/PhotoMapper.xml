@@ -9,7 +9,7 @@
         <include refid="CommonColumnMappings.postTableColumn"/>,
         <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
         <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
-        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberTableColumn"/>,
         <include refid="CommonColumnMappings.maxThumbnailTableColumn"/>,
         <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>
         FROM tb_post p

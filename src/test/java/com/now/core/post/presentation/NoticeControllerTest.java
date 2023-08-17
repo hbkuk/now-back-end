@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import javax.servlet.http.Cookie;
 import java.util.List;
 
-import static com.now.common.snippet.RequestCookiesSnippet.cookieWithName;
-import static com.now.common.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
+import static com.now.config.document.snippet.RequestCookiesSnippet.cookieWithName;
+import static com.now.config.document.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
 import static com.now.config.document.utils.RestDocsConfig.field;
 import static com.now.config.fixtures.comment.CommentFixture.createComments;
 import static com.now.config.fixtures.post.NoticeFixture.createNotice;

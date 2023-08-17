@@ -13,9 +13,10 @@ import javax.validation.constraints.*;
 /**
  * 조건 정보를 담는 데이터 전송 객체
  */
+@Setter // 파라미터 자동 맵핑으로 인한 Setter 추가
 @Builder(toBuilder = true)
 @Getter
-@ToString(callSuper = true)
+@ToString
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @EqualsAndHashCode

@@ -14,8 +14,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.servlet.http.Cookie;
 
-import static com.now.common.snippet.RequestCookiesSnippet.cookieWithName;
-import static com.now.common.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
+import static com.now.config.document.snippet.RequestCookiesSnippet.cookieWithName;
+import static com.now.config.document.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
 import static com.now.config.fixtures.member.MemberFixture.createMember;
 import static com.now.config.fixtures.member.MemberFixture.createMemberProfile;
 import static org.mockito.BDDMockito.given;

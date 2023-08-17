@@ -16,16 +16,12 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import javax.servlet.http.Cookie;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import static com.now.common.snippet.RequestCookiesSnippet.cookieWithName;
-import static com.now.common.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
+import static com.now.config.document.snippet.RequestCookiesSnippet.cookieWithName;
+import static com.now.config.document.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
 import static com.now.config.document.utils.RestDocsConfig.field;
 import static com.now.config.fixtures.attachment.AttachmentFixture.createAttachments;
 import static com.now.config.fixtures.comment.CommentFixture.createComments;

@@ -7,7 +7,7 @@
     <select id="findAllInquiries" parameterType="Condition" resultMap="inquiry">
         SELECT
         <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
-        <include refid="CommonColumnMappings.memberTableColumn"/>,
+        <include refid="CommonColumnMappings.maxMemberTableColumn"/>,
         <include refid="CommonColumnMappings.maxInquiriesWithNonSecretInfo"/>,
         <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
         <include refid="CommonColumnMappings.maxManagerTableColumn"/>,

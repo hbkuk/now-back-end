@@ -39,8 +39,7 @@
             (p.title LIKE CONCAT('%', #{keyword}, '%')
             OR m.nickname LIKE CONCAT('%', #{keyword}, '%')
             OR ma.nickname LIKE CONCAT('%', #{keyword}, '%')
-            OR p.content LIKE
-            CONCAT('%', #{keyword}, '%'))
+            OR p.content LIKE CONCAT('%', #{keyword}, '%'))
         </if>
 
     </sql>
@@ -53,7 +52,7 @@
                 ORDER BY p.post_idx DESC
             </when>
             <when test="sort.name == 'RECOMMENDED'">
-                ORDER BY p.like_count DESC
+                ORDER BY p.like_count - p.dislike_count DESC
             </when>
             <when test="sort.name == 'MOST_VIEWED'">
                 ORDER BY p.view_count DESC

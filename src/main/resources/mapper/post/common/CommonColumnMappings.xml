@@ -5,164 +5,208 @@
 
         <!-- Post 테이블의 컬럼 Mapping -->
         <sql id="postTableColumn">
-        p.post_idx AS p_post_idx,
-        p.post_group AS p_post_group,
-        p.category AS p_category,
-        p.title AS p_title,
-        p.member_idx AS p_member_idx,
-        p.manager_idx AS p_manager_idx,
-        p.reg_date AS p_reg_date,
-        p.mod_date AS p_mod_date,
-        p.content AS p_content,
-        p.view_count AS p_view_count,
-        p.like_count AS p_like_count,
-        p.dislike_count AS p_dislike_count,
-        p.pinned AS p_pinned
+                p.post_idx AS p_post_idx,
+                p.post_group AS p_post_group,
+                p.category AS p_category,
+                p.title AS p_title,
+                p.member_idx AS p_member_idx,
+                p.manager_idx AS p_manager_idx,
+                p.reg_date AS p_reg_date,
+                p.mod_date AS p_mod_date,
+                p.content AS p_content,
+                p.view_count AS p_view_count,
+                p.like_count AS p_like_count,
+                p.dislike_count AS p_dislike_count,
+                p.pinned AS p_pinned
         </sql>
 
 
         <!-- Post 테이블의 컬럼 Mapping, content 제외 -->
         <sql id="postTableColumnWithoutContent">
-        p.post_idx AS p_post_idx,
-        p.post_group AS p_post_group,
-        p.category AS p_category,
-        p.title AS p_title,
-        p.member_idx AS p_member_idx,
-        p.manager_idx AS p_manager_idx,
-        p.reg_date AS p_reg_date,
-        p.mod_date AS p_mod_date,
-        p.view_count AS p_view_count,
-        p.like_count AS p_like_count,
-        p.dislike_count AS p_dislike_count,
-        p.pinned AS p_pinned
+                p.post_idx AS p_post_idx,
+                p.post_group AS p_post_group,
+                p.category AS p_category,
+                p.title AS p_title,
+                p.member_idx AS p_member_idx,
+                p.manager_idx AS p_manager_idx,
+                p.reg_date AS p_reg_date,
+                p.mod_date AS p_mod_date,
+                p.view_count AS p_view_count,
+                p.like_count AS p_like_count,
+                p.dislike_count AS p_dislike_count,
+                p.pinned AS p_pinned
         </sql>
 
 
         <!-- Attachment 테이블의 컬럼 Mapping -->
         <sql id="attachmentTableColumn">
-        f.attachment_idx AS f_attachment_idx,
-        f.original_attachment_name AS f_original_attachment_name,
-        f.saved_attachment_name AS f_saved_attachment_name,
-        f.attachment_extension AS f_attachment_extension,
-        f.attachment_size AS f_attachment_size,
-        f.post_idx AS f_post_idx
+                f.attachment_idx AS f_attachment_idx,
+                f.original_attachment_name AS f_original_attachment_name,
+                f.saved_attachment_name AS f_saved_attachment_name,
+                f.attachment_extension AS f_attachment_extension,
+                f.attachment_size AS f_attachment_size,
+                f.post_idx AS f_post_idx
         </sql>
 
 
         <!-- Attachment 테이블의 컬럼 Mapping, MAX 함수 사용-->
         <sql id="maxAttachmentTableColumn">
-        MAX(f.attachment_idx) AS f_attachment_idx,
-        MAX(f.original_attachment_name) AS f_original_attachment_name,
-        MAX(f.saved_attachment_name) AS f_saved_attachment_name,
-        MAX(f.attachment_extension) AS f_attachment_extension,
-        MAX(f.attachment_size) AS f_attachment_size,
-        MAX(f.post_idx) AS f_post_idx
+                MAX(f.attachment_idx) AS f_attachment_idx,
+                MAX(f.original_attachment_name) AS f_original_attachment_name,
+                MAX(f.saved_attachment_name) AS f_saved_attachment_name,
+                MAX(f.attachment_extension) AS f_attachment_extension,
+                MAX(f.attachment_size) AS f_attachment_size,
+                MAX(f.post_idx) AS f_post_idx
         </sql>
 
 
         <!-- Comment 테이블의 컬럼 Mapping -->
         <sql id="commentTableColumn">
-        co.comment_idx AS co_comment_idx,
-        co.member_idx AS co_member_idx,
-        co.manager_idx AS co_manager_idx,
-        co.reg_date AS co_reg_date,
-        co.content AS co_content,
-        co.post_idx AS co_post_idx
+                co.comment_idx AS co_comment_idx,
+                co.member_idx AS co_member_idx,
+                co.manager_idx AS co_manager_idx,
+                co.reg_date AS co_reg_date,
+                co.content AS co_content,
+                co.post_idx AS co_post_idx
         </sql>
 
 
         <!-- Comment 테이블의 컬럼 Mapping, MAX 함수 사용-->
         <sql id="maxCommentTableColumn">
-        MAX(co.comment_idx) AS co_comment_idx,
-        MAX(co.member_idx) AS co_member_idx,
-        MAX(co.manager_idx) AS co_manager_idx,
-        MAX(co.reg_date) AS co_reg_date,
-        MAX(co.content) AS co_content,
-        MAX(co.post_idx) AS co_post_idx
+                MAX(co.comment_idx) AS co_comment_idx,
+                MAX(co.member_idx) AS co_member_idx,
+                MAX(co.manager_idx) AS co_manager_idx,
+                MAX(co.reg_date) AS co_reg_date,
+                MAX(co.content) AS co_content,
+                MAX(co.post_idx) AS co_post_idx
         </sql>
 
 
         <!-- Member, Manager 테이블의 컬럼 맵핑(Post author seach)-->
         <sql id="memberAndManagerInfoOfCommentTableColumn">
-        com.id AS com_id,
-        coma.id AS coma_id,
-        com.nickname AS com_nickname,
-        coma.nickname AS coma_nickname
+                com.id AS com_id,
+                coma.id AS coma_id,
+                com.nickname AS com_nickname,
+                coma.nickname AS coma_nickname
         </sql>
 
 
         <!-- Member, Manager 테이블의 컬럼 맵핑(Post author seach), MAX 함수 사용-->
         <sql id="maxMemberAndManagerInfoOfCommentTableColumn">
-        MAX(com.id) AS com_id,
-        MAX(coma.id) AS coma_id,
-        MAX(com.nickname) AS com_nickname,
-        MAX(coma.nickname) AS coma_nickname
+                MAX(com.id) AS com_id,
+                MAX(coma.id) AS coma_id,
+                MAX(com.nickname) AS com_nickname,
+                MAX(coma.nickname) AS coma_nickname
         </sql>
 
 
         <!-- Inquiry 테이블의 컬럼 Mapping, 비밀글 여부만-->
         <sql id="inquiriesWithNonSecretInfo">
-        i.secret AS i_secret,
-        i.answer_manager_idx AS i_answer_manager_idx
+                i.secret AS i_secret,
+                i.answer_manager_idx AS i_answer_manager_idx
         </sql>
 
 
         <!-- Inquiry 테이블의 컬럼 Mapping, 비밀글 여부만, MAX 함수 사용-->
         <sql id="maxInquiriesWithNonSecretInfo">
-        MAX(i.secret) AS i_secret,
-        MAX(i.answer_manager_idx) AS i_answer_manager_idx
+                MAX(i.secret) AS i_secret,
+                MAX(i.answer_manager_idx) AS i_answer_manager_idx
         </sql>
 
 
         <!-- Inquiry 테이블의 컬럼 Mapping-->
         <sql id="inquiryTableColumn">
-        i.secret AS i_secret,
-        i.answer_content AS i_answer_content,
-        i.answer_reg_date AS i_answer_reg_date,
-        i.answer_manager_idx AS i_answer_manager_idx,
-        i.password AS i_password
+                i.secret AS i_secret,
+                i.answer_content AS i_answer_content,
+                i.answer_reg_date AS i_answer_reg_date,
+                i.answer_manager_idx AS i_answer_manager_idx,
+                i.password AS i_password
         </sql>
 
 
         <!-- Inquiry 테이블과 Manager 테이블의 Join 컬럼 Mapping, MAX 함수 사용-->
         <sql id="maxManagerInfoOfInquiryTableColumn">
-        MAX(ima.nickname) AS ima_nickname
+            MAX(ima.nickname) AS ima_nickname
         </sql>
 
 
         <!-- Inquiry 테이블과 Manager 테이블의 Join 컬럼 Mapping-->
         <sql id="managerInfoOfInquiryTableColumn">
-        ima.nickname AS ima_nickname
+            ima.nickname AS ima_nickname
         </sql>
 
 
         <!-- Manager 테이블의 컬럼 Mapping, MAX 함수 사용 -->
         <sql id="maxManagerTableColumn">
-        max(ma.nickname) AS ma_nickname
+            max(ma.nickname) AS ma_nickname
         </sql>
 
 
         <!-- Manager 테이블의 컬럼 Mapping -->
         <sql id="managerTableColumn">
-        ma.nickname AS ma_nickname
+            ma.nickname AS ma_nickname
         </sql>
 
 
         <!-- Member 테이블의 컬럼 Mapping -->
         <sql id="memberTableColumn">
-        m.nickname AS m_nickname,
-        m.id AS m_id
+            m.nickname AS m_nickname,
+            m.id AS m_id
         </sql>
+
+
+        <!-- Member 테이블의 컬럼 Mapping, MAX 함수 사용-->
+        <sql id="maxMemberTableColumn">
+            max(m.nickname) AS m_nickname,
+            max(m.id) AS m_id
+        </sql>
+
 
 
         <!-- thumbnail 테이블의 컬럼 Mapping -->
         <sql id="thumbnailTableColumn">
-        th.attachment_idx AS th_thumbnail_attachment_idx
+            th.attachment_idx AS th_thumbnail_attachment_idx
         </sql>
+
 
         <!-- thumbnail 테이블의 컬럼 Mapping, MAX 함수 사용-->
         <sql id="maxThumbnailTableColumn">
-        MAX(th.attachment_idx) AS th_thumbnail_attachment_idx
+            MAX(th.attachment_idx) AS th_thumbnail_attachment_idx
         </sql>
+
+
+        <!-- post_reaction 테이블의 컬럼 Mapping -->
+        <sql id="postReactionTableColumn">
+            prea.post_reaction_idx AS prea_post_reaction_idx,
+            prea.reaction AS prea_reaction
+        </sql>
+
+        <!-- post_reaction 테이블의 컬럼 Mapping, MAX 함수 사용 -->
+        <sql id="maxPostReactionTableColumn">
+            MAX(prea.post_reaction_idx) AS prea_post_reaction_idx,
+            MAX(prea.reaction) AS prea_reaction
+        </sql>
+
+        <!-- post_reaction 테이블과 Manager 테이블의 Join 컬럼 Mapping, MAX 함수 사용-->
+        <sql id="maxManagerInfoOfPostReactionTableColumn">
+            MAX(preama.nickname) AS preama_nickname
+        </sql>
+
+        <!-- post_reaction 테이블과 Manager 테이블의 Join 컬럼 Mapping-->
+        <sql id="managerInfoOfPostReactionTableColumn">
+            preama.nickname AS preama_nickname
+        </sql>
+
+        <!-- post_reaction 테이블과 Member 테이블의 Join 컬럼 Mapping, MAX 함수 사용-->
+        <sql id="maxMemberInfoOfPostReactionTableColumn">
+            MAX(pream.nickname) AS pream_nickname
+        </sql>
+
+        <!-- post_reaction 테이블과 Member 테이블의 Join 컬럼 Mapping-->
+        <sql id="memberInfoOfPostReactionTableColumn">
+            pream.nickname AS pream_nickname
+        </sql>
+
+
 
 </mapper>

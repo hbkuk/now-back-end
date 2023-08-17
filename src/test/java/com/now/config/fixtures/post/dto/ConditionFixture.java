@@ -17,4 +17,25 @@ public class ConditionFixture {
                 .pageNo(1)
                 .build();
     }
+
+    public static Condition createConditionOnlySort(Sort sort) {
+        return Condition.builder()
+                .sort(sort)
+                .build();
+    }
+
+    public static Condition createCondition(Sort sort, Category category) {
+        return Condition.builder()
+                .sort(sort)
+                .category(category)
+                .build();
+    }
+
+    public static Condition createCondition(Sort sort, Category category, String keyword) {
+        return Condition.builder()
+                .sort(sort)
+                .category(category)
+                .keyword(keyword)
+                .build();
+    }
 }

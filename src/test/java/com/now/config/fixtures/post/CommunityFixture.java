@@ -73,6 +73,46 @@ public class CommunityFixture {
                 .build();
     }
 
+    public static Community createCommunityForSave(Long memberIdx, String memberId) {
+        return Community.builder()
+                .category(Category.COMMUNITY_STUDY)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .memberId(memberId)
+                .memberIdx(memberIdx)
+                .build();
+    }
+
+    public static Community createCommunityForSave(String memberId, Category category) {
+        return Community.builder()
+                .category(category)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .memberId(memberId)
+                .build();
+    }
+
+    public static Community createCommunityForSave(String memberId, Long memberIdx, String memberNickname, Category category, String title, String content) {
+        return Community.builder()
+                .category(category)
+                .title(title)
+                .content(content)
+                .memberId(memberId)
+                .memberIdx(memberIdx)
+                .memberNickname(memberNickname)
+                .build();
+    }
+
+    public static Community createCommunityForUpdate(Long postIdx, Long memberIdx, Category category, String title, String content) {
+        return Community.builder()
+                .postIdx(postIdx)
+                .memberIdx(memberIdx)
+                .category(category)
+                .title(title)
+                .content(content)
+                .build();
+    }
+
     public static Community createCommunityForUpdate(Long postIdx, String memberId) {
         return Community.builder()
                 .postIdx(postIdx)
@@ -80,6 +120,16 @@ public class CommunityFixture {
                 .title(SAMPLE_TITLE_1)
                 .content(SAMPLE_CONTENT_1)
                 .memberId(memberId)
+                .build();
+    }
+
+    public static Community createCommunityForUpdate(Long postIdx, Long memberIdx) {
+        return Community.builder()
+                .postIdx(postIdx)
+                .category(Category.COMMUNITY_STUDY)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .memberIdx(memberIdx)
                 .build();
     }
 

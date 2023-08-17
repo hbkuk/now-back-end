@@ -10,7 +10,7 @@ import javax.validation.constraints.Size;
  */
 @Builder(toBuilder = true)
 @Getter
-@ToString(callSuper = true)
+@ToString
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 public class Answer {

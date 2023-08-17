@@ -1,4 +1,4 @@
-package com.now.common.snippet;
+package com.now.config.document.snippet;
 
 import org.springframework.restdocs.headers.AbstractHeadersSnippet;
 import org.springframework.restdocs.headers.HeaderDescriptor;

@@ -27,7 +27,7 @@ public class CommentController {
      * @param postIdx  원글 번호
      * @param memberId 회원 ID
      * @param comment  댓글 정보
-     * @return 생성된 게시글에 대한 CREATED 응답을 반환
+     * @return 생성된 댓글에 대한 CREATED 응답을 반환
      */
     @PostMapping("/api/posts/{postIdx}/comments")
     public ResponseEntity<Void> registerComment(@PathVariable("postIdx") Long postIdx,
@@ -43,7 +43,7 @@ public class CommentController {
      * @param postIdx  원글 번호
      * @param memberId 회원 ID
      * @param comment  댓글 정보
-     * @return 생성된 게시글에 대한 CREATED 응답을 반환
+     * @return 생성된 댓글에 대한 CREATED 응답을 반환
      */
     @PutMapping("/api/posts/{postIdx}/comments/{commentIdx}")
     public ResponseEntity<Void> updateComment(@PathVariable("postIdx") Long postIdx,

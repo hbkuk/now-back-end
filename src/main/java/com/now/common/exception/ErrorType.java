@@ -38,6 +38,8 @@ public enum ErrorType {
     CAN_NOT_DELETE_POST_WITH_MANAGER_ANSWER(6009, "매니저가 작성한 답변이 있으므로 해당 게시글을 삭제할 수 없습니다."),
     INVALID_SECRET(6010, "유효하지 않은 비밀글 설정입니다."),
 
+    CAN_NOT_UPDATE_REACTION(6011, "반응 정보를 수정할 수 없습니다."),
+
     NOT_FOUND_COMMENT(7001, "존재하지 않는 댓글입니다."),
     CAN_NOT_UPDATE_OTHER_MEMBER_COMMENT(7002,"다른 회원이 작성한 댓글을 수정할 수 없습니다."),
     CAN_NOT_DELETE_OTHER_MEMBER_COMMENT(7003, "다른 회원이 작성한 댓글을 삭제할 수 없습니다."),
