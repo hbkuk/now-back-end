@@ -21,4 +21,13 @@ public class ManagerRepository {
     public Manager findById(String managerId) {
         return managerMapper.findById(managerId);
     }
+
+    /**
+     * 매니저 정보 저장
+     *
+     * @param manager 저장할 매니저 정보
+     */
+    public void saveManager(Manager manager) {
+        managerMapper.saveManager(manager);
+    }
 }

@@ -15,4 +15,11 @@ public interface ManagerMapper {
      * @return 조회된 매니저 정보 (해당 아이디에 해당하는 매니저가 없으면 null)
      */
     Manager findById(String managerId);
+
+    /**
+     * 매니저 정보 저장
+     *
+     * @param manager 저장할 매니저 정보
+     */
+    void saveManager(Manager manager);
 }

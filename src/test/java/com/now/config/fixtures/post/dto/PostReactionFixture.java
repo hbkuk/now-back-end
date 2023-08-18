@@ -12,4 +12,12 @@ public class PostReactionFixture {
                 .reaction(reaction)
                 .build();
     }
+
+    public static PostReaction createPostReaction(Long postIdx, Integer managerIdx, Reaction reaction) {
+        return PostReaction.builder()
+                .postIdx(postIdx)
+                .managerIdx(managerIdx)
+                .reaction(reaction)
+                .build();
+    }
 }

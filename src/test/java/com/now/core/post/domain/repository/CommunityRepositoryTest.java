@@ -62,7 +62,7 @@ class CommunityRepositoryTest {
     }
 
     @Nested
-    @DisplayName("모든 커뮤니티 게시글을 찾을 때,")
+    @DisplayName("모든 커뮤니티 게시글을 찾을 때")
     class FindAll {
 
         @Nested
@@ -201,7 +201,7 @@ class CommunityRepositoryTest {
         class Category_of {
 
             @Test
-            @DisplayName("LIFESTYLE 카테고리로 설정된 게시글만 조회된다")
+            @DisplayName("특정 카테고리의 설정된 게시글만 조회된다")
             void filter_only_category() {
                 // given
                 List<Member> members = Arrays.asList(
@@ -367,7 +367,7 @@ class CommunityRepositoryTest {
         }
 
         @Nested
-        @DisplayName("단건 커뮤니티 게시글을 찾을 때,")
+        @DisplayName("단건 게시글을 찾을 때")
         class FindOne {
 
             @Test
@@ -402,7 +402,7 @@ class CommunityRepositoryTest {
         }
 
         @Nested
-        @DisplayName("커뮤니티 게시글을 수정할 때,")
+        @DisplayName("게시글을 수정할 때")
         class Update {
 
             @Test
@@ -434,9 +434,9 @@ class CommunityRepositoryTest {
         }
 
         @Nested
-        @DisplayName("커뮤니티 게시글을 삭제할 때,")
+        @DisplayName("게시글을 삭제할 때")
         class Delete {
-            
+
             @Test
             @DisplayName("게시글이 삭제된다")
             void deleteCommunity() {

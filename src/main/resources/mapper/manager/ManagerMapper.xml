@@ -3,7 +3,14 @@
 
 <mapper namespace="com.now.core.admin.manager.domain.ManagerMapper">
 
-    <!-- 사용자 확인 -->
+    <!-- 매니저 정보를 삽입하는 쿼리 -->
+    <insert id="saveManager" parameterType="Manager" useGeneratedKeys="true" keyProperty="managerIdx">
+        INSERT INTO tb_manager (id, password, nickname)
+        VALUES (#{id}, #{password}, #{nickname})
+    </insert>
+
+
+    <!-- 매니저 확인 -->
     <select id="findById" parameterType="java.lang.String" resultMap="Manager">
         SELECT *
         FROM tb_manager

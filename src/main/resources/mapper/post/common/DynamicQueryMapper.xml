@@ -47,26 +47,30 @@
 
     <!-- 정렬 -->
     <sql id="sort">
-        <choose>
-            <when test="sort.name == 'LATEST'">
-                ORDER BY p.post_idx DESC
-            </when>
-            <when test="sort.name == 'RECOMMENDED'">
-                ORDER BY p.like_count - p.dislike_count DESC
-            </when>
-            <when test="sort.name == 'MOST_VIEWED'">
-                ORDER BY p.view_count DESC
-            </when>
-            <otherwise>
-                ORDER BY p.post_idx DESC
-            </otherwise>
-        </choose>
+        <if test="sort != null">
+            <choose>
+                <when test="sort.name == 'LATEST'">
+                    ORDER BY p.post_idx DESC
+                </when>
+                <when test="sort.name == 'RECOMMENDED'">
+                    ORDER BY p.like_count - p.dislike_count DESC
+                </when>
+                <when test="sort.name == 'MOST_VIEWED'">
+                    ORDER BY p.view_count DESC
+                </when>
+                <otherwise>
+                    ORDER BY p.post_idx DESC
+                </otherwise>
+            </choose>
+        </if>
     </sql>
 
 
     <!-- 페이지 -->
     <sql id="page">
-        LIMIT #{page.recordStartIndex}, #{page.recordsPerPage}
+        <if test="page != null">
+            LIMIT #{page.recordStartIndex}, #{page.recordsPerPage}
+        </if>
     </sql>
 
 </mapper>

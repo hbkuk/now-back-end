@@ -2,6 +2,7 @@ package com.now.config.fixtures.post;
 
 import com.now.core.category.domain.constants.Category;
 import com.now.core.comment.domain.Comment;
+import com.now.core.post.domain.Community;
 import com.now.core.post.domain.Notice;
 
 import java.time.LocalDateTime;
@@ -43,7 +44,50 @@ public class NoticeFixture {
                 .build();
     }
 
-    public static String createNoticeJson(String category, String title, String content, boolean pinned) {
+    public static Notice createNoticeForSave(Integer managerIdx, String managerId, Boolean pinned) {
+        return Notice.builder()
+                .category(Category.COMMUNITY_STUDY)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .managerIdx(managerIdx)
+                .managerId(managerId)
+                .pinned(pinned)
+                .build();
+    }
+
+    public static Notice createNoticeForSave(Category category, String managerId, Boolean pinned) {
+        return Notice.builder()
+                .category(category)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .managerId(managerId)
+                .pinned(pinned)
+                .build();
+    }
+
+    public static Notice createNoticeForSave(String managerId, Category category, Boolean pinned) {
+        return Notice.builder()
+                .category(category)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .managerId(managerId)
+                .pinned(pinned)
+                .build();
+    }
+
+    public static Notice createNoticeForSave(String managerId, Integer managerIdx, String managerNickname, Category category, String title, String content, Boolean pinned) {
+        return Notice.builder()
+                .category(category)
+                .title(title)
+                .content(content)
+                .managerId(managerId)
+                .managerIdx(managerIdx)
+                .managerNickname(managerNickname)
+                .pinned(pinned)
+                .build();
+    }
+
+    public static String createNoticeJson(String category, String title, String content, Boolean pinned) {
         return "{\"category\":\"" + category + "\",\"title\":\"" + title + "\",\"content\":\"" + content + "\",\"pinned\":" + pinned + "}";
     }
 }
