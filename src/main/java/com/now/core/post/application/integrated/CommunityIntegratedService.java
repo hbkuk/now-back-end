@@ -13,6 +13,8 @@ import com.now.core.post.presentation.dto.CommunitiesResponse;
 import com.now.core.post.presentation.dto.Condition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,6 +38,7 @@ public class CommunityIntegratedService {
      * @return 커뮤니티 게시글 목록과 페이지 정보
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = "communityCache", key="#condition.hashCode()")
     public CommunitiesResponse getAllCommunitiesWithPageInfo(Condition condition) {
         return CommunitiesResponse.builder()
                 .communities(communityService.getAllCommunities(condition.updatePage()))
@@ -49,6 +52,7 @@ public class CommunityIntegratedService {
      * @param postIdx 게시글 번호
      * @return 조회된 커뮤니티 게시글
      */
+    @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public Community getCommunityAndIncrementViewCount(Long postIdx) {
         Community community = communityService.getCommunity(postIdx);
         postService.incrementViewCount(postIdx);
@@ -73,6 +77,7 @@ public class CommunityIntegratedService {
      * @param community   커뮤니티 게시글
      * @param attachments 첨부 파일 배열
      */
+    @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public void registerCommunity(Community community, MultipartFile[] attachments) {
         communityService.registerCommunity(community);
         attachmentService.saveAttachments(attachments, community.getPostIdx(), AttachmentType.FILE);
@@ -85,6 +90,7 @@ public class CommunityIntegratedService {
      * @param addNewAttachments         새로 추가되는 첨부 파일
      * @param updateExistingAttachments 기존 첨부 파일 업데이트 정보
      */
+    @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public void updateCommunity(Community updatedCommunity,
                                 AddNewAttachments addNewAttachments, UpdateExistingAttachments updateExistingAttachments) {
         communityService.hasUpdateAccess(updatedCommunity.getPostIdx(), updatedCommunity.getMemberId());
@@ -100,6 +106,7 @@ public class CommunityIntegratedService {
      * @param postIdx  게시글 번호
      * @param memberId 멤버 아이디
      */
+    @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public void deleteCommunity(Long postIdx, String memberId) {
         communityService.hasDeleteAccess(postIdx, memberId);
 

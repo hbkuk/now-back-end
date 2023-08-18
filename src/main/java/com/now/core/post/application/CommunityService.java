@@ -38,7 +38,6 @@ public class CommunityService {
      *
      * @return 커뮤니티 게시글 정보 리스트
      */
-    @Cacheable(value = "communityCache", key="#condition.hashCode()")
     public List<Community> getAllCommunities(Condition condition) {
         log.debug("Fetching posts from the database...");
         return communityRepository.findAllCommunity(condition);
@@ -49,7 +48,6 @@ public class CommunityService {
      *
      * @param community 등록할 커뮤니티 게시글 정보
      */
-    @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public void registerCommunity(Community community) {
         Member member = getMember(community.getMemberId());
 
@@ -96,7 +94,6 @@ public class CommunityService {
      *
      * @param community 수정할 커뮤니티 게시글 정보
      */
-    @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public void updateCommunity(Community community) {
         Member member = getMember(community.getMemberId());
 
@@ -112,7 +109,6 @@ public class CommunityService {
      *
      * @param postIdx 게시글 번호
      */
-    @CacheEvict(value = {"postCache", "communityCache"}, allEntries = true)
     public void deleteCommunity(Long postIdx) {
         communityRepository.deleteCommunity(postIdx);
     }

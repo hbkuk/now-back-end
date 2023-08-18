@@ -6,6 +6,7 @@ import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.presentation.dto.Condition;
+import com.now.core.post.presentation.dto.NoticesResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import static com.now.config.fixtures.comment.CommentFixture.createComments;
 import static com.now.config.fixtures.post.NoticeFixture.createNotice;
 import static com.now.config.fixtures.post.NoticeFixture.createNoticeForSave;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
@@ -38,13 +40,16 @@ class NoticeControllerTest extends RestDocsTestSupport {
     @DisplayName("모든 공지 게시글 조회")
     void getAllNotices() throws Exception {
         // given
-        Condition condition = createCondition(Category.NEWS);
-        given(noticeService.getAllNoticesWithPin(condition.updatePage()))
-                .willReturn(List.of(
+        Condition condition = createCondition(Category.NEWS).updatePage();
+        NoticesResponse noticesResponse = NoticesResponse.builder()
+                .notices(List.of(
                         createNotice(1L, NoticeFixture.SAMPLE_NICKNAME_1, NoticeFixture.SAMPLE_TITLE_1, NoticeFixture.SAMPLE_CONTENT_1, createComments()),
                         createNotice(2L, NoticeFixture.SAMPLE_NICKNAME_2, NoticeFixture.SAMPLE_TITLE_2, NoticeFixture.SAMPLE_CONTENT_2, createComments())
-                ));
-        given(postService.getTotalPostCount(condition)).willReturn(2L);
+                ))
+                .page(condition.getPage().calculatePageInfo(2L))
+                .build();
+
+        given(noticeIntegratedService.getAllNoticesWithPageInfo(any())).willReturn(noticesResponse);
 
         // when, then
         ResultActions resultActions =
@@ -109,7 +114,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
     void getNotice() throws Exception {
         // given
         Long postIdx = 1L;
-        given(noticeService.getNotice(postIdx))
+        given(noticeIntegratedService.getNoticeAndIncrementViewCount(postIdx))
                 .willReturn(createNotice(2L, NoticeFixture.SAMPLE_NICKNAME_2, NoticeFixture.SAMPLE_TITLE_2, NoticeFixture.SAMPLE_CONTENT_2, createComments()));
 
                         // when, then

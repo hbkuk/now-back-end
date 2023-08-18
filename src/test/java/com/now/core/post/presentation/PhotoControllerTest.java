@@ -32,6 +32,7 @@ import static com.now.config.fixtures.post.CommunityFixture.SAMPLE_NICKNAME_2;
 import static com.now.config.fixtures.post.PhotoFixture.createPhoto;
 import static com.now.config.fixtures.post.PhotoFixture.createPhotoForSave;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
@@ -47,12 +48,12 @@ class PhotoControllerTest extends RestDocsTestSupport {
     void getAllPhotos() throws Exception {
         // given
         Condition condition = createCondition(Category.DAILY_LIFE);
-        given(photoService.getAllPhotos(condition.updatePage()))
+        given(photoService.getAllPhotos(any()))
                 .willReturn(List.of(
                         createPhoto(1L, SAMPLE_NICKNAME_1, PhotoFixture.SAMPLE_TITLE_1, PhotoFixture.SAMPLE_CONTENT_1, createAttachments(), createComments()),
                         createPhoto(2L, SAMPLE_NICKNAME_2, PhotoFixture.SAMPLE_TITLE_2, PhotoFixture.SAMPLE_CONTENT_2, createAttachments(), createComments())
                 ));
-        given(postService.getTotalPostCount(condition)).willReturn(2L);
+        given(postService.getTotalPostCount(any())).willReturn(2L);
 
         // when, then
         ResultActions resultActions =

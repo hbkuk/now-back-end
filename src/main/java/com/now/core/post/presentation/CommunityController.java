@@ -40,7 +40,7 @@ public class CommunityController {
     @GetMapping("/api/communities")
     public ResponseEntity<CommunitiesResponse> getAllCommunities(@Valid Condition condition) {
         return new ResponseEntity<>(communityIntegratedService
-                .getAllCommunitiesWithPageInfo(condition.updatePage()), HttpStatus.OK);
+                .getAllCommunitiesWithPageInfo(condition), HttpStatus.OK);
     }
 
     /**

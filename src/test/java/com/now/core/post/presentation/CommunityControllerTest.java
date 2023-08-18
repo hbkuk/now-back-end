@@ -5,6 +5,7 @@ import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.domain.Community;
+import com.now.core.post.presentation.dto.CommunitiesResponse;
 import com.now.core.post.presentation.dto.Condition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import static com.now.config.fixtures.attachment.AttachmentFixture.createAttachm
 import static com.now.config.fixtures.comment.CommentFixture.createComments;
 import static com.now.config.fixtures.post.CommunityFixture.*;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -43,13 +45,15 @@ class CommunityControllerTest extends RestDocsTestSupport {
     @DisplayName("모든 커뮤니티 게시글 조회")
     void getAllCommunities() throws Exception {
         // given
-        Condition condition = createCondition(Category.COMMUNITY_STUDY);
-        given(communityService.getAllCommunities(condition.updatePage()))
-                .willReturn(List.of(
+        Condition condition = createCondition(Category.COMMUNITY_STUDY).updatePage();
+        CommunitiesResponse communitiesResponse = CommunitiesResponse.builder()
+                .communities(List.of(
                         createCommunity(1L, SAMPLE_NICKNAME_1, SAMPLE_TITLE_1, SAMPLE_CONTENT_1, createAttachments(), createComments()),
-                        createCommunity(2L, SAMPLE_NICKNAME_2, SAMPLE_TITLE_2, SAMPLE_CONTENT_2, createAttachments(), createComments())
-                ));
-        given(postService.getTotalPostCount(condition)).willReturn(2L);
+                        createCommunity(2L, SAMPLE_NICKNAME_2, SAMPLE_TITLE_2, SAMPLE_CONTENT_2, createAttachments(), createComments())))
+                .page(condition.getPage().calculatePageInfo(2L))
+                .build();
+
+        given(communityIntegratedService.getAllCommunitiesWithPageInfo(any())).willReturn(communitiesResponse);
 
         // when, then
         ResultActions resultActions =
@@ -121,7 +125,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
     void getCommunity() throws Exception {
         // given
         Long postIdx = 1L;
-        given(communityService.getCommunity(postIdx))
+        given(communityIntegratedService.getCommunityAndIncrementViewCount(postIdx))
                 .willReturn(createCommunity(
                         1L, SAMPLE_NICKNAME_1, SAMPLE_TITLE_1, SAMPLE_CONTENT_1, createAttachments(), createComments()));
 

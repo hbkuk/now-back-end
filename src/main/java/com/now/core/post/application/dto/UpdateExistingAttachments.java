@@ -30,12 +30,16 @@ public class UpdateExistingAttachments {
     /**
      * 정적 팩토리 메서드
      *
-     * @param thumbnailIdx              대표 이미지 첨부 파일 인덱스
-     * @param previouslyUploadedIndexes 아직 검증되지 않은 클라이언트로부터 받은 삭제하지 않는 첨부 파일 인덱스 목록
+     * @param thumbnailIdx      대표 이미지 첨부 파일 인덱스
+     * @param notDeletedIndexes 아직 검증되지 않은 클라이언트로부터 받은 삭제하지 않는 첨부 파일 인덱스 목록
      * @return UpdateExistingAttachments  업데이트 대상 첨부 파일 정보 객체
      */
-    public static UpdateExistingAttachments of(Long thumbnailIdx, List<Long> previouslyUploadedIndexes) {
-        return new UpdateExistingAttachments(thumbnailIdx, previouslyUploadedIndexes,
+    public static UpdateExistingAttachments of(Long thumbnailIdx, List<Long> notDeletedIndexes) {
+        if (notDeletedIndexes == null) {
+            return new UpdateExistingAttachments(thumbnailIdx, new ArrayList<Long>(),
+                    null, null, null);
+        }
+        return new UpdateExistingAttachments(thumbnailIdx, notDeletedIndexes,
                 null, null, null);
     }
 

@@ -1,7 +1,6 @@
 package com.now.core.post.presentation;
 
-import com.now.core.post.application.NoticeService;
-import com.now.core.post.application.PostService;
+import com.now.core.post.application.integrated.NoticeIntegratedService;
 import com.now.core.post.domain.Notice;
 import com.now.core.post.presentation.dto.Condition;
 import com.now.core.post.presentation.dto.NoticesResponse;
@@ -23,8 +22,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class NoticeController {
 
-    private final PostService postService;
-    private final NoticeService noticeService;
+    private final NoticeIntegratedService noticeIntegratedService;
 
     /**
      * 모든 공지 게시물 정보를 조회하는 핸들러 메서드
@@ -34,12 +32,9 @@ public class NoticeController {
      */
     @GetMapping("/api/notices")
     public ResponseEntity<NoticesResponse> retrieveAllNotices(@Valid Condition condition) {
-        NoticesResponse noticesResponse = NoticesResponse.builder()
-                .notices(noticeService.getAllNoticesWithPin(condition.updatePage()))
-                .page(condition.getPage().calculatePageInfo(postService.getTotalPostCount(condition)))
-                .build();
 
-        return new ResponseEntity<>(noticesResponse, HttpStatus.OK);
+        return new ResponseEntity<>(
+                noticeIntegratedService.getAllNoticesWithPageInfo(condition.updatePage()), HttpStatus.OK);
     }
 
     /**
@@ -50,6 +45,7 @@ public class NoticeController {
      */
     @GetMapping("/api/notices/{postIdx}")
     public ResponseEntity<Notice> getNotice(@PathVariable("postIdx") Long postIdx) {
-        return ResponseEntity.ok(noticeService.getNotice(postIdx));
+
+        return ResponseEntity.ok(noticeIntegratedService.getNoticeAndIncrementViewCount(postIdx));
     }
 }

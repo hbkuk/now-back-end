@@ -28,7 +28,6 @@ public class NoticeService {
      * @param condition 게시물 제한 정보를 담은 객체
      * @return 공지사항 게시글 정보 리스트
      */
-    @Cacheable(value = "noticeCache", key="#condition.hashCode()")
     public List<Notice> getAllNoticesWithPin(Condition condition) {
         return noticeRepository.findAllNoticesWithPin(condition);
     }
@@ -39,7 +38,6 @@ public class NoticeService {
      * @param postIdx 게시글 번호
      * @return 공지 게시글 정보
      */
-    @Cacheable(value = "postCache", key="#postIdx")
     public Notice getNotice(Long postIdx) {
         Notice notice = noticeRepository.findNotice(postIdx);
         if (notice == null) {
@@ -48,12 +46,5 @@ public class NoticeService {
 
         return notice;
     }
-
-    /* 해당 메서드(모든 공지 게시글 정보를 조회 후 반환)는
-        상단 고정된 공지 게시물을 조회 후 반환한 메서드 사용으로 인한 주석
-    public List<Notice> getAllNotices(Condition condition) {
-        return postRepository.findAllNotices(condition);
-    }
-    */
 }
 

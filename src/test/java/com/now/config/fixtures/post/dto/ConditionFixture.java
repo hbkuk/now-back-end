@@ -4,12 +4,15 @@ import com.now.core.category.domain.constants.Category;
 import com.now.core.post.presentation.dto.Condition;
 import com.now.core.post.presentation.dto.constants.Sort;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class ConditionFixture {
 
     public static Condition createCondition(Category category) {
         return Condition.builder()
-                .startDate("2020-08-08")
-                .endDate("2023-08-08")
+                .startDate(formatLocalDateTime(LocalDateTime.now().minusYears(2)))
+                .endDate(formatLocalDateTime(LocalDateTime.now()))
                 .category(category)
                 .keyword("input Keyword...")
                 .sort(Sort.LATEST)
@@ -37,5 +40,10 @@ public class ConditionFixture {
                 .category(category)
                 .keyword(keyword)
                 .build();
+    }
+
+    private static String formatLocalDateTime(LocalDateTime localDateTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return localDateTime.format(formatter);
     }
 }
