@@ -41,15 +41,16 @@ class NoticeControllerTest extends RestDocsTestSupport {
     void getAllNotices() throws Exception {
         // given
         Condition condition = createCondition(Category.NEWS).updatePage();
+
         NoticesResponse noticesResponse = NoticesResponse.builder()
                 .notices(List.of(
                         createNotice(1L, NoticeFixture.SAMPLE_NICKNAME_1, NoticeFixture.SAMPLE_TITLE_1, NoticeFixture.SAMPLE_CONTENT_1, createComments()),
                         createNotice(2L, NoticeFixture.SAMPLE_NICKNAME_2, NoticeFixture.SAMPLE_TITLE_2, NoticeFixture.SAMPLE_CONTENT_2, createComments())
                 ))
-                .page(condition.getPage().calculatePageInfo(2L))
+                .page(createCondition(Category.COMMUNITY_STUDY).updatePage().getPage().calculatePageInfo(2L))
                 .build();
 
-        given(noticeIntegratedService.getAllNoticesWithPageInfo(any())).willReturn(noticesResponse);
+        given(noticeIntegratedService.getAllNoticesWithPageInfo(condition)).willReturn(noticesResponse);
 
         // when, then
         ResultActions resultActions =

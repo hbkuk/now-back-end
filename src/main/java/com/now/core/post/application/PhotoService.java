@@ -36,7 +36,6 @@ public class PhotoService {
      *
      * @return 사진 게시글 정보 리스트
      */
-    @Cacheable(value = "photoCache", key="#condition.hashCode()")
     public List<Photo> getAllPhotos(Condition condition) {
         return photoRepository.findAllPhotos(condition);
     }
@@ -46,7 +45,6 @@ public class PhotoService {
      *
      * @param photo 등록할 사진 게시글 정보
      */
-    @CacheEvict(value = {"postCache", "photoCache"}, allEntries = true)
     public void registerPhoto(Photo photo) {
         Member member = getMember(photo.getMemberId());
 

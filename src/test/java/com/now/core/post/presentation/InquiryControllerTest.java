@@ -39,12 +39,13 @@ class InquiryControllerTest extends RestDocsTestSupport {
     void getAllInquiries() throws Exception {
         // given
         Condition condition = createCondition(Category.SERVICE);
+
         given(inquiryService.getAllInquiries(any()))
                 .willReturn(List.of(
                         createNonSecretInquiry(1L, InquiryFixture.SAMPLE_NICKNAME_1, InquiryFixture.SAMPLE_TITLE_1, InquiryFixture.SAMPLE_CONTENT_1),
                         createNonSecretInquiry(2L, InquiryFixture.SAMPLE_NICKNAME_2, InquiryFixture.SAMPLE_TITLE_2, InquiryFixture.SAMPLE_CONTENT_2)
                 ));
-        given(postService.getTotalPostCount(any())).willReturn(2L);
+        given(postService.getTotalPostCount(condition)).willReturn(2L);
 
         // when, then
         ResultActions resultActions =

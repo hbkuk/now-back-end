@@ -32,7 +32,7 @@ public class NoticeIntegratedService {
     @Cacheable(value = "noticeCache", key="#condition.hashCode()")
     public NoticesResponse getAllNoticesWithPageInfo(Condition condition) {
         return NoticesResponse.builder()
-                .notices(noticeService.getAllNoticesWithPin(condition.updatePage()))
+                .notices(noticeService.getAllNoticesWithPin(condition))
                 .page(condition.getPage().calculatePageInfo(postService.getTotalPostCount(condition)))
                 .build();
     }

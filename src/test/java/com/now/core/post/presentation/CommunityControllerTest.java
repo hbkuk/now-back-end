@@ -7,6 +7,8 @@ import com.now.core.category.domain.constants.Category;
 import com.now.core.post.domain.Community;
 import com.now.core.post.presentation.dto.CommunitiesResponse;
 import com.now.core.post.presentation.dto.Condition;
+import com.now.core.post.presentation.dto.Page;
+import com.now.core.post.presentation.dto.constants.Sort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import javax.servlet.http.Cookie;
+import java.util.Collections;
 import java.util.List;
 
 import static com.now.config.document.snippet.RequestCookiesSnippet.cookieWithName;
@@ -30,6 +33,7 @@ import static com.now.config.fixtures.post.CommunityFixture.*;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
@@ -46,14 +50,15 @@ class CommunityControllerTest extends RestDocsTestSupport {
     void getAllCommunities() throws Exception {
         // given
         Condition condition = createCondition(Category.COMMUNITY_STUDY).updatePage();
+
         CommunitiesResponse communitiesResponse = CommunitiesResponse.builder()
                 .communities(List.of(
                         createCommunity(1L, SAMPLE_NICKNAME_1, SAMPLE_TITLE_1, SAMPLE_CONTENT_1, createAttachments(), createComments()),
                         createCommunity(2L, SAMPLE_NICKNAME_2, SAMPLE_TITLE_2, SAMPLE_CONTENT_2, createAttachments(), createComments())))
-                .page(condition.getPage().calculatePageInfo(2L))
+                .page(createCondition(Category.COMMUNITY_STUDY).updatePage().getPage().calculatePageInfo(2L))
                 .build();
 
-        given(communityIntegratedService.getAllCommunitiesWithPageInfo(any())).willReturn(communitiesResponse);
+        given(communityIntegratedService.getAllCommunitiesWithPageInfo(condition)).willReturn(communitiesResponse);
 
         // when, then
         ResultActions resultActions =

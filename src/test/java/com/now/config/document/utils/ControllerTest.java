@@ -19,6 +19,7 @@ import com.now.core.member.presentation.MemberController;
 import com.now.core.post.application.*;
 import com.now.core.post.application.integrated.CommunityIntegratedService;
 import com.now.core.post.application.integrated.NoticeIntegratedService;
+import com.now.core.post.application.integrated.PhotoIntegratedService;
 import com.now.core.post.presentation.*;
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected CommunityIntegratedService communityIntegratedService;
+
+    @MockBean
+    protected PhotoIntegratedService photoIntegratedService;
 
     @MockBean
     protected PostService postService;

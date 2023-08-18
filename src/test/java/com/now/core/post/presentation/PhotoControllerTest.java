@@ -8,6 +8,7 @@ import com.now.core.category.domain.constants.Category;
 import com.now.core.post.domain.Photo;
 import com.now.core.post.domain.constants.UpdateOption;
 import com.now.core.post.presentation.dto.Condition;
+import com.now.core.post.presentation.dto.PhotosResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -34,7 +35,8 @@ import static com.now.config.fixtures.post.PhotoFixture.createPhotoForSave;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -47,13 +49,17 @@ class PhotoControllerTest extends RestDocsTestSupport {
     @DisplayName("모든 사진 게시글 조회")
     void getAllPhotos() throws Exception {
         // given
-        Condition condition = createCondition(Category.DAILY_LIFE);
-        given(photoService.getAllPhotos(any()))
-                .willReturn(List.of(
+        Condition condition = createCondition(Category.DAILY_LIFE).updatePage();
+
+        PhotosResponse photosResponse = PhotosResponse.builder()
+                .photos(List.of(
                         createPhoto(1L, SAMPLE_NICKNAME_1, PhotoFixture.SAMPLE_TITLE_1, PhotoFixture.SAMPLE_CONTENT_1, createAttachments(), createComments()),
                         createPhoto(2L, SAMPLE_NICKNAME_2, PhotoFixture.SAMPLE_TITLE_2, PhotoFixture.SAMPLE_CONTENT_2, createAttachments(), createComments())
-                ));
-        given(postService.getTotalPostCount(any())).willReturn(2L);
+                ))
+                .page(createCondition(Category.COMMUNITY_STUDY).updatePage().getPage().calculatePageInfo(2L))
+                .build();
+
+        given(photoIntegratedService.getAllPhotosWithPageInfo(condition)).willReturn(photosResponse);
 
         // when, then
         ResultActions resultActions =
@@ -126,7 +132,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
     void getPhoto() throws Exception {
         // given
         Long postIdx = 1L;
-        given(photoService.getPhoto(postIdx))
+        given(photoIntegratedService.getPhotoAndIncrementViewCount(postIdx))
                 .willReturn(createPhoto(
                         1L, PhotoFixture.SAMPLE_NICKNAME_1, PhotoFixture.SAMPLE_TITLE_1, PhotoFixture.SAMPLE_CONTENT_1, createAttachments(), createComments()));
 
@@ -199,7 +205,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
                         .file(fileB)
                         .file(fileC)
                         .accept(MediaType.APPLICATION_JSON)
-                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
@@ -370,7 +376,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/photos/{postIdx}", postIdx)
-                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         resultActions

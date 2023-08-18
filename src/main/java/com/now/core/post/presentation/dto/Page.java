@@ -2,11 +2,14 @@ package com.now.core.post.presentation.dto;
 
 import lombok.*;
 
+import java.util.Objects;
+
 /**
  * 페이지 정보를 담는 데이터 전송 객체
  */
 @Getter
 @ToString
+@EqualsAndHashCode
 public class Page {
 
     /**

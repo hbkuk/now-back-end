@@ -1,14 +1,10 @@
 package com.now.core.post.presentation;
 
-import com.now.core.attachment.application.AttachmentService;
-import com.now.core.attachment.domain.constants.AttachmentType;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.presentation.AuthenticationPrincipal;
-import com.now.core.comment.application.CommentService;
-import com.now.core.post.application.PhotoService;
-import com.now.core.post.application.PostService;
 import com.now.core.post.application.dto.AddNewAttachments;
 import com.now.core.post.application.dto.UpdateExistingAttachments;
+import com.now.core.post.application.integrated.PhotoIntegratedService;
 import com.now.core.post.domain.Photo;
 import com.now.core.post.domain.constants.PostValidationGroup;
 import com.now.core.post.domain.constants.UpdateOption;
@@ -34,11 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PhotoController {
 
-    private final PostService postService;
-    private final JwtTokenService jwtTokenService;
-    private final PhotoService photoService;
-    private final AttachmentService attachmentService;
-    private final CommentService commentService;
+    private final PhotoIntegratedService photoIntegratedService;
 
     /**
      * 모든 사진 게시글 정보를 조회하는 핸들러 메서드
@@ -48,12 +40,8 @@ public class PhotoController {
      */
     @GetMapping("/api/photos")
     public ResponseEntity<PhotosResponse> getAllPhotos(@Valid Condition condition) {
-        PhotosResponse photosResponse = PhotosResponse.builder()
-                .photos(photoService.getAllPhotos(condition.updatePage()))
-                .page(condition.getPage().calculatePageInfo(postService.getTotalPostCount(condition)))
-                .build();
-
-        return new ResponseEntity<>(photosResponse, HttpStatus.OK);
+        return new ResponseEntity<>(
+                photoIntegratedService.getAllPhotosWithPageInfo(condition.updatePage()), HttpStatus.OK);
     }
 
     /**
@@ -64,7 +52,7 @@ public class PhotoController {
      */
     @GetMapping("/api/photos/{postIdx}")
     public ResponseEntity<Photo> getPhoto(@PathVariable("postIdx") Long postIdx) {
-        return ResponseEntity.ok(photoService.getPhoto(postIdx));
+        return ResponseEntity.ok(photoIntegratedService.getPhotoAndIncrementViewCount(postIdx));
     }
 
     /**
@@ -76,7 +64,7 @@ public class PhotoController {
     @GetMapping("/api/photos/{postIdx}/edit")
     public ResponseEntity<Photo> getEditPhoto(@PathVariable("postIdx") Long postIdx,
                                               @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
-        return ResponseEntity.ok(photoService.getEditPhoto(postIdx, (String) jwtTokenService.getClaim(accessToken, "id")));
+        return ResponseEntity.ok(photoIntegratedService.getEditPhoto(postIdx, accessToken));
     }
 
     /**
@@ -93,10 +81,8 @@ public class PhotoController {
                                               @RequestPart(name = "photo") @Validated(PostValidationGroup.savePhoto.class) Photo photo,
                                               @RequestPart(name = "thumbnail", required = false) MultipartFile thumbnail,
                                               @RequestPart(name = "attachments", required = false) MultipartFile[] attachments) {
-        photoService.registerPhoto(photo.updateMemberId(memberId));
-        attachmentService.saveAttachmentsWithThumbnail(AddNewAttachments.of(thumbnail, attachments),
-                photo.getPostIdx(), AttachmentType.IMAGE);
 
+        photoIntegratedService.registerPhoto(photo.updateMemberId(memberId), AddNewAttachments.of(thumbnail, attachments));
         return ResponseEntity.created(URI.create("/api/photos/" + photo.getPostIdx())).build();
     }
 
@@ -122,12 +108,9 @@ public class PhotoController {
                                             @RequestPart(name = "attachments", required = false) MultipartFile[] newAttachments,
                                             @RequestParam(name = "thumbnailAttachmentIdx", required = false) Long thumbnailAttachmentIdx,
                                             @RequestParam(name = "notDeletedIndexes", required = false) List<Long> notDeletedIndexes) {
-        photoService.hasUpdateAccess(postIdx, memberId);
 
-        photoService.updatePhoto(updatePhoto.updatePostIdx(postIdx).updateMemberId(memberId));
-        attachmentService.updateAttachmentsWithVerifiedIndexes(updateOption, AddNewAttachments.of(newThumbnail, newAttachments),
-                UpdateExistingAttachments.of(thumbnailAttachmentIdx, notDeletedIndexes), postIdx, AttachmentType.IMAGE);
-
+        photoIntegratedService.updatePhoto(updatePhoto.updatePostIdx(postIdx).updateMemberId(memberId),
+                updateOption, AddNewAttachments.of(newThumbnail, newAttachments), UpdateExistingAttachments.of(thumbnailAttachmentIdx, notDeletedIndexes));
         return ResponseEntity.created(URI.create("/api/photos/" + updatePhoto.getPostIdx())).build();
     }
 
@@ -141,12 +124,7 @@ public class PhotoController {
     @DeleteMapping("/api/photos/{postIdx}")
     public ResponseEntity<Void> deletePhoto(@PathVariable("postIdx") Long postIdx,
                                             @AuthenticationPrincipal String memberId) {
-        photoService.hasDeleteAccess(postIdx, memberId);
-
-        commentService.deleteAllByPostIdx(postIdx);
-        attachmentService.deleteAllByPostIdxWithThumbNail(postIdx);
-        photoService.deletePhoto(postIdx);
-
+        photoIntegratedService.deletePhoto(postIdx, memberId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

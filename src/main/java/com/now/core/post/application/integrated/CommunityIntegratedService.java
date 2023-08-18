@@ -41,7 +41,7 @@ public class CommunityIntegratedService {
     @Cacheable(value = "communityCache", key="#condition.hashCode()")
     public CommunitiesResponse getAllCommunitiesWithPageInfo(Condition condition) {
         return CommunitiesResponse.builder()
-                .communities(communityService.getAllCommunities(condition.updatePage()))
+                .communities(communityService.getAllCommunities(condition))
                 .page(condition.getPage().calculatePageInfo(postService.getTotalPostCount(condition)))
                 .build();
     }
