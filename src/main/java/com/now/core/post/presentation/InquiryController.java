@@ -1,13 +1,10 @@
 package com.now.core.post.presentation;
 
-import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.presentation.AuthenticationPrincipal;
-import com.now.core.post.application.InquiryService;
-import com.now.core.post.application.PostService;
+import com.now.core.post.application.integrated.InquiryIntegratedService;
 import com.now.core.post.domain.Inquiry;
 import com.now.core.post.domain.constants.PostValidationGroup;
-import com.now.core.post.exception.CannotCreatePostException;
 import com.now.core.post.presentation.dto.Condition;
 import com.now.core.post.presentation.dto.InquiriesResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +25,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class InquiryController {
 
-    private final PostService postService;
-    private final InquiryService inquiryService;
-    private final JwtTokenService jwtTokenService;
+    private final InquiryIntegratedService inquiryIntegratedService;
 
     /**
      * 모든 문의 게시글 정보를 조회하는 핸들러 메서드
@@ -40,27 +35,23 @@ public class InquiryController {
      */
     @GetMapping("/api/inquiries")
     public ResponseEntity<InquiriesResponse> getAllInquiries(@Valid Condition condition) {
-        InquiriesResponse inquiriesResponse = InquiriesResponse.builder()
-                .inquiries(inquiryService.getAllInquiries(condition.updatePage()))
-                .page(condition.getPage().calculatePageInfo(postService.getTotalPostCount(condition)))
-                .build();
-
-        return new ResponseEntity<>(inquiriesResponse, HttpStatus.OK);
+        return new ResponseEntity<>(
+                inquiryIntegratedService.getAllInquiriesWithPageInfo(condition.updatePage()), HttpStatus.OK);
     }
 
     /**
-     * 문의 게시글 조회
+     * 공개 문의 게시글 조회
      *
      * @param postIdx 게시글 번호
      * @return 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @GetMapping("/api/inquiries/{postIdx}")
-    public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx) {
-        return ResponseEntity.ok(inquiryService.getPublicInquiry(postIdx));
+    public ResponseEntity<Inquiry> getPublicInquiry(@PathVariable("postIdx") Long postIdx) {
+        return ResponseEntity.ok(inquiryIntegratedService.getPublicInquiryAndIncrementViewCount(postIdx));
     }
 
     /**
-     * 비밀글 설정된 문의 게시글 조회
+     * 비공개 설정된 문의 게시글 조회
      *
      * @param postIdx     게시글 번호
      * @param password    비밀글로 설정된 비밀번호
@@ -68,15 +59,10 @@ public class InquiryController {
      * @return 문의 게시글 정보와 함께 OK 응답을 반환
      */
     @PostMapping("/api/inquiries/secret/{postIdx}")
-    public ResponseEntity<Inquiry> getSecretInquiry(@PathVariable("postIdx") Long postIdx,
+    public ResponseEntity<Inquiry> getPrivateInquiry(@PathVariable("postIdx") Long postIdx,
                                                     @RequestParam(required = false) String password,
                                                     @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = false) String accessToken) {
-        String memberId = null;
-        if (accessToken != null) {
-            memberId = (String) jwtTokenService.getClaim(accessToken, "id");
-        }
-
-        return ResponseEntity.ok(inquiryService.getPrivateInquiry(postIdx, memberId, password));
+        return ResponseEntity.ok(inquiryIntegratedService.getPrivateInquiryAndIncrementViewCount(postIdx, accessToken, password));
     }
 
     /**
@@ -88,7 +74,7 @@ public class InquiryController {
     @GetMapping("/api/inquiries/{postIdx}/edit")
     public ResponseEntity<Inquiry> getEditInquiry(@PathVariable("postIdx") Long postIdx,
                                                   @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
-        return ResponseEntity.ok(inquiryService.getEditInquiry(postIdx, (String) jwtTokenService.getClaim(accessToken, "id")));
+        return ResponseEntity.ok(inquiryIntegratedService.getEditInquiry(postIdx, accessToken));
     }
 
     /**
@@ -101,11 +87,7 @@ public class InquiryController {
     @PostMapping("/api/inquiries")
     public ResponseEntity<Void> registerInquiry(@AuthenticationPrincipal String memberId,
                                                 @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry inquiry) {
-        if (inquiry.isSecretInquiryWithoutPassword()) {
-            throw new CannotCreatePostException(ErrorType.INVALID_SECRET);
-        }
-
-        inquiryService.registerInquiry(inquiry.updateMemberId(memberId));
+        inquiryIntegratedService.registerInquiry(inquiry.updateMemberId(memberId));
         return ResponseEntity.created(URI.create("/api/inquiries/" + inquiry.getPostIdx())).build();
     }
 
@@ -120,9 +102,7 @@ public class InquiryController {
     public ResponseEntity<Void> updateInquiry(@PathVariable("postIdx") Long postIdx,
                                               @AuthenticationPrincipal String memberId,
                                               @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry updateInquiry) {
-        inquiryService.hasUpdateAccess(postIdx, memberId);
-
-        inquiryService.updateInquiry(updateInquiry.updateMemberId(memberId).updatePostIdx(postIdx));
+        inquiryIntegratedService.updateInquiry(updateInquiry.updateMemberId(memberId).updatePostIdx(postIdx));
         return ResponseEntity.created(URI.create("/api/inquiries/" + updateInquiry.getPostIdx())).build();
     }
 
@@ -135,9 +115,7 @@ public class InquiryController {
     @DeleteMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Void> deleteInquiry(@PathVariable("postIdx") Long postIdx,
                                               @AuthenticationPrincipal String memberId) {
-        inquiryService.hasDeleteAccess(postIdx, memberId);
-
-        inquiryService.deleteInquiry(postIdx, memberId);
+        inquiryIntegratedService.deleteInquiry(postIdx, memberId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
