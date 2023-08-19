@@ -43,8 +43,8 @@ public class InquiryRepository {
      *
      * @param inquiry 등록할 문의 게시글 정보
      */
-    public void saveInquiry(Inquiry inquiry) {
-        inquiryMapper.saveInquiry(inquiry);
+    public void savePost(Inquiry inquiry) {
+        inquiryMapper.savePost(inquiry);
     }
 
     /**
@@ -71,8 +71,8 @@ public class InquiryRepository {
      *
      * @param inquiry 수정할 문의 게시글 정보
      */
-    public void updateInquiryPost(Inquiry inquiry) {
-        inquiryMapper.updateInquiryPost(inquiry);
+    public void updatePost(Inquiry inquiry) {
+        inquiryMapper.updatePost(inquiry);
     }
 
 
@@ -99,8 +99,8 @@ public class InquiryRepository {
      *
      * @param postIdx 게시글 번호
      */
-    public void deleteInquiryOfPost(Long postIdx) {
-        inquiryMapper.deleteInquiryOfPost(postIdx);
+    public void deletePost(Long postIdx) {
+        inquiryMapper.deletePost(postIdx);
     }
 
     /**

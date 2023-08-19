@@ -9,6 +9,7 @@ import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.comment.domain.Comment;
 import com.now.core.member.domain.Member;
+import com.now.core.post.domain.constants.InquiryStatus;
 import com.now.core.post.domain.constants.PostValidationGroup;
 import com.now.core.post.exception.CannotDeletePostException;
 import com.now.core.post.exception.CannotUpdatePostException;
@@ -101,6 +102,9 @@ public class Inquiry {
     @JsonIgnore
     private String managerId;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private InquiryStatus inquiryStatus;
+
     /**
      * 회원의 식별자를 업데이트
      *
@@ -156,7 +160,7 @@ public class Inquiry {
             }
         }
 
-        if(answerManagerNickname != null) {
+        if(inquiryStatus == InquiryStatus.COMPLETE) {
             throw new CannotDeletePostException(ErrorType.CAN_NOT_DELETE_POST_WITH_MANAGER_ANSWER);
         }
 

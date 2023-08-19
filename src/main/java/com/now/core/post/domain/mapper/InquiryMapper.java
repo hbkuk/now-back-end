@@ -35,7 +35,7 @@ public interface InquiryMapper {
      *
      * @param inquiry 등록할 문의 게시글 정보
      */
-    void saveInquiry(Inquiry inquiry);
+    void savePost(Inquiry inquiry);
 
     /**
      * 문의 게시글 비밀글 설정
@@ -56,7 +56,7 @@ public interface InquiryMapper {
      *
      * @param inquiry 수정할 문의 게시글 정보
      */
-    void updateInquiryPost(Inquiry inquiry);
+    void updatePost(Inquiry inquiry);
 
     /**
      * 문의 게시글 수정
@@ -77,7 +77,7 @@ public interface InquiryMapper {
      *
      * @param postIdx 게시글 번호
      */
-    void deleteInquiryOfPost(Long postIdx);
+    void deletePost(Long postIdx);
 
     /**
      * 문의 테이블 삭제

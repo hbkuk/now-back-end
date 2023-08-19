@@ -51,7 +51,7 @@ public class InquiryService {
      * @return 문의 게시글 정보
      */
     @Cacheable(value = "postCache", key="#postIdx")
-    public Inquiry getInquiryWithSecretCheck(Long postIdx) {
+    public Inquiry getPublicInquiry(Long postIdx) {
         Inquiry inquiry = getInquiry(postIdx);
 
         if (inquiry.getSecret()) {
@@ -67,7 +67,7 @@ public class InquiryService {
      * @param memberId 회원 아이디
      * @return 문의 게시글 정보
      */
-    public Inquiry getInquiryWithSecretCheck(Long postIdx, String memberId, String password) {
+    public Inquiry getPrivateInquiry(Long postIdx, String memberId, String password) {
         Inquiry inquiry = getInquiry(postIdx);
 
         if (inquiry.getSecret()) {
@@ -92,8 +92,9 @@ public class InquiryService {
             throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
 
-        inquiryRepository.saveInquiry(inquiry.updateMemberIdx(member.getMemberIdx())
+        inquiryRepository.savePost(inquiry.updateMemberIdx(member.getMemberIdx())
                                             .updatePassword(passwordSecurityManager.encodeWithSalt(inquiry.getPassword())));
+        inquiryRepository.saveInquirySecretSetting(inquiry);
     }
 
     /**
@@ -108,7 +109,9 @@ public class InquiryService {
         if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, updateInquiry.getCategory())) {
             throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
-        inquiryRepository.updateInquiry(updateInquiry.updateMemberIdx(member.getMemberIdx()));
+
+        inquiryRepository.updatePost(updateInquiry.updateMemberIdx(member.getMemberIdx()));;
+        inquiryRepository.updateInquiry(updateInquiry);
     }
 
     /**
@@ -121,6 +124,7 @@ public class InquiryService {
     public void deleteInquiry(Long postIdx, String memberId) {
         Member member = getMember(memberId);
 
+        inquiryRepository.deletePost(postIdx);
         inquiryRepository.deleteInquiry(postIdx);
     }
 

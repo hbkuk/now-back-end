@@ -73,11 +73,11 @@ class PhotoRepositoryTest {
             void filter_only_sort_latest() {
                 // given
                 List<Member> members = Arrays.asList(
-                        createMember(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createMember(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createMember(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createMember(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createMember(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME));
+                        createMember(MEMBER1_ID, MEMBER1_NAME, MEMBER1_NICKNAME),
+                        createMember(MEMBER2_ID, MEMBER2_NAME, MEMBER2_NICKNAME),
+                        createMember(MEMBER3_ID, MEMBER3_NAME, MEMBER3_NICKNAME),
+                        createMember(MEMBER4_ID, MEMBER4_NAME, MEMBER4_NICKNAME),
+                        createMember(MEMBER5_ID, MEMBER5_NAME, MEMBER5_NICKNAME));
 
                 List<Photo> expectedPhotos = Arrays.asList(
                         createPhotoForSave(1L, members.get(0).getId(), members.get(0).getNickname(), Category.DAILY_LIFE, "사랑", "기쁨"),
@@ -108,11 +108,11 @@ class PhotoRepositoryTest {
             void filter_only_sort_recommended() {
                 // given
                 List<Member> members = Arrays.asList(
-                        createMember(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createMember(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createMember(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createMember(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createMember(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME));
+                        createMember(MEMBER1_ID, MEMBER1_NAME, MEMBER1_NICKNAME),
+                        createMember(MEMBER2_ID, MEMBER2_NAME, MEMBER2_NICKNAME),
+                        createMember(MEMBER3_ID, MEMBER3_NAME, MEMBER3_NICKNAME),
+                        createMember(MEMBER4_ID, MEMBER4_NAME, MEMBER4_NICKNAME),
+                        createMember(MEMBER5_ID, MEMBER5_NAME, MEMBER5_NICKNAME));
 
                 List<Photo> expectedPhotos = Arrays.asList(
                         createPhotoForSave(1L, members.get(0).getId(), members.get(0).getNickname(), Category.DAILY_LIFE, "사랑", "기쁨"),
@@ -173,11 +173,11 @@ class PhotoRepositoryTest {
             void filter_only_sort_most_viewed() {
                 // given
                 List<Member> members = Arrays.asList(
-                        createMember(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createMember(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createMember(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createMember(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createMember(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME));
+                        createMember(MEMBER1_ID, MEMBER1_NAME, MEMBER1_NICKNAME),
+                        createMember(MEMBER2_ID, MEMBER2_NAME, MEMBER2_NICKNAME),
+                        createMember(MEMBER3_ID, MEMBER3_NAME, MEMBER3_NICKNAME),
+                        createMember(MEMBER4_ID, MEMBER4_NAME, MEMBER4_NICKNAME),
+                        createMember(MEMBER5_ID, MEMBER5_NAME, MEMBER5_NICKNAME));
 
                 List<Photo> expectedPhotos = Arrays.asList(
                         createPhotoForSave(1L, members.get(0).getId(), members.get(0).getNickname(), Category.DAILY_LIFE, "사랑", "기쁨"),
@@ -219,11 +219,11 @@ class PhotoRepositoryTest {
             void filter_only_category() {
                 // given
                 List<Member> members = Arrays.asList(
-                        createMember(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createMember(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createMember(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createMember(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createMember(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME));
+                        createMember(MEMBER1_ID, MEMBER1_NAME, MEMBER1_NICKNAME),
+                        createMember(MEMBER2_ID, MEMBER2_NAME, MEMBER2_NICKNAME),
+                        createMember(MEMBER3_ID, MEMBER3_NAME, MEMBER3_NICKNAME),
+                        createMember(MEMBER4_ID, MEMBER4_NAME, MEMBER4_NICKNAME),
+                        createMember(MEMBER5_ID, MEMBER5_NAME, MEMBER5_NICKNAME));
 
                 List<Photo> expectedPhotos = Arrays.asList(
                         createPhotoForSave(1L, members.get(0).getId(), members.get(0).getNickname(), Category.DAILY_LIFE, "사랑", "기쁨"),
@@ -263,11 +263,11 @@ class PhotoRepositoryTest {
             void filter_only_keyword_match_content() {
                 // given
                 List<Member> members = Arrays.asList(
-                        createMember(TESTER1_ID, TESTER1_NAME, "애플"),
-                        createMember(TESTER2_ID, TESTER2_NAME, "apple"),
-                        createMember(TESTER3_ID, TESTER3_NAME, "바나나"),
-                        createMember(TESTER4_ID, TESTER4_NAME, "banana"),
-                        createMember(TESTER5_ID, TESTER5_NAME, "멜론"));
+                        createMember(MEMBER1_ID, MEMBER1_NAME, "애플"),
+                        createMember(MEMBER2_ID, MEMBER2_NAME, "apple"),
+                        createMember(MEMBER3_ID, MEMBER3_NAME, "바나나"),
+                        createMember(MEMBER4_ID, MEMBER4_NAME, "banana"),
+                        createMember(MEMBER5_ID, MEMBER5_NAME, "멜론"));
 
                 List<Photo> expectedPhotos = Arrays.asList(
                         createPhotoForSave(1L, members.get(0).getId(), members.get(0).getNickname(), Category.DAILY_LIFE, "사랑", "기쁨"),
@@ -303,11 +303,11 @@ class PhotoRepositoryTest {
             void filter_only_keyword_match_title() {
                 // given
                 List<Member> members = Arrays.asList(
-                        createMember(TESTER1_ID, TESTER1_NAME, "애플"),
-                        createMember(TESTER2_ID, TESTER2_NAME, "apple"),
-                        createMember(TESTER3_ID, TESTER3_NAME, "바나나"),
-                        createMember(TESTER4_ID, TESTER4_NAME, "banana"),
-                        createMember(TESTER5_ID, TESTER5_NAME, "멜론"));
+                        createMember(MEMBER1_ID, MEMBER1_NAME, "애플"),
+                        createMember(MEMBER2_ID, MEMBER2_NAME, "apple"),
+                        createMember(MEMBER3_ID, MEMBER3_NAME, "바나나"),
+                        createMember(MEMBER4_ID, MEMBER4_NAME, "banana"),
+                        createMember(MEMBER5_ID, MEMBER5_NAME, "멜론"));
 
                 List<Photo> expectedPhotos = Arrays.asList(
                         createPhotoForSave(1L, members.get(0).getId(), members.get(0).getNickname(), Category.DAILY_LIFE, "사랑", "기쁨"),
@@ -342,11 +342,11 @@ class PhotoRepositoryTest {
             void filter_only_keyword_match_memberNickname() {
                 // given
                 List<Member> members = Arrays.asList(
-                        createMember(TESTER1_ID, TESTER1_NAME, "애플"),
-                        createMember(TESTER2_ID, TESTER2_NAME, "apple"),
-                        createMember(TESTER3_ID, TESTER3_NAME, "바나나"),
-                        createMember(TESTER4_ID, TESTER4_NAME, "banana"),
-                        createMember(TESTER5_ID, TESTER5_NAME, "멜론"));
+                        createMember(MEMBER1_ID, MEMBER1_NAME, "애플"),
+                        createMember(MEMBER2_ID, MEMBER2_NAME, "apple"),
+                        createMember(MEMBER3_ID, MEMBER3_NAME, "바나나"),
+                        createMember(MEMBER4_ID, MEMBER4_NAME, "banana"),
+                        createMember(MEMBER5_ID, MEMBER5_NAME, "멜론"));
 
                 List<Photo> expectedPhotos = Arrays.asList(
                         createPhotoForSave(1L, members.get(0).getId(), members.get(0).getNickname(), Category.DAILY_LIFE, "사랑", "기쁨"),
@@ -387,11 +387,11 @@ class PhotoRepositoryTest {
             void by_postIdx() {
                 // given
                 List<Member> members = Arrays.asList(
-                        createMember(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createMember(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createMember(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createMember(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createMember(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME));
+                        createMember(MEMBER1_ID, MEMBER1_NAME, MEMBER1_NICKNAME),
+                        createMember(MEMBER2_ID, MEMBER2_NAME, MEMBER2_NICKNAME),
+                        createMember(MEMBER3_ID, MEMBER3_NAME, MEMBER3_NICKNAME),
+                        createMember(MEMBER4_ID, MEMBER4_NAME, MEMBER4_NICKNAME),
+                        createMember(MEMBER5_ID, MEMBER5_NAME, MEMBER5_NICKNAME));
 
                 List<Photo> expectedPhotos = LongStream.range(1L, members.size() + 1L)
                         .mapToObj(index -> createPhotoForSave(index,
@@ -406,11 +406,11 @@ class PhotoRepositoryTest {
 
 
                 // then
-                assertThat(photoRepository.findPhoto(1L).getMemberNickname()).isEqualTo(TESTER1_NICKNAME);
-                assertThat(photoRepository.findPhoto(2L).getMemberNickname()).isEqualTo(TESTER2_NICKNAME);
-                assertThat(photoRepository.findPhoto(3L).getMemberNickname()).isEqualTo(TESTER3_NICKNAME);
-                assertThat(photoRepository.findPhoto(4L).getMemberNickname()).isEqualTo(TESTER4_NICKNAME);
-                assertThat(photoRepository.findPhoto(5L).getMemberNickname()).isEqualTo(TESTER5_NICKNAME);
+                assertThat(photoRepository.findPhoto(1L).getMemberNickname()).isEqualTo(MEMBER1_NICKNAME);
+                assertThat(photoRepository.findPhoto(2L).getMemberNickname()).isEqualTo(MEMBER2_NICKNAME);
+                assertThat(photoRepository.findPhoto(3L).getMemberNickname()).isEqualTo(MEMBER3_NICKNAME);
+                assertThat(photoRepository.findPhoto(4L).getMemberNickname()).isEqualTo(MEMBER4_NICKNAME);
+                assertThat(photoRepository.findPhoto(5L).getMemberNickname()).isEqualTo(MEMBER5_NICKNAME);
 
             }
         }
@@ -424,7 +424,7 @@ class PhotoRepositoryTest {
             void updatePhoto() {
                 // given
                 Long postIdx = 1L;
-                Member member = createMember(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME);
+                Member member = createMember(MEMBER1_ID, MEMBER1_NAME, MEMBER1_NICKNAME);
 
                 Photo photo = createPhotoForSave(1L, member.getId(), member.getNickname(),
                                                                     Category.DAILY_LIFE, "영업소", "구입처");
@@ -457,7 +457,7 @@ class PhotoRepositoryTest {
             void deletePhoto() {
                 // given
                 Long postIdx = 1L;
-                Member member = createMember(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME);
+                Member member = createMember(MEMBER1_ID, MEMBER1_NAME, MEMBER1_NICKNAME);
 
                 Photo photo = createPhotoForSave(1L, member.getId(), member.getNickname(),
                                                             Category.DAILY_LIFE, "영업소", "구입처");

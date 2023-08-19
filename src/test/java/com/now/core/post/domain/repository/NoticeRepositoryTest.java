@@ -69,12 +69,12 @@ class NoticeRepositoryTest {
             void filter_only_category() {
                 // given
                 List<Manager> managers = Arrays.asList(
-                        createManager(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createManager(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createManager(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createManager(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createManager(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME),
-                        createManager(TESTER6_ID, TESTER6_NAME, TESTER6_NICKNAME));
+                        createManager(MANAGER1_ID, MANAGER1_NAME, MANAGER1_NICKNAME),
+                        createManager(MANAGER2_ID, MANAGER2_NAME, MANAGER2_NICKNAME),
+                        createManager(MANAGER3_ID, MANAGER3_NAME, MANAGER3_NICKNAME),
+                        createManager(MANAGER4_ID, MANAGER4_NAME, MANAGER4_NICKNAME),
+                        createManager(MANAGER5_ID, MANAGER5_NAME, MANAGER5_NICKNAME),
+                        createManager(MANAGER6_ID, MANAGER6_NAME, MANAGER6_NICKNAME));
 
                 List<Notice> pinnedNewsNotices = managers.stream()
                         .map(manager -> createNoticeForSave(Category.NEWS, manager.getId(), true))
@@ -129,12 +129,12 @@ class NoticeRepositoryTest {
             void filter_only_sort_latest() {
                 // given
                 List<Manager> managers = Arrays.asList(
-                        createManager(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createManager(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createManager(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createManager(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createManager(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME),
-                        createManager(TESTER6_ID, TESTER6_NAME, TESTER6_NICKNAME));
+                        createManager(MANAGER1_ID, MANAGER1_NAME, MANAGER1_NICKNAME),
+                        createManager(MANAGER2_ID, MANAGER2_NAME, MANAGER2_NICKNAME),
+                        createManager(MANAGER3_ID, MANAGER3_NAME, MANAGER3_NICKNAME),
+                        createManager(MANAGER4_ID, MANAGER4_NAME, MANAGER4_NICKNAME),
+                        createManager(MANAGER5_ID, MANAGER5_NAME, MANAGER5_NICKNAME),
+                        createManager(MANAGER6_ID, MANAGER6_NAME, MANAGER6_NICKNAME));
 
                 List<Notice> notPinnedEventNotices = managers.stream()
                         .map(manager -> createNoticeForSave(Category.EVENT, manager.getId(), false))
@@ -162,12 +162,12 @@ class NoticeRepositoryTest {
             void filter_only_sort_recommended() {
                 // given
                 List<Manager> managers = Arrays.asList(
-                        createManager(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createManager(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createManager(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createManager(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createManager(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME),
-                        createManager(TESTER6_ID, TESTER6_NAME, TESTER6_NICKNAME));
+                        createManager(MANAGER1_ID, MANAGER1_NAME, MANAGER1_NICKNAME),
+                        createManager(MANAGER2_ID, MANAGER2_NAME, MANAGER2_NICKNAME),
+                        createManager(MANAGER3_ID, MANAGER3_NAME, MANAGER3_NICKNAME),
+                        createManager(MANAGER4_ID, MANAGER4_NAME, MANAGER4_NICKNAME),
+                        createManager(MANAGER5_ID, MANAGER5_NAME, MANAGER5_NICKNAME),
+                        createManager(MANAGER6_ID, MANAGER6_NAME, MANAGER6_NICKNAME));
 
                 List<Notice> notPinnedEventNotices = managers.stream()
                         .map(manager -> createNoticeForSave(Category.EVENT, manager.getId(), false))
@@ -224,12 +224,12 @@ class NoticeRepositoryTest {
             void filter_only_sort_most_viewed() {
                 // given
                 List<Manager> managers = Arrays.asList(
-                        createManager(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createManager(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createManager(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createManager(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createManager(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME),
-                        createManager(TESTER6_ID, TESTER6_NAME, TESTER6_NICKNAME));
+                        createManager(MANAGER1_ID, MANAGER1_NAME, MANAGER1_NICKNAME),
+                        createManager(MANAGER2_ID, MANAGER2_NAME, MANAGER2_NICKNAME),
+                        createManager(MANAGER3_ID, MANAGER3_NAME, MANAGER3_NICKNAME),
+                        createManager(MANAGER4_ID, MANAGER4_NAME, MANAGER4_NICKNAME),
+                        createManager(MANAGER5_ID, MANAGER5_NAME, MANAGER5_NICKNAME),
+                        createManager(MANAGER6_ID, MANAGER6_NAME, MANAGER6_NICKNAME));
 
                 List<Notice> notPinnedEventNotices = managers.stream()
                         .map(manager -> createNoticeForSave(Category.EVENT, manager.getId(), false))
@@ -267,12 +267,12 @@ class NoticeRepositoryTest {
             void filter_only_category() {
                 // given
                 List<Manager> managers = Arrays.asList(
-                        createManager(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createManager(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createManager(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createManager(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createManager(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME),
-                        createManager(TESTER6_ID, TESTER6_NAME, TESTER6_NICKNAME));
+                        createManager(MANAGER1_ID, MANAGER1_NAME, MANAGER1_NICKNAME),
+                        createManager(MANAGER2_ID, MANAGER2_NAME, MANAGER2_NICKNAME),
+                        createManager(MANAGER3_ID, MANAGER3_NAME, MANAGER3_NICKNAME),
+                        createManager(MANAGER4_ID, MANAGER4_NAME, MANAGER4_NICKNAME),
+                        createManager(MANAGER5_ID, MANAGER5_NAME, MANAGER5_NICKNAME),
+                        createManager(MANAGER6_ID, MANAGER6_NAME, MANAGER6_NICKNAME));
 
                 List<Notice> expectedNotices = Arrays.asList(
                         createNoticeForSave(managers.get(0).getId(), Category.EVENT, false),
@@ -313,12 +313,12 @@ class NoticeRepositoryTest {
             void filter_only_keyword_match_content() {
                 // given
                 List<Manager> managers = Arrays.asList(
-                        createManager(TESTER1_ID, TESTER1_NAME, "메가슈퍼"),
-                        createManager(TESTER2_ID, TESTER2_NAME, "애플매니저"),
-                        createManager(TESTER3_ID, TESTER3_NAME, "appleManager"),
-                        createManager(TESTER4_ID, TESTER4_NAME, "바나매니저"),
-                        createManager(TESTER5_ID, TESTER5_NAME, "bananaManager"),
-                        createManager(TESTER6_ID, TESTER6_NAME, "멜론매니저"));
+                        createManager(MANAGER1_ID, MANAGER1_NAME, "메가슈퍼"),
+                        createManager(MANAGER2_ID, MANAGER2_NAME, "애플매니저"),
+                        createManager(MANAGER3_ID, MANAGER3_NAME, "appleManager"),
+                        createManager(MANAGER4_ID, MANAGER4_NAME, "바나매니저"),
+                        createManager(MANAGER5_ID, MANAGER5_NAME, "bananaManager"),
+                        createManager(MANAGER6_ID, MANAGER6_NAME, "멜론매니저"));
 
                 List<Notice> notices = Arrays.asList(
                         createNoticeForSave(managers.get(0).getId(), 1, managers.get(0).getNickname(), Category.NEWS, "사랑", "기쁨", false),
@@ -355,12 +355,12 @@ class NoticeRepositoryTest {
             void filter_only_keyword_match_title() {
                 // given
                 List<Manager> managers = Arrays.asList(
-                        createManager(TESTER1_ID, TESTER1_NAME, "메가슈퍼"),
-                        createManager(TESTER2_ID, TESTER2_NAME, "애플매니저"),
-                        createManager(TESTER3_ID, TESTER3_NAME, "appleManager"),
-                        createManager(TESTER4_ID, TESTER4_NAME, "바나매니저"),
-                        createManager(TESTER5_ID, TESTER5_NAME, "bananaManager"),
-                        createManager(TESTER6_ID, TESTER6_NAME, "멜론매니저"));
+                        createManager(MANAGER1_ID, MANAGER1_NAME, "메가슈퍼"),
+                        createManager(MANAGER2_ID, MANAGER2_NAME, "애플매니저"),
+                        createManager(MANAGER3_ID, MANAGER3_NAME, "appleManager"),
+                        createManager(MANAGER4_ID, MANAGER4_NAME, "바나매니저"),
+                        createManager(MANAGER5_ID, MANAGER5_NAME, "bananaManager"),
+                        createManager(MANAGER6_ID, MANAGER6_NAME, "멜론매니저"));
 
                 List<Notice> notices = Arrays.asList(
                         createNoticeForSave(managers.get(0).getId(), 1, managers.get(0).getNickname(), Category.NEWS, "사랑", "기쁨", false),
@@ -397,12 +397,12 @@ class NoticeRepositoryTest {
             void filter_only_keyword_match_managerNickname() {
                 // given
                 List<Manager> managers = Arrays.asList(
-                        createManager(TESTER1_ID, TESTER1_NAME, "메가슈퍼"),
-                        createManager(TESTER2_ID, TESTER2_NAME, "애플매니저"),
-                        createManager(TESTER3_ID, TESTER3_NAME, "appleManager"),
-                        createManager(TESTER4_ID, TESTER4_NAME, "바나매니저"),
-                        createManager(TESTER5_ID, TESTER5_NAME, "bananaManager"),
-                        createManager(TESTER6_ID, TESTER6_NAME, "멜론매니저"));
+                        createManager(MANAGER1_ID, MANAGER1_NAME, "메가슈퍼"),
+                        createManager(MANAGER2_ID, MANAGER2_NAME, "애플매니저"),
+                        createManager(MANAGER3_ID, MANAGER3_NAME, "appleManager"),
+                        createManager(MANAGER4_ID, MANAGER4_NAME, "바나매니저"),
+                        createManager(MANAGER5_ID, MANAGER5_NAME, "bananaManager"),
+                        createManager(MANAGER6_ID, MANAGER6_NAME, "멜론매니저"));
 
                 List<Notice> notices = Arrays.asList(
                         createNoticeForSave(managers.get(0).getId(), 1, managers.get(0).getNickname(), Category.NEWS, "사랑", "기쁨", false),
@@ -444,12 +444,12 @@ class NoticeRepositoryTest {
             void by_postIdx() {
                 // given
                 List<Manager> managers = Arrays.asList(
-                        createManager(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME),
-                        createManager(TESTER2_ID, TESTER2_NAME, TESTER2_NICKNAME),
-                        createManager(TESTER3_ID, TESTER3_NAME, TESTER3_NICKNAME),
-                        createManager(TESTER4_ID, TESTER4_NAME, TESTER4_NICKNAME),
-                        createManager(TESTER5_ID, TESTER5_NAME, TESTER5_NICKNAME),
-                        createManager(TESTER6_ID, TESTER6_NAME, TESTER6_NICKNAME));
+                        createManager(MANAGER1_ID, MANAGER1_NAME, MANAGER1_NICKNAME),
+                        createManager(MANAGER2_ID, MANAGER2_NAME, MANAGER2_NICKNAME),
+                        createManager(MANAGER3_ID, MANAGER3_NAME, MANAGER3_NICKNAME),
+                        createManager(MANAGER4_ID, MANAGER4_NAME, MANAGER4_NICKNAME),
+                        createManager(MANAGER5_ID, MANAGER5_NAME, MANAGER5_NICKNAME),
+                        createManager(MANAGER6_ID, MANAGER6_NAME, MANAGER6_NICKNAME));
 
                 List<Notice> expectedNotices = LongStream.range(1, managers.size() + 1)
                         .mapToObj(index -> createNoticeForSave((int) index, managers.get((int) (index - 1)).getId(), false))
@@ -458,12 +458,12 @@ class NoticeRepositoryTest {
                 managers.forEach(member -> managerRepository.saveManager(member));
                 expectedNotices.forEach(notice -> noticeRepository.saveNotice(notice));
 
-                assertThat(noticeRepository.findNotice(1L).getManagerNickname()).isEqualTo(TESTER1_NICKNAME);
-                assertThat(noticeRepository.findNotice(2L).getManagerNickname()).isEqualTo(TESTER2_NICKNAME);
-                assertThat(noticeRepository.findNotice(3L).getManagerNickname()).isEqualTo(TESTER3_NICKNAME);
-                assertThat(noticeRepository.findNotice(4L).getManagerNickname()).isEqualTo(TESTER4_NICKNAME);
-                assertThat(noticeRepository.findNotice(5L).getManagerNickname()).isEqualTo(TESTER5_NICKNAME);
-                assertThat(noticeRepository.findNotice(6L).getManagerNickname()).isEqualTo(TESTER6_NICKNAME);
+                assertThat(noticeRepository.findNotice(1L).getManagerNickname()).isEqualTo(MANAGER1_NICKNAME);
+                assertThat(noticeRepository.findNotice(2L).getManagerNickname()).isEqualTo(MANAGER2_NICKNAME);
+                assertThat(noticeRepository.findNotice(3L).getManagerNickname()).isEqualTo(MANAGER3_NICKNAME);
+                assertThat(noticeRepository.findNotice(4L).getManagerNickname()).isEqualTo(MANAGER4_NICKNAME);
+                assertThat(noticeRepository.findNotice(5L).getManagerNickname()).isEqualTo(MANAGER5_NICKNAME);
+                assertThat(noticeRepository.findNotice(6L).getManagerNickname()).isEqualTo(MANAGER6_NICKNAME);
             }
         }
 
@@ -476,7 +476,7 @@ class NoticeRepositoryTest {
             void updateNotice() {
                 // given
                 Long postIdx = 1L;
-                Manager manager = createManager(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME);
+                Manager manager = createManager(MANAGER1_ID, MANAGER1_NAME, MANAGER1_NICKNAME);
 
                 Notice notice = createNoticeForSave(manager.getId(), 1, manager.getNickname(), Category.NEWS, "사랑", "기쁨", false);
                 Notice expectedUpdatedNotice = createNoticeForSave(manager.getId(), 1, 
@@ -507,7 +507,7 @@ class NoticeRepositoryTest {
             void deleteNotice() {
                 // given
                 Long postIdx = 1L;
-                Manager manager = createManager(TESTER1_ID, TESTER1_NAME, TESTER1_NICKNAME);
+                Manager manager = createManager(MANAGER1_ID, MANAGER1_NAME, MANAGER1_NICKNAME);
 
                 Notice notice = createNoticeForSave(manager.getId(), 1, manager.getNickname(),
                                                             Category.NEWS, "사랑", "기쁨", false);

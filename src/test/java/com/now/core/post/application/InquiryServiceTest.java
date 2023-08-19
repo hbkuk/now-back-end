@@ -66,7 +66,7 @@ class InquiryServiceTest {
 
             when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
 
-            inquiryService.getInquiryWithSecretCheck(postIdx, "tester1", "token");
+            inquiryService.getPrivateInquiry(postIdx, "tester1", "token");
         }
 
         @Nested
@@ -82,7 +82,7 @@ class InquiryServiceTest {
                 when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
                 when(passwordSecurityManager.matchesWithSalt(anyString(), anyString())).thenReturn(true);
 
-                inquiryService.getInquiryWithSecretCheck(postIdx, null, "testPassword");
+                inquiryService.getPrivateInquiry(postIdx, null, "testPassword");
             }
 
             @Test
@@ -95,7 +95,7 @@ class InquiryServiceTest {
                 when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
                 when(memberRepository.findById(anyString())).thenReturn(member);
 
-                inquiryService.getInquiryWithSecretCheck(postIdx, "tester1", null);
+                inquiryService.getPrivateInquiry(postIdx, "tester1", null);
             }
 
             @Test
@@ -110,7 +110,7 @@ class InquiryServiceTest {
 
                 assertThatExceptionOfType(CannotViewInquiryException.class)
                         .isThrownBy(() -> {
-                            inquiryService.getInquiryWithSecretCheck(postIdx, "tester2", null);
+                            inquiryService.getPrivateInquiry(postIdx, "tester2", null);
                         })
                         .withMessage(ErrorType.CAN_NOT_VIEW_OTHER_MEMBER_INQUIRIES.getMessage());
             }

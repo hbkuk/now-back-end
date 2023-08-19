@@ -2,6 +2,8 @@ package com.now.config.fixtures.post;
 
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.domain.Inquiry;
+import com.now.core.post.domain.Photo;
+import com.now.core.post.domain.constants.InquiryStatus;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -34,6 +36,7 @@ public class InquiryFixture {
                 .answerManagerNickname(SAMPLE_MANAGER_NICKNAME_1)
                 .answerContent("안녕하세요. 답변드리도록 하겠습니다.....")
                 .answerRegDate(String.valueOf(LocalDateTime.now().plus(2, ChronoUnit.DAYS)))
+                .inquiryStatus(InquiryStatus.COMPLETE)
                 .build();
     }
 
@@ -50,6 +53,7 @@ public class InquiryFixture {
                 .likeCount(100)
                 .dislikeCount(2)
                 .secret(false)
+                .inquiryStatus(InquiryStatus.INCOMPLETE)
                 .build();
     }
 
@@ -60,6 +64,7 @@ public class InquiryFixture {
                 .content(SAMPLE_CONTENT_1)
                 .secret(true)
                 .password("1234")
+                .inquiryStatus(InquiryStatus.INCOMPLETE)
                 .build();
     }
 
@@ -77,6 +82,7 @@ public class InquiryFixture {
                 .secret(true)
                 .password("0736")
                 .category(Category.SERVICE)
+                .inquiryStatus(InquiryStatus.INCOMPLETE)
                 .build();
     }
 
@@ -94,6 +100,7 @@ public class InquiryFixture {
                 .secret(true)
                 .category(category)
                 .password("0736")
+                .inquiryStatus(InquiryStatus.INCOMPLETE)
                 .build();
     }
 
@@ -112,6 +119,7 @@ public class InquiryFixture {
                 .category(category)
                 .password("0736")
                 .answerManagerNickname("manager1")
+                .inquiryStatus(InquiryStatus.COMPLETE)
                 .build();
     }
 
@@ -128,6 +136,7 @@ public class InquiryFixture {
                 .dislikeCount(0)
                 .secret(false)
                 .category(Category.SERVICE)
+                .inquiryStatus(InquiryStatus.INCOMPLETE)
                 .build();
     }
 
@@ -144,6 +153,34 @@ public class InquiryFixture {
                 .dislikeCount(0)
                 .secret(false)
                 .category(category)
+                .inquiryStatus(InquiryStatus.INCOMPLETE)
+                .build();
+    }
+
+    public static Inquiry createInquiryForSave(Long memberIdx, String memberId, String memberNickname, Category category, String title, String content, Boolean serect) {
+        return Inquiry.builder()
+                .category(category)
+                .title(title)
+                .content(content)
+                .memberId(memberId)
+                .memberIdx(memberIdx)
+                .memberNickname(memberNickname)
+                .secret(serect)
+                .inquiryStatus(InquiryStatus.INCOMPLETE)
+                .build();
+    }
+
+    public static Inquiry createInquiryForSave(Long memberIdx, String memberId, String memberNickname, Category category, String title, String content, Boolean serect, String password) {
+        return Inquiry.builder()
+                .category(category)
+                .title(title)
+                .content(content)
+                .memberId(memberId)
+                .memberIdx(memberIdx)
+                .memberNickname(memberNickname)
+                .secret(serect)
+                .password(password)
+                .inquiryStatus(InquiryStatus.INCOMPLETE)
                 .build();
     }
 }

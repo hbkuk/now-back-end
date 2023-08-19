@@ -1,30 +1,29 @@
 package com.now.config.fixtures.member;
 
 import com.now.core.member.domain.Member;
-import com.now.core.member.presentation.dto.MemberProfile;
 
 public class MemberFixture {
 
     public static String SAMPLE_MEMBER_ID_1 = "honi132";
     public static String SAMPLE_PASSWORD_1 = "testPassword1!";
 
-    public static String TESTER1_ID = "TESTER_ID_1";
-    public static String TESTER2_ID = "TESTER_ID_2";
-    public static String TESTER3_ID = "TESTER_ID_3";
-    public static String TESTER4_ID = "TESTER_ID_4";
-    public static String TESTER5_ID = "TESTER_ID_5";
+    public static String MEMBER1_ID = "MEMBER_ID_1";
+    public static String MEMBER2_ID = "MEMBER_ID_2";
+    public static String MEMBER3_ID = "MEMBER_ID_3";
+    public static String MEMBER4_ID = "MEMBER_ID_4";
+    public static String MEMBER5_ID = "MEMBER_ID_5";
 
-    public static String TESTER1_NAME = "TESTER_NAME_1";
-    public static String TESTER2_NAME = "TESTER_NAME_2";
-    public static String TESTER3_NAME = "TESTER_NAME_3";
-    public static String TESTER4_NAME = "TESTER_NAME_4";
-    public static String TESTER5_NAME = "TESTER_NAME_5";
+    public static String MEMBER1_NAME = "MEMBER_NAME_1";
+    public static String MEMBER2_NAME = "MEMBER_NAME_2";
+    public static String MEMBER3_NAME = "MEMBER_NAME_3";
+    public static String MEMBER4_NAME = "MEMBER_NAME_4";
+    public static String MEMBER5_NAME = "MEMBER_NAME_5";
 
-    public static String TESTER1_NICKNAME = "TESTER_NIC_1";
-    public static String TESTER2_NICKNAME = "TESTER_NIC_2";
-    public static String TESTER3_NICKNAME = "TESTER_NIC_3";
-    public static String TESTER4_NICKNAME = "TESTER_NIC_4";
-    public static String TESTER5_NICKNAME = "TESTER_NIC_5";
+    public static String MEMBER1_NICKNAME = "MEMBER_NIC_1";
+    public static String MEMBER2_NICKNAME = "MEMBER_NIC_2";
+    public static String MEMBER3_NICKNAME = "MEMBER_NIC_3";
+    public static String MEMBER4_NICKNAME = "MEMBER_NIC_4";
+    public static String MEMBER5_NICKNAME = "MEMBER_NIC_5";
 
 
     public static Member createMember(String memberId) {

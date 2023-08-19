@@ -56,7 +56,7 @@ public class InquiryController {
      */
     @GetMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Inquiry> getInquiry(@PathVariable("postIdx") Long postIdx) {
-        return ResponseEntity.ok(inquiryService.getInquiryWithSecretCheck(postIdx));
+        return ResponseEntity.ok(inquiryService.getPublicInquiry(postIdx));
     }
 
     /**
@@ -76,7 +76,7 @@ public class InquiryController {
             memberId = (String) jwtTokenService.getClaim(accessToken, "id");
         }
 
-        return ResponseEntity.ok(inquiryService.getInquiryWithSecretCheck(postIdx, memberId, password));
+        return ResponseEntity.ok(inquiryService.getPrivateInquiry(postIdx, memberId, password));
     }
 
     /**

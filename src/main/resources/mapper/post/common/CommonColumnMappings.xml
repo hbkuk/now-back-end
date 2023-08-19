@@ -103,14 +103,16 @@
         <!-- Inquiry 테이블의 컬럼 Mapping, 비밀글 여부만-->
         <sql id="inquiriesWithNonSecretInfo">
                 i.secret AS i_secret,
-                i.answer_manager_idx AS i_answer_manager_idx
+                i.answer_manager_idx AS i_answer_manager_idx,
+                i.inquiry_status AS i_inquiry_status
         </sql>
 
 
         <!-- Inquiry 테이블의 컬럼 Mapping, 비밀글 여부만, MAX 함수 사용-->
         <sql id="maxInquiriesWithNonSecretInfo">
                 MAX(i.secret) AS i_secret,
-                MAX(i.answer_manager_idx) AS i_answer_manager_idx
+                MAX(i.answer_manager_idx) AS i_answer_manager_idx,
+                MAX(i.inquiry_status) AS i_inquiry_status
         </sql>
 
 
@@ -120,7 +122,8 @@
                 i.answer_content AS i_answer_content,
                 i.answer_reg_date AS i_answer_reg_date,
                 i.answer_manager_idx AS i_answer_manager_idx,
-                i.password AS i_password
+                i.password AS i_password,
+                i.inquiry_status AS i_inquiry_status
         </sql>
 
 
