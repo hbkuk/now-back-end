@@ -27,9 +27,9 @@
         LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
         LEFT OUTER JOIN tb_manager ima ON p.manager_idx = ima.manager_idx
-        WHERE p.post_group = 'NOTICE'
+        WHERE p.post_group = 'NOTICE' AND p.pinned = false
         GROUP BY p.post_idx
-        ORDER BY p.post_idx DESC
+        <include refid="DynamicQueryMapper.sort"/>
 
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
 
@@ -60,7 +60,7 @@
         LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
         WHERE p.post_group = 'COMMUNITY'
         GROUP BY p.post_idx
-        ORDER BY p.post_idx DESC
+        <include refid="DynamicQueryMapper.sort"/>
 
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
 
@@ -91,7 +91,7 @@
         LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
         WHERE p.post_group = 'PHOTO'
         GROUP BY p.post_idx
-        ORDER BY p.post_idx DESC
+        <include refid="DynamicQueryMapper.sort"/>
 
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
 
@@ -122,7 +122,7 @@
         LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
         WHERE p.post_group = 'INQUIRY'
         GROUP BY p.post_idx
-        ORDER BY p.post_idx DESC
+        <include refid="DynamicQueryMapper.sort"/>
 
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
 
@@ -200,17 +200,21 @@
 
 
     <!-- 기존 리액션 저장 여부 확인 쿼리 -->
-    <select id="getReaction" parameterType="PostReaction" resultMap="postReaction">
+    <select id="getPostReaction" parameterType="PostReaction" resultMap="postReaction">
         SELECT
-        <include refid="CommonColumnMappings.postReactionTableColumn"/>,
-        <include refid="CommonColumnMappings.managerInfoOfPostReactionTableColumn"/>,
-        <include refid="CommonColumnMappings.memberInfoOfPostReactionTableColumn"/>
+            <include refid="CommonColumnMappings.postReactionTableColumn"/>,
+            <include refid="CommonColumnMappings.managerInfoOfPostReactionTableColumn"/>,
+            <include refid="CommonColumnMappings.memberInfoOfPostReactionTableColumn"/>
             FROM tb_post_reaction prea
             LEFT OUTER JOIN tb_member pream ON prea.member_idx = pream.member_idx
             LEFT OUTER JOIN tb_manager preama ON prea.manager_idx = preama.manager_idx
         WHERE prea.post_idx = #{postIdx}
-            AND prea.member_idx = ${memberIdx}
-            OR pream.manager_idx = ${managerIdx}
+            <if test="memberIdx != null">
+                AND prea.member_idx = ${memberIdx}
+            </if>
+            <if test="managerIdx != null">
+                AND prea.manager_idx = ${managerIdx}
+            </if>
     </select>
 
 

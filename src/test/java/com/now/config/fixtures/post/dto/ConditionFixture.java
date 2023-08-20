@@ -1,6 +1,7 @@
 package com.now.config.fixtures.post.dto;
 
 import com.now.core.category.domain.constants.Category;
+import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.constants.Sort;
 
@@ -24,6 +25,21 @@ public class ConditionFixture {
     public static Condition createConditionOnlySort(Sort sort) {
         return Condition.builder()
                 .sort(sort)
+                .build();
+    }
+
+    public static Condition createCondition(Sort sort, Integer maxNumberOfPosts) {
+        return Condition.builder()
+                .sort(sort)
+                .maxNumberOfPosts(maxNumberOfPosts)
+                .build();
+    }
+
+    public static Condition createCondition(PostGroup postGroup, Category category) {
+        return Condition.builder()
+                .postGroup(postGroup)
+                .category(category)
+                .sort(null)
                 .build();
     }
 

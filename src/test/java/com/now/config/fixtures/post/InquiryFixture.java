@@ -3,6 +3,7 @@ package com.now.config.fixtures.post;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.inquiry.domain.Inquiry;
 import com.now.core.post.inquiry.domain.constants.InquiryStatus;
+import com.now.core.post.photo.domain.Photo;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -59,6 +60,28 @@ public class InquiryFixture {
     public static Inquiry createInquiryForSave() {
         return Inquiry.builder()
                 .category(Category.SERVICE)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .secret(true)
+                .password("1234")
+                .inquiryStatus(InquiryStatus.INCOMPLETE)
+                .build();
+    }
+
+    public static Inquiry createInquiryForSave(String memberId) {
+        return Inquiry.builder()
+                .category(Category.SERVICE)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .secret(true)
+                .password("1234")
+                .inquiryStatus(InquiryStatus.INCOMPLETE)
+                .build();
+    }
+
+    public static Inquiry createInquiryForSave(String memberId, Category category) {
+        return Inquiry.builder()
+                .category(category)
                 .title(SAMPLE_TITLE_1)
                 .content(SAMPLE_CONTENT_1)
                 .secret(true)

@@ -4,6 +4,7 @@ package com.now.config.fixtures.post;
 import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.comment.domain.Comment;
+import com.now.core.post.community.domain.Community;
 import com.now.core.post.photo.domain.Photo;
 
 import java.time.LocalDateTime;
@@ -57,6 +58,24 @@ public class PhotoFixture {
     public static Photo createPhotoForSave() {
         return Photo.builder()
                 .category(Category.DAILY_LIFE)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .thumbnailAttachmentIdx(1L)
+                .build();
+    }
+
+    public static Photo createPhotoForSave(String memberId) {
+        return Photo.builder()
+                .category(Category.DAILY_LIFE)
+                .title(SAMPLE_TITLE_1)
+                .content(SAMPLE_CONTENT_1)
+                .thumbnailAttachmentIdx(1L)
+                .build();
+    }
+
+    public static Photo createPhotoForSave(String memberId, Category category) {
+        return Photo.builder()
+                .category(category)
                 .title(SAMPLE_TITLE_1)
                 .content(SAMPLE_CONTENT_1)
                 .thumbnailAttachmentIdx(1L)
