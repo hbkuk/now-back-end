@@ -12,6 +12,7 @@ import com.now.core.member.domain.Member;
 import com.now.core.post.common.domain.constants.PostValidationGroup;
 import com.now.core.post.common.exception.CannotDeletePostException;
 import com.now.core.post.common.exception.CannotUpdatePostException;
+import com.now.core.post.inquiry.domain.constants.InquiryStatus;
 import com.now.core.post.inquiry.exception.CannotViewInquiryException;
 import lombok.*;
 

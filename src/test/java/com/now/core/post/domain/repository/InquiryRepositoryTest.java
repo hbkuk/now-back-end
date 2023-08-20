@@ -9,6 +9,7 @@ import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.post.common.domain.repository.PostRepository;
 import com.now.core.post.inquiry.domain.Inquiry;
+import com.now.core.post.inquiry.domain.constants.InquiryStatus;
 import com.now.core.post.inquiry.domain.repository.InquiryRepository;
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.PostReaction;

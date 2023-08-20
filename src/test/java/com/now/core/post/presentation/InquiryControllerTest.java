@@ -6,6 +6,7 @@ import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.common.presentation.dto.Condition;
+import com.now.core.post.inquiry.presentation.dto.InquiriesResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +23,6 @@ import static com.now.config.document.snippet.RequestCookiesSnippet.customReques
 import static com.now.config.document.utils.RestDocsConfig.field;
 import static com.now.config.fixtures.post.InquiryFixture.*;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -38,14 +38,17 @@ class InquiryControllerTest extends RestDocsTestSupport {
     @DisplayName("모든 문의 게시글 조회")
     void getAllInquiries() throws Exception {
         // given
-        Condition condition = createCondition(Category.SERVICE);
+        Condition condition = createCondition(Category.SERVICE).updatePage();
 
-        given(inquiryService.getAllInquiries(any()))
-                .willReturn(List.of(
+        InquiriesResponse inquiriesResponse = InquiriesResponse.builder()
+                .inquiries(List.of(
                         createNonSecretInquiry(1L, InquiryFixture.SAMPLE_NICKNAME_1, InquiryFixture.SAMPLE_TITLE_1, InquiryFixture.SAMPLE_CONTENT_1),
                         createNonSecretInquiry(2L, InquiryFixture.SAMPLE_NICKNAME_2, InquiryFixture.SAMPLE_TITLE_2, InquiryFixture.SAMPLE_CONTENT_2)
-                ));
-        given(postService.getTotalPostCount(condition)).willReturn(2L);
+                ))
+                .page(createCondition(Category.SERVICE).updatePage().getPage().calculatePageInfo(2L))
+                .build();
+
+        given(inquiryIntegratedService.getAllInquiriesWithPageInfo(condition.updatePage())).willReturn(inquiriesResponse);
 
         // when, then
         ResultActions resultActions =
@@ -108,11 +111,11 @@ class InquiryControllerTest extends RestDocsTestSupport {
     }
 
     @Test
-    @DisplayName("문의 게시글 응답")
-    void getInquiry() throws Exception {
+    @DisplayName("공개 문의 게시글 응답")
+    void getPublicInquiry() throws Exception {
         // given
         Long postIdx = 1L;
-        given(inquiryService.getPublicInquiry(postIdx))
+        given(inquiryIntegratedService.getPublicInquiryAndIncrementViewCount(postIdx))
                 .willReturn(createNonSecretInquiry(
                         1L, InquiryFixture.SAMPLE_NICKNAME_1, InquiryFixture.SAMPLE_TITLE_1, InquiryFixture.SAMPLE_CONTENT_1));
 
@@ -155,13 +158,14 @@ class InquiryControllerTest extends RestDocsTestSupport {
     }
 
     @Test
-    @DisplayName("비밀글 설정된 문의 게시글 응답")
-    void getSecretInquiry() throws Exception {
+    @DisplayName("비공개 비밀글 설정된 문의 게시글 응답")
+    void getPrivateInquiry() throws Exception {
         // given
         Long postIdx = 1L;
+        String password = "password1!";
         String accessToken = "AccessToken";
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn("tester1");
-        given(inquiryService.getPrivateInquiry(anyLong(), anyString(), any()))
+
+        given(inquiryIntegratedService.getPrivateInquiryAndIncrementViewCount(postIdx, accessToken, password))
                 .willReturn(createSecretInquiry(
                         1L, InquiryFixture.SAMPLE_NICKNAME_1, InquiryFixture.SAMPLE_TITLE_1, InquiryFixture.SAMPLE_CONTENT_1));
 
@@ -169,7 +173,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/inquiries/secret/{postIdx}", postIdx)
                         .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("password", "password"))
+                        .param("password", password))
                 .andExpect(status().isOk());
 
         resultActions

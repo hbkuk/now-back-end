@@ -87,7 +87,7 @@ public class MemberService {
      *
      * @param member 체크할 사용자 정보
      */
-    public void duplicateMemberCheck(Member member) {
+    private void duplicateMemberCheck(Member member) {
         boolean duplicateId = memberRepository.existsById(member.getId());
         boolean duplicateNickname = memberRepository.existsByNickname(member.getNickname());
 

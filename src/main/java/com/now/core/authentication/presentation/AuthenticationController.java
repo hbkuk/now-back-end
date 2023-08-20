@@ -41,13 +41,7 @@ public class AuthenticationController {
         Member authenticatedMember = memberService.validateCredentialsAndRetrieveMember(member);
         Token token = memberService.generateAuthToken(authenticatedMember);
 
-        response.addCookie(CookieUtil.createCookieWithHttpOnly(JwtTokenService.ACCESS_TOKEN_KEY,
-                                                token.getAccessToken(), true));
-        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
-                                                token.getRefreshToken(), "/api/refresh", true));
-        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
-                                                token.getRefreshToken(), "/api/log-out", true));
-
+        setTokenCookiesInResponse(response, token);
         return ResponseEntity.ok().body(MemberProfile.from(authenticatedMember));
     }
 
@@ -63,12 +57,9 @@ public class AuthenticationController {
                        @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
         authenticationService.logout(accessToken, refreshToken);
 
-        response.addCookie(CookieUtil.deleteCookie(JwtTokenService.ACCESS_TOKEN_KEY));
-        response.addCookie(CookieUtil.deleteCookie(JwtTokenService.REFRESH_TOKEN_KEY));
-
+        deleteTokenCookiesInResponse(response);
         return ResponseEntity.ok().build();
     }
-
 
     /**
      * 토큰을 확인 후 Access및 Refresh 토큰을 재발급 처리하는 핸들러 메서드
@@ -85,14 +76,7 @@ public class AuthenticationController {
 
         authenticationService.logout(accessToken, refreshToken);
 
-        Token newTokens = jwtTokenService.refreshTokens(refreshToken);
-        response.addCookie(CookieUtil.createCookieWithHttpOnly(JwtTokenService.ACCESS_TOKEN_KEY,
-                                                newTokens.getAccessToken(), true));
-        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
-                                                newTokens.getRefreshToken(), "/api/refresh", true));
-        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
-                                                newTokens.getRefreshToken(), "/api/log-out", true));
-
+        setTokenCookiesInResponse(response, jwtTokenService.refreshTokens(refreshToken));
         return ResponseEntity.ok().build();
     }
 
@@ -108,6 +92,31 @@ public class AuthenticationController {
 
         String memberId = extractMemberIdFromToken(accessToken);
         return ResponseEntity.ok().body(MemberProfile.from(memberService.getMember(memberId)));
+    }
+
+    /**
+     * HTTP 응답에 토큰 관련 쿠키를 설정
+     *
+     * @param response 응답에 쿠키를 추가할 HttpServletResponse 객체
+     * @param token 액세스 토큰과 리프레시 토큰 정보를 담은 토큰 객체
+     */
+    private void setTokenCookiesInResponse(HttpServletResponse response, Token token) {
+        response.addCookie(CookieUtil.createCookieWithHttpOnly(JwtTokenService.ACCESS_TOKEN_KEY,
+                token.getAccessToken(), true));
+        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
+                token.getRefreshToken(), "/api/refresh", true));
+        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
+                token.getRefreshToken(), "/api/log-out", true));
+    }
+
+    /**
+     * HTTP 응답에 토큰 관련 쿠키를 삭제
+     *
+     * @param response 응답에 쿠키를 삭제할 HttpServletResponse 객체
+     */
+    private void deleteTokenCookiesInResponse(HttpServletResponse response) {
+        response.addCookie(CookieUtil.deleteCookie(JwtTokenService.ACCESS_TOKEN_KEY));
+        response.addCookie(CookieUtil.deleteCookie(JwtTokenService.REFRESH_TOKEN_KEY));
     }
 
     /**

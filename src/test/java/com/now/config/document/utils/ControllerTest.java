@@ -21,6 +21,7 @@ import com.now.core.post.common.presentation.PostController;
 import com.now.core.post.community.application.CommunityIntegratedService;
 import com.now.core.post.community.application.CommunityService;
 import com.now.core.post.community.presentation.CommunityController;
+import com.now.core.post.inquiry.application.InquiryIntegratedService;
 import com.now.core.post.inquiry.application.InquiryService;
 import com.now.core.post.inquiry.presentation.InquiryController;
 import com.now.core.post.notice.application.NoticeIntegratedService;
@@ -67,6 +68,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected PhotoIntegratedService photoIntegratedService;
+
+    @MockBean
+    protected InquiryIntegratedService inquiryIntegratedService;
 
     @MockBean
     protected PostService postService;
