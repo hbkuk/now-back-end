@@ -1,9 +1,9 @@
 package com.now.core.admin.post.inquiry.presentation;
 
 import com.now.core.admin.post.inquiry.application.ManagerInquiryService;
-import com.now.core.post.domain.Inquiry;
-import com.now.core.post.domain.constants.PostValidationGroup;
-import com.now.core.post.presentation.dto.Answer;
+import com.now.core.post.inquiry.domain.Inquiry;
+import com.now.core.post.common.domain.constants.PostValidationGroup;
+import com.now.core.post.inquiry.presentation.dto.Answer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -1,8 +1,8 @@
 package com.now.config.fixtures.post.dto;
 
 import com.now.core.category.domain.constants.Category;
-import com.now.core.post.presentation.dto.Condition;
-import com.now.core.post.presentation.dto.constants.Sort;
+import com.now.core.post.common.presentation.dto.Condition;
+import com.now.core.post.common.presentation.dto.constants.Sort;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

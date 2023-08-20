@@ -2,8 +2,7 @@ package com.now.config.fixtures.post;
 
 import com.now.core.category.domain.constants.Category;
 import com.now.core.comment.domain.Comment;
-import com.now.core.post.domain.Community;
-import com.now.core.post.domain.Notice;
+import com.now.core.post.notice.domain.Notice;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.now.core.post.presentation.constants;
 
-import com.now.core.post.presentation.dto.constants.Reaction;
+import com.now.core.post.common.presentation.dto.constants.Reaction;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;

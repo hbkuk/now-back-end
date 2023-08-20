@@ -1,9 +1,7 @@
 package com.now.config.fixtures.post;
 
 import com.now.core.category.domain.constants.Category;
-import com.now.core.post.domain.Inquiry;
-import com.now.core.post.domain.Photo;
-import com.now.core.post.domain.constants.InquiryStatus;
+import com.now.core.post.inquiry.domain.Inquiry;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

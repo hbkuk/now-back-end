@@ -1,6 +1,6 @@
 package com.now.config.fixtures.post.dto;
 
-import com.now.core.post.presentation.dto.Answer;
+import com.now.core.post.inquiry.presentation.dto.Answer;
 
 public class AnswerFixture {
 

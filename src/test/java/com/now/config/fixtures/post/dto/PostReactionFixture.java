@@ -1,7 +1,7 @@
 package com.now.config.fixtures.post.dto;
 
-import com.now.core.post.presentation.dto.PostReaction;
-import com.now.core.post.presentation.dto.constants.Reaction;
+import com.now.core.post.common.presentation.dto.PostReaction;
+import com.now.core.post.common.presentation.dto.constants.Reaction;
 
 public class PostReactionFixture {
 

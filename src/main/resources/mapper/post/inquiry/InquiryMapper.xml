@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.now.core.post.domain.mapper.InquiryMapper">
+<mapper namespace="com.now.core.post.inquiry.domain.mapper.InquiryMapper">
 
     <!-- 모든 문의 게시글 조회 쿼리, content 제외 -->
     <select id="findAllInquiries" parameterType="Condition" resultMap="inquiry">
@@ -141,7 +141,7 @@
         <result property="answerContent" column="i_answer_content"/>
         <result property="answerRegDate" column="i_answer_reg_date"/>
         <result property="password" column="i_password"/>
-        <result property="inquiryStatus" column="i_inquiry_status" javaType="com.now.core.post.domain.constants.InquiryStatus"/>
+        <result property="inquiryStatus" column="i_inquiry_status" javaType="com.now.core.post.inquiry.domain.constants.InquiryStatus"/>
         <!-- 공통 컬렉션 매핑 -->
         <collection property="comments" resultMap="com.now.core.comment.domain.CommentMapper.commentResultMap" />
     </resultMap>

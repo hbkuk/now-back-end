@@ -5,7 +5,7 @@ import com.now.config.fixtures.post.InquiryFixture;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
-import com.now.core.post.presentation.dto.Condition;
+import com.now.core.post.common.presentation.dto.Condition;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;

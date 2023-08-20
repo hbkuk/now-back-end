@@ -7,13 +7,13 @@ import com.now.core.category.domain.constants.Category;
 import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
-import com.now.core.post.domain.Inquiry;
-import com.now.core.post.domain.constants.InquiryStatus;
-import com.now.core.post.presentation.dto.Answer;
-import com.now.core.post.presentation.dto.Condition;
-import com.now.core.post.presentation.dto.PostReaction;
-import com.now.core.post.presentation.dto.constants.Reaction;
-import com.now.core.post.presentation.dto.constants.Sort;
+import com.now.core.post.common.domain.repository.PostRepository;
+import com.now.core.post.inquiry.domain.Inquiry;
+import com.now.core.post.inquiry.domain.repository.InquiryRepository;
+import com.now.core.post.common.presentation.dto.Condition;
+import com.now.core.post.common.presentation.dto.PostReaction;
+import com.now.core.post.common.presentation.dto.constants.Reaction;
+import com.now.core.post.common.presentation.dto.constants.Sort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -582,7 +582,7 @@ class InquiryRepositoryTest {
                 Inquiry expectedInquiry = createInquiryForSave(1L, member.getId(), member.getNickname(),
                         Category.SERVICE, "영업소", "구입처", true, "dkanro132!");
 
-                com.now.core.post.presentation.dto.Answer expectedAnswer = createAnswer(postIdx, 1, manager.getId(), SAMPLE_ANSWER_CONTENT_1);
+                com.now.core.post.inquiry.presentation.dto.Answer expectedAnswer = createAnswer(postIdx, 1, manager.getId(), SAMPLE_ANSWER_CONTENT_1);
 
                 // when
                 memberRepository.saveMember(member);
@@ -622,9 +622,9 @@ class InquiryRepositoryTest {
                 Inquiry expectedInquiry = createInquiryForSave(1L, member.getId(), member.getNickname(),
                         Category.SERVICE, "영업소", "구입처", true, "dkanro132!");
 
-                com.now.core.post.presentation.dto.Answer answer = createAnswer(postIdx, 1, manager.getId(), SAMPLE_ANSWER_CONTENT_1);
+                com.now.core.post.inquiry.presentation.dto.Answer answer = createAnswer(postIdx, 1, manager.getId(), SAMPLE_ANSWER_CONTENT_1);
 
-                com.now.core.post.presentation.dto.Answer expectedUpdateAnswer = createAnswer(postIdx, 1, manager.getId(), SAMPLE_ANSWER_CONTENT_2);
+                com.now.core.post.inquiry.presentation.dto.Answer expectedUpdateAnswer = createAnswer(postIdx, 1, manager.getId(), SAMPLE_ANSWER_CONTENT_2);
 
                 // when
                 memberRepository.saveMember(member);

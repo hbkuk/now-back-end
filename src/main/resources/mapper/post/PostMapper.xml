@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.now.core.post.domain.mapper.PostMapper">
+<mapper namespace="com.now.core.post.common.domain.mapper.PostMapper">
 
 
     <!-- 모든 게시글 조회 쿼리 -->
@@ -226,16 +226,16 @@
     <resultMap id="posts" type="Posts">
         <discriminator javaType="string" column="p_post_group">
             <case value="NOTICE">
-                <association property="notice" resultMap="com.now.core.post.domain.mapper.NoticeMapper.notice"/>
+                <association property="notice" resultMap="com.now.core.post.notice.domain.mapper.NoticeMapper.notice"/>
             </case>
             <case value="COMMUNITY">
-                <association property="community" resultMap="com.now.core.post.domain.mapper.CommunityMapper.community"/>
+                <association property="community" resultMap="com.now.core.post.community.domain.mapper.CommunityMapper.community"/>
             </case>
             <case value="PHOTO">
-                <association property="photo" resultMap="com.now.core.post.domain.mapper.PhotoMapper.photo"/>
+                <association property="photo" resultMap="com.now.core.post.photo.domain.mapper.PhotoMapper.photo"/>
             </case>
             <case value="INQUIRY">
-                <association property="inquiry" resultMap="com.now.core.post.domain.mapper.InquiryMapper.inquiry"/>
+                <association property="inquiry" resultMap="com.now.core.post.inquiry.domain.mapper.InquiryMapper.inquiry"/>
             </case>
         </discriminator>
     </resultMap>
@@ -247,7 +247,7 @@
         <result property="postIdx" column="prea_post_idx"/>
         <result property="memberNickname" column="pream_nickname"/>
         <result property="managerNickname" column="preama_nickname"/>
-        <result property="reaction" column="prea_reaction" javaType="com.now.core.post.presentation.dto.constants.Reaction"/>
+        <result property="reaction" column="prea_reaction" javaType="com.now.core.post.common.presentation.dto.constants.Reaction"/>
     </resultMap>
 
 </mapper>
