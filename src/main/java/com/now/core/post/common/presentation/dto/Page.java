@@ -69,13 +69,20 @@ public class Page {
      * @return 전체 게시글 수를 기반으로 페이지 정보 업데이트 한 객체 반환
      */
     public Page calculatePageInfo(Long totalPostCount) {
+        if (totalPostCount == 0L) {
+            this.maxPage = 1;
+            this.pageNo = 1;
+            this.startPage = 1;
+            this.endPage = 1;
+            return this;
+        }
         this.maxPage = updateMaxPage(totalPostCount);
         this.pageNo = Math.min(pageNo, maxPage);
         this.startPage = updateStartPage();
         this.endPage = updateEndPage();
-
         return this;
     }
+
 
     /**
      * Page 객체를 생성하고 기본 설정 값을 적용한 후 해당 객체 반환
@@ -145,10 +152,10 @@ public class Page {
     /**
      * 최대 페이지 수 반환
      *
-     * @param totalBoardCount 전체 게시글 수
+     * @param totalPostCount 전체 게시글 수
      * @return 최대 페이지 수 반환
      */
-    private int updateMaxPage(double totalBoardCount) {
-        return (int) (Math.ceil(totalBoardCount / this.recordsPerPage));
+    private int updateMaxPage(double totalPostCount) {
+        return (int) (Math.ceil(totalPostCount / this.recordsPerPage));
     }
 }
