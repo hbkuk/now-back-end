@@ -9,9 +9,11 @@
 
 include::Overview.adoc[]
 
-include::Category-API.adoc[]
-
 include::Authentication-API.adoc[]
+
+include::Post-API.adoc[]
+
+include::Category-API.adoc[]
 
 include::Notice-API.adoc[]
 

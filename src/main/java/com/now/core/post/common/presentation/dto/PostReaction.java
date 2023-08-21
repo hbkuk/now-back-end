@@ -1,6 +1,7 @@
 package com.now.core.post.common.presentation.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.now.core.post.common.presentation.dto.constants.Reaction;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostReaction {
 
     private Long postReactionIdx;

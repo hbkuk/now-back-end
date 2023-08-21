@@ -11,10 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -42,13 +39,12 @@ public class PostController {
      * @param postReaction 게시물 반응 객체
      * @return CREATED 응답 반환
      */
-    @PostMapping("/posts/{postIdx}/reaction")
+    @PostMapping("/api/posts/{postIdx}/reaction")
     public ResponseEntity<Void> updateReaction(@PathVariable("postIdx") Long postIdx,
                                                @AuthenticationPrincipal String memberId,
-                                               @Valid PostReaction postReaction) {
+                                               @RequestBody @Valid PostReaction postReaction) {
 
         postService.updatePostReaction(postReaction.updatePostIdx(postIdx).updateMemberId(memberId));
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
-
 }

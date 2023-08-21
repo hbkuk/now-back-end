@@ -3,7 +3,7 @@
 
 [[Comment-등록]]
 === Comment 등록
-operation::comment-controller-test/register-comment[snippets='http-request,request-body,request-fields,request-headers,http-response']
+operation::comment-controller-test/register-comment[snippets='http-request,request-body,request-fields,http-response']
 
 [[Comment-수정]]
 === Comment 수정
