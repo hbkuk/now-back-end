@@ -23,6 +23,7 @@
 
 #### 기술적 도전
 
+- [격리된 테스트 환경 구성 후  Repository 객체에 대한 테스트 코드](https://github.com/hbkuk/blog/tree/main/project/%EA%B2%A9%EB%A6%AC%EB%90%9C%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%84%B1%20%ED%9B%84%20%20Repository%20%EA%B0%9D%EC%B2%B4%EC%97%90%20%EB%8C%80%ED%95%9C%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EC%BD%94%EB%93%9C)
 - [Spring AOP로 Slack 알람 구현](https://github.com/hbkuk/blog/tree/main/project/Spring%20AOP%EB%A1%9C%20Slack%20%EC%95%8C%EB%9E%8C%20%EA%B5%AC%ED%98%84)
 - [Spring AOP로 모든 요청과 응답 로그 기록](https://github.com/hbkuk/blog/tree/main/project/Spring%20AOP%EB%A1%9C%20%EB%AA%A8%EB%93%A0%20%EC%9A%94%EC%B2%AD%EA%B3%BC%20%EC%9D%91%EB%8B%B5%20%EB%A1%9C%EA%B7%B8%20%EA%B8%B0%EB%A1%9D)
 - [토큰 기반 인증을 선택한 이유](https://github.com/hbkuk/blog/tree/main/project/%ED%86%A0%ED%81%B0%20%EA%B8%B0%EB%B0%98%20%EC%9D%B8%EC%A6%9D%EC%9D%84%20%EC%84%A0%ED%83%9D%ED%95%9C%20%EC%9D%B4%EC%9C%A0)
@@ -32,6 +33,7 @@
 
 #### 클린코드
 
+- [파사드 패턴(Facade Pattern)을 활용한 서비스 의존성 주입(with 트랜잭션 설정)](https://github.com/hbkuk/blog/tree/main/project/%ED%8C%8C%EC%82%AC%EB%93%9C%20%ED%8C%A8%ED%84%B4%EC%9D%84%20%ED%99%9C%EC%9A%A9%ED%95%9C%20%EC%84%9C%EB%B9%84%EC%8A%A4%20%EC%9D%98%EC%A1%B4%EC%84%B1%20%EC%A3%BC%EC%9E%85(with%20%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98%20%EC%84%A4%EC%A0%95))
 - [Spring의 Argument Resolver를 활용한 principal 주입](https://github.com/hbkuk/blog/tree/main/project/Spring%EC%9D%98%20Argument%20Resolver%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%9C%20principal%20%EC%A3%BC%EC%9E%85)
 - [상속을 활용한 Global Exception Handler 리팩토링](https://github.com/hbkuk/blog/tree/main/project/%EC%83%81%EC%86%8D%EC%9D%84%20%ED%99%9C%EC%9A%A9%ED%95%9C%20Global%20Exception%20Handler%20%EB%A6%AC%ED%8C%A9%ED%86%A0%EB%A7%81)
 - [enum 활용을 통한 파일(File) 도메인 관련 리팩토링](https://starting-coding.tistory.com/658)
