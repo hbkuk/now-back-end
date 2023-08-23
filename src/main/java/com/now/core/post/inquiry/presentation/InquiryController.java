@@ -67,6 +67,7 @@ public class InquiryController {
 
     /**
      * 수정 문의 게시글 조회
+     *
      * @param postIdx 게시글 번호
      * @param accessToken 액세스 토큰
      * @return 문의 게시글 정보와 함께 OK 응답을 반환

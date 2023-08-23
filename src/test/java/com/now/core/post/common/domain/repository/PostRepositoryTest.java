@@ -11,6 +11,7 @@ import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.PostReaction;
+import com.now.core.post.common.presentation.dto.PostReactionResponse;
 import com.now.core.post.common.presentation.dto.Posts;
 import com.now.core.post.common.presentation.dto.constants.Reaction;
 import com.now.core.post.common.presentation.dto.constants.Sort;
@@ -44,7 +45,7 @@ import static com.now.config.fixtures.post.dto.PostReactionFixture.createPostRea
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RepositoryTest
-@DisplayName("커뮤니티 레포지토리")
+@DisplayName("게시글 레포지토리")
 class PostRepositoryTest {
 
     @Autowired
@@ -251,6 +252,107 @@ class PostRepositoryTest {
     }
 
     @Nested
+    @DisplayName("게시글의 반응 정보")
+    class getReaction {
+
+        public List<Member> members;
+        public List<Community> communities;
+        public List<PostReaction> postLikeReactions;
+
+        @BeforeEach
+        void setUp() {
+            // given
+            members = Arrays.asList(
+                    createMember(MEMBER1_ID, MEMBER1_NAME, MEMBER1_NICKNAME),
+                    createMember(MEMBER2_ID, MEMBER2_NAME, MEMBER2_NICKNAME),
+                    createMember(MEMBER3_ID, MEMBER3_NAME, MEMBER3_NICKNAME),
+                    createMember(MEMBER4_ID, MEMBER4_NAME, MEMBER4_NICKNAME),
+                    createMember(MEMBER5_ID, MEMBER5_NAME, MEMBER5_NICKNAME));
+            communities = members.stream()
+                    .map(member -> createCommunityForSave(member.getId())).collect(Collectors.toList());
+            postLikeReactions = Arrays.asList(
+                    createPostReaction(1L, 1L, Reaction.LIKE),
+                    createPostReaction(1L, 2L, Reaction.LIKE),
+                    createPostReaction(1L, 3L, Reaction.LIKE),
+
+                    createPostReaction(2L, 2L, Reaction.LIKE),
+                    createPostReaction(2L, 1L, Reaction.LIKE),
+
+                    createPostReaction(3L, 3L, Reaction.LIKE),
+
+                    createPostReaction(4L, 4L, Reaction.LIKE),
+                    createPostReaction(4L, 1L, Reaction.LIKE),
+
+                    createPostReaction(5L, 5L, Reaction.LIKE)
+            );
+
+            members.forEach(member -> memberRepository.saveMember(member));
+            communities.forEach(community -> communityRepository.saveCommunity(community));
+            postLikeReactions.forEach(postReaction -> postRepository.savePostReaction(postReaction));
+            postLikeReactions.forEach(postReaction -> postRepository.incrementLikeCount(postReaction.getPostIdx()));
+        }
+
+        @Test
+        @DisplayName("게시물의 반응 정보만 조회한다")
+        void getPostReaction() {
+            List<PostReactionResponse> postReactionResponses = postLikeReactions.stream()
+                    .map(postReaction -> postRepository.getPostReaction(postReaction))
+                    .collect(Collectors.toList());
+
+            boolean hasAnyLikeReactions = postReactionResponses.stream()
+                    .allMatch(postReactionResponse -> postReactionResponse.getReaction() == Reaction.LIKE);
+            boolean hasAnyNullLikeCount = postReactionResponses.stream()
+                    .allMatch(postReactionResponse -> postReactionResponse.getLikeCount() == null);
+            boolean hasAnyNullDislikeCount = postReactionResponses.stream()
+                    .allMatch(postReactionResponse -> postReactionResponse.getDislikeCount() == null);
+
+            assertThat(hasAnyLikeReactions).isTrue();
+            assertThat(hasAnyNullLikeCount).isTrue();
+            assertThat(hasAnyNullDislikeCount).isTrue();
+        }
+
+        @Test
+        @DisplayName("게시물의 반응 정보와 상세 내용까지 조회한다")
+        void getPostReactionDetails() {
+            List<PostReactionResponse> actualPostReactionResponses = postLikeReactions.stream()
+                    .map(postReaction -> postRepository.getPostReactionDetails(postReaction))
+                    .collect(Collectors.toList());
+
+            boolean hasAnyLikeReactions = actualPostReactionResponses.stream()
+                    .allMatch(postReactionResponse -> postReactionResponse.getReaction() == Reaction.LIKE);
+            boolean hasAnyNotNullLikeCount = actualPostReactionResponses.stream()
+                    .allMatch(postReactionResponse -> postReactionResponse.getLikeCount() != null);
+            boolean hasAnyNotNullDislikeCount = actualPostReactionResponses.stream()
+                    .allMatch(postReactionResponse -> postReactionResponse.getDislikeCount() != null);
+
+            List<Integer> expectedLikeCounts = postLikeReactions.stream()
+                    .collect(Collectors.groupingBy(PostReaction::getPostIdx))
+                    .values()
+                    .stream()
+                    .map(List::size)
+                    .collect(Collectors.toList());
+
+            assertThat(hasAnyLikeReactions).isTrue();
+            assertThat(hasAnyNotNullLikeCount).isTrue();
+            assertThat(hasAnyNotNullDislikeCount).isTrue();
+
+            assertThat(actualPostReactionResponses.get(0).getLikeCount()).isEqualTo(expectedLikeCounts.get(0));
+            assertThat(actualPostReactionResponses.get(1).getLikeCount()).isEqualTo(expectedLikeCounts.get(0));
+            assertThat(actualPostReactionResponses.get(2).getLikeCount()).isEqualTo(expectedLikeCounts.get(0));
+
+            assertThat(actualPostReactionResponses.get(3).getLikeCount()).isEqualTo(expectedLikeCounts.get(1));
+            assertThat(actualPostReactionResponses.get(4).getLikeCount()).isEqualTo(expectedLikeCounts.get(1));
+
+            assertThat(actualPostReactionResponses.get(5).getLikeCount()).isEqualTo(expectedLikeCounts.get(2));
+
+            assertThat(actualPostReactionResponses.get(6).getLikeCount()).isEqualTo(expectedLikeCounts.get(3));
+            assertThat(actualPostReactionResponses.get(7).getLikeCount()).isEqualTo(expectedLikeCounts.get(3));
+
+            assertThat(actualPostReactionResponses.get(8).getLikeCount()).isEqualTo(expectedLikeCounts.get(4));
+        }
+    }
+
+    @Nested
     @DisplayName("게시글 좋아요의 증가")
     class IncrementLikeCount {
 
@@ -303,7 +405,7 @@ class PostRepositoryTest {
                     .collect(Collectors.groupingBy(PostReaction::getPostIdx, Collectors.collectingAndThen(
                             Collectors.counting(), Long::intValue
                     )));
-            
+
             // then
             assertThat(actualLikeCounts).isEqualTo(expectedLikeCounts);
         }
@@ -314,7 +416,7 @@ class PostRepositoryTest {
             // when
             boolean hasAnyLikeReactions = postLikeReactions.stream()
                     .allMatch(postReaction -> postRepository.getPostReaction(postReaction).getReaction() == Reaction.LIKE);
-            
+
             // then
             assertThat(hasAnyLikeReactions).isTrue();
         }
@@ -415,12 +517,12 @@ class PostRepositoryTest {
             postUnlikeReactions.forEach(postReaction -> postRepository.updatePostReaction(postReaction));
             postUnlikeReactions.forEach(postReaction -> postRepository.decrementLikeCount(postReaction.getPostIdx()));
 
-            boolean hasAnyUnlikeReactionsAfterUpdate  = postLikeReactions.stream()
+            boolean hasAnyUnlikeReactionsAfterUpdate = postLikeReactions.stream()
                     .allMatch(postReaction -> postRepository.getPostReaction(postReaction).getReaction() == Reaction.UNLIKE);
 
             // then
             assertThat(hasAnyLikeReactionsBeforeUpdate).isTrue();
-            assertThat(hasAnyUnlikeReactionsAfterUpdate ).isTrue();
+            assertThat(hasAnyUnlikeReactionsAfterUpdate).isTrue();
         }
     }
 
@@ -563,7 +665,7 @@ class PostRepositoryTest {
                     .collect(Collectors.groupingBy(PostReaction::getPostIdx, Collectors.collectingAndThen(
                             Collectors.counting(), Long::intValue
                     )));
-            boolean allCommunitiesHaveNonZeroDislikeCountsBeforeUpdate  = actualCommunitiesBeforeUpdate.stream()
+            boolean allCommunitiesHaveNonZeroDislikeCountsBeforeUpdate = actualCommunitiesBeforeUpdate.stream()
                     .allMatch(community -> community.getDislikeCount() != 0);
 
             postUnDislikeReactions.forEach(postReaction -> postRepository.updatePostReaction(postReaction));

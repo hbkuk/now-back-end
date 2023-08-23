@@ -180,13 +180,11 @@
 
         <!-- post_reaction 테이블의 컬럼 Mapping -->
         <sql id="postReactionTableColumn">
-            prea.post_reaction_idx AS prea_post_reaction_idx,
             prea.reaction AS prea_reaction
         </sql>
 
         <!-- post_reaction 테이블의 컬럼 Mapping, MAX 함수 사용 -->
         <sql id="maxPostReactionTableColumn">
-            MAX(prea.post_reaction_idx) AS prea_post_reaction_idx,
             MAX(prea.reaction) AS prea_reaction
         </sql>
 
@@ -210,6 +208,17 @@
             pream.nickname AS pream_nickname
         </sql>
 
+        <!-- post_reaction 테이블과 post 테이블의 Join 컬럼 Mapping, MAX 함수 사용-->
+        <sql id="maxReactionInfoOfPostTableColumn">
+            MAX(preap.like_count) AS preap_like_count,
+            MAX(preap.dislike_count) AS preap_dislike_count
+        </sql>
+
+        <!-- post_reaction 테이블과 post 테이블의 Join 컬럼 Mapping-->
+        <sql id="reactionInfoOfPostTableColumn">
+            preap.like_count AS preap_like_count,
+            preap.dislike_count AS preap_dislike_count
+        </sql>
 
 
 </mapper>

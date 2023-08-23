@@ -2,28 +2,32 @@ package com.now.core.post.common.presentation.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.now.core.post.common.presentation.dto.constants.PostReactionValidationGroup;
 import com.now.core.post.common.presentation.dto.constants.Reaction;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
-@Builder(toBuilder = true)
+@Builder
 @Getter
 @ToString
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode
 public class PostReaction {
 
+    @JsonIgnore
     private Long postReactionIdx;
 
+    @JsonIgnore
     private Long postIdx;
 
     @JsonIgnore
     private String managerId;
 
     @JsonIgnore
-    private Integer managerIdx;
+    private Long managerIdx;
 
     @JsonIgnore
     private String managerNickname;
@@ -37,8 +41,24 @@ public class PostReaction {
     @JsonIgnore
     private String memberNickname;
 
-    @NotNull(message = "{reaction.notnull}")
+    @NotNull(groups = {PostReactionValidationGroup.savePostReaction.class}, message = "{reaction.notnull}")
     private Reaction reaction;
+
+
+    /**
+     * 전달받은 게시글 번호와 매니저 번호를 통해 객체 생성
+     *
+     * @param postIdx     게시글 번호
+     * @param memberIdx  매니저 번호
+     * @return 새로운 PostReaction 객체
+     */
+    public static PostReaction create(Long postIdx, Long memberIdx) {
+        return PostReaction.builder()
+                .postIdx(postIdx)
+                .memberIdx(memberIdx)
+                .reaction(null)
+                .build();
+    }
 
     /**
      * 게시글 번호 업데이트
@@ -85,10 +105,10 @@ public class PostReaction {
     /**
      * 전달받은 객체와 현재 반응 객체를 비교해서 수정이 가능하다면 true, 그렇지 않다면 false 반환
      *
-     * @param newPostReaction PostReaction 객체
+     * @param newReaction PostReaction 객체
      * @return 전달받은 객체와 현재 반응 객체를 비교해서 수정이 가능하다면 true, 그렇지 않다면 false 반환
      */
-    public boolean canUpdate(PostReaction newPostReaction) {
-        return this.reaction.canUpdate(newPostReaction.getReaction());
+    public boolean canUpdate(Reaction newReaction) {
+        return this.reaction.canUpdate(newReaction);
     }
 }

@@ -9,6 +9,7 @@ import com.now.config.fixtures.post.dto.PostReactionFixture;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.PostReaction;
+import com.now.core.post.common.presentation.dto.PostReactionResponse;
 import com.now.core.post.common.presentation.dto.Posts;
 import com.now.core.post.common.presentation.dto.constants.Reaction;
 import com.now.core.post.common.presentation.dto.constants.Sort;
@@ -25,11 +26,10 @@ import java.util.List;
 
 import static com.now.config.document.snippet.RequestCookiesSnippet.cookieWithName;
 import static com.now.config.document.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
-import static com.now.config.document.utils.RestDocsConfig.field;
 import static com.now.config.fixtures.attachment.AttachmentFixture.createAttachments;
-import static com.now.config.fixtures.comment.CommentFixture.createCommentForSave;
 import static com.now.config.fixtures.comment.CommentFixture.createComments;
 import static com.now.config.fixtures.post.CommunityFixture.*;
+import static com.now.config.fixtures.post.InquiryFixture.createInquiryForSave;
 import static com.now.config.fixtures.post.InquiryFixture.createNonSecretInquiry;
 import static com.now.config.fixtures.post.NoticeFixture.createNotice;
 import static com.now.config.fixtures.post.PhotoFixture.createPhoto;
@@ -188,19 +188,56 @@ class PostControllerTest extends RestDocsTestSupport {
     }
 
     @Test
-    @DisplayName("게시글 반응 저장")
-    void updateReaction() throws Exception {
+    @DisplayName("게시글 반응 조회")
+    void getPostReaction() throws Exception {
         Long postIdx = 1L;
         String memberId = MemberFixture.MEMBER1_ID;
         String accessToken = "Bearer accessToken";
-        PostReaction postReaction = PostReactionFixture.createPostReaction(Reaction.DISLIKE);
+        PostReactionResponse postReactionResponse = PostReactionFixture.createPostReactionResponse(100, 5, Reaction.DISLIKE);
+
+        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
+        given(postService.getPostReaction(postIdx, memberId, true)).willReturn(postReactionResponse);
+
+        ResultActions resultActions =
+                mockMvc.perform(RestDocumentationRequestBuilders.get("/api/posts/{postIdx}/reaction", postIdx)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                                .param("isReactionDetails", "true"))
+                        .andExpect(status().isOk());
+
+        resultActions
+                .andDo(restDocs.document(
+                        customRequestHeaderCookies(
+                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("postIdx").description("원글 ID")
+                        ),
+                        requestParameters(
+                                parameterWithName("isReactionDetails").description("반응에 대한 상세 정보 반환 여부")
+                        ),
+                        responseFields(
+                                fieldWithPath("likeCount").description("좋아요 수"),
+                                fieldWithPath("dislikeCount").description("싫어요 수"),
+                                fieldWithPath("reaction").description("게시글 반응")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("게시글 반응 저장")
+    void savePostReaction() throws Exception {
+        Long postIdx = 1L;
+        String memberId = MemberFixture.MEMBER1_ID;
+        String accessToken = "Bearer accessToken";
+        PostReaction postReactionResponse = PostReactionFixture.createPostReaction(postIdx, memberId, Reaction.DISLIKE);
 
         given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.post("/api/posts/{postIdx}/reaction", postIdx)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
-                                .content(objectMapper.writeValueAsString(postReaction)))
+                                .content(objectMapper.writeValueAsString(postReactionResponse)))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
 
         resultActions
@@ -213,7 +250,6 @@ class PostControllerTest extends RestDocsTestSupport {
                         ),
                         requestFields(
                                 fieldWithPath("reaction").description("게시글 반응")
-                        )
-                ));
+                        )));
     }
 }

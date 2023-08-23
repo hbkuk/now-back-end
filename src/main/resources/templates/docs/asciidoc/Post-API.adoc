@@ -5,6 +5,10 @@
 === Post 전체 조회
 operation::post-controller-test/get-all-posts[snippets='http-request,request-parameters,http-response,response-fields']
 
+[[Post-반응-조회]]
+=== Post 반응 조회
+operation::post-controller-test/get-post-reaction[snippets='http-request,cookie-request-headers,path-parameters,request-parameters,http-response,response-fields']
+
 [[Post-반응-저장]]
 === Post 반응 저장
-operation::post-controller-test/update-reaction[snippets='http-request,request-body,request-fields,http-response']
+operation::post-controller-test/save-post-reaction[snippets='http-request,cookie-request-headers,request-body,request-fields,http-response']

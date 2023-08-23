@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-@Sql("${test-scripts.sql-path}")
+@Sql("classpath:testdb.sql")
 @ActiveProfiles("test")
 public @interface RepositoryTest {
 }

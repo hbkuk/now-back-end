@@ -9,15 +9,18 @@ import com.now.core.post.common.exception.CannotUpdateReactionException;
 import com.now.core.post.common.exception.InvalidPostException;
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.PostReaction;
+import com.now.core.post.common.presentation.dto.PostReactionResponse;
 import com.now.core.post.common.presentation.dto.Posts;
 import com.now.core.post.common.presentation.dto.constants.Reaction;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 
 /**
  * 커뮤니티 게시글 관련 비즈니스 로직을 처리하는 서비스
@@ -56,6 +59,52 @@ public class PostService {
     }
 
     /**
+     * 특정 게시글에 대한 회원의 반응 정보를 조회 후 반환
+     *
+     * @param postIdx           게시글 번호
+     * @param memberId          회원 아이디
+     * @param isReactionDetails 반응에 대한 상세 정보 반환 여부
+     * @return 반응 정보를 포함한 {@link PostReactionResponse} 객체
+     */
+    @Transactional(readOnly = true)
+    public PostReactionResponse getPostReaction(Long postIdx, String memberId, boolean isReactionDetails) {
+        Member member = getMember(memberId);
+
+        if (!isExistPost(postIdx)) {
+            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
+        }
+
+        if (!isReactionDetails) {
+            return getPostReaction(postIdx, member.getMemberIdx());
+        }
+        return getPostReactionDetails(postIdx, member.getMemberIdx());
+    }
+
+    /**
+     * 반응 정보 저장
+     *
+     * @param newPostReaction 저장할 반응 정보를 포함하는 객체
+     */
+    @CacheEvict(value = {"postCache"}, allEntries = true)
+    public void savePostReaction(PostReaction newPostReaction) {
+        Member member = getMember(newPostReaction.getMemberId());
+
+        if (!isExistPost(newPostReaction.getPostIdx())) {
+            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
+        }
+
+        PostReactionResponse existPostReaction = getPostReaction(newPostReaction.getPostIdx(),
+                newPostReaction.updateMemberIdx(member.getMemberIdx()).getMemberIdx());
+
+        if (existPostReaction.getReaction() == Reaction.NOTTING) {
+            handleNonExistingPostReaction(newPostReaction);
+        }
+        if (existPostReaction.getReaction() != Reaction.NOTTING) {
+            handleExistingPostReaction(newPostReaction, existPostReaction);
+        }
+    }
+
+    /**
      * 게시글 번호에 해당하는 게시글의 조회수를 증가
      *
      * @param postIdx 게시글 번호
@@ -64,28 +113,36 @@ public class PostService {
         postRepository.incrementViewCount(postIdx);
     }
 
+
     /**
-     * 반응 정보 업데이트
+     * 게시글에 대한 회원의 반응 정보를 조회 후 반환
      *
-     * @param newPostReaction 업데이트할 반응 정보를 포함하는 객체
+     * @param postIdx   게시글 번호
+     * @param memberIdx 회원 번호
+     * @return 반응 정보를 포함한 {@link PostReactionResponse} 객체
      */
-    public void updatePostReaction(PostReaction newPostReaction) {
-        Member member = getMember(newPostReaction.getMemberId());
-
-        if (!isExistPost(newPostReaction.getPostIdx())) {
-            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
+    private PostReactionResponse getPostReaction(Long postIdx, Long memberIdx) {
+        PostReactionResponse postReactionResponse = postRepository.getPostReaction(PostReaction.create(postIdx, memberIdx));
+        if (postReactionResponse == null) {
+            return new PostReactionResponse().createNoReactionPostReaction();
         }
+        return postReactionResponse;
+    }
 
-        PostReaction exisitPostReaction = postRepository
-                .getPostReaction(newPostReaction.updateMemberIdx(member.getMemberIdx()));
 
-        if (exisitPostReaction != null) {
-            handleExistingPostReaction(newPostReaction, exisitPostReaction);
+    /**
+     * 게시글에 대한 회원의 반응 및 상세 정보를 조회 후 반환
+     *
+     * @param postIdx   게시글 번호
+     * @param memberIdx 회원 번호
+     * @return 반응 정보와 상세 정보를 포함한 {@link PostReactionResponse} 객체
+     */
+    private PostReactionResponse getPostReactionDetails(Long postIdx, Long memberIdx) {
+        PostReactionResponse postReactionResponse = postRepository.getPostReactionDetails(PostReaction.create(postIdx, memberIdx));
+        if (postReactionResponse.getReaction() == null) {
+            return postReactionResponse.createNoReactionPostReaction();
         }
-
-        if (exisitPostReaction == null) {
-            handleNonExistingPostReaction(newPostReaction);
-        }
+        return postReactionResponse;
     }
 
 
@@ -95,11 +152,11 @@ public class PostService {
      * @param newReaction      새로운 반응 정보
      * @param existingReaction 기존 반응 정보
      */
-    private void handleExistingPostReaction(PostReaction newReaction, PostReaction existingReaction) {
-        if (!existingReaction.canUpdate(newReaction)) {
+    private void handleExistingPostReaction(PostReaction newReaction, PostReactionResponse existingReaction) {
+        if (!existingReaction.getReaction().canUpdate(newReaction.getReaction())) {
             throw new CannotUpdateReactionException(ErrorType.CAN_NOT_UPDATE_REACTION);
         }
-        adjustExistReactionCount(existingReaction);
+        adjustExistReactionCount(existingReaction, newReaction.getPostIdx());
         adjustNewReactionCount(newReaction);
         postRepository.updatePostReaction(newReaction);
     }
@@ -123,18 +180,12 @@ public class PostService {
      *
      * @param existingReaction 반응 정보를 포함하는 객체
      */
-    private void adjustExistReactionCount(PostReaction existingReaction) {
+    private void adjustExistReactionCount(PostReactionResponse existingReaction, Long postIdx) {
         if (existingReaction.getReaction() == Reaction.LIKE) {
-            postRepository.decrementLikeCount(existingReaction.getPostIdx());
-        }
-        if (existingReaction.getReaction() == Reaction.UNLIKE) {
-            postRepository.incrementLikeCount(existingReaction.getPostIdx());
+            postRepository.decrementLikeCount(postIdx);
         }
         if (existingReaction.getReaction() == Reaction.DISLIKE) {
-            postRepository.decrementDislikeCount(existingReaction.getPostIdx());
-        }
-        if (existingReaction.getReaction() == Reaction.UNDISLIKE) {
-            postRepository.incrementDislikeCount(existingReaction.getPostIdx());
+            postRepository.decrementDislikeCount(postIdx);
         }
     }
 
@@ -147,14 +198,8 @@ public class PostService {
         if (newReaction.getReaction() == Reaction.LIKE) {
             postRepository.incrementLikeCount(newReaction.getPostIdx());
         }
-        if (newReaction.getReaction() == Reaction.UNLIKE) {
-            postRepository.decrementLikeCount(newReaction.getPostIdx());
-        }
         if (newReaction.getReaction() == Reaction.DISLIKE) {
             postRepository.incrementDislikeCount(newReaction.getPostIdx());
-        }
-        if (newReaction.getReaction() == Reaction.UNDISLIKE) {
-            postRepository.decrementDislikeCount(newReaction.getPostIdx());
         }
     }
 

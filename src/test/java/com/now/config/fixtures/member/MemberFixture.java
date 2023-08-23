@@ -25,6 +25,15 @@ public class MemberFixture {
     public static String MEMBER4_NICKNAME = "MEMBER_NIC_4";
     public static String MEMBER5_NICKNAME = "MEMBER_NIC_5";
 
+    public static Member createMember(Long memberIdx, String memberId) {
+        return Member.builder()
+                .memberIdx(memberIdx)
+                .id(memberId)
+                .password("testPassword")
+                .name("testName")
+                .nickname("testNickName")
+                .build();
+    }
 
     public static Member createMember(String memberId) {
         return Member.builder()

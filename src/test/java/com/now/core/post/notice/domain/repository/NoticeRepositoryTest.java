@@ -7,7 +7,6 @@ import com.now.core.category.domain.constants.Category;
 import com.now.core.comment.domain.CommentRepository;
 import com.now.core.post.common.domain.repository.PostRepository;
 import com.now.core.post.notice.domain.Notice;
-import com.now.core.post.notice.domain.repository.NoticeRepository;
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.PostReaction;
 import com.now.core.post.common.presentation.dto.constants.Reaction;
@@ -29,6 +28,7 @@ import static com.now.config.fixtures.post.NoticeFixture.createNoticeForSave;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createConditionOnlySort;
 import static com.now.config.fixtures.post.dto.PostReactionFixture.createPostReaction;
+import static com.now.config.fixtures.post.dto.PostReactionFixture.createPostReactionByManager;
 import static com.now.config.utilities.SortUtils.isChronologicalOrder;
 import static com.now.config.utilities.SortUtils.isFirstElementMaxAndDescending;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -178,27 +178,27 @@ class NoticeRepositoryTest {
                 Condition condition = createConditionOnlySort(Sort.RECOMMENDED);
 
                 List<PostReaction> postLikeReactions = Arrays.asList(
-                        createPostReaction(1L, 1, Reaction.LIKE),
-                        createPostReaction(1L, 2, Reaction.LIKE),
-                        createPostReaction(1L, 3, Reaction.LIKE),
+                        createPostReactionByManager(1L, 1L, Reaction.LIKE),
+                        createPostReactionByManager(1L, 2L, Reaction.LIKE),
+                        createPostReactionByManager(1L, 3L, Reaction.LIKE),
 
-                        createPostReaction(2L, 2, Reaction.LIKE),
-                        createPostReaction(2L, 1, Reaction.LIKE),
+                        createPostReactionByManager(2L, 2L, Reaction.LIKE),
+                        createPostReactionByManager(2L, 1L, Reaction.LIKE),
 
-                        createPostReaction(3L, 3, Reaction.LIKE),
+                        createPostReactionByManager(3L, 3L, Reaction.LIKE),
 
-                        createPostReaction(4L, 4, Reaction.LIKE),
-                        createPostReaction(4L, 1, Reaction.LIKE),
+                        createPostReactionByManager(4L, 4L, Reaction.LIKE),
+                        createPostReactionByManager(4L, 1L, Reaction.LIKE),
 
-                        createPostReaction(5L, 5, Reaction.LIKE)
+                        createPostReactionByManager(5L, 5L, Reaction.LIKE)
                 );
 
                 List<PostReaction> postUnlikeReactions = Arrays.asList(
-                        createPostReaction(1L, 2, Reaction.UNLIKE),
-                        createPostReaction(1L, 3, Reaction.UNLIKE),
+                        createPostReaction(1L, 2L, Reaction.UNLIKE),
+                        createPostReaction(1L, 3L, Reaction.UNLIKE),
 
-                        createPostReaction(2L, 2, Reaction.UNLIKE),
-                        createPostReaction(2L, 1, Reaction.UNLIKE)
+                        createPostReaction(2L, 2L, Reaction.UNLIKE),
+                        createPostReaction(2L, 1L, Reaction.UNLIKE)
                 );
 
                 // when

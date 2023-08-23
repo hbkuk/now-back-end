@@ -8,7 +8,6 @@ import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.post.common.domain.repository.PostRepository;
 import com.now.core.post.community.domain.Community;
-import com.now.core.post.community.domain.repository.CommunityRepository;
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.PostReaction;
 import com.now.core.post.common.presentation.dto.constants.Reaction;

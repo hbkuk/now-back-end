@@ -2,6 +2,7 @@ package com.now.core.post.common.domain.mapper;
 
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.PostReaction;
+import com.now.core.post.common.presentation.dto.PostReactionResponse;
 import com.now.core.post.common.presentation.dto.Posts;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -72,14 +73,23 @@ public interface PostMapper {
 
 
     /**
-     * 게시글 반응 정보 조회 후 반환
+     * 게시글 번호에 해당하는 게시글의 반응 정보만 조회 후 반환
      *
-     * @param postReaction 리액션 정보
-     * @return 반응 정보
+     * @param postReaction 게시글 반응 정보
+     * @return 게시글의 반응 정보만 조회 후 반환
      */
-    PostReaction getPostReaction(PostReaction postReaction);
+    PostReactionResponse getPostReaction(PostReaction postReaction);
 
-    
+
+    /**
+     * 게시글 번호에 해당하는 게시글의 반응 정보와 좋아요, 싫어요 조회 후 반환
+     *
+     * @param postReaction 게시글 반응 정보
+     * @return 게시글의 반응 정보와 좋아요, 싫어요 조회 후 반환
+     */
+    PostReactionResponse getPostReactionDetails(PostReaction postReaction);
+
+
     /**
      * 게시글 번호에 해당하는 게시글의 반응 저장
      *
@@ -87,7 +97,7 @@ public interface PostMapper {
      */
     void savePostReaction(PostReaction postReaction);
 
-    
+
     /**
      * 게시글 번호에 해당하는 게시글의 반응 수정
      *

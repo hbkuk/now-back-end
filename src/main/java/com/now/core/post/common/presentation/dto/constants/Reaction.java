@@ -11,6 +11,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Reaction {
+    NOTTING("notting"),
+
     LIKE("like"),
     UNLIKE("unlike"),
 
@@ -51,7 +53,7 @@ public enum Reaction {
      * @return 현재 객체로 저장이 가능하다면 true, 그렇지 않다면 false 반환
      */
     public boolean canSave() {
-        return (this == LIKE) || (this == DISLIKE);
+        return (this == NOTTING) || (this == LIKE) || (this == DISLIKE);
     }
 
     /**
@@ -63,6 +65,10 @@ public enum Reaction {
     public boolean canUpdate(Reaction reaction) {
         if (isSameReaction(reaction)) {
             return false;
+        }
+
+        if (this == NOTTING) {
+            return reaction == LIKE || reaction == DISLIKE;
         }
 
         if (this == LIKE) {

@@ -199,13 +199,30 @@
     </update>
 
 
-    <!-- 기존 리액션 저장 여부 확인 쿼리 -->
+    <!-- 기존 리액션만 확인 쿼리 -->
     <select id="getPostReaction" parameterType="PostReaction" resultMap="postReaction">
         SELECT
-            <include refid="CommonColumnMappings.postReactionTableColumn"/>,
-            <include refid="CommonColumnMappings.managerInfoOfPostReactionTableColumn"/>,
-            <include refid="CommonColumnMappings.memberInfoOfPostReactionTableColumn"/>
+        <include refid="CommonColumnMappings.postReactionTableColumn"/>
+        FROM tb_post_reaction prea
+        LEFT OUTER JOIN tb_member pream ON prea.member_idx = pream.member_idx
+        LEFT OUTER JOIN tb_manager preama ON prea.manager_idx = preama.manager_idx
+        WHERE prea.post_idx = #{postIdx}
+        <if test="memberIdx != null">
+            AND prea.member_idx = ${memberIdx}
+        </if>
+        <if test="managerIdx != null">
+            AND prea.manager_idx = ${managerIdx}
+        </if>
+    </select>
+
+
+    <!-- 기존 리액션과 좋아요, 싫어요 확인 쿼리 -->
+    <select id="getPostReactionDetails" parameterType="PostReaction" resultMap="postReaction">
+        SELECT
+            <include refid="CommonColumnMappings.reactionInfoOfPostTableColumn"/>,
+            <include refid="CommonColumnMappings.postReactionTableColumn"/>
             FROM tb_post_reaction prea
+            LEFT OUTER JOIN tb_post preap ON prea.post_idx = preap.post_idx
             LEFT OUTER JOIN tb_member pream ON prea.member_idx = pream.member_idx
             LEFT OUTER JOIN tb_manager preama ON prea.manager_idx = preama.manager_idx
         WHERE prea.post_idx = #{postIdx}
@@ -246,11 +263,9 @@
 
 
     <!-- 게시글의 리액션 결과 매핑 -->
-    <resultMap id="postReaction" type="PostReaction">
-        <id property="postReactionIdx" column="prea_post_reaction_idx"/>
-        <result property="postIdx" column="prea_post_idx"/>
-        <result property="memberNickname" column="pream_nickname"/>
-        <result property="managerNickname" column="preama_nickname"/>
+    <resultMap id="postReaction" type="PostReactionResponse">
+        <id property="likeCount" column="preap_like_count"/>
+        <id property="dislikeCount" column="preap_dislike_count"/>
         <result property="reaction" column="prea_reaction" javaType="com.now.core.post.common.presentation.dto.constants.Reaction"/>
     </resultMap>
 

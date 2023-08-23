@@ -3,6 +3,7 @@ package com.now.core.post.common.domain.repository;
 import com.now.core.post.common.domain.mapper.PostMapper;
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.PostReaction;
+import com.now.core.post.common.presentation.dto.PostReactionResponse;
 import com.now.core.post.common.presentation.dto.Posts;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +86,7 @@ public class PostRepository {
         postMapper.decrementDislikeCount(postIdx);
     }
 
-    
+
     /**
      * 게시글 번호에 해당하는 게시글의 반응 저장
      *
@@ -95,7 +96,7 @@ public class PostRepository {
         postMapper.savePostReaction(postReaction);
     }
 
-    
+
     /**
      * 게시글 번호에 해당하는 게시글의 반응 수정
      *
@@ -107,14 +108,26 @@ public class PostRepository {
 
 
     /**
-     * 게시글 번호에 해당하는 게시글의 반응 조회 후 반환
+     * 게시글 번호와 회원 또는 매니저에 해당하는 반응 정보만 조회 후 반환
      *
      * @param postReaction 게시글 반응 정보
-     * @return 게시글 번호에 해당하는 게시글의 반응 조회 후 반환
+     * @return 반응 정보만 조회 후 반환
      */
-    public PostReaction getPostReaction(PostReaction postReaction) {
+    public PostReactionResponse getPostReaction(PostReaction postReaction) {
         return postMapper.getPostReaction(postReaction);
     }
+
+
+    /**
+     * 게시글 번호에 해당하는 게시글의 반응 정보와 좋아요, 싫어요 등의 상세 정보를 조회 후 반환
+     *
+     * @param postReaction 게시글 반응 정보
+     * @return  게시글의 반응 정보와 좋아요, 싫어요 등의 상세 정보를 조회 후 반환
+     */
+    public PostReactionResponse getPostReactionDetails(PostReaction postReaction) {
+        return postMapper.getPostReactionDetails(postReaction);
+    }
+
 
     /**
      * 게시글 번호에 해당하는 게시글이 있다면 true 반환, 그렇지 않다면 false 반환
