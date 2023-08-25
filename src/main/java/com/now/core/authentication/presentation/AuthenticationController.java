@@ -89,7 +89,6 @@ public class AuthenticationController {
     public ResponseEntity<MemberProfile> me(
                         @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = false) String accessToken) {
         authenticationService.isAccessTokenBlacklisted(accessToken);
-
         String memberId = extractMemberIdFromToken(accessToken);
         return ResponseEntity.ok().body(MemberProfile.from(memberService.getMember(memberId)));
     }

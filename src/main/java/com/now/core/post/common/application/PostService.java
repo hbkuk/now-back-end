@@ -21,9 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.now.common.config.CachingConfig.POST_CACHE;
+
 
 /**
- * 커뮤니티 게시글 관련 비즈니스 로직을 처리하는 서비스
+ * 게시글 관련 비즈니스 로직을 처리하는 서비스
  */
 @Slf4j
 @Service
@@ -35,12 +37,12 @@ public class PostService {
     private final MemberRepository memberRepository;
 
     /**
-     * 모든 커뮤니티 게시글 정보를 조회 후 반환
+     * 모든 게시글 정보를 조회 후 반환
      *
-     * @return 커뮤니티 게시글 정보 리스트
+     * @return 모든 게시글 정보 리스트
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "postCache", key = "#condition.maxNumberOfPosts")
+    @Cacheable(value = POST_CACHE, key = "#condition.maxNumberOfPosts")
     public List<Posts> getAllPosts(Condition condition) {
         log.debug("Fetching posts from the database...");
         return postRepository.findAllPosts(condition);
@@ -53,7 +55,7 @@ public class PostService {
      * @return 조건에 맞는 게시물을 조회 후 수량 반환
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "postCache", key = "#condition.hashCode()")
+    @Cacheable(value = POST_CACHE, key = "#condition.hashCode()")
     public Long getTotalPostCount(Condition condition) {
         return postRepository.findTotalPostCount(condition);
     }
@@ -67,6 +69,7 @@ public class PostService {
      * @return 반응 정보를 포함한 {@link PostReactionResponse} 객체
      */
     @Transactional(readOnly = true)
+    @Cacheable(value = POST_CACHE, key = "#postIdx + '-' + #memberId + '-' + #isReactionDetails")
     public PostReactionResponse getPostReaction(Long postIdx, String memberId, boolean isReactionDetails) {
         Member member = getMember(memberId);
 
@@ -85,7 +88,7 @@ public class PostService {
      *
      * @param newPostReaction 저장할 반응 정보를 포함하는 객체
      */
-    @CacheEvict(value = {"postCache"}, allEntries = true)
+    @CacheEvict(value = POST_CACHE, allEntries = true)
     public void savePostReaction(PostReaction newPostReaction) {
         Member member = getMember(newPostReaction.getMemberId());
 

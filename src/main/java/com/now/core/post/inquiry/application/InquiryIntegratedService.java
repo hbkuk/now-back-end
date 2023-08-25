@@ -4,9 +4,9 @@ import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.common.application.PostService;
-import com.now.core.post.inquiry.domain.Inquiry;
 import com.now.core.post.common.exception.CannotCreatePostException;
 import com.now.core.post.common.presentation.dto.Condition;
+import com.now.core.post.inquiry.domain.Inquiry;
 import com.now.core.post.inquiry.presentation.dto.InquiriesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,9 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.now.common.config.CachingConfig.INQUIRY_CACHE;
+import static com.now.common.config.CachingConfig.POST_CACHE;
 
 @Slf4j
 @Service
@@ -33,7 +36,7 @@ public class InquiryIntegratedService {
      * @return 문의 게시글 목록과 페이지 정보
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "inquiryCache", key = "#condition.hashCode()")
+    @Cacheable(value = INQUIRY_CACHE, key = "#condition.hashCode()")
     public InquiriesResponse getAllInquiriesWithPageInfo(Condition condition) {
         return InquiriesResponse.builder()
                 .inquiries(inquiryService.getAllInquiries(condition.updatePage()))
@@ -47,7 +50,7 @@ public class InquiryIntegratedService {
      * @param postIdx 게시글 번호
      * @return 조회된 문의 게시글
      */
-    @CacheEvict(value = {"postCache", "inquiryCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, INQUIRY_CACHE}, allEntries = true)
     public Inquiry getPublicInquiryAndIncrementViewCount(Long postIdx) {
         Inquiry inquiry = inquiryService.getPublicInquiry(postIdx);
         postService.incrementViewCount(postIdx);
@@ -62,7 +65,7 @@ public class InquiryIntegratedService {
      * @param password    비밀번호
      * @return 조회된 문의 게시글
      */
-    @CacheEvict(value = {"postCache", "inquiryCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, INQUIRY_CACHE}, allEntries = true)
     public Inquiry getPrivateInquiryAndIncrementViewCount(Long postIdx, String accessToken, String password) {
         String memberId = null;
         if (accessToken != null) {
@@ -91,7 +94,7 @@ public class InquiryIntegratedService {
      *
      * @param inquiry 문의 게시글
      */
-    @CacheEvict(value = {"postCache", "inquiryCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, INQUIRY_CACHE}, allEntries = true)
     public void registerInquiry(Inquiry inquiry) {
         if (inquiry.isSecretInquiryWithoutPassword()) {
             throw new CannotCreatePostException(ErrorType.INVALID_SECRET);
@@ -104,7 +107,7 @@ public class InquiryIntegratedService {
      *
      * @param updatedInquiry 업데이트된 문의 게시글
      */
-    @CacheEvict(value = {"postCache", "inquiryCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, INQUIRY_CACHE}, allEntries = true)
     public void updateInquiry(Inquiry updatedInquiry) {
         inquiryService.hasUpdateAccess(updatedInquiry.getPostIdx(), updatedInquiry.getMemberId());
 
@@ -117,7 +120,7 @@ public class InquiryIntegratedService {
      * @param postIdx  게시글 번호
      * @param memberId 회원 아이디
      */
-    @CacheEvict(value = {"postCache", "inquiryCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, INQUIRY_CACHE}, allEntries = true)
     public void deleteInquiry(Long postIdx, String memberId) {
         inquiryService.hasDeleteAccess(postIdx, memberId);
 

@@ -11,6 +11,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.now.common.config.CachingConfig.NOTICE_CACHE;
+import static com.now.common.config.CachingConfig.POST_CACHE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -27,7 +30,7 @@ public class NoticeIntegratedService {
      * @return 공지 게시글 목록과 페이지 정보
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "noticeCache", key="#condition.hashCode()")
+    @Cacheable(value = NOTICE_CACHE, key="#condition.hashCode()")
     public NoticesResponse getAllNoticesWithPageInfo(Condition condition) {
         return NoticesResponse.builder()
                 .notices(noticeService.getAllNoticesWithPin(condition))
@@ -41,7 +44,7 @@ public class NoticeIntegratedService {
      * @param postIdx 게시글 번호
      * @return 조회된 공지 게시글
      */
-    @CacheEvict(value = {"postCache", "noticeCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, NOTICE_CACHE}, allEntries = true)
     public Notice getNoticeAndIncrementViewCount(Long postIdx) {
         Notice notice = noticeService.getNotice(postIdx);
         postService.incrementViewCount(postIdx);

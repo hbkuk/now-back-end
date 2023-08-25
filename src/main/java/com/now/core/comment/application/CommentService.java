@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.now.common.config.CachingConfig.*;
+
 /**
  * 댓글 관련 비즈니스 로직을 처리하는 서비스
  */
@@ -40,7 +42,7 @@ public class CommentService {
      * @return 모든 댓글 정보와 함께 OK 응답을 반환
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "postCache", key = "#postIdx")
+    @Cacheable(value = POST_CACHE, key = "#postIdx")
     public CommentsResponse getAllComments(Long postIdx) {
         if (!isExistPost(postIdx)) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
@@ -55,7 +57,7 @@ public class CommentService {
      *
      * @param comment 등록할 댓글 정보
      */
-    @CacheEvict(value = {"postCache", "noticeCache", "communityCache", "photoCache", "inquiryCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, NOTICE_CACHE, COMMUNITY_CACHE, PHOTO_CACHE, INQUIRY_CACHE}, allEntries = true)
     public void registerCommentByMember(Comment comment) {
         Member member = getMember(comment.getMemberId());
 
@@ -71,7 +73,7 @@ public class CommentService {
      *
      * @param updatedComment 수정할 댓글 정보
      */
-    @CacheEvict(value = {"postCache", "noticeCache", "communityCache", "photoCache", "inquiryCache"}, allEntries = true)
+    @CacheEvict(value = {NOTICE_CACHE, COMMUNITY_CACHE, PHOTO_CACHE, INQUIRY_CACHE}, allEntries = true)
     public void updateCommentByMember(Comment updatedComment) {
         Member member = getMember(updatedComment.getMemberId());
 
@@ -94,7 +96,7 @@ public class CommentService {
      * @param commentIdx 댓글 번호
      * @param memberId   회원 아이디
      */
-    @CacheEvict(value = {"postCache", "noticeCache", "communityCache", "photoCache", "inquiryCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, NOTICE_CACHE, COMMUNITY_CACHE, PHOTO_CACHE, INQUIRY_CACHE}, allEntries = true)
     public void deleteCommentByMember(Long postIdx, Long commentIdx, String memberId) {
         Member member = getMember(memberId);
 

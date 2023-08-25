@@ -18,6 +18,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.now.common.config.CachingConfig.PHOTO_CACHE;
+import static com.now.common.config.CachingConfig.POST_CACHE;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -37,7 +40,7 @@ public class PhotoIntegratedService {
      * @return 사진 게시글 목록과 페이지 정보
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = "photoCache", key="#condition.hashCode()")
+    @Cacheable(value = PHOTO_CACHE, key="#condition.hashCode()")
     public PhotosResponse getAllPhotosWithPageInfo(Condition condition) {
         return PhotosResponse.builder()
                 .photos(photoService.getAllPhotos(condition))
@@ -51,7 +54,7 @@ public class PhotoIntegratedService {
      * @param postIdx 게시글 번호
      * @return 조회된 사진 게시글
      */
-    @CacheEvict(value = {"postCache", "photoCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, PHOTO_CACHE}, allEntries = true)
     public Photo getPhotoAndIncrementViewCount(Long postIdx) {
         Photo photo = photoService.getPhoto(postIdx);
         postService.incrementViewCount(postIdx);
@@ -77,7 +80,7 @@ public class PhotoIntegratedService {
      * @param photo             사진 게시글
      * @param addNewAttachments 새로운 첨부파일
      */
-    @CacheEvict(value = {"postCache", "photoCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, PHOTO_CACHE}, allEntries = true)
     public void registerPhoto(Photo photo, AddNewAttachments addNewAttachments) {
         photoService.registerPhoto(photo);
         attachmentService.saveAttachmentsWithThumbnail(
@@ -92,7 +95,7 @@ public class PhotoIntegratedService {
      * @param addNewAttachments         새로 추가되는 첨부 파일
      * @param updateExistingAttachments 기존 첨부 파일 업데이트 정보
      */
-    @CacheEvict(value = {"postCache", "photoCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, PHOTO_CACHE}, allEntries = true)
     public void updatePhoto(Photo updatePhoto, UpdateOption updateOption,
                             AddNewAttachments addNewAttachments, UpdateExistingAttachments updateExistingAttachments) {
 
@@ -109,7 +112,7 @@ public class PhotoIntegratedService {
      * @param postIdx  게시글 번호
      * @param memberId 멤버 아이디
      */
-    @CacheEvict(value = {"postCache", "photoCache"}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, PHOTO_CACHE}, allEntries = true)
     public void deletePhoto(Long postIdx, String memberId) {
         photoService.hasDeleteAccess(postIdx, memberId);
 
