@@ -17,10 +17,11 @@
 
 
     <!-- Member, Comment 저장 쿼리 -->
-    <insert id="updateComment" parameterType="Comment">
-        INSERT INTO tb_comment (content)
-        VALUES (#{content})
-    </insert>
+    <update id="updateComment" parameterType="Comment">
+        UPDATE tb_comment
+            SET content = #{content}
+        WHERE comment_idx = #{commentIdx}
+    </update>
 
 
     <!-- 게시물 번호, 모든 댓글 확인 -->
@@ -55,7 +56,7 @@
         FROM tb_comment co
                  LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
                  LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
-        WHERE post_idx = #{postIdx}
+        WHERE co.comment_idx = #{commentIdx}
     </select>
 
 

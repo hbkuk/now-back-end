@@ -126,6 +126,9 @@ public class AuthenticationController {
      * @return 회원 아이디
      */
     private String extractMemberIdFromToken(String accessToken) {
+        if (jwtTokenService.isTokenExpired(accessToken)) {
+            throw new InvalidTokenException(ErrorType.EXPIRED_ACCESS_TOKEN);
+        }
         String memberId = null;
         try {
             memberId = (String) jwtTokenService.getClaim(accessToken, "id");

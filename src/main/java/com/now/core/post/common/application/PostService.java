@@ -228,5 +228,14 @@ public class PostService {
         }
         return member;
     }
+
+    /**
+     * 게시글 번호에 해당하는 게시글 반응 삭제
+     *
+     * @param postIdx 게시글 번호
+     */
+    public void deleteAllPostReactionByPostIdx(Long postIdx) {
+        postRepository.deleteAllPostReactionByPostIdx(postIdx);
+    }
 }
 

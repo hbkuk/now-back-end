@@ -13,7 +13,7 @@
 
 ## ERD(Entity Relationship Diagram)
 
-![ERD](https://github.com/hbkuk/blog/assets/109803585/187bb7b8-80ec-49be-9c27-cc535ba5cfb0)
+![ERD](https://github.com/hbkuk/blog/assets/109803585/5e94ffd3-cf7e-4d36-a6fd-47b1d5c58bc4)
 
 ## Skill
 

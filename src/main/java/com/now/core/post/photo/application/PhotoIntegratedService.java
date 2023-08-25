@@ -113,6 +113,7 @@ public class PhotoIntegratedService {
     public void deletePhoto(Long postIdx, String memberId) {
         photoService.hasDeleteAccess(postIdx, memberId);
 
+        postService.deleteAllPostReactionByPostIdx(postIdx);
         commentService.deleteAllByPostIdx(postIdx);
         attachmentService.deleteAllByPostIdxWithThumbNail(postIdx);
         photoService.deletePhoto(postIdx);

@@ -10,7 +10,6 @@ import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
-import com.now.core.post.community.application.CommunityService;
 import com.now.core.post.community.domain.Community;
 import com.now.core.post.community.domain.repository.CommunityRepository;
 import com.now.core.post.common.exception.CannotDeletePostException;

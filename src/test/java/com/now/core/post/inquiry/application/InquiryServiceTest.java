@@ -10,7 +10,6 @@ import com.now.core.comment.domain.Comment;
 import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
-import com.now.core.post.inquiry.application.InquiryService;
 import com.now.core.post.inquiry.domain.Inquiry;
 import com.now.core.post.inquiry.domain.repository.InquiryRepository;
 import com.now.core.post.common.exception.CannotDeletePostException;

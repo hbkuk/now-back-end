@@ -6,6 +6,7 @@ import com.now.core.comment.domain.CommentRepository;
 import com.now.core.comment.exception.CannotDeleteCommentException;
 import com.now.core.comment.exception.CannotUpdateCommentException;
 import com.now.core.comment.exception.InvalidCommentException;
+import com.now.core.comment.presentation.dto.CommentsResponse;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
@@ -14,7 +15,11 @@ import com.now.core.post.common.exception.InvalidPostException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 댓글 관련 비즈니스 로직을 처리하는 서비스
@@ -27,6 +32,23 @@ public class CommentService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
+
+    /**
+     * 게시글 번호에 해당하는 모든 댓글 정보를 조회
+     *
+     * @param postIdx 게시글 번호
+     * @return 모든 댓글 정보와 함께 OK 응답을 반환
+     */
+    @Transactional(readOnly = true)
+    @Cacheable(value = "postCache", key = "#postIdx")
+    public CommentsResponse getAllComments(Long postIdx) {
+        if (!isExistPost(postIdx)) {
+            throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
+        }
+        return CommentsResponse.builder()
+                .comments(commentRepository.findAllByPostIdx(postIdx))
+                .build();
+    }
 
     /**
      * 댓글 등록
@@ -49,7 +71,7 @@ public class CommentService {
      *
      * @param updatedComment 수정할 댓글 정보
      */
-    @CacheEvict(value = "postCache", key ="#updatedComment.postIdx")
+    @CacheEvict(value = {"postCache", "noticeCache", "communityCache", "photoCache", "inquiryCache"}, allEntries = true)
     public void updateCommentByMember(Comment updatedComment) {
         Member member = getMember(updatedComment.getMemberId());
 
@@ -57,21 +79,12 @@ public class CommentService {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
         }
 
-        Comment comment = getComment(updatedComment.getPostIdx());
-        if(comment.canUpdate(member)) {
+        Comment comment = getComment(updatedComment.getCommentIdx());
+        if(!comment.canUpdate(member)) {
             throw new CannotUpdateCommentException(ErrorType.CAN_NOT_UPDATE_OTHER_MEMBER_COMMENT);
         }
 
         commentRepository.updateComment(updatedComment.updateMemberIdx(member.getMemberIdx()));
-    }
-
-    /**
-     * 게시글 번호에 해당하는 모든 댓글 삭제
-     *
-     * @param postIdx 게시글 번호
-     */
-    public void deleteAllByPostIdx(Long postIdx) {
-        commentRepository.deleteAllByPostIdx(postIdx);
     }
 
     /**
@@ -90,11 +103,20 @@ public class CommentService {
         }
 
         Comment comment = getComment(commentIdx);
-        if(comment.canDelete(member)) {
+        if(!comment.canDelete(member)) {
             throw new CannotDeleteCommentException(ErrorType.CAN_NOT_DELETE_OTHER_MEMBER_COMMENT);
         }
 
         commentRepository.deleteComment(commentIdx);
+    }
+
+    /**
+     * 게시글 번호에 해당하는 모든 댓글 삭제
+     *
+     * @param postIdx 게시글 번호
+     */
+    public void deleteAllByPostIdx(Long postIdx) {
+        commentRepository.deleteAllByPostIdx(postIdx);
     }
 
     /**
@@ -134,10 +156,4 @@ public class CommentService {
         }
         return comment;
     }
-
-    /* 해당 메서드(게시글 번호에 해당하는 댓글 정보 조회 후 반환)는 사용안함
-    public List<Comment> getAllByPostIdx(Long postIdx) {
-        return commentRepository.findAllByPostIdx(postIdx);
-    }
-    */
 }

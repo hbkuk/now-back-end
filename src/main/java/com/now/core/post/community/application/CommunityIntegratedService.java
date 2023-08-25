@@ -109,6 +109,7 @@ public class CommunityIntegratedService {
     public void deleteCommunity(Long postIdx, String memberId) {
         communityService.hasDeleteAccess(postIdx, memberId);
 
+        postService.deleteAllPostReactionByPostIdx(postIdx);
         commentService.deleteAllByPostIdx(postIdx);
         attachmentService.deleteAllByPostIdx(postIdx);
         communityService.deleteCommunity(postIdx);

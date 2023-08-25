@@ -121,6 +121,7 @@ public class InquiryIntegratedService {
     public void deleteInquiry(Long postIdx, String memberId) {
         inquiryService.hasDeleteAccess(postIdx, memberId);
 
+        postService.deleteAllPostReactionByPostIdx(postIdx);
         commentService.deleteAllByPostIdx(postIdx);
         inquiryService.deleteInquiry(postIdx, memberId);
     }

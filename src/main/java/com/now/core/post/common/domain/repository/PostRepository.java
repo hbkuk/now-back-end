@@ -108,6 +108,16 @@ public class PostRepository {
 
 
     /**
+     * 게시글 번호에 해당하는 게시글 반응 삭제
+     *
+     * @param postIdx 게시글 번호
+     */
+    public void deleteAllPostReactionByPostIdx(Long postIdx) {
+        postMapper.deleteAllPostReactionByPostIdx(postIdx);
+    }
+
+
+    /**
      * 게시글 번호와 회원 또는 매니저에 해당하는 반응 정보만 조회 후 반환
      *
      * @param postReaction 게시글 반응 정보

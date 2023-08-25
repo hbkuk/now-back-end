@@ -8,7 +8,6 @@ import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.post.common.application.dto.AddNewAttachments;
 import com.now.core.post.common.application.dto.UpdateExistingAttachments;
-import com.now.core.post.community.application.CommunityIntegratedService;
 import com.now.core.post.community.domain.Community;
 import com.now.core.post.community.domain.repository.CommunityRepository;
 import com.now.core.post.common.presentation.dto.Condition;

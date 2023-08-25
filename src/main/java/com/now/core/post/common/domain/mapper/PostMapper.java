@@ -107,6 +107,14 @@ public interface PostMapper {
 
 
     /**
+     * 게시글 번호에 해당하는 게시글 반응 삭제
+     * 
+     * @param postIdx 게시글 번호
+     */
+    void deleteAllPostReactionByPostIdx(Long postIdx);
+
+
+    /**
      * 주어진 게시물 번호에 해당하는 게시물이 존재한다면 true, 그렇지 않다면 false 반환
      *
      * @param postIdx 게시글 번호

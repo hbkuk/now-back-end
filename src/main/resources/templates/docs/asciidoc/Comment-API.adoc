@@ -1,6 +1,10 @@
 [[Comment-API]]
 == Comment API
 
+[[Comment-전체-조회]]
+=== Comment 전체 조회
+operation::comment-controller-test/get-all-comments[snippets='http-request,path-parameters,http-response,response-fields']
+
 [[Comment-등록]]
 === Comment 등록
 operation::comment-controller-test/register-comment[snippets='http-request,request-body,request-fields,http-response']

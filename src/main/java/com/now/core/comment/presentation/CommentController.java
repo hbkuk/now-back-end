@@ -4,12 +4,18 @@ import com.now.core.authentication.presentation.AuthenticationPrincipal;
 import com.now.core.comment.application.CommentService;
 import com.now.core.comment.domain.Comment;
 import com.now.core.comment.domain.CommentValidationGroup;
+import com.now.core.comment.presentation.dto.CommentsResponse;
+import com.now.core.post.common.presentation.dto.Condition;
+import com.now.core.post.community.presentation.dto.CommunitiesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 댓글 관련 작업을 위한 컨트롤러
@@ -20,6 +26,17 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     private final CommentService commentService;
+
+    /**
+     * 게시글 번호에 해당하는 모든 댓글 정보를 조회
+     *
+     * @param postIdx 게시글 번호
+     * @return 모든 댓글 정보와 함께 OK 응답을 반환
+     */
+    @GetMapping("/api/posts/{postIdx}/comments")
+    public ResponseEntity<CommentsResponse> getAllComments(@PathVariable("postIdx") Long postIdx) {
+        return new ResponseEntity<>(commentService.getAllComments(postIdx), HttpStatus.OK);
+    }
 
     /**
      * 댓글 등록

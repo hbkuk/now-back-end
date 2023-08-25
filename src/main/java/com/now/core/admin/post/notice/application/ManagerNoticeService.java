@@ -6,6 +6,7 @@ import com.now.core.admin.manager.domain.Manager;
 import com.now.core.admin.manager.domain.ManagerRepository;
 import com.now.core.admin.manager.exception.InvalidManagerException;
 import com.now.core.category.domain.constants.PostGroup;
+import com.now.core.post.common.domain.repository.PostRepository;
 import com.now.core.post.notice.domain.Notice;
 import com.now.core.post.notice.domain.repository.NoticeRepository;
 import com.now.core.post.common.exception.CannotCreatePostException;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ManagerNoticeService {
 
+    private final PostRepository postRepository;
     private final NoticeRepository noticeRepository;
     private final ManagerRepository managerRepository;
 
@@ -78,6 +80,7 @@ public class ManagerNoticeService {
             throw new ForbiddenException(ErrorType.FORBIDDEN);
         }
 
+        postRepository.deleteAllPostReactionByPostIdx(postIdx);
         noticeRepository.deleteNotice(postIdx);
     }
 

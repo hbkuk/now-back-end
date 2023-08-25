@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Comment {
-
     //TODO: 댓글 `like_count`, `dislike_count` 기능 구현
 
     private Long postIdx; // 게시글의 고유 식별자
