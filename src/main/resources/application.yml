@@ -1,0 +1,97 @@
+spring:
+
+  profiles:
+    group:
+      "test": "testdb"
+      "local": "devdb,common"
+      "dev": "devdb,common"
+      "prod": "proddb,common"
+
+  web:
+    resources:
+      add-mappings: false
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+  servlet:
+    multipart:
+      enabled: true
+      resolve-lazily: false
+      file-size-threshold: 1MB
+      location: C:/Temp
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+logging:
+  level:
+    org.springframework.web: debug
+    com.now.core: debug
+
+
+mybatis:
+  type-aliases-package: com.now.core
+  mapper-locations: classpath:mapper/**/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    type-handlers-package: com.now.core.category.config
+
+slack:
+  webhook:
+    url: ${NOW_SLACK_URL}
+
+now:
+  password:
+    salt: ${NOW_PASSWORD_SALT}
+  security:
+    key: ${NOW_SECURITY_KEY}
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "proddb"
+  datasource:
+    url: jdbc:mysql://${NOW_MYSQL_HOST}:${NOW_MYSQL_PORT}/${NOW_DATA_BASE_NAME}
+    username: ${NOW_MYSQL_USER_NAME}
+    password: ${NOW_MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+
+
+spring:
+  config:
+    activate:
+      on-profile: "devdb"
+  datasource:
+    url: jdbc:mysql://${NOW_MYSQL_HOST}:${NOW_MYSQL_PORT}/${NOW_DATA_BASE_NAME}
+    username: ${NOW_MYSQL_USER_NAME}
+    password: ${NOW_MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+
+
+spring:
+  config:
+    activate:
+      on-profile: "testdb"
+  datasource:
+    url: jdbc:mysql://${NOW_MYSQL_HOST}:${NOW_MYSQL_PORT}/${NOW_DATA_BASE_NAME}
+    username: ${NOW_MYSQL_USER_NAME}
+    password: ${NOW_MYSQL_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "common"
+
+server:
+  port: ${NOW_SERVER_PORT}
+  tomcat:
+    uri-encoding: UTF-8

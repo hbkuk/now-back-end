@@ -23,6 +23,7 @@
 
 #### 기술적 도전
 
+- [Spring Cache(스프링 캐시) 적용](https://github.com/hbkuk/blog/tree/main/project/Spring%20Cache(%EC%8A%A4%ED%94%84%EB%A7%81%20%EC%BA%90%EC%8B%9C)%20%EC%A0%81%EC%9A%A9)
 - [격리된 테스트 환경 구성 후  Repository 객체에 대한 테스트 코드](https://github.com/hbkuk/blog/tree/main/project/%EA%B2%A9%EB%A6%AC%EB%90%9C%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%84%B1%20%ED%9B%84%20%20Repository%20%EA%B0%9D%EC%B2%B4%EC%97%90%20%EB%8C%80%ED%95%9C%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EC%BD%94%EB%93%9C)
 - [Spring AOP로 Slack 알람 구현](https://github.com/hbkuk/blog/tree/main/project/Spring%20AOP%EB%A1%9C%20Slack%20%EC%95%8C%EB%9E%8C%20%EA%B5%AC%ED%98%84)
 - [Spring AOP로 모든 요청과 응답 로그 기록](https://github.com/hbkuk/blog/tree/main/project/Spring%20AOP%EB%A1%9C%20%EB%AA%A8%EB%93%A0%20%EC%9A%94%EC%B2%AD%EA%B3%BC%20%EC%9D%91%EB%8B%B5%20%EB%A1%9C%EA%B7%B8%20%EA%B8%B0%EB%A1%9D)

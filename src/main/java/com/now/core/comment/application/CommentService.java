@@ -73,7 +73,7 @@ public class CommentService {
      *
      * @param updatedComment 수정할 댓글 정보
      */
-    @CacheEvict(value = {NOTICE_CACHE, COMMUNITY_CACHE, PHOTO_CACHE, INQUIRY_CACHE}, allEntries = true)
+    @CacheEvict(value = {POST_CACHE, NOTICE_CACHE, COMMUNITY_CACHE, PHOTO_CACHE, INQUIRY_CACHE}, allEntries = true)
     public void updateCommentByMember(Comment updatedComment) {
         Member member = getMember(updatedComment.getMemberId());
 
