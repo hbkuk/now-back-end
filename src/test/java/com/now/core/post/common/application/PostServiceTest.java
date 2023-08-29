@@ -87,7 +87,7 @@ public class PostServiceTest {
                 Long postIdx = 1L;
                 Long memberIdx = 1L;
                 String memberId = MemberFixture.SAMPLE_MEMBER_ID_1;
-                Member member = createMember(memberId);
+                Member member = createMember(memberIdx, memberId);
                 PostReaction postReaction = PostReactionFixture.createPostReaction(postIdx, memberIdx);
 
                 when(memberRepository.findById(memberId)).thenReturn(member);

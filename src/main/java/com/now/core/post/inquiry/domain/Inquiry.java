@@ -188,7 +188,7 @@ public class Inquiry {
      */
     public boolean isAccessSecretBy(Member member) {
         if (!member.isSameMemberId(this.memberId)) {
-            throw new CannotViewInquiryException(ErrorType.CAN_NOT_VIEW_OTHER_MEMBER_INQUIRIES);
+            throw new CannotViewInquiryException(ErrorType.CAN_NOT_VIEW_OTHER_MEMBER_INQUIRY);
         }
         return true;
     }

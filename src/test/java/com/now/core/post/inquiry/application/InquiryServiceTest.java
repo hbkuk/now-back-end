@@ -74,6 +74,22 @@ class InquiryServiceTest {
         class Secret {
 
             @Test
+            @DisplayName("전달받은 memberId, password가 없다면 CannotViewInquiryException 을 던진다")
+            void getInquiryWithSecretCheck_all_null() {
+                Long postIdx = 1L;
+                Inquiry inquiry = InquiryFixture.createSecretInquiry("tester1", Category.SERVICE);
+
+                when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
+                when(passwordSecurityManager.matchesWithSalt(anyString(), anyString())).thenReturn(false);
+
+                assertThatExceptionOfType(CannotViewInquiryException.class)
+                        .isThrownBy(() -> {
+                            inquiryService.getPrivateInquiry(postIdx, null, null);
+                        })
+                        .withMessage(ErrorType.CAN_NOT_VIEW_INQUIRY_PASSWORD_NOT_MATCH.getMessage());
+            }
+
+            @Test
             @DisplayName("비밀번호를 확인 후 같다면 문의 게시글을 반환한다.")
             void getInquiryWithSecretCheck_isPasswordMatching() {
                 Long postIdx = 1L;
@@ -112,7 +128,7 @@ class InquiryServiceTest {
                         .isThrownBy(() -> {
                             inquiryService.getPrivateInquiry(postIdx, "tester2", null);
                         })
-                        .withMessage(ErrorType.CAN_NOT_VIEW_OTHER_MEMBER_INQUIRIES.getMessage());
+                        .withMessage(ErrorType.CAN_NOT_VIEW_OTHER_MEMBER_INQUIRY.getMessage());
             }
         }
     }

@@ -7,6 +7,7 @@ import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -18,6 +19,7 @@ import java.util.Objects;
 @EnableCaching  // Spring 캐싱 기능을 사용하기 위한 어노테이션
 @EnableScheduling  // 스케줄링 기능을 사용하기 위한 어노테이션
 @Slf4j  // 로깅을 위한 어노테이션
+@Profile({"local", "dev", "prod"})
 public class CachingConfig {
 
     public static final String POST_CACHE = "postCache";

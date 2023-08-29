@@ -59,18 +59,22 @@ public class InquiryService {
     /**
      * 문의 게시글 응답
      *
-     * @param postIdx 게시글 번호
+     * @param postIdx 게식글 번호
      * @param memberId 회원 아이디
+     * @param password 비밀번호
      * @return 문의 게시글 정보
      */
     public Inquiry getPrivateInquiry(Long postIdx, String memberId, String password) {
         Inquiry inquiry = getInquiry(postIdx);
 
         if (inquiry.getSecret()) {
-            if (isPasswordMatching(password, inquiry.getPassword())) {
+            if(memberId != null) {
+                inquiry.canView(getMember(memberId));
                 return inquiry;
             }
-            inquiry.canView(getMember(memberId));
+            if (!isPasswordMatching(password, inquiry.getPassword())) {
+                throw new CannotViewInquiryException(ErrorType.CAN_NOT_VIEW_INQUIRY_PASSWORD_NOT_MATCH);
+            }
         }
         return inquiry;
     }
