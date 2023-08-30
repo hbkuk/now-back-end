@@ -97,6 +97,15 @@
     </update>
 
 
+    <!-- Inquiry 테이블 수정 쿼리-->
+    <update id="updateInquiryNonSecretSetting" parameterType="Long">
+        UPDATE tb_inquiry
+        SET secret   = false,
+            password = null
+        WHERE post_idx = #{postIdx}
+    </update>
+
+
     <!-- tb_inquiry Answer 수정 쿼리-->
     <update id="updateAnswer" parameterType="Answer">
         UPDATE tb_inquiry

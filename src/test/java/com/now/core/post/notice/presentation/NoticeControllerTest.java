@@ -6,11 +6,14 @@ import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.common.presentation.dto.Condition;
+import com.now.core.post.notice.domain.Notice;
 import com.now.core.post.notice.presentation.dto.NoticesResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -25,9 +28,9 @@ import static com.now.config.fixtures.comment.CommentFixture.createComments;
 import static com.now.config.fixtures.post.NoticeFixture.createNotice;
 import static com.now.config.fixtures.post.NoticeFixture.createNoticeForSave;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.headers.HeaderDocumentation.*;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
@@ -118,10 +121,10 @@ class NoticeControllerTest extends RestDocsTestSupport {
         given(noticeIntegratedService.getNoticeAndIncrementViewCount(postIdx))
                 .willReturn(createNotice(2L, NoticeFixture.SAMPLE_NICKNAME_2, NoticeFixture.SAMPLE_TITLE_2, NoticeFixture.SAMPLE_CONTENT_2, createComments()));
 
-                        // when, then
-                        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/notices/{postIdx}", postIdx)
-                                        .contentType(MediaType.APPLICATION_JSON))
-                                .andExpect(status().isOk());
+        // when, then
+        ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.get("/api/notices/{postIdx}", postIdx)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
 
         resultActions
                 .andDo(restDocs.document(
@@ -157,15 +160,18 @@ class NoticeControllerTest extends RestDocsTestSupport {
     void registerNotice() throws Exception {
         String managerId = "manager1";
         String accessToken = "Bearer accessToken";
-
+        Notice notice = createNoticeForSave().updatePostIdx(1L);
         given(jwtTokenService.getClaim(accessToken, "id")).willReturn(managerId);
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MANAGER.getValue());
 
+        MockMultipartFile noticePart = new MockMultipartFile("notice", "",
+                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(notice));
+
         ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.post("/api/manager/notices")
+                mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/manager/notices")
+                                .file(noticePart)
                                 .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createNoticeForSave().updatePostIdx(1L))))
+                                .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
 
@@ -174,7 +180,10 @@ class NoticeControllerTest extends RestDocsTestSupport {
                         customRequestHeaderCookies(
                                 cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
-                        requestFields(
+                        requestParts(
+                                partWithName("notice").description("공지 게시글 정보")
+                        ),
+                        requestPartFields("notice",
                                 fieldWithPath("postGroup").ignored(),
                                 fieldWithPath("postIdx").ignored(),
                                 fieldWithPath("category").description("카테고리"),
@@ -194,15 +203,28 @@ class NoticeControllerTest extends RestDocsTestSupport {
         Long postIdx = 1L;
         String managerId = "manager1";
         String accessToken = "Bearer accessToken";
-
         given(jwtTokenService.getClaim(accessToken, "id")).willReturn(managerId);
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MANAGER.getValue());
 
+        Notice updatedNotice = Notice.builder()
+                .category(Category.NEWS)
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .pinned(true)
+                .build();
+
+        MockMultipartFile noticePart = new MockMultipartFile("notice", "",
+                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(updatedNotice));
+
         ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.put("/api/manager/notices/{postIdx}", postIdx)
+                mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/manager/notices/{postIdx}", postIdx)
+                                .file(noticePart)
                                 .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createNoticeForSave().updatePostIdx(postIdx))))
+                                .with(request -> {
+                                    request.setMethod(String.valueOf(HttpMethod.PUT)); // PUT 메서드로 변경
+                                    return request;
+                                }))
                         .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
 
@@ -211,9 +233,11 @@ class NoticeControllerTest extends RestDocsTestSupport {
                         customRequestHeaderCookies(
                                 cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
-                        requestFields(
+                        requestParts(
+                                partWithName("notice").description("공지 게시글 정보")
+                        ),
+                        requestPartFields("notice",
                                 fieldWithPath("postGroup").ignored(),
-                                fieldWithPath("postIdx").description("게시글 번호"),
                                 fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
                                 fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하")),
@@ -236,7 +260,7 @@ class NoticeControllerTest extends RestDocsTestSupport {
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MANAGER.getValue());
 
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/manager/notices/{postIdx}", postIdx)
-                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
+                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         resultActions

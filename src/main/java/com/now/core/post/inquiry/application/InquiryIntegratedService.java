@@ -7,6 +7,7 @@ import com.now.core.post.common.application.PostService;
 import com.now.core.post.common.exception.CannotCreatePostException;
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.inquiry.domain.Inquiry;
+import com.now.core.post.inquiry.domain.constants.PrivacyUpdateOption;
 import com.now.core.post.inquiry.presentation.dto.InquiriesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -108,10 +109,9 @@ public class InquiryIntegratedService {
      * @param updatedInquiry 업데이트된 문의 게시글
      */
     @CacheEvict(value = {POST_CACHE, INQUIRY_CACHE}, allEntries = true)
-    public void updateInquiry(Inquiry updatedInquiry) {
-        inquiryService.hasUpdateAccess(updatedInquiry.getPostIdx(), updatedInquiry.getMemberId());
-
-        inquiryService.updateInquiry(updatedInquiry);
+    public void updateInquiry(Inquiry updatedInquiry, PrivacyUpdateOption privacyUpdateOption) {
+        inquiryService.hasUpdateAccess(updatedInquiry);
+        inquiryService.updateInquiry(updatedInquiry, privacyUpdateOption);
     }
 
     /**

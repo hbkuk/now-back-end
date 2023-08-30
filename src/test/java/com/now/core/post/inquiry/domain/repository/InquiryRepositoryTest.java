@@ -526,6 +526,40 @@ class InquiryRepositoryTest {
                     assertThat(actualInquiry.getTitle()).isEqualTo(expectedUpdatedInquiry.getTitle());
                     assertThat(actualInquiry.getContent()).isEqualTo(expectedUpdatedInquiry.getContent());
                 }
+
+                @Test
+                @DisplayName("게시글이 비공개로 설정되고, 비밀번호가 초기화된다")
+                void updateInquiryNonSecretSetting() {
+                    // given
+                    Long postIdx = 1L;
+                    Member member = createMember(MEMBER1_ID, MEMBER1_NAME, MEMBER1_NICKNAME);
+
+                    Inquiry inquiry = createInquiryForSave(1L, member.getId(), member.getNickname(),
+                            Category.SERVICE, "영업소", "구입처", true, "rlwhs132!");
+
+                    Inquiry expectedUpdatedInquiry = createInquiryForSave(1L, member.getId(), member.getNickname(),
+                            Category.SERVICE, "슬픔", "눈물", false, null)
+                            .updatePostIdx(postIdx);
+
+                    // when
+                    memberRepository.saveMember(member);
+
+                    inquiryRepository.savePost(inquiry);
+                    inquiryRepository.saveInquirySecretSetting(inquiry);
+
+                    inquiryRepository.updatePost(expectedUpdatedInquiry);
+                    inquiryRepository.updateInquiryNonSecretSetting(postIdx);
+
+                    Inquiry actualInquiry = inquiryRepository.findInquiry(postIdx);
+
+                    // then
+                    assertThat(actualInquiry.getMemberNickname()).isEqualTo(member.getNickname());
+                    assertThat(actualInquiry.getCategory()).isEqualTo(expectedUpdatedInquiry.getCategory());
+                    assertThat(actualInquiry.getTitle()).isEqualTo(expectedUpdatedInquiry.getTitle());
+                    assertThat(actualInquiry.getContent()).isEqualTo(expectedUpdatedInquiry.getContent());
+                    assertThat(actualInquiry.getSecret()).isEqualTo(expectedUpdatedInquiry.getSecret());
+                    assertThat(actualInquiry.getPassword()).isEqualTo(expectedUpdatedInquiry.getPassword());
+                }
             }
 
             @Nested

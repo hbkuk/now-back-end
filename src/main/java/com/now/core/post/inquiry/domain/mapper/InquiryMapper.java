@@ -66,6 +66,14 @@ public interface InquiryMapper {
     void updateInquiry(Inquiry inquiry);
 
     /**
+     * 문의 게시글 공개글 수정
+     *
+     * @param postIdx 수정할 문의 게시글 번호
+     */
+    void updateInquiryNonSecretSetting(Long postIdx);
+
+
+    /**
      * 문의 게시글의 답변 수정
      *
      * @param answer 수정할 문의 게시글의 답변 정보

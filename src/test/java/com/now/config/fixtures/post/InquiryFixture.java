@@ -205,4 +205,17 @@ public class InquiryFixture {
                 .inquiryStatus(InquiryStatus.INCOMPLETE)
                 .build();
     }
+
+    public static Inquiry createInquiry(Long postIdx, Long memberIdx, String memberId, Category category, String title, String content, Boolean serect, String password) {
+        return Inquiry.builder()
+                .postIdx(postIdx)
+                .category(category)
+                .title(title)
+                .content(content)
+                .memberIdx(memberIdx)
+                .memberId(memberId)
+                .secret(serect)
+                .password(password)
+                .build();
+    }
 }

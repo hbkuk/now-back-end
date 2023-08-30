@@ -7,12 +7,14 @@ import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
 import com.now.core.member.exception.InvalidMemberException;
-import com.now.core.post.inquiry.domain.Inquiry;
-import com.now.core.post.inquiry.domain.repository.InquiryRepository;
 import com.now.core.post.common.exception.CannotCreatePostException;
-import com.now.core.post.inquiry.exception.CannotViewInquiryException;
+import com.now.core.post.common.exception.CannotUpdatePostException;
 import com.now.core.post.common.exception.InvalidPostException;
 import com.now.core.post.common.presentation.dto.Condition;
+import com.now.core.post.inquiry.domain.Inquiry;
+import com.now.core.post.inquiry.domain.constants.PrivacyUpdateOption;
+import com.now.core.post.inquiry.domain.repository.InquiryRepository;
+import com.now.core.post.inquiry.exception.CannotViewInquiryException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -59,7 +61,7 @@ public class InquiryService {
     /**
      * 문의 게시글 응답
      *
-     * @param postIdx 게식글 번호
+     * @param postIdx  게식글 번호
      * @param memberId 회원 아이디
      * @param password 비밀번호
      * @return 문의 게시글 정보
@@ -68,7 +70,7 @@ public class InquiryService {
         Inquiry inquiry = getInquiry(postIdx);
 
         if (inquiry.getSecret()) {
-            if(memberId != null) {
+            if (memberId != null) {
                 inquiry.canView(getMember(memberId));
                 return inquiry;
             }
@@ -92,24 +94,33 @@ public class InquiryService {
         }
 
         inquiryRepository.savePost(inquiry.updateMemberIdx(member.getMemberIdx())
-                                            .updatePassword(passwordSecurityManager.encodeWithSalt(inquiry.getPassword())));
+                .updatePassword(passwordSecurityManager.encodeWithSalt(inquiry.getPassword())));
         inquiryRepository.saveInquirySecretSetting(inquiry);
     }
 
     /**
      * 문의 게시글 수정
      *
-     * @param updateInquiry 수정할 문의 게시글 정보
+     * @param updatedInquiry       수정할 문의 게시글 정보
+     * @param privacyUpdateOption 개인 정보 옵션
      */
-    public void updateInquiry(Inquiry updateInquiry) {
-        Member member = getMember(updateInquiry.getMemberId());
-
-        if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, updateInquiry.getCategory())) {
-            throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
+    public void updateInquiry(Inquiry updatedInquiry, PrivacyUpdateOption privacyUpdateOption) {
+        Member member = getMember(updatedInquiry.getMemberId());
+        if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, updatedInquiry.getCategory())) {
+            throw new CannotUpdatePostException(ErrorType.NOT_FOUND_CATEGORY);
+        }
+        Inquiry existInquiry = getInquiry(updatedInquiry.getPostIdx());
+        if (!privacyUpdateOption.canUpdate(existInquiry.getSecret())) {
+            throw new CannotUpdatePostException(ErrorType.INVALID_SECRET);
         }
 
-        inquiryRepository.updatePost(updateInquiry.updateMemberIdx(member.getMemberIdx()));;
-        inquiryRepository.updateInquiry(updateInquiry);
+        if (!updatedInquiry.getSecret()) {
+            processPublicInquiryUpdate(updatedInquiry.updateMemberIdx(member.getMemberIdx()), privacyUpdateOption);
+        }
+        if (updatedInquiry.getSecret()) {
+            processPrivateInquiryUpdate(updatedInquiry.updateMemberIdx(member.getMemberIdx())
+                    .updatePassword(passwordSecurityManager.encodeWithSalt(updatedInquiry.getPassword())), privacyUpdateOption);
+        }
     }
 
     /**
@@ -128,18 +139,17 @@ public class InquiryService {
     /**
      * 게시글 수정 권한 확인
      *
-     * @param postIdx 게시글 번호
-     * @param memberId 회원 아이디
+     * @param updatedInquiry 수정할 게시글 정보
      */
-    public void hasUpdateAccess(Long postIdx, String memberId) {
-        Inquiry inquiry = getInquiry(postIdx);
-        inquiry.canUpdate(getMember(memberId));
+    public void hasUpdateAccess(Inquiry updatedInquiry) {
+        Inquiry inquiry = getInquiry(updatedInquiry.getPostIdx());
+        inquiry.canUpdate(getMember(updatedInquiry.getMemberId()));
     }
 
     /**
      * 게시글 삭제 권한 확인
      *
-     * @param postIdx 게시글 번호
+     * @param postIdx  게시글 번호
      * @param memberId 회원 아이디
      */
     public void hasDeleteAccess(Long postIdx, String memberId) {
@@ -149,7 +159,7 @@ public class InquiryService {
 
     /**
      * 문의 게시글 조회
-     * 
+     *
      * @param postIdx 게시글 번호
      * @return 문의 게시글
      */
@@ -164,7 +174,7 @@ public class InquiryService {
     /**
      * 수정 문의 게시글 조회
      *
-     * @param postIdx 게시글 번호
+     * @param postIdx  게시글 번호
      * @param memberId 회원 아이디
      * @return 수정 문의 게시글
      */
@@ -176,6 +186,47 @@ public class InquiryService {
         return inquiry;
     }
 
+    /**
+     * 비밀 문의 게시글 업데이트
+     *
+     * @param updatedInquiry       수정할 문의 게시글 정보
+     * @param privacyUpdateOption 개인 정보 업데이트 옵션
+     * @throws CannotUpdatePostException 비밀글 업데이트에 실패한 경우 발생
+     */
+    private void processPrivateInquiryUpdate(Inquiry updatedInquiry, PrivacyUpdateOption privacyUpdateOption) {
+        if (PrivacyUpdateOption.TO_PRIVATE == privacyUpdateOption) {
+            if (updatedInquiry.isSecretInquiryWithoutPassword()) {
+                throw new CannotUpdatePostException(ErrorType.INVALID_SECRET);
+            }
+            inquiryRepository.updatePost(updatedInquiry.updateMemberIdx(updatedInquiry.getMemberIdx()));
+            inquiryRepository.updateInquiry(updatedInquiry);
+        }
+        if (PrivacyUpdateOption.CHANGE_PASSWORD == privacyUpdateOption) {
+            if (updatedInquiry.isSecretInquiryWithoutPassword()) {
+                throw new CannotUpdatePostException(ErrorType.INVALID_SECRET);
+            }
+            inquiryRepository.updatePost(updatedInquiry.updateMemberIdx(updatedInquiry.getMemberIdx()));
+            inquiryRepository.updateInquiry(updatedInquiry);
+        }
+        if (PrivacyUpdateOption.KEEP_PASSWORD == privacyUpdateOption) {
+            inquiryRepository.updatePost(updatedInquiry.updateMemberIdx(updatedInquiry.getMemberIdx()));
+        }
+    }
+
+    /**
+     * 공개 문의 게시글 업데이트
+     *
+     * @param updateInquiry       수정할 문의 게시글 정보
+     * @param privacyUpdateOption 개인 정보 업데이트 옵션
+     */
+    private void processPublicInquiryUpdate(Inquiry updateInquiry, PrivacyUpdateOption privacyUpdateOption) {
+        if (PrivacyUpdateOption.TO_PUBLIC == privacyUpdateOption) {
+            inquiryRepository.updatePost(updateInquiry.updateMemberIdx(updateInquiry.getMemberIdx()));
+            ;
+            inquiryRepository.updateInquiryNonSecretSetting(updateInquiry.getPostIdx());
+        }
+    }
+
 
     /**
      * 회원 정보 응답
@@ -185,7 +236,7 @@ public class InquiryService {
      */
     private Member getMember(String memberId) {
         Member member = memberRepository.findById(memberId);
-        if(member == null) {
+        if (member == null) {
             throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
         }
         return member;

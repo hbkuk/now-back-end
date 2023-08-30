@@ -2,10 +2,12 @@ package com.now.core.post.inquiry.presentation;
 
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.presentation.AuthenticationPrincipal;
+import com.now.core.post.common.domain.constants.UpdateOption;
 import com.now.core.post.inquiry.application.InquiryIntegratedService;
 import com.now.core.post.inquiry.domain.Inquiry;
 import com.now.core.post.common.domain.constants.PostValidationGroup;
 import com.now.core.post.common.presentation.dto.Condition;
+import com.now.core.post.inquiry.domain.constants.PrivacyUpdateOption;
 import com.now.core.post.inquiry.presentation.dto.InquiriesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -102,8 +104,9 @@ public class InquiryController {
     @PutMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Void> updateInquiry(@PathVariable("postIdx") Long postIdx,
                                               @AuthenticationPrincipal String memberId,
+                                              @RequestPart(name = "privacyUpdateOption", required = true) PrivacyUpdateOption privacyUpdateOption,
                                               @RequestPart(name = "inquiry") @Validated({PostValidationGroup.saveInquiry.class}) Inquiry updateInquiry) {
-        inquiryIntegratedService.updateInquiry(updateInquiry.updateMemberId(memberId).updatePostIdx(postIdx));
+        inquiryIntegratedService.updateInquiry(updateInquiry.updateMemberId(memberId).updatePostIdx(postIdx), privacyUpdateOption);
         return ResponseEntity.created(URI.create("/api/inquiries/" + updateInquiry.getPostIdx())).build();
     }
 

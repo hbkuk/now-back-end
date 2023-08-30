@@ -29,8 +29,7 @@
         LEFT OUTER JOIN tb_manager ima ON p.manager_idx = ima.manager_idx
         WHERE p.post_group = 'NOTICE' AND p.pinned = false
         GROUP BY p.post_idx
-        <include refid="DynamicQueryMapper.sort"/>
-
+        ORDER BY p.post_idx DESC
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
 
         ) AS notice_posts
@@ -60,8 +59,7 @@
         LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
         WHERE p.post_group = 'COMMUNITY'
         GROUP BY p.post_idx
-        <include refid="DynamicQueryMapper.sort"/>
-
+        ORDER BY p.post_idx DESC
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
 
         ) AS community_posts
@@ -91,8 +89,7 @@
         LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
         WHERE p.post_group = 'PHOTO'
         GROUP BY p.post_idx
-        <include refid="DynamicQueryMapper.sort"/>
-
+        ORDER BY p.post_idx DESC
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
 
         ) AS photo_posts
@@ -122,8 +119,7 @@
         LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
         WHERE p.post_group = 'INQUIRY'
         GROUP BY p.post_idx
-        <include refid="DynamicQueryMapper.sort"/>
-
+        ORDER BY p.post_idx DESC
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
 
         ) AS inquiry_posts

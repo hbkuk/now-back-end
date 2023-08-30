@@ -86,6 +86,16 @@ public class InquiryRepository {
     }
 
     /**
+     * 문의 게시글 공개글 수정
+     *
+     * @param postIdx 수정할 문의 게시글 번호
+     */
+    public void updateInquiryNonSecretSetting(Long postIdx) {
+        inquiryMapper.updateInquiryNonSecretSetting(postIdx);
+    }
+
+
+    /**
      * 문의 게시글의 답변 수정
      *
      * @param answer 등록할 문의 게시글의 답변 정보

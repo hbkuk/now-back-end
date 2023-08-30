@@ -4,18 +4,20 @@ import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
 import com.now.config.annotations.ApplicationTest;
 import com.now.config.fixtures.comment.CommentFixture;
+import com.now.config.fixtures.member.MemberFixture;
 import com.now.config.fixtures.post.InquiryFixture;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.comment.domain.Comment;
 import com.now.core.comment.domain.CommentRepository;
 import com.now.core.member.domain.Member;
 import com.now.core.member.domain.MemberRepository;
-import com.now.core.post.inquiry.domain.Inquiry;
-import com.now.core.post.inquiry.domain.repository.InquiryRepository;
 import com.now.core.post.common.exception.CannotDeletePostException;
 import com.now.core.post.common.exception.CannotUpdatePostException;
-import com.now.core.post.inquiry.exception.CannotViewInquiryException;
 import com.now.core.post.common.exception.InvalidPostException;
+import com.now.core.post.inquiry.domain.Inquiry;
+import com.now.core.post.inquiry.domain.constants.PrivacyUpdateOption;
+import com.now.core.post.inquiry.domain.repository.InquiryRepository;
+import com.now.core.post.inquiry.exception.CannotViewInquiryException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,21 +27,27 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import java.util.List;
 
 import static com.now.config.fixtures.member.MemberFixture.createMember;
+import static com.now.config.fixtures.post.InquiryFixture.createInquiry;
 import static com.now.config.fixtures.post.InquiryFixture.createSecretInquiryWithAnswer;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ApplicationTest
 @DisplayName("문의 서비스 객체는")
 class InquiryServiceTest {
 
-    @Autowired private InquiryService inquiryService;
-    @MockBean private InquiryRepository inquiryRepository;
-    @MockBean private MemberRepository memberRepository;
-    @MockBean private CommentRepository commentRepository;
-    @MockBean private PasswordSecurityManager passwordSecurityManager;
+    @Autowired
+    private InquiryService inquiryService;
+    @MockBean
+    private InquiryRepository inquiryRepository;
+    @MockBean
+    private MemberRepository memberRepository;
+    @MockBean
+    private CommentRepository commentRepository;
+    @MockBean
+    private PasswordSecurityManager passwordSecurityManager;
 
     @Test
     @DisplayName("문의 게시글을 찾을때 게시물 번호에 해당하는 게시물이 없다면 InvalidPostException 을 던진다")
@@ -147,7 +155,7 @@ class InquiryServiceTest {
             when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById("tester1")).thenReturn(member);
 
-            inquiryService.hasUpdateAccess(postIdx, "tester1");
+            inquiryService.hasUpdateAccess(inquiry);
         }
 
         @Test
@@ -162,7 +170,7 @@ class InquiryServiceTest {
 
             assertThatExceptionOfType(CannotUpdatePostException.class)
                     .isThrownBy(() -> {
-                        inquiryService.hasUpdateAccess(postIdx, "tester2");
+                        inquiryService.hasUpdateAccess(inquiry);
                     })
                     .withMessage(ErrorType.CAN_NOT_UPDATE_OTHER_MEMBER_POST.getMessage());
         }
@@ -238,6 +246,176 @@ class InquiryServiceTest {
                         inquiryService.hasDeleteAccess(postIdx, "tester1");
                     })
                     .withMessage(ErrorType.CAN_NOT_DELETE_POST_WITH_MANAGER_ANSWER.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("기존 게시글이 공개글일 때")
+    class Exist_Public {
+
+        @Test
+        @DisplayName("수정 옵션을 TO_PUBLIC을 전달받았다면, 공개글로 변경한다")
+        void updateInquiry_TO_PUBLIC() {
+            Long postIdx = 1L;
+            Long memberIdx = 1L;
+            String memberId = MemberFixture.MEMBER1_ID;
+            Member member = createMember(memberIdx, memberId);
+
+            Inquiry existInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "기존 제목", "기존 내용", false, null);
+            Inquiry updatedInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "수정된 제목", "수정된 내용", false, null);
+
+            when(memberRepository.findById(anyString())).thenReturn(member);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
+
+            inquiryService.updateInquiry(updatedInquiry, PrivacyUpdateOption.TO_PUBLIC);
+
+            verify(inquiryRepository, times(1)).updatePost(updatedInquiry);
+            verify(inquiryRepository, times(1)).updateInquiryNonSecretSetting(postIdx);
+        }
+
+        @Test
+        @DisplayName("수정 옵션을 TO_PRIVATE을 전달받았다면, 비공개글로 변경한다")
+        void updateInquiry_TO_PRIVATE() {
+            Long postIdx = 1L;
+            Long memberIdx = 1L;
+            String memberId = MemberFixture.MEMBER1_ID;
+            Member member = createMember(memberIdx, memberId);
+
+            String newPassword = "tofhqrp132!";
+            String encodePassword = "endcode_tofhqrp132!";
+            Inquiry existInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "기존 제목", "기존 내용", false, null);
+            Inquiry updatedInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "수정된 제목", "수정된 내용", true, newPassword);
+
+
+            when(memberRepository.findById(anyString())).thenReturn(member);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
+            when(passwordSecurityManager.encodeWithSalt(newPassword)).thenReturn(encodePassword);
+
+            inquiryService.updateInquiry(updatedInquiry, PrivacyUpdateOption.TO_PRIVATE);
+
+            verify(inquiryRepository, times(1)).updatePost(updatedInquiry);
+            verify(inquiryRepository, times(1)).updateInquiry(updatedInquiry);
+        }
+
+        @Test
+        @DisplayName("수정 옵션을 CHANGE_PASSWORD을 전달받았다면, CannotUpdatePostException 을 던진다")
+        void updateInquiry_CHANGE_PASSWORD() {
+            Long postIdx = 1L;
+            Long memberIdx = 1L;
+            String memberId = MemberFixture.MEMBER1_ID;
+            Member member = createMember(memberIdx, memberId);
+            Inquiry existInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "기존 제목", "기존 내용", false, null);
+            Inquiry updatedInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "수정된 제목", "수정된 내용", true, "qusrud132!");
+
+            when(memberRepository.findById(anyString())).thenReturn(member);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
+
+            assertThatExceptionOfType(CannotUpdatePostException.class)
+                    .isThrownBy(() -> {
+                        inquiryService.updateInquiry(updatedInquiry, PrivacyUpdateOption.CHANGE_PASSWORD);
+                    })
+                    .withMessage(ErrorType.INVALID_SECRET.getMessage());
+        }
+
+        @Test
+        @DisplayName("수정 옵션을 KEEP_PASSWORD을 전달받았다면, CannotUpdatePostException 을 던진다")
+        void updateInquiry_KEEP_PASSWORD() {
+            Long postIdx = 1L;
+            Long memberIdx = 1L;
+            String memberId = MemberFixture.MEMBER1_ID;
+            Member member = createMember(memberIdx, memberId);
+            Inquiry existInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "기존 제목", "기존 내용", false, null);
+            Inquiry updatedInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "수정된 제목", "수정된 내용", true, "qusrud132!");
+
+            when(memberRepository.findById(anyString())).thenReturn(member);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
+
+            assertThatExceptionOfType(CannotUpdatePostException.class)
+                    .isThrownBy(() -> {
+                        inquiryService.updateInquiry(updatedInquiry, PrivacyUpdateOption.KEEP_PASSWORD);
+                    })
+                    .withMessage(ErrorType.INVALID_SECRET.getMessage());
+        }
+    }
+
+    @Nested
+    @DisplayName("기존 게시글이 비공개글일 때")
+    class Exist_Private {
+
+        @Test
+        @DisplayName("수정 옵션을 TO_PUBLIC을 전달받았다면, 공개글로 변경한다")
+        void updateInquiry_TO_PUBLIC() {
+            Long postIdx = 1L;
+            Long memberIdx = 1L;
+            String memberId = MemberFixture.MEMBER1_ID;
+            Member member = createMember(memberIdx, memberId);
+
+            Inquiry existInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "기존 제목", "기존 내용", true, "rlwhs132!");
+            Inquiry updatedInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "수정된 제목", "수정된 내용", false, null);
+
+            when(memberRepository.findById(anyString())).thenReturn(member);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
+
+            inquiryService.updateInquiry(updatedInquiry, PrivacyUpdateOption.TO_PUBLIC);
+
+            verify(inquiryRepository, times(1)).updatePost(updatedInquiry);
+            verify(inquiryRepository, times(1)).updateInquiryNonSecretSetting(postIdx);
+        }
+
+        @Test
+        @DisplayName("수정 옵션을 CHANGE_PASSWORD을 전달받았다면, 게시글을 수정한다")
+        void updateInquiry_CHANGE_PASSWORD() {
+            Long postIdx = 1L;
+            Long memberIdx = 1L;
+            String memberId = MemberFixture.MEMBER1_ID;
+            Member member = createMember(memberIdx, memberId);
+
+            String updatePassword = "tofhqrp132!";
+            String encodePassword = "endcode_tofhqrp132!";
+            Inquiry existInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "기존 제목", "기존 내용", true, "rlwhs132!");
+            Inquiry updatedInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "수정된 제목", "수정된 내용", true, updatePassword);
+
+            when(memberRepository.findById(anyString())).thenReturn(member);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
+            when(passwordSecurityManager.encodeWithSalt(updatePassword)).thenReturn(encodePassword);
+
+            inquiryService.updateInquiry(updatedInquiry, PrivacyUpdateOption.CHANGE_PASSWORD);
+
+            verify(inquiryRepository, times(1)).updatePost(updatedInquiry);
+            verify(inquiryRepository, times(1)).updateInquiry(updatedInquiry);
+        }
+
+        @Test
+        @DisplayName("수정 옵션을 KEEP_PASSWORD을 전달받았다면, 게시글을 수정한다")
+        void updateInquiry_KEEP_PASSWORD() {
+            Long postIdx = 1L;
+            Long memberIdx = 1L;
+            String memberId = MemberFixture.MEMBER1_ID;
+            Member member = createMember(memberIdx, memberId);
+            Inquiry existInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "기존 제목", "기존 내용", true, "rlwhs132!");
+            Inquiry updatedInquiry = createInquiry(postIdx, memberIdx, memberId, Category.SERVICE,
+                    "수정된 제목", "수정된 내용", true, "qusrud132!");
+
+            when(memberRepository.findById(anyString())).thenReturn(member);
+            when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
+
+            inquiryService.updateInquiry(updatedInquiry, PrivacyUpdateOption.KEEP_PASSWORD);
+
+            verify(inquiryRepository, times(1)).updatePost(updatedInquiry);
+            verify(inquiryRepository, never()).updateInquiry(any());
         }
     }
 }

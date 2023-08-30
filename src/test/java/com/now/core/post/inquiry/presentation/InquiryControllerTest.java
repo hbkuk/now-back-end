@@ -6,11 +6,15 @@ import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.common.presentation.dto.Condition;
+import com.now.core.post.inquiry.domain.Inquiry;
+import com.now.core.post.inquiry.domain.constants.PrivacyUpdateOption;
 import com.now.core.post.inquiry.presentation.dto.InquiriesResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -207,21 +211,23 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         )));
     }
 
-    // password 필드에 @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) 로 인한 테스트 실패
     @Test
     @DisplayName("문의 게시글 등록")
     void registerInquiry() throws Exception {
         String memberId = "member1";
         String accessToken = "Bearer accessToken";
-
+        Inquiry inquiry = createInquiryForSave().updatePostIdx(1L);
         given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
+        MockMultipartFile inquiryPart = new MockMultipartFile("inquiry", "",
+                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(inquiry));
+
         ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.post("/api/inquiries")
+                mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/inquiries")
+                                .file(inquiryPart)
                                 .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createInquiryForSave().updatePostIdx(1L))))
+                                .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
 
@@ -230,7 +236,10 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         customRequestHeaderCookies(
                                 cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
-                        requestFields(
+                        requestParts(
+                                partWithName("inquiry").description("문의 게시글 정보")
+                        ),
+                        requestPartFields("inquiry",
                                 fieldWithPath("postIdx").ignored(),
                                 fieldWithPath("postGroup").ignored(),
                                 fieldWithPath("category").description("카테고리"),
@@ -252,15 +261,34 @@ class InquiryControllerTest extends RestDocsTestSupport {
         long postIdx = 1L;
         String memberId = "member1";
         String accessToken = "Bearer accessToken";
-
         given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
         given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
+        Inquiry updatedInquiry = Inquiry.builder()
+                .category(Category.SERVICE)
+                .title("수정된 제목")
+                .content("수정된 내용")
+                .secret(true)
+                .password("qusrud132!")
+                .build();
+
+        MockMultipartFile inquiryPart = new MockMultipartFile("inquiry", "",
+                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(updatedInquiry));
+
+        MockMultipartFile updateOptionPart = new MockMultipartFile("privacyUpdateOption", "",
+                MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(PrivacyUpdateOption.CHANGE_PASSWORD));
+
         ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.put("/api/inquiries/{postIdx}", postIdx)
+                mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/inquiries/{postIdx}", postIdx)
+                                .file(inquiryPart)
+                                .file(updateOptionPart)
                                 .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(createInquiryForSave().updatePostIdx(postIdx))))
+                                .content(objectMapper.writeValueAsString(createInquiryForSave().updatePostIdx(postIdx)))
+                                .with(request -> {
+                                    request.setMethod(String.valueOf(HttpMethod.PUT)); // PUT 메서드로 변경
+                                    return request;
+                                }))
                         .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
 
@@ -269,15 +297,17 @@ class InquiryControllerTest extends RestDocsTestSupport {
                         customRequestHeaderCookies(
                                 cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
-                        requestFields(
-                                fieldWithPath("postIdx").description("게시글 번호"),
+                        requestParts(
+                                partWithName("inquiry").description("문의 게시글 정보"),
+                                partWithName("privacyUpdateOption").description("문의 게시글 정보")
+                        ),
+                        requestPartFields("inquiry",
                                 fieldWithPath("postGroup").ignored(),
                                 fieldWithPath("category").description("카테고리"),
                                 fieldWithPath("title").description("제목").attributes(field("constraints", "길이 100 이하")),
                                 fieldWithPath("content").description("내용").attributes(field("constraints", "길이 2000 이하")),
                                 fieldWithPath("secret").description("비밀글 설정 여부"),
-                                fieldWithPath("password").type(STRING).description("비밀글 설정시 비밀번호").optional(),
-                                fieldWithPath("inquiryStatus").type(STRING).ignored()
+                                fieldWithPath("password").type(STRING).description("비밀글 설정시 비밀번호").optional()
                         ),
                         responseHeaders(
                                 headerWithName(HttpHeaders.LOCATION).description("생성된 위치 URI")
