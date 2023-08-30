@@ -87,7 +87,7 @@ public class InquiryController {
      */
     @PostMapping("/api/inquiries")
     public ResponseEntity<Void> registerInquiry(@AuthenticationPrincipal String memberId,
-                                                @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry inquiry) {
+                                                @RequestPart(name = "inquiry") @Validated({PostValidationGroup.saveInquiry.class}) Inquiry inquiry) {
         inquiryIntegratedService.registerInquiry(inquiry.updateMemberId(memberId));
         return ResponseEntity.created(URI.create("/api/inquiries/" + inquiry.getPostIdx())).build();
     }
@@ -102,7 +102,7 @@ public class InquiryController {
     @PutMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Void> updateInquiry(@PathVariable("postIdx") Long postIdx,
                                               @AuthenticationPrincipal String memberId,
-                                              @RequestBody @Validated({PostValidationGroup.saveInquiry.class}) Inquiry updateInquiry) {
+                                              @RequestPart(name = "inquiry") @Validated({PostValidationGroup.saveInquiry.class}) Inquiry updateInquiry) {
         inquiryIntegratedService.updateInquiry(updateInquiry.updateMemberId(memberId).updatePostIdx(postIdx));
         return ResponseEntity.created(URI.create("/api/inquiries/" + updateInquiry.getPostIdx())).build();
     }

@@ -37,7 +37,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        if (isGetMethod(request.getMethod())) {
+        if (shouldSkipAuthentication(request.getMethod())) {
             return true;
         }
 
@@ -86,6 +86,16 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
     }
 
     /**
+     * 인증을 Skip 가능하다면 true 반환, 그렇지 않다면 false 반환(GET 및 OPTIONS 요청인 경우 true)
+     *
+     * @param httpMethod HTTP 요청 메서드
+     * @return 인증을 Skip 가능하다면 true 반환, 그렇지 않다면 false 반환(GET 및 OPTIONS 요청인 경우 true)
+     */
+    private boolean shouldSkipAuthentication(String httpMethod) {
+        return isGetMethod(httpMethod) || isOptionMethod(httpMethod);
+    }
+
+    /**
      * HTTP 요청 메서드가 GET인지 확인
      *
      * @param httpMethod 확인할 HTTP 요청 메서드
@@ -93,6 +103,16 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
      */
     private boolean isGetMethod(String httpMethod) {
         return HttpMethod.valueOf(httpMethod) == HttpMethod.GET;
+    }
+
+    /**
+     * HTTP 요청 메서드가 OPTIONS인지 확인
+     *
+     * @param httpMethod 확인할 HTTP 요청 메서드
+     * @return HTTP 요청 메서드가 OPTIONS인 경우 true, 그렇지 않은 경우 false
+     */
+    private boolean isOptionMethod(String httpMethod) {
+        return HttpMethod.valueOf(httpMethod) == HttpMethod.OPTIONS;
     }
 }
 

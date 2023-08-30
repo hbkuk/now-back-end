@@ -30,7 +30,7 @@ public class ManagerNoticeController {
      */
     @PostMapping("/api/manager/notices")
     public ResponseEntity<Void> registerNotice(@RequestAttribute("id") String managerId,
-                                               @RequestBody @Validated(PostValidationGroup.saveNotice.class) Notice notice) {
+                                               @RequestPart(name = "notice") @Validated(PostValidationGroup.saveNotice.class) Notice notice) {
         managerNoticeService.registerNotice(notice.updateManagerId(managerId));
         return ResponseEntity.created(URI.create("/api/notice/" + notice.getPostIdx())).build();
     }
@@ -59,7 +59,7 @@ public class ManagerNoticeController {
     @PutMapping("/api/manager/notices/{postIdx}")
     public ResponseEntity<Void> updateNotice(@PathVariable("postIdx") Long postIdx,
                                              @RequestAttribute("id") String managerId,
-                                             @RequestBody @Validated(PostValidationGroup.saveNotice.class) Notice updatedNotice) {
+                                             @RequestPart(name = "notice") @Validated(PostValidationGroup.saveNotice.class) Notice updatedNotice) {
         managerNoticeService.updateNotice(updatedNotice.updatePostIdx(postIdx).updateManagerId(managerId));
         return ResponseEntity.created(URI.create("/api/notice/" + updatedNotice.getPostIdx())).build();
     }
