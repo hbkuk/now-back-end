@@ -101,24 +101,35 @@ public class InquiryService {
     /**
      * 문의 게시글 수정
      *
-     * @param updatedInquiry       수정할 문의 게시글 정보
+     * @param updatedInquiry      수정할 문의 게시글 정보
      * @param privacyUpdateOption 개인 정보 옵션
      */
-    public void updateInquiry(Inquiry updatedInquiry, PrivacyUpdateOption privacyUpdateOption) {
+    public void updateAndProcessInquiry(Inquiry updatedInquiry, PrivacyUpdateOption privacyUpdateOption) {
         Member member = getMember(updatedInquiry.getMemberId());
         if (!PostGroup.isCategoryInGroup(PostGroup.INQUIRY, updatedInquiry.getCategory())) {
             throw new CannotUpdatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
+
         Inquiry existInquiry = getInquiry(updatedInquiry.getPostIdx());
         if (!privacyUpdateOption.canUpdate(existInquiry.getSecret())) {
             throw new CannotUpdatePostException(ErrorType.INVALID_SECRET);
         }
 
+        processUpdatedInquiry(updatedInquiry.updateMemberIdx(member.getMemberIdx()), privacyUpdateOption);
+    }
+
+    /**
+     * 수정된 문의 게시글 처리
+     *
+     * @param updatedInquiry      수정된 문의 게시글 정보
+     * @param privacyUpdateOption 개인 정보 옵션
+     */
+    private void processUpdatedInquiry(Inquiry updatedInquiry, PrivacyUpdateOption privacyUpdateOption) {
         if (!updatedInquiry.getSecret()) {
-            processPublicInquiryUpdate(updatedInquiry.updateMemberIdx(member.getMemberIdx()), privacyUpdateOption);
+            processPublicInquiryUpdate(updatedInquiry, privacyUpdateOption);
         }
         if (updatedInquiry.getSecret()) {
-            processPrivateInquiryUpdate(updatedInquiry.updateMemberIdx(member.getMemberIdx())
+            processPrivateInquiryUpdate(updatedInquiry
                     .updatePassword(passwordSecurityManager.encodeWithSalt(updatedInquiry.getPassword())), privacyUpdateOption);
         }
     }
@@ -186,32 +197,49 @@ public class InquiryService {
         return inquiry;
     }
 
+    
     /**
-     * 비밀 문의 게시글 업데이트
+     * 비밀글로 변경 혹은 비밀번호를 변경할 때 처리
      *
-     * @param updatedInquiry       수정할 문의 게시글 정보
-     * @param privacyUpdateOption 개인 정보 업데이트 옵션
-     * @throws CannotUpdatePostException 비밀글 업데이트에 실패한 경우 발생
+     * @param updatedInquiry       수정된 문의 게시글 정보
+     * @param privacyUpdateOption 개인 정보 옵션
      */
     private void processPrivateInquiryUpdate(Inquiry updatedInquiry, PrivacyUpdateOption privacyUpdateOption) {
         if (PrivacyUpdateOption.TO_PRIVATE == privacyUpdateOption) {
-            if (updatedInquiry.isSecretInquiryWithoutPassword()) {
-                throw new CannotUpdatePostException(ErrorType.INVALID_SECRET);
-            }
-            inquiryRepository.updatePost(updatedInquiry.updateMemberIdx(updatedInquiry.getMemberIdx()));
-            inquiryRepository.updateInquiry(updatedInquiry);
+            processPrivateOrPasswordChangeInquiryUpdate(updatedInquiry);
         }
         if (PrivacyUpdateOption.CHANGE_PASSWORD == privacyUpdateOption) {
-            if (updatedInquiry.isSecretInquiryWithoutPassword()) {
-                throw new CannotUpdatePostException(ErrorType.INVALID_SECRET);
-            }
-            inquiryRepository.updatePost(updatedInquiry.updateMemberIdx(updatedInquiry.getMemberIdx()));
-            inquiryRepository.updateInquiry(updatedInquiry);
+            processPrivateOrPasswordChangeInquiryUpdate(updatedInquiry);
         }
         if (PrivacyUpdateOption.KEEP_PASSWORD == privacyUpdateOption) {
-            inquiryRepository.updatePost(updatedInquiry.updateMemberIdx(updatedInquiry.getMemberIdx()));
+            processKeepPasswordInquiryUpdate(updatedInquiry);
         }
     }
+
+    
+    /**
+     * 비밀번호 유지 옵션일 때 처리
+     *
+     * @param updatedInquiry 수정된 문의 게시글 정보
+     */
+    private void processKeepPasswordInquiryUpdate(Inquiry updatedInquiry) {
+        inquiryRepository.updatePost(updatedInquiry.updateMemberIdx(updatedInquiry.getMemberIdx()));
+    }
+
+    
+    /**
+     * 비밀글로 변경하거나 비밀번호 변경 시 처리
+     *
+     * @param updatedInquiry 수정된 문의 게시글 정보
+     */
+    private void processPrivateOrPasswordChangeInquiryUpdate(Inquiry updatedInquiry) {
+        if (updatedInquiry.isSecretInquiryWithoutPassword()) {
+            throw new CannotUpdatePostException(ErrorType.INVALID_SECRET);
+        }
+        processKeepPasswordInquiryUpdate(updatedInquiry);
+        inquiryRepository.updateInquiry(updatedInquiry);
+    }
+
 
     /**
      * 공개 문의 게시글 업데이트
@@ -221,8 +249,7 @@ public class InquiryService {
      */
     private void processPublicInquiryUpdate(Inquiry updateInquiry, PrivacyUpdateOption privacyUpdateOption) {
         if (PrivacyUpdateOption.TO_PUBLIC == privacyUpdateOption) {
-            inquiryRepository.updatePost(updateInquiry.updateMemberIdx(updateInquiry.getMemberIdx()));
-            ;
+            processKeepPasswordInquiryUpdate(updateInquiry);
             inquiryRepository.updateInquiryNonSecretSetting(updateInquiry.getPostIdx());
         }
     }

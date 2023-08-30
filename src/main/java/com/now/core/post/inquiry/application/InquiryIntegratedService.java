@@ -111,7 +111,7 @@ public class InquiryIntegratedService {
     @CacheEvict(value = {POST_CACHE, INQUIRY_CACHE}, allEntries = true)
     public void updateInquiry(Inquiry updatedInquiry, PrivacyUpdateOption privacyUpdateOption) {
         inquiryService.hasUpdateAccess(updatedInquiry);
-        inquiryService.updateInquiry(updatedInquiry, privacyUpdateOption);
+        inquiryService.updateAndProcessInquiry(updatedInquiry, privacyUpdateOption);
     }
 
     /**

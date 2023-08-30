@@ -104,7 +104,7 @@ public class InquiryController {
     @PutMapping("/api/inquiries/{postIdx}")
     public ResponseEntity<Void> updateInquiry(@PathVariable("postIdx") Long postIdx,
                                               @AuthenticationPrincipal String memberId,
-                                              @RequestPart(name = "privacyUpdateOption", required = true) PrivacyUpdateOption privacyUpdateOption,
+                                              @RequestPart(name = "privacyUpdateOption") PrivacyUpdateOption privacyUpdateOption,
                                               @RequestPart(name = "inquiry") @Validated({PostValidationGroup.saveInquiry.class}) Inquiry updateInquiry) {
         inquiryIntegratedService.updateInquiry(updateInquiry.updateMemberId(memberId).updatePostIdx(postIdx), privacyUpdateOption);
         return ResponseEntity.created(URI.create("/api/inquiries/" + updateInquiry.getPostIdx())).build();
