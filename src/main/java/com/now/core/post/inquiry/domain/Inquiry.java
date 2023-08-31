@@ -13,6 +13,7 @@ import com.now.core.post.common.domain.constants.PostValidationGroup;
 import com.now.core.post.common.exception.CannotDeletePostException;
 import com.now.core.post.common.exception.CannotUpdatePostException;
 import com.now.core.post.inquiry.domain.constants.InquiryStatus;
+import com.now.core.post.inquiry.domain.constants.PrivacyUpdateOption;
 import com.now.core.post.inquiry.exception.CannotViewInquiryException;
 import lombok.*;
 
@@ -33,59 +34,40 @@ import java.util.List;
 public class Inquiry {
 
     private final PostGroup postGroup = PostGroup.INQUIRY;
-
-    private Long postIdx;
-
     private final Long inquiryIdx;
-
     @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.category.notnull}")
     private final Category category;
-
-    @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.title.notnull}" )
+    @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.title.notnull}")
     @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 100, message = "{post.title.size}")
     private final String title;
-
-    @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.content.notnull}" )
+    @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.content.notnull}")
     @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 1, max = 2000, message = "{post.content.size}")
     private final String content;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime regDate;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private final LocalDateTime modDate;
-
     private final Integer viewCount;
-
     private final Integer likeCount;
-
     private final Integer dislikeCount;
-
     @NotNull(groups = {PostValidationGroup.saveInquiry.class}, message = "{post.secret.notnull}")
     private final Boolean secret;
-
     @JsonIgnore
     private final String answerManagerIdx;
-
     @JsonIgnore
     private final String answerManagerId;
-
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final String answerManagerNickname;
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 4, max = 15, message = "{post.password.size}")
-    private String password;
-
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final String answerContent;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private final String answerRegDate;
-
     private final List<Comment> comments;
-
+    private Long postIdx;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Size(groups = {PostValidationGroup.saveInquiry.class}, min = 4, max = 15, message = "{post.password.size}")
+    private String password;
     private String memberNickname;
 
     @JsonIgnore
@@ -160,7 +142,7 @@ public class Inquiry {
             }
         }
 
-        if(inquiryStatus == InquiryStatus.COMPLETE) {
+        if (inquiryStatus == InquiryStatus.COMPLETE) {
             throw new CannotDeletePostException(ErrorType.CAN_NOT_DELETE_POST_WITH_MANAGER_ANSWER);
         }
 
@@ -195,7 +177,7 @@ public class Inquiry {
 
     /**
      * 비밀번호 필드를 수정 후 해당 객체 반환
-     * 
+     *
      * @param newPassword 수정할 비밀번호
      * @return 비밀번호 필드를 수정한 해당 객체
      */
@@ -205,13 +187,40 @@ public class Inquiry {
     }
 
     /**
-     * 비밀번호가 없는 비밀 문의글이라면 true 반환, 그렇지 않다면 false 반환
+     * 공개글 혹은 비밀글 설정이 제대로 되어있다면 true 반환, 그렇지 않다면 false 반환
      *
-     * @return 비밀번호가 없는 비밀 문의글이라면 true 반환, 그렇지 않다면 false 반환
+     * @return 설정이 제대로 되어있다면 true 반환, 그렇지 않다면 false 반환
      */
     @JsonIgnore
-    public boolean isSecretInquiryWithoutPassword() {
-        return this.getSecret() && this.getPassword() == null;
+    public boolean isPasswordRequiredForSecretInquiry() {
+        if (this.getSecret()) {
+            return this.getPassword() != null && !this.getPassword().isEmpty();
+        }
+        return this.getPassword() == null || this.getPassword().isEmpty();
+    }
+
+    /**
+     * 전달받은 privacy 정보를 기반으로 수정이 가능하다면 true 반환, 그렇지 않다면 false 반환
+     *
+     * @param privacyUpdateOption privacy 정보
+     * @return 수정이 가능하다면 true 반환, 그렇지 않다면 false 반환
+     */
+    public boolean canUpdateWithPrivacyOption(PrivacyUpdateOption privacyUpdateOption) {
+        boolean hasSecret = this.getSecret();
+
+        if (hasSecret) {
+            if (privacyUpdateOption == PrivacyUpdateOption.TO_PRIVATE || privacyUpdateOption == PrivacyUpdateOption.CHANGE_PASSWORD) {
+                return isPasswordRequiredForSecretInquiry();
+            }
+            if (privacyUpdateOption == PrivacyUpdateOption.KEEP_PASSWORD) {
+                return hasSecret;
+            }
+        }
+
+        if (privacyUpdateOption == PrivacyUpdateOption.TO_PUBLIC) {
+            return !hasSecret;
+        }
+        return false;
     }
 
     /**

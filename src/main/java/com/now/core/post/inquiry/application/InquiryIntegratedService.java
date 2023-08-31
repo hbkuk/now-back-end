@@ -97,7 +97,7 @@ public class InquiryIntegratedService {
      */
     @CacheEvict(value = {POST_CACHE, INQUIRY_CACHE}, allEntries = true)
     public void registerInquiry(Inquiry inquiry) {
-        if (inquiry.isSecretInquiryWithoutPassword()) {
+        if (!inquiry.isPasswordRequiredForSecretInquiry()) {
             throw new CannotCreatePostException(ErrorType.INVALID_SECRET);
         }
         inquiryService.registerInquiry(inquiry);

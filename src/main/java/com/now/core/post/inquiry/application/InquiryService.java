@@ -134,8 +134,8 @@ public class InquiryService {
     public void deleteInquiry(Long postIdx, String memberId) {
         Member member = getMember(memberId);
 
-        inquiryRepository.deletePost(postIdx);
         inquiryRepository.deleteInquiry(postIdx);
+        inquiryRepository.deletePost(postIdx);
     }
 
     /**
@@ -156,7 +156,7 @@ public class InquiryService {
             throw new CannotUpdatePostException(ErrorType.INVALID_SECRET);
         }
 
-        if (updatedInquiry.isSecretInquiryWithoutPassword()) {
+        if (!updatedInquiry.canUpdateWithPrivacyOption(privacyUpdateOption)) {
             throw new CannotCreatePostException(ErrorType.INVALID_SECRET);
         }
     }
