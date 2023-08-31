@@ -155,7 +155,7 @@ class InquiryServiceTest {
             when(inquiryRepository.findInquiry(postIdx)).thenReturn(inquiry);
             when(memberRepository.findById("tester1")).thenReturn(member);
 
-            inquiryService.hasUpdateAccess(inquiry);
+            inquiryService.verifyInquiryUpdatePermission(inquiry, PrivacyUpdateOption.KEEP_PASSWORD);
         }
 
         @Test
@@ -170,7 +170,7 @@ class InquiryServiceTest {
 
             assertThatExceptionOfType(CannotUpdatePostException.class)
                     .isThrownBy(() -> {
-                        inquiryService.hasUpdateAccess(inquiry);
+                        inquiryService.verifyInquiryUpdatePermission(inquiry, PrivacyUpdateOption.KEEP_PASSWORD);
                     })
                     .withMessage(ErrorType.CAN_NOT_UPDATE_OTHER_MEMBER_POST.getMessage());
         }
@@ -269,7 +269,8 @@ class InquiryServiceTest {
             when(memberRepository.findById(anyString())).thenReturn(member);
             when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
 
-            inquiryService.updateAndProcessInquiry(updatedInquiry, PrivacyUpdateOption.TO_PUBLIC);
+            inquiryService.verifyInquiryUpdatePermission(updatedInquiry, PrivacyUpdateOption.TO_PUBLIC);
+            inquiryService.updateAndHandleInquiry(updatedInquiry, PrivacyUpdateOption.TO_PUBLIC);
 
             verify(inquiryRepository, times(1)).updatePost(updatedInquiry);
             verify(inquiryRepository, times(1)).updateInquiryNonSecretSetting(postIdx);
@@ -295,7 +296,8 @@ class InquiryServiceTest {
             when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
             when(passwordSecurityManager.encodeWithSalt(newPassword)).thenReturn(encodePassword);
 
-            inquiryService.updateAndProcessInquiry(updatedInquiry, PrivacyUpdateOption.TO_PRIVATE);
+            inquiryService.verifyInquiryUpdatePermission(updatedInquiry, PrivacyUpdateOption.TO_PRIVATE);
+            inquiryService.updateAndHandleInquiry(updatedInquiry, PrivacyUpdateOption.TO_PRIVATE);
 
             verify(inquiryRepository, times(1)).updatePost(updatedInquiry);
             verify(inquiryRepository, times(1)).updateInquiry(updatedInquiry);
@@ -318,7 +320,8 @@ class InquiryServiceTest {
 
             assertThatExceptionOfType(CannotUpdatePostException.class)
                     .isThrownBy(() -> {
-                        inquiryService.updateAndProcessInquiry(updatedInquiry, PrivacyUpdateOption.CHANGE_PASSWORD);
+                        inquiryService.verifyInquiryUpdatePermission(updatedInquiry, PrivacyUpdateOption.CHANGE_PASSWORD);
+                        inquiryService.updateAndHandleInquiry(updatedInquiry, PrivacyUpdateOption.CHANGE_PASSWORD);
                     })
                     .withMessage(ErrorType.INVALID_SECRET.getMessage());
         }
@@ -340,7 +343,8 @@ class InquiryServiceTest {
 
             assertThatExceptionOfType(CannotUpdatePostException.class)
                     .isThrownBy(() -> {
-                        inquiryService.updateAndProcessInquiry(updatedInquiry, PrivacyUpdateOption.KEEP_PASSWORD);
+                        inquiryService.verifyInquiryUpdatePermission(updatedInquiry, PrivacyUpdateOption.KEEP_PASSWORD);
+                        inquiryService.updateAndHandleInquiry(updatedInquiry, PrivacyUpdateOption.KEEP_PASSWORD);
                     })
                     .withMessage(ErrorType.INVALID_SECRET.getMessage());
         }
@@ -366,7 +370,8 @@ class InquiryServiceTest {
             when(memberRepository.findById(anyString())).thenReturn(member);
             when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
 
-            inquiryService.updateAndProcessInquiry(updatedInquiry, PrivacyUpdateOption.TO_PUBLIC);
+            inquiryService.verifyInquiryUpdatePermission(updatedInquiry, PrivacyUpdateOption.TO_PUBLIC);
+            inquiryService.updateAndHandleInquiry(updatedInquiry, PrivacyUpdateOption.TO_PUBLIC);
 
             verify(inquiryRepository, times(1)).updatePost(updatedInquiry);
             verify(inquiryRepository, times(1)).updateInquiryNonSecretSetting(postIdx);
@@ -391,7 +396,8 @@ class InquiryServiceTest {
             when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
             when(passwordSecurityManager.encodeWithSalt(updatePassword)).thenReturn(encodePassword);
 
-            inquiryService.updateAndProcessInquiry(updatedInquiry, PrivacyUpdateOption.CHANGE_PASSWORD);
+            inquiryService.verifyInquiryUpdatePermission(updatedInquiry, PrivacyUpdateOption.CHANGE_PASSWORD);
+            inquiryService.updateAndHandleInquiry(updatedInquiry, PrivacyUpdateOption.CHANGE_PASSWORD);
 
             verify(inquiryRepository, times(1)).updatePost(updatedInquiry);
             verify(inquiryRepository, times(1)).updateInquiry(updatedInquiry);
@@ -412,7 +418,8 @@ class InquiryServiceTest {
             when(memberRepository.findById(anyString())).thenReturn(member);
             when(inquiryRepository.findInquiry(postIdx)).thenReturn(existInquiry);
 
-            inquiryService.updateAndProcessInquiry(updatedInquiry, PrivacyUpdateOption.KEEP_PASSWORD);
+            inquiryService.verifyInquiryUpdatePermission(updatedInquiry, PrivacyUpdateOption.KEEP_PASSWORD);
+            inquiryService.updateAndHandleInquiry(updatedInquiry, PrivacyUpdateOption.KEEP_PASSWORD);
 
             verify(inquiryRepository, times(1)).updatePost(updatedInquiry);
             verify(inquiryRepository, never()).updateInquiry(any());
