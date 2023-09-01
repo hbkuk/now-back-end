@@ -1,5 +1,6 @@
-package com.now.core.member.domain;
+package com.now.core.member.domain.mapper;
 
+import com.now.core.member.domain.Member;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

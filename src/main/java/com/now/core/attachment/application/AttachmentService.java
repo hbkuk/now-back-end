@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AttachmentService {
 
+    private final StorageService storageService;
     private final AttachmentRepository attachmentRepository;
 
     /**
@@ -304,7 +305,7 @@ public class AttachmentService {
      * @param attachmentIdx 첨부파일 번호
      */
     public void deleteAttachment(Long attachmentIdx) {
-        AttachmentUtils.deleteUploadedFile(getAttachment(attachmentIdx).getSavedAttachmentName());
+        storageService.delete(getAttachment(attachmentIdx).getSavedAttachmentName());
         attachmentRepository.deleteAttachmentIdx(attachmentIdx);
     }
 
@@ -378,10 +379,6 @@ public class AttachmentService {
      * @return 변환된 {@link Attachment} 객체
      */
     private Attachment convertToAttachment(UploadedAttachment uploadedAttachment, AttachmentType uploadType) {
-        if (uploadedAttachment == null) {
-            return null;
-        }
-
         try {
             return Attachment.builder()
                     .savedAttachmentName(uploadedAttachment.getSystemName())
@@ -391,7 +388,7 @@ public class AttachmentService {
                     .build();
         } catch (InvalidAttachmentException e) {
             log.error(e.getMessage(), e);
-            AttachmentUtils.deleteUploadedFile(uploadedAttachment.getSystemName());
+            storageService.delete(uploadedAttachment.getSystemName());
             return null;
         }
     }
@@ -424,7 +421,7 @@ public class AttachmentService {
     private List<Attachment> uploadedAttachments(MultipartFile[] multipartFiles, AttachmentType uploadType) {
         return Arrays.stream(multipartFiles)
                 .limit(uploadType.getMaxUploadCount())
-                .map(multipartFile -> convertToAttachment(AttachmentUtils.processServerUploadFile(multipartFile), uploadType))
+                .map(multipartFile -> convertToAttachment(storageService.upload(multipartFile), uploadType))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
@@ -437,7 +434,7 @@ public class AttachmentService {
      * @return 업로드된 첨부파일 목록
      */
     private Attachment uploadedAttachment(MultipartFile multipartFiles, AttachmentType uploadType) {
-        return convertToAttachment(AttachmentUtils.processServerUploadFile(multipartFiles), uploadType);
+        return convertToAttachment(storageService.upload(multipartFiles), uploadType);
     }
 }
 

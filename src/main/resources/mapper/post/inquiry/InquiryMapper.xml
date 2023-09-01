@@ -152,7 +152,7 @@
         <result property="password" column="i_password"/>
         <result property="inquiryStatus" column="i_inquiry_status" javaType="com.now.core.post.inquiry.domain.constants.InquiryStatus"/>
         <!-- 공통 컬렉션 매핑 -->
-        <collection property="comments" resultMap="com.now.core.comment.domain.CommentMapper.commentResultMap" />
+        <collection property="comments" resultMap="com.now.core.comment.domain.mapper.CommentMapper.commentResultMap" />
     </resultMap>
 
 </mapper>

@@ -125,7 +125,7 @@
         <result property="pinned" column="p_pinned"/>
         <!-- 공통 컬렉션 매핑 -->
         <collection property="comments"
-                    resultMap="com.now.core.comment.domain.CommentMapper.commentResultMap"/>
+                    resultMap="com.now.core.comment.domain.mapper.CommentMapper.commentResultMap"/>
     </resultMap>
 
 

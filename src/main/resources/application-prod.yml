@@ -22,6 +22,14 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
 
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          location: classpath:key/${NOW_GCS_KEY}.json
+        project-id: ${NOW_GCS_PROJECT_ID}
+        bucket-name: ${NOW_GCS_BUCKET_NAME}
+
 logging:
   level:
     org.springframework.web: debug

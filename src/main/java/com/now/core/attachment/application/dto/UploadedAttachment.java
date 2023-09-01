@@ -14,5 +14,6 @@ public class UploadedAttachment {
 
     private final String systemName;
     private final String originalAttachmentName;
+    private final String extension;
     private final int attachmentSize;
 }

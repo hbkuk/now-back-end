@@ -1,5 +1,6 @@
 package com.now.core.admin.manager.domain;
 
+import com.now.core.admin.manager.domain.mapper.ManagerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

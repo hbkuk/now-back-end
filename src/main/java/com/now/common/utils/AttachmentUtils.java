@@ -50,23 +50,12 @@ public class AttachmentUtils {
     }
 
     /**
-     * 서버에 업로드된 첨부파일을 삭제
-     *
-     * @param fileNameToDelete 삭제할 첨부파일 이름
-     * @return 첨부파일 삭제 성공 여부
-     */
-    public static boolean deleteUploadedFile(String fileNameToDelete) {
-        log.debug("삭제할 File : {}{}{} ", UPLOAD_PATH,"\\",fileNameToDelete);
-        return createFile(fileNameToDelete).delete();
-    }
-
-    /**
      * 서버 디렉토리에서 주어진 첨부파일명에 해당하는 첨부파일 객체를 생성하여 반환
      *
      * @param fileName 첨부파일 이름
      * @return 첨부파일 객체
      */
-    private static File createFile(String fileName) {
+    public static File createFile(String fileName) {
         return new File(UPLOAD_PATH, fileName);
     }
 
@@ -105,17 +94,11 @@ public class AttachmentUtils {
         return String.format("%s.%s", UUID.randomUUID(), AttachmentUtils.extractFileExtension(fileName));
     }
 
-    /**
-     * 저장된 첨부파일을 바이트 배열로 변환하여 반환
-     *
-     * @param savedFileName 저장된 첨부파일 이름
-     * @return 첨부파일의 바이트 배열
-     */
-    public static byte[] convertByteArray(String savedFileName) {
+    public static byte[] convertByteArray(InputStream stream) {
         ByteArrayOutputStream byteArrayOutputStream = null;
         InputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(AttachmentUtils.createFile(savedFileName));
+            inputStream = stream;
 
             byte[] buffer = new byte[1024];
             int bytesRead;
@@ -149,59 +132,17 @@ public class AttachmentUtils {
     }
 
     /**
-     * 서버에 첨부파일을 업로드하고 {@link UploadedAttachment} 객체를 반환
-     *
-     * @param multipartFile 업로드할 {@link MultipartFile} 객체
-     * @return 업로드된 {@link UploadedAttachment} 객체 또는 null (업로드할 첨부파일이 없는 경우)
-     * @throws FileInsertionException 첨부파일 업로드 중에 에러가 발생한 경우
-     */
-    public static UploadedAttachment processServerUploadFile(MultipartFile multipartFile) {
-        if (multipartFile.isEmpty()) {
-            return null;
-        }
-
-        UploadedAttachment uploadedFile = createUploadedFileFromMultipartFile(multipartFile);
-
-        try {
-            multipartFile.transferTo(AttachmentUtils.createAbsolutePath(uploadedFile.getSystemName()));
-            return uploadedFile;
-        } catch (IOException e) {
-            log.error(e.getMessage(), e);
-            AttachmentUtils.deleteUploadedFile(uploadedFile.getSystemName());
-            throw new FileInsertionException("첨부파일 업로드 중 에러가 발생했습니다.");
-        }
-    }
-
-    /**
      * {@link MultipartFile} 객체를 기반으로 {@link UploadedAttachment} 객체를 생성
      *
      * @param multipartFile 업로드할 {@link MultipartFile} 객체
      * @return 생성된 {@link UploadedAttachment} 객체
      */
-    private static UploadedAttachment createUploadedFileFromMultipartFile(MultipartFile multipartFile) {
+    public static UploadedAttachment createUploadedFileFromMultipartFile(MultipartFile multipartFile) {
         return UploadedAttachment.builder()
                 .originalAttachmentName(multipartFile.getOriginalFilename())
                 .systemName(AttachmentUtils.generateSystemName(multipartFile.getOriginalFilename()))
+                .extension(AttachmentUtils.extractFileExtension(multipartFile.getOriginalFilename()))
                 .attachmentSize((int) multipartFile.getSize())
                 .build();
-    }
-
-    /**
-     * 지정된 MultipartFile을 MultipartFile 배열의 맨 앞으로 옮기는 유틸리티 메서드
-     *
-     * @param multipartFile    맨 앞으로 옮길 MultipartFile
-     * @param multipartFiles   대상 MultipartFile 배열
-     * @return 맨 앞으로 MultipartFile을 옮긴 후의 업데이트된 MultipartFile 배열
-     */
-    public static MultipartFile[] moveFileToFront(MultipartFile multipartFile, MultipartFile[] multipartFiles) {
-        if (multipartFile != null) {
-            MultipartFile[] updatedMultipartFiles = new MultipartFile[multipartFiles != null ? multipartFiles.length + 1 : 1];
-            updatedMultipartFiles[0] = multipartFile;
-            if (multipartFiles != null) {
-                System.arraycopy(multipartFiles, 0, updatedMultipartFiles, 1, multipartFiles.length);
-            }
-            multipartFiles = updatedMultipartFiles;
-        }
-        return multipartFiles;
     }
 }

@@ -87,8 +87,8 @@
         <result property="likeCount" column="p_like_count"/>
         <result property="dislikeCount" column="p_dislike_count"/>
         <!-- 공통 컬렉션 매핑 -->
-        <collection property="attachments" resultMap="com.now.core.attachment.domain.AttachmentMapper.attachmentResponseResultMap" />
-        <collection property="comments" resultMap="com.now.core.comment.domain.CommentMapper.commentResultMap" />
+        <collection property="attachments" resultMap="com.now.core.attachment.domain.mapper.AttachmentMapper.attachmentResponseResultMap" />
+        <collection property="comments" resultMap="com.now.core.comment.domain.mapper.CommentMapper.commentResultMap" />
     </resultMap>
 
 

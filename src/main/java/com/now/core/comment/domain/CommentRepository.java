@@ -1,5 +1,6 @@
 package com.now.core.comment.domain;
 
+import com.now.core.comment.domain.mapper.CommentMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

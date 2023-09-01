@@ -1,6 +1,7 @@
-package com.now.core.attachment.domain;
+package com.now.core.attachment.domain.mapper;
 
 import com.now.core.attachment.application.dto.ThumbNail;
+import com.now.core.attachment.domain.Attachment;
 import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import org.apache.ibatis.annotations.Mapper;
 

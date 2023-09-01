@@ -5,6 +5,7 @@ import com.now.common.mapper.EnumMapperFactory;
 import com.now.core.admin.post.notice.application.ManagerNoticeService;
 import com.now.core.admin.post.notice.presentation.ManagerNoticeController;
 import com.now.core.attachment.application.AttachmentService;
+import com.now.core.attachment.application.StorageService;
 import com.now.core.attachment.presentation.AttachmentController;
 import com.now.core.authentication.application.AuthenticationService;
 import com.now.core.authentication.application.JwtTokenService;
@@ -95,6 +96,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected InquiryService inquiryService;
+
+    @MockBean
+    protected StorageService storageService;
 
     @MockBean
     protected AttachmentService attachmentService;

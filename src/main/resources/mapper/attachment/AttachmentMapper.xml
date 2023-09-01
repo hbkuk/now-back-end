@@ -3,7 +3,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.now.core.attachment.domain.AttachmentMapper">
+<mapper namespace="com.now.core.attachment.domain.mapper.AttachmentMapper">
 
     <!-- 게시물 번호에 해당하는 Thumbnail을 가져오는 쿼리 -->
     <select id="findThumbnailByPostIdx" parameterType="Long">
@@ -14,21 +14,33 @@
 
     <!-- 게시물 번호에 해당하는 Attachment 목록을 가져오는 쿼리 -->
     <select id="findAllIndexesByPostIdx" parameterType="Long">
-        SELECT attachment_idx
-        FROM tb_attachment
-        WHERE post_idx = #{postIdx}
+        SELECT f.attachment_idx AS f_attachment_idx
+        FROM tb_attachment f
+        WHERE f.post_idx = #{postIdx}
     </select>
 
     <select id="findAttachmentResponseByAttachmentIdx" parameterType="Long" resultMap="attachmentResponseResultMap">
-        SELECT *
-        FROM tb_attachment
-        WHERE attachment_idx = #{attachmentIdx}
+        SELECT
+            f.attachment_idx AS f_attachment_idx,
+            f.original_attachment_name AS f_original_attachment_name,
+            f.saved_attachment_name AS f_saved_attachment_name,
+            f.attachment_extension AS f_attachment_extension,
+            f.attachment_size AS f_attachment_size,
+            f.post_idx AS f_post_idx
+        FROM tb_attachment f
+        WHERE f.attachment_idx = #{attachmentIdx}
     </select>
 
     <select id="findAttachmentByAttachmentIdx" parameterType="Long" resultMap="attachmentResultMap">
-        SELECT *
-        FROM tb_attachment
-        WHERE attachment_idx = #{attachmentIdx}
+        SELECT
+            f.attachment_idx AS f_attachment_idx,
+            f.original_attachment_name AS f_original_attachment_name,
+            f.saved_attachment_name AS f_saved_attachment_name,
+            f.attachment_extension AS f_attachment_extension,
+            f.attachment_size AS f_attachment_size,
+            f.post_idx AS f_post_idx
+        FROM tb_attachment f
+        WHERE f.attachment_idx = #{attachmentIdx}
     </select>
 
     <!-- Attachment 저장 쿼리 -->
@@ -82,22 +94,22 @@
     </delete>
 
     <resultMap id="attachmentResponseResultMap" type="AttachmentResponse">
-        <id property="attachmentIdx" column="attachment_idx"/>
-        <result property="originalAttachmentName" column="original_attachment_name"/>
-        <result property="savedAttachmentName" column="saved_attachment_name"/>
-        <result property="attachmentExtension" column="attachment_extension"/>
-        <result property="attachmentSize" column="attachment_size"/>
-        <result property="postIdx" column="post_idx"/>
+        <id property="attachmentIdx" column="f_attachment_idx"/>
+        <result property="originalAttachmentName" column="f_original_attachment_name"/>
+        <result property="savedAttachmentName" column="f_saved_attachment_name"/>
+        <result property="attachmentExtension" column="f_attachment_extension"/>
+        <result property="attachmentSize" column="f_attachment_size"/>
+        <result property="postIdx" column="f_post_idx"/>
     </resultMap>
 
 
     <resultMap id="attachmentResultMap" type="Attachment">
-        <id property="attachmentIdx" column="attachment_idx"/>
-        <result property="originalAttachmentName.originalAttachmentName" column="original_attachment_name"/>
-        <result property="savedAttachmentName" column="saved_attachment_name"/>
-        <result property="attachmentExtension.attachmentExtension" column="attachment_extension"/>
-        <result property="attachmentSize.attachmentSize" column="attachment_size"/>
-        <result property="postIdx" column="post_idx"/>
+        <id property="attachmentIdx" column="f_attachment_idx"/>
+        <result property="originalAttachmentName.originalAttachmentName" column="f_original_attachment_name"/>
+        <result property="savedAttachmentName" column="f_saved_attachment_name"/>
+        <result property="attachmentExtension.attachmentExtension" column="f_attachment_extension"/>
+        <result property="attachmentSize.attachmentSize" column="f_attachment_size"/>
+        <result property="postIdx" column="f_post_idx"/>
     </resultMap>
 
 

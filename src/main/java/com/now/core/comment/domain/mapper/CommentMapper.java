@@ -1,5 +1,6 @@
-package com.now.core.comment.domain;
+package com.now.core.comment.domain.mapper;
 
+import com.now.core.comment.domain.Comment;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

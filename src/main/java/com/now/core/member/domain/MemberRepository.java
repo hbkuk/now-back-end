@@ -1,5 +1,6 @@
 package com.now.core.member.domain;
 
+import com.now.core.member.domain.mapper.MemberMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 

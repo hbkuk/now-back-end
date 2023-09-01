@@ -2,7 +2,7 @@ package com.now.core.attachment.presentation;
 
 import com.now.common.utils.AttachmentUtils;
 import com.now.core.attachment.application.AttachmentService;
-import com.now.core.attachment.domain.Attachment;
+import com.now.core.attachment.application.StorageService;
 import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -23,6 +24,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class AttachmentController {
 
+    private final StorageService storageService;
     private final AttachmentService attachmentService;
 
     /**
@@ -32,10 +34,10 @@ public class AttachmentController {
      * @return 응답 결과
      */
     @GetMapping("/attachments/{attachmentIdx}")
-    public ResponseEntity<byte[]> serveDownloadFile(@PathVariable("attachmentIdx") Long attachmentIdx) {
+    public ResponseEntity<byte[]> serveDownloadFile(@PathVariable("attachmentIdx") Long attachmentIdx) throws IOException {
         AttachmentResponse attachment = attachmentService.getAttachment(attachmentIdx);
 
-        byte[] attachmentContent = AttachmentUtils.convertByteArray(attachment.getSavedAttachmentName());
+        byte[] attachmentContent = AttachmentUtils.convertByteArray(storageService.createStream(attachment.getSavedAttachmentName()));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);

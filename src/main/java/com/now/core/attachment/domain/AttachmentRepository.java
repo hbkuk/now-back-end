@@ -1,6 +1,7 @@
 package com.now.core.attachment.domain;
 
 import com.now.core.attachment.application.dto.ThumbNail;
+import com.now.core.attachment.domain.mapper.AttachmentMapper;
 import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
