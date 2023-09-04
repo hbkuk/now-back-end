@@ -22,19 +22,28 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
 
-  cloud:
-    gcp:
-      storage:
-        credentials:
-          location: classpath:key/${NOW_GCS_KEY}.json
-        project-id: ${NOW_GCS_PROJECT_ID}
-        bucket-name: ${NOW_GCS_BUCKET_NAME}
+cloud:
+  aws:
+    s3:
+      bucket: ${NOW_S3_BUCKET_NAME}
+    credentials:
+      access-key: ${NOW_S3_ACCESS_KEY}
+      secret-key: ${NOW_S3_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
+
 
 logging:
   level:
     org.springframework.web: debug
     com.now.core: debug
-
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
 
 mybatis:
   type-aliases-package: com.now.core
