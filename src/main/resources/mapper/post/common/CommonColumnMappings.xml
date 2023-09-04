@@ -220,5 +220,15 @@
             preap.dislike_count AS preap_dislike_count
         </sql>
 
+        <!-- thumbnail 테이블과 attahcment 테이블의 Join 컬럼 Mapping -->
+        <sql id="thumbnailInfoOfAttachmentTableColumn">
+            tha.saved_attachment_name AS tha_thumbnail_saved_attachment_name
+        </sql>
+
+        <!-- thumbnail 테이블과 attahcment 테이블의 Join 컬럼 Mapping, MAX 함수 사용 -->
+        <sql id="maxThumbnailInfoOfAttachmentTableColumn">
+            MAX(tha.saved_attachment_name) AS tha_thumbnail_saved_attachment_name
+        </sql>
+
 
 </mapper>

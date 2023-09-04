@@ -63,6 +63,8 @@ public class Photo {
 
     private final Long thumbnailAttachmentIdx;
 
+    private final String thumbnailSavedAttachmentName;
+
     private String memberNickname;
 
     @JsonIgnore

@@ -3,6 +3,7 @@ package com.now.common.utils;
 import com.now.core.attachment.application.dto.UploadedAttachment;
 import com.now.common.exception.FileInsertionException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -22,7 +23,7 @@ public class AttachmentUtils {
     /**
      * 서버 디렉토리 저장소
      */
-    public static final String UPLOAD_PATH = "C:\\git\\now\\front\\now\\public\\file\\";
+    public static final String UPLOAD_PATH = "C:\\git\\now\\front\\now\\public\\upload\\";
 
     /**
      * 첨부파일 이름에서 확장자 추출을 위한 정규식 패턴

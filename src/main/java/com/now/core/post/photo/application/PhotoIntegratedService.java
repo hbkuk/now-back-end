@@ -54,7 +54,6 @@ public class PhotoIntegratedService {
      * @param postIdx 게시글 번호
      * @return 조회된 사진 게시글
      */
-    @CacheEvict(value = {POST_CACHE, PHOTO_CACHE}, allEntries = true)
     public Photo getPhotoAndIncrementViewCount(Long postIdx) {
         Photo photo = photoService.getPhoto(postIdx);
         postService.incrementViewCount(postIdx);

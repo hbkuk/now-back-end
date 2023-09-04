@@ -5,17 +5,12 @@ import com.now.core.comment.application.CommentService;
 import com.now.core.comment.domain.Comment;
 import com.now.core.comment.domain.CommentValidationGroup;
 import com.now.core.comment.presentation.dto.CommentsResponse;
-import com.now.core.post.common.presentation.dto.Condition;
-import com.now.core.post.community.presentation.dto.CommunitiesResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
 
 /**
  * 댓글 관련 작업을 위한 컨트롤러

@@ -11,7 +11,8 @@
         <include refid="CommonColumnMappings.maxCommentTableColumn"/>,
         <include refid="CommonColumnMappings.maxMemberTableColumn"/>,
         <include refid="CommonColumnMappings.maxThumbnailTableColumn"/>,
-        <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>
+        <include refid="CommonColumnMappings.maxMemberAndManagerInfoOfCommentTableColumn"/>,
+        <include refid="CommonColumnMappings.maxThumbnailInfoOfAttachmentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
@@ -20,6 +21,7 @@
         LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
         LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
         LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
+        LEFT OUTER JOIN tb_attachment tha ON th.attachment_idx = tha.attachment_idx
         WHERE p.post_group = 'PHOTO'
         <include refid="DynamicQueryMapper.conditionWithoutPostGroup"/>
         GROUP BY p.post_idx
@@ -36,7 +38,8 @@
         <include refid="CommonColumnMappings.commentTableColumn"/>,
         <include refid="CommonColumnMappings.memberTableColumn"/>,
         <include refid="CommonColumnMappings.memberAndManagerInfoOfCommentTableColumn"/>,
-        <include refid="CommonColumnMappings.thumbnailTableColumn"/>
+        <include refid="CommonColumnMappings.thumbnailTableColumn"/>,
+        <include refid="CommonColumnMappings.thumbnailInfoOfAttachmentTableColumn"/>
         FROM tb_post p
         LEFT OUTER JOIN tb_attachment f ON p.post_idx = f.post_idx
         LEFT OUTER JOIN tb_comment co ON p.post_idx = co.post_idx
@@ -45,6 +48,7 @@
         LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
         LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         LEFT OUTER JOIN tb_thumbnail th ON p.post_idx = th.post_idx
+        LEFT OUTER JOIN tb_attachment tha ON th.attachment_idx = tha.attachment_idx
         WHERE p.post_group = 'PHOTO' AND p.post_idx = #{postIdx}
     </select>
 
@@ -90,6 +94,7 @@
         <result property="likeCount" column="p_like_count"/>
         <result property="dislikeCount" column="p_dislike_count"/>
         <result property="thumbnailAttachmentIdx" column="th_thumbnail_attachment_idx"/>
+        <result property="thumbnailSavedAttachmentName" column="tha_thumbnail_saved_attachment_name"/>
         <!-- 공통 컬렉션 매핑 -->
         <collection property="attachments" resultMap="com.now.core.attachment.domain.mapper.AttachmentMapper.attachmentResponseResultMap" />
         <collection property="comments" resultMap="com.now.core.comment.domain.mapper.CommentMapper.commentResultMap" />

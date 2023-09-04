@@ -42,7 +42,6 @@ public class CommentService {
      * @return 모든 댓글 정보와 함께 OK 응답을 반환
      */
     @Transactional(readOnly = true)
-    @Cacheable(value = POST_CACHE, key = "#postIdx")
     public CommentsResponse getAllComments(Long postIdx) {
         if (!isExistPost(postIdx)) {
             throw new InvalidPostException(ErrorType.NOT_FOUND_POST);
