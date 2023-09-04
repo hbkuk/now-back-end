@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
+import static com.now.core.authentication.application.util.CookieUtil.RESPONSE_COOKIE_NAME_IN_HEADERS;
+
 /**
  * 회원 인증 관련 작업을 위한 컨트롤러
  */
@@ -100,12 +102,12 @@ public class AuthenticationController {
      * @param token 액세스 토큰과 리프레시 토큰 정보를 담은 토큰 객체
      */
     private void setTokenCookiesInResponse(HttpServletResponse response, Token token) {
-        response.addCookie(CookieUtil.createCookieWithHttpOnly(JwtTokenService.ACCESS_TOKEN_KEY,
-                token.getAccessToken(), true));
-        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
-                token.getRefreshToken(), "/api/refresh", true));
-        response.addCookie(CookieUtil.createCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
-                token.getRefreshToken(), "/api/log-out", true));
+        response.setHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithHttpOnly(JwtTokenService.ACCESS_TOKEN_KEY,
+                token.getAccessToken(), true).toString());
+        response.addHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
+                token.getRefreshToken(), "/api/refresh", true).toString());
+        response.addHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
+                token.getRefreshToken(), "/api/log-out", true).toString());
     }
 
     /**

@@ -1,36 +1,74 @@
 package com.now.core.authentication.application.util;
 
+import org.springframework.boot.web.server.Cookie.SameSite;
+import org.springframework.http.ResponseCookie;
+
 import javax.servlet.http.Cookie;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class CookieUtil {
 
+    public static final String REQUEST_COOKIE_NAME_IN_HEADER = "Cookie";
+    public static final String RESPONSE_COOKIE_NAME_IN_HEADERS = "Set-Cookie";
+
+    /**
+     * HttpOnly 설정을 포함한 ResponseCookie 생성
+     *
+     * @param key             쿠키의 이름 (key)
+     * @param value           쿠키의 값 (value)
+     * @param httpOnlySetting HttpOnly 설정 여부. true인 경우 HttpOnly로 설정
+     * @return 생성된 ResponseCookie 쿠키 객체
+     */
+    public static ResponseCookie createResponseCookieWithHttpOnly(String key, String value, boolean httpOnlySetting) {
+        String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
+        return ResponseCookie.from(key, encodedValue)
+                .httpOnly(httpOnlySetting)
+                .secure(true)
+                .sameSite(SameSite.NONE.attributeValue()).build();
+    }
+
+    /**
+     * HttpOnly 설정과 경로 설정을 포함한 쿠키 생성
+     *
+     * @param key             쿠키의 이름 (key)
+     * @param value           쿠키의 값 (value)
+     * @param path            쿠키의 경로 (path)
+     * @param httpOnlySetting HttpOnly 설정 여부. true인 경우 HttpOnly로 설정
+     * @return 생성된 ResponseCookie 쿠키 객체
+     */
+    public static ResponseCookie createResponseCookieWithPathAndHttpOnly(String key, String value, String path, boolean httpOnlySetting) {
+        String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
+        return ResponseCookie.from(key, encodedValue)
+                .httpOnly(httpOnlySetting)
+                .path(path)
+                .secure(true)
+                .sameSite(SameSite.NONE.attributeValue()).build();
+    }
+
     /**
      * HttpOnly 설정을 포함한 쿠키 생성
      *
-     * @param key            쿠키의 이름 (key)
-     * @param value          쿠키의 값 (value)
+     * @param key             쿠키의 이름 (key)
+     * @param value           쿠키의 값 (value)
      * @param httpOnlySetting HttpOnly 설정 여부. true인 경우 HttpOnly로 설정
      * @return 생성된 HttpOnly 쿠키 객체
      */
     public static Cookie createCookieWithHttpOnly(String key, String value, boolean httpOnlySetting) {
-        Cookie cookie = new Cookie(key, URLEncoder.encode( value, StandardCharsets.UTF_8));
+        Cookie cookie = new Cookie(key, URLEncoder.encode(value, StandardCharsets.UTF_8));
 
         cookie.setHttpOnly(httpOnlySetting);
         return cookie;
     }
 
-
     /**
      * HttpOnly 설정과 경로 설정을 포함한 쿠키 생성
      *
-     * @param key              쿠키의 이름 (key)
-     * @param value            쿠키의 값 (value)
-     * @param path             쿠키의 경로 (path)
-     * @param httpOnlySetting  HttpOnly 설정 여부. true인 경우 HttpOnly로 설정
+     * @param key             쿠키의 이름 (key)
+     * @param value           쿠키의 값 (value)
+     * @param path            쿠키의 경로 (path)
+     * @param httpOnlySetting HttpOnly 설정 여부. true인 경우 HttpOnly로 설정
      * @return 생성된 쿠키 객체
      */
     public static Cookie createCookieWithPathAndHttpOnly(String key, String value, String path, boolean httpOnlySetting) {
@@ -40,6 +78,7 @@ public class CookieUtil {
         cookie.setHttpOnly(httpOnlySetting);
         return cookie;
     }
+
     /**
      * 쿠키 삭제
      *

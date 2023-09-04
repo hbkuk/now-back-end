@@ -23,6 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtTokenService {
 
+    public static final String BEARER_PREFIX = "Bearer";
     private static final String BEARER_PREFIX_WITH_SPACE = "Bearer ";
 
     private static final int ACCESS_TOKEN_EXPIRE_MINUTES = 10;

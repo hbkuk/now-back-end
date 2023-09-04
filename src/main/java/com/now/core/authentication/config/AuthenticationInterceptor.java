@@ -3,7 +3,6 @@ package com.now.core.authentication.config;
 import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenService;
 import com.now.core.authentication.application.TokenBlackList;
-import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.authentication.exception.InvalidAuthenticationException;
 import com.now.core.authentication.exception.InvalidTokenException;
 import com.now.core.authentication.presentation.AuthenticationContext;
@@ -12,9 +11,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.Arrays;
+
+import static com.now.core.authentication.application.JwtTokenService.ACCESS_TOKEN_KEY;
+import static com.now.core.authentication.application.JwtTokenService.BEARER_PREFIX;
+import static com.now.core.authentication.application.util.CookieUtil.REQUEST_COOKIE_NAME_IN_HEADER;
 
 /**
  * JWT 토큰을 검증하고 인증된 사용자의 주체 정보를 설정하는 인터셉터
@@ -63,12 +67,20 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
      * @return 추출 및 검증된 액세스 토큰
      */
     private String extractAccessTokenFromRequest(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
+        String cookieHeader = request.getHeader(REQUEST_COOKIE_NAME_IN_HEADER);
+        if (cookieHeader == null) {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
 
-        String accessToken = CookieUtil.getValue(cookies, JwtTokenService.ACCESS_TOKEN_KEY);
+        String accessToken = Arrays.stream(cookieHeader.split("; "))
+                .filter(cookieItem -> cookieItem.startsWith(ACCESS_TOKEN_KEY))
+                .map(cookieItem -> cookieItem.split("="))
+                .filter(keyValue -> keyValue.length == 2 && keyValue[0].equals(ACCESS_TOKEN_KEY))
+                .map(keyValue -> keyValue[1].trim())
+                .filter(cookieValue -> cookieValue.startsWith(BEARER_PREFIX))
+                .findFirst()
+                .orElse(null);
+
         if (accessToken == null) {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
@@ -76,10 +88,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             throw new InvalidTokenException(ErrorType.EXPIRED_ACCESS_TOKEN);
         }
         if (tokenBlacklist.isAccessTokenBlacklisted(accessToken)) {
-            throw new InvalidTokenException(ErrorType.LOGGED_OUT_TOKEN);
-        }
-        String refreshToken = CookieUtil.getValue(cookies, JwtTokenService.REFRESH_TOKEN_KEY);
-        if (tokenBlacklist.isRefreshTokenBlacklisted(refreshToken)) {
             throw new InvalidTokenException(ErrorType.LOGGED_OUT_TOKEN);
         }
         return accessToken;

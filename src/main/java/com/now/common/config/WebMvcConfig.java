@@ -26,7 +26,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private static final String TIMEOUT = "timeout";
     private static final int TIME_ALIVE_MILLISECONDS = 1000;
     private static final int DEFAULT_KEEP_ALIVE_TIME = 5000;
-    private final long MAX_AGE_SECS = 3600;
 
     /**
      * Cross-Origin Resource Sharing (CORS) 설정
@@ -38,15 +37,13 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                         "http://localhost:3000",
-                        "https://home.nowtoday.net",
-                        "https://www.home.nowtoday.net",
-                        "https://web-now-front-fq2r52klluuyef5.sel3.cloudtype.app"
+                        "https://beta.nowtoday.net",
+                        "https://www.beta.nowtoday.net ",
+                        "https://web-new-now-front-fq2r52klluuyef5.sel3.cloudtype.app"
                 )
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
-                .allowedHeaders("*")
                 .exposedHeaders(HttpHeaders.LOCATION)
-                .allowCredentials(true)
-                .maxAge(MAX_AGE_SECS);
+                .allowCredentials(true);
     }
 
     /**
