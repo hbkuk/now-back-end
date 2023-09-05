@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 
 /**
  * 정렬 방식을 나타내는 Enum
@@ -28,11 +30,9 @@ public enum Sort {
      */
     @JsonCreator //  JSON 값을 열거형으로 변환할 때 사용
     public static Sort from(String value) {
-        for (Sort sort : Sort.values()) {
-            if (sort.name().equals(value)) {
-                return sort;
-            }
-        }
-        return null;
+        return Arrays.stream(Sort.values())
+                .filter(sort -> sort.name().equals(value))
+                .findAny()
+                .orElse(null);
     }
 }

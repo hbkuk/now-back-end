@@ -1,6 +1,9 @@
 package com.now.core.post.inquiry.domain.constants;
 
+import com.now.core.post.common.domain.constants.UpdateOption;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 
 @RequiredArgsConstructor
 public enum PrivacyUpdateOption {
@@ -18,12 +21,10 @@ public enum PrivacyUpdateOption {
      * @return 전달받은 값으로부터 해당하는 PrivacyUpdateOption enum
      */
     public static PrivacyUpdateOption from(String value) {
-        for (PrivacyUpdateOption privacyUpdateOption : PrivacyUpdateOption.values()) {
-            if (privacyUpdateOption.name().equals(value)) {
-                return privacyUpdateOption;
-            }
-        }
-        return null;
+        return Arrays.stream(PrivacyUpdateOption.values())
+                .filter(privacyUpdateOption -> privacyUpdateOption.name().equals(value))
+                .findAny()
+                .orElse(null);
     }
 
     public String getCode() {

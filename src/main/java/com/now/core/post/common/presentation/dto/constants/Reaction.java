@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 
 /**
  * 반응을 나타내는 Enum
@@ -29,12 +31,10 @@ public enum Reaction {
      */
     @JsonCreator(mode = JsonCreator.Mode.DELEGATING) //  JSON 값을 열거형으로 변환할 때 사용
     public static Reaction from(String value) {
-        for (Reaction reaction : Reaction.values()) {
-            if (reaction.name().equals(value)) {
-                return reaction;
-            }
-        }
-        return null;
+        return Arrays.stream(Reaction.values())
+                .filter(reaction -> reaction.name().equals(value))
+                .findAny()
+                .orElse(null);
     }
 
     /**
