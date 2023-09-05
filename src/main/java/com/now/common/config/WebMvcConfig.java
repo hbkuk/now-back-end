@@ -38,7 +38,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins(
                         "http://localhost:3000",
                         "https://beta.nowtoday.net",
-                        "https://www.beta.nowtoday.net ",
+                        "https://www.beta.nowtoday.net",
                         "https://web-new-now-front-fq2r52klluuyef5.sel3.cloudtype.app"
                 )
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))

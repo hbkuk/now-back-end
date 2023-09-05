@@ -53,7 +53,7 @@ public class AuthenticationController {
      * @param response 응답 객체
      * @return ResponseEntity 객체 (HTTP 응답)
      */
-    @PostMapping("/api/log-out")
+    @PostMapping("/api/log-out") // TODO: Required Test Code
     public ResponseEntity<Void> logout(HttpServletResponse response,
                        @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken,
                        @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
@@ -116,8 +116,8 @@ public class AuthenticationController {
      * @param response 응답에 쿠키를 삭제할 HttpServletResponse 객체
      */
     private void deleteTokenCookiesInResponse(HttpServletResponse response) {
-        response.addCookie(CookieUtil.deleteCookie(JwtTokenService.ACCESS_TOKEN_KEY));
-        response.addCookie(CookieUtil.deleteCookie(JwtTokenService.REFRESH_TOKEN_KEY));
+        response.setHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.deleteResponseCookie(JwtTokenService.ACCESS_TOKEN_KEY).toString());
+        response.addHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.deleteResponseCookie(JwtTokenService.REFRESH_TOKEN_KEY).toString());
     }
 
     /**

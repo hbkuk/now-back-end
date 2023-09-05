@@ -2,7 +2,7 @@
 
 ![home](https://github.com/hbkuk/now-back-end/assets/109803585/5e96cfb3-70b1-4273-8443-f2fd836185a8)
 
-- [NOW(https://www.nowtoday.net)](https://www.nowtoday.net)는 공지사항, 커뮤니티, 사진 및 문의 게시판을 통해 정보를 공유 및 소통하는 플랫폼입니다.
+- [NOW(https://www.beta.nowtoday.net)](https://www.beta.nowtoday.net)는 공지사항, 커뮤니티, 사진 및 문의 게시판을 통해 정보를 공유 및 소통하는 플랫폼입니다.
 - 2024년까지의 테스트 기간을 거쳐 정식 서비스를 시작할 계획이 있으며, 이 기간 동안 사용자들의 피드백을 수집하고 기능을 개선하며 더 나은 사용자 경험을 위해 노력하고자 합니다.
 
 ## Architecture

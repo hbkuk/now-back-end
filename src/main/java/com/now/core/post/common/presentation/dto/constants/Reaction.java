@@ -27,7 +27,7 @@ public enum Reaction {
      * @param value Sort 이름에 해당하는 값
      * @return 전달받은 값으로부터 해당하는 Sort enum
      */
-    @JsonCreator //  JSON 값을 열거형으로 변환할 때 사용
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING) //  JSON 값을 열거형으로 변환할 때 사용
     public static Reaction from(String value) {
         for (Reaction reaction : Reaction.values()) {
             if (reaction.name().equals(value)) {

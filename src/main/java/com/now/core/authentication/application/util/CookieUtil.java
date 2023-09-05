@@ -48,6 +48,20 @@ public class CookieUtil {
     }
 
     /**
+     * 쿠키 삭제
+     *
+     * @param key 쿠키의 이름 (key)
+     * @return 삭제되도록 만료 시간이 설정된 쿠키 객체
+     */
+    public static ResponseCookie deleteResponseCookie(String key) {
+        return ResponseCookie.from(key, "")
+                .maxAge(0)
+                .secure(true)
+                .sameSite(SameSite.NONE.attributeValue())
+                .build();
+    }
+
+    /**
      * HttpOnly 설정을 포함한 쿠키 생성
      *
      * @param key             쿠키의 이름 (key)

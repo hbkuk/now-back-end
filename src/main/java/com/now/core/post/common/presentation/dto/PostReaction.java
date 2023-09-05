@@ -1,27 +1,26 @@
 package com.now.core.post.common.presentation.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.now.core.post.common.presentation.dto.constants.PostReactionValidationGroup;
 import com.now.core.post.common.presentation.dto.constants.Reaction;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
 
-@Builder
+@Setter // 파라미터 자동 맵핑으로 인한 Setter 추가
+@Builder(toBuilder = true)
 @Getter
 @ToString
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode
 public class PostReaction {
 
     @JsonIgnore
-    private Long postReactionIdx;
+    private Long postIdx;
 
     @JsonIgnore
-    private Long postIdx;
+    private Long postReactionIdx;
 
     @JsonIgnore
     private String managerId;
@@ -42,14 +41,13 @@ public class PostReaction {
     private String memberNickname;
 
     @NotNull(groups = {PostReactionValidationGroup.savePostReaction.class}, message = "{reaction.notnull}")
-    private Reaction reaction;
-
+    private final Reaction reaction;
 
     /**
-     * 전달받은 게시글 번호와 매니저 번호를 통해 객체 생성
+     * 전달받은 게시글 번호와 회원 번호를 통해 객체 생성
      *
-     * @param postIdx     게시글 번호
-     * @param memberIdx  매니저 번호
+     * @param postIdx   게시글 번호
+     * @param memberIdx 회원 번호
      * @return 새로운 PostReaction 객체
      */
     public static PostReaction create(Long postIdx, Long memberIdx) {

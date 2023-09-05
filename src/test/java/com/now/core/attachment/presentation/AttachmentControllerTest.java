@@ -1,5 +1,6 @@
 package com.now.core.attachment.presentation;
 
+import com.now.common.utils.AttachmentUtils;
 import com.now.config.document.utils.RestDocsTestSupport;
 import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -10,9 +11,12 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.io.FileInputStream;
+
 import static com.now.config.fixtures.attachment.AttachmentFixture.createAttachmentResponseForBinaryDownload;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -26,6 +30,7 @@ class AttachmentControllerTest extends RestDocsTestSupport {
         Long attachmentIdx = 1L;
         AttachmentResponse attachment = createAttachmentResponseForBinaryDownload("NOW_ERD.PNG");
         given(attachmentService.getAttachment(anyLong())).willReturn(attachment);
+        given(storageService.createStream(attachment.getSavedAttachmentName())).willReturn(new FileInputStream(AttachmentUtils.createFile(attachment.getSavedAttachmentName())));
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.get("/attachments/{attachmentIdx}", attachmentIdx))

@@ -21,7 +21,7 @@ import static com.now.common.utils.AttachmentUtils.createUploadedFileFromMultipa
  */
 @Slf4j
 @Service
-@Profile({"prod"})
+@Profile("prod")
 @RequiredArgsConstructor
 public class AmazonCloudStorageService implements StorageService {
 
