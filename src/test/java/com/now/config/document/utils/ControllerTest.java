@@ -31,6 +31,9 @@ import com.now.core.post.notice.application.NoticeService;
 import com.now.core.post.notice.presentation.NoticeController;
 import com.now.core.post.photo.application.PhotoService;
 import com.now.core.post.photo.presentation.PhotoController;
+import com.now.core.report.application.ReportService;
+import com.now.core.report.presentation.ReportController;
+import com.now.core.report.presentation.SenderContext;
 import org.mybatis.spring.boot.test.autoconfigure.AutoConfigureMybatis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -49,7 +52,8 @@ import org.springframework.test.web.servlet.MockMvc;
         InquiryController.class,
         CategoryController.class,
         CommentController.class,
-        AttachmentController.class
+        AttachmentController.class,
+        ReportController.class,
 })
 @AutoConfigureMybatis
 @ActiveProfiles("test")
@@ -110,6 +114,9 @@ public abstract class ControllerTest {
     protected JwtTokenService jwtTokenService;
 
     @MockBean
+    protected ReportService reportService;
+
+    @MockBean
     protected TokenBlackList tokenBlackList;
 
     @MockBean
@@ -117,4 +124,7 @@ public abstract class ControllerTest {
 
     @MockBean
     protected AuthenticationContext authenticationContext;
+
+    @MockBean
+    protected SenderContext senderContext;
 }

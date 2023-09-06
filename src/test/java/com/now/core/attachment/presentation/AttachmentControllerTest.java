@@ -33,7 +33,7 @@ class AttachmentControllerTest extends RestDocsTestSupport {
         given(storageService.createStream(attachment.getSavedAttachmentName())).willReturn(new FileInputStream(AttachmentUtils.createFile(attachment.getSavedAttachmentName())));
 
         ResultActions resultActions =
-                mockMvc.perform(RestDocumentationRequestBuilders.get("/attachments/{attachmentIdx}", attachmentIdx))
+                mockMvc.perform(RestDocumentationRequestBuilders.get("/api/attachments/{attachmentIdx}", attachmentIdx))
                         .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_OCTET_STREAM))
                         .andExpect(MockMvcResultMatchers.header().string(HttpHeaders.CONTENT_DISPOSITION,
                                 "form-data; name=\"attachment\"; filename=\"NOW_ERD.PNG\"")) // 수정된 부분

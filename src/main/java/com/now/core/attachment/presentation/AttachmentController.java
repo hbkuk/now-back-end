@@ -33,7 +33,7 @@ public class AttachmentController {
      * @param attachmentIdx 첨부파일 번호
      * @return 응답 결과
      */
-    @GetMapping("/attachments/{attachmentIdx}")
+    @GetMapping("/api/attachments/{attachmentIdx}")
     public ResponseEntity<byte[]> serveDownloadFile(@PathVariable("attachmentIdx") Long attachmentIdx) throws IOException {
         AttachmentResponse attachment = attachmentService.getAttachment(attachmentIdx);
 

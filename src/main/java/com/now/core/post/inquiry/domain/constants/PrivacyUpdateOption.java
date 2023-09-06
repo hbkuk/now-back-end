@@ -1,6 +1,5 @@
 package com.now.core.post.inquiry.domain.constants;
 
-import com.now.core.post.common.domain.constants.UpdateOption;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Arrays;
