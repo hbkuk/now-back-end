@@ -15,7 +15,7 @@ public class RateLimitingProvider {
     public static final int TOKEN_REFILL_COUNT_AT_ONCE = 3;
     public static final int TOKEN_REFILL_DURATION_MINUTES = 1;
     public static final int TOKEN_REFILL_COUNT = 5;
-    public static final int MAX_BANDWIDTH = 10;
+    public static final int MAX_BANDWIDTH = 20;
 
     private final RateLimitingFactory rateLimitingFactory;
 
