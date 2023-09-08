@@ -1,6 +1,5 @@
 package com.now.core.attachment.presentation;
 
-import com.now.common.utils.AttachmentUtils;
 import com.now.config.document.utils.RestDocsTestSupport;
 import com.now.core.attachment.presentation.dto.AttachmentResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -11,12 +10,11 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 
 import static com.now.config.fixtures.attachment.AttachmentFixture.createAttachmentResponseForBinaryDownload;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static com.now.config.fixtures.attachment.AttachmentFixture.createMockMultipartFile;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
@@ -28,9 +26,12 @@ class AttachmentControllerTest extends RestDocsTestSupport {
     @DisplayName("바이너리 다운로드 응답")
     void serveDownloadFile() throws Exception {
         Long attachmentIdx = 1L;
-        AttachmentResponse attachment = createAttachmentResponseForBinaryDownload("NOW_ERD.PNG");
-        given(attachmentService.getAttachment(anyLong())).willReturn(attachment);
-        given(storageService.createStream(attachment.getSavedAttachmentName())).willReturn(new FileInputStream(AttachmentUtils.createFile(attachment.getSavedAttachmentName())));
+        String attachmentName = "NOW_ERD.PNG";
+        AttachmentResponse attachment = createAttachmentResponseForBinaryDownload(attachmentName);
+        given(attachmentService.getAttachment(attachmentIdx)).willReturn(attachment);
+
+        given(storageService.createStream(attachment.getSavedAttachmentName()))
+                .willReturn(createMockMultipartFile(attachmentName).getInputStream());
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.get("/api/attachments/{attachmentIdx}", attachmentIdx))
