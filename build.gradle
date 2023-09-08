@@ -80,6 +80,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
 
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+    implementation group: 'com.github.vladimir-bukhtoyarov', name: 'bucket4j-core', version: '7.6.0'
 }
 
 ext {

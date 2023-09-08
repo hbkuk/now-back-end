@@ -1,6 +1,7 @@
 package com.now.common.exception;
 
 import com.now.common.alert.SlackLogger;
+import com.now.common.config.infrastructure.RateLimitHeaders;
 import com.now.common.exception.dto.ErrorResponse;
 import com.now.common.exception.dto.ValidationErrorResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -61,13 +62,27 @@ public class GlobalExceptionAdvice {
     }
 
     /**
+     * TooManyRequestsException이 발생했을 때 처리하는 메소드
+     *
+     * @param e 발생한 TooManyRequestsException 객체
+     * @return ErrorResponse 객체를 담은 ResponseEntity
+     */
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<ErrorResponse> tooManyRequestsExceptionHandler(final TooManyRequestsException e) {
+        log.warn("TooManyRequests Exception", e);
+        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                .header(RateLimitHeaders.RETRY_AFTER, String.valueOf(e.getRetryAfterMillis()))
+                .body(new ErrorResponse(ErrorType.TOO_MANY_REQUESTS.getCode(), ErrorType.TOO_MANY_REQUESTS.getMessage()));
+    }
+
+    /**
      * MethodArgumentNotValidException 발생했을 때 처리하는 메소드
      *
      * @param e 발생한 MethodArgumentNotValidException 객체
      * @return ValidationErrorResponse 객체를 담은 ResponseEntity
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e)  {
+    public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getAllErrors().forEach((error) -> {
             errors.put(((FieldError) error).getField(), error.getDefaultMessage());
@@ -100,7 +115,7 @@ public class GlobalExceptionAdvice {
     public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(NoHandlerFoundException e) {
         log.error("NoHandlerFoundException", e);
         return ResponseEntity.badRequest().body(new ErrorResponse(ErrorType.INVALID_PATH.getCode(),
-                        ErrorType.INVALID_PATH.getMessage()));
+                ErrorType.INVALID_PATH.getMessage()));
     }
 
     /**
