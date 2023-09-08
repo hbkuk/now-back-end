@@ -1,6 +1,6 @@
 package com.now.core.post.common.presentation;
 
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.presentation.AuthenticationPrincipal;
 import com.now.core.post.common.application.PostService;
 import com.now.core.post.common.domain.constants.PostValidationGroup;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostService postService;
-    private final JwtTokenService jwtTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 모든 게시글 정보를 조회 후 반환
@@ -45,8 +45,8 @@ public class PostController {
     @GetMapping("/api/posts/{postIdx}/reaction")
     public ResponseEntity<PostReactionResponse> getPostReaction(@PathVariable("postIdx") Long postIdx,
                                                                 @RequestParam(name = "isReactionDetails", required = false, defaultValue = "false") boolean isReactionDetails,
-                                                                @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
-        return new ResponseEntity<>(postService.getPostReaction(postIdx, (String) jwtTokenService.getClaim(accessToken, "id"), isReactionDetails), HttpStatus.OK);
+                                                                @CookieValue(value = JwtTokenProvider.ACCESS_TOKEN_KEY, required = true) String accessToken) {
+        return new ResponseEntity<>(postService.getPostReaction(postIdx, (String) jwtTokenProvider.getClaim(accessToken, "id"), isReactionDetails), HttpStatus.OK);
     }
 
     /**

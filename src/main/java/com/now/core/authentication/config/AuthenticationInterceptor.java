@@ -1,7 +1,7 @@
 package com.now.core.authentication.config;
 
 import com.now.common.exception.ErrorType;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.application.TokenBlackList;
 import com.now.core.authentication.exception.InvalidAuthenticationException;
 import com.now.core.authentication.exception.InvalidTokenException;
@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.util.Arrays;
 
-import static com.now.core.authentication.application.JwtTokenService.ACCESS_TOKEN_KEY;
-import static com.now.core.authentication.application.JwtTokenService.BEARER_PREFIX;
+import static com.now.core.authentication.application.JwtTokenProvider.ACCESS_TOKEN_KEY;
+import static com.now.core.authentication.application.JwtTokenProvider.BEARER_PREFIX;
 import static com.now.core.authentication.application.util.CookieUtil.REQUEST_COOKIE_NAME_IN_HEADER;
 
 /**
@@ -27,7 +27,7 @@ import static com.now.core.authentication.application.util.CookieUtil.REQUEST_CO
 @RequiredArgsConstructor
 public class AuthenticationInterceptor implements HandlerInterceptor {
 
-    private final JwtTokenService jwtTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final TokenBlackList tokenBlacklist;
     private final AuthenticationContext authenticationContext;
 
@@ -57,7 +57,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
      * @return 토큰에서 추출한 회원 ID 정보
      */
     private String getMemberIdFromToken(String accessToken) {
-        return (String) jwtTokenService.getClaim(accessToken, "id");
+        return (String) jwtTokenProvider.getClaim(accessToken, "id");
     }
 
     /**
@@ -84,7 +84,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
         if (accessToken == null) {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
-        if (jwtTokenService.isTokenExpired(accessToken)) {
+        if (jwtTokenProvider.isTokenExpired(accessToken)) {
             throw new InvalidTokenException(ErrorType.EXPIRED_ACCESS_TOKEN);
         }
         if (tokenBlacklist.isAccessTokenBlacklisted(accessToken)) {

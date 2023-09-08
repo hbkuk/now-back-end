@@ -8,6 +8,7 @@ import com.now.core.authentication.exception.InvalidTokenException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -17,11 +18,11 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * JWT(Json Web Token) 생성 및 검증을 담당하는 서비스 객체
+ * JWT(Json Web Token) 생성 및 검증을 담당하는 객체
  */
-@Service
+@Component
 @RequiredArgsConstructor
-public class JwtTokenService {
+public class JwtTokenProvider {
 
     public static final String BEARER_PREFIX = "Bearer";
     private static final String BEARER_PREFIX_WITH_SPACE = "Bearer ";

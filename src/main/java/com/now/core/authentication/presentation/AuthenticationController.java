@@ -2,7 +2,7 @@ package com.now.core.authentication.presentation;
 
 import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.AuthenticationService;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.application.dto.Token;
 import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.authentication.exception.InvalidTokenException;
@@ -28,7 +28,7 @@ import static com.now.core.authentication.application.util.CookieUtil.RESPONSE_C
 public class AuthenticationController {
 
     private final MemberService memberService;
-    private final JwtTokenService jwtTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationService authenticationService;
 
     /**
@@ -55,8 +55,8 @@ public class AuthenticationController {
      */
     @PostMapping("/api/log-out") // TODO: Required Test Code
     public ResponseEntity<Void> logout(HttpServletResponse response,
-                       @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken,
-                       @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
+                       @CookieValue(value = JwtTokenProvider.ACCESS_TOKEN_KEY, required = true) String accessToken,
+                       @CookieValue(value = JwtTokenProvider.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
         authenticationService.logout(accessToken, refreshToken);
 
         deleteTokenCookiesInResponse(response);
@@ -72,13 +72,13 @@ public class AuthenticationController {
      */
     @PostMapping("/api/refresh")
     public ResponseEntity<HttpHeaders> refresh(HttpServletResponse response,
-                           @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken,
-                           @CookieValue(value = JwtTokenService.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
-        jwtTokenService.validateForRefresh(accessToken, refreshToken);
+                           @CookieValue(value = JwtTokenProvider.ACCESS_TOKEN_KEY, required = true) String accessToken,
+                           @CookieValue(value = JwtTokenProvider.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
+        jwtTokenProvider.validateForRefresh(accessToken, refreshToken);
 
         authenticationService.logout(accessToken, refreshToken);
 
-        setTokenCookiesInResponse(response, jwtTokenService.refreshTokens(refreshToken));
+        setTokenCookiesInResponse(response, jwtTokenProvider.refreshTokens(refreshToken));
         return ResponseEntity.ok().build();
     }
 
@@ -89,7 +89,7 @@ public class AuthenticationController {
      */
     @PostMapping("/api/member/me")
     public ResponseEntity<MemberProfile> me(
-                        @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = false) String accessToken) {
+                        @CookieValue(value = JwtTokenProvider.ACCESS_TOKEN_KEY, required = false) String accessToken) {
         authenticationService.isAccessTokenBlacklisted(accessToken);
         String memberId = extractMemberIdFromToken(accessToken);
         return ResponseEntity.ok().body(MemberProfile.from(memberService.getMember(memberId)));
@@ -102,11 +102,11 @@ public class AuthenticationController {
      * @param token 액세스 토큰과 리프레시 토큰 정보를 담은 토큰 객체
      */
     private void setTokenCookiesInResponse(HttpServletResponse response, Token token) {
-        response.setHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithHttpOnly(JwtTokenService.ACCESS_TOKEN_KEY,
+        response.setHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithHttpOnly(JwtTokenProvider.ACCESS_TOKEN_KEY,
                 token.getAccessToken(), true).toString());
-        response.addHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
+        response.addHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithPathAndHttpOnly(JwtTokenProvider.REFRESH_TOKEN_KEY,
                 token.getRefreshToken(), "/api/refresh", true).toString());
-        response.addHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithPathAndHttpOnly(JwtTokenService.REFRESH_TOKEN_KEY,
+        response.addHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithPathAndHttpOnly(JwtTokenProvider.REFRESH_TOKEN_KEY,
                 token.getRefreshToken(), "/api/log-out", true).toString());
     }
 
@@ -116,8 +116,8 @@ public class AuthenticationController {
      * @param response 응답에 쿠키를 삭제할 HttpServletResponse 객체
      */
     private void deleteTokenCookiesInResponse(HttpServletResponse response) {
-        response.setHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.deleteResponseCookie(JwtTokenService.ACCESS_TOKEN_KEY).toString());
-        response.addHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.deleteResponseCookie(JwtTokenService.REFRESH_TOKEN_KEY).toString());
+        response.setHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.deleteResponseCookie(JwtTokenProvider.ACCESS_TOKEN_KEY).toString());
+        response.addHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.deleteResponseCookie(JwtTokenProvider.REFRESH_TOKEN_KEY).toString());
     }
 
     /**
@@ -127,12 +127,12 @@ public class AuthenticationController {
      * @return 회원 아이디
      */
     private String extractMemberIdFromToken(String accessToken) {
-        if (jwtTokenService.isTokenExpired(accessToken)) {
+        if (jwtTokenProvider.isTokenExpired(accessToken)) {
             throw new InvalidTokenException(ErrorType.EXPIRED_ACCESS_TOKEN);
         }
         String memberId = null;
         try {
-            memberId = (String) jwtTokenService.getClaim(accessToken, "id");
+            memberId = (String) jwtTokenProvider.getClaim(accessToken, "id");
         } catch (Exception e) {
             throw new InvalidTokenException(ErrorType.NOT_FOUND_TOKEN);
         }

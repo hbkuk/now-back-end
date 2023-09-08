@@ -2,7 +2,7 @@ package com.now.core.post.inquiry.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
 import com.now.config.fixtures.post.InquiryFixture;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.common.presentation.dto.Condition;
@@ -175,7 +175,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
 
         // when, then
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.post("/api/inquiries/secret/{postIdx}", postIdx)
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("password", password))
                 .andExpect(status().isOk());
@@ -186,7 +186,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                                 parameterWithName("postIdx").description("게시글 ID")
                         ),
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParameters(
                                 parameterWithName("password").description("비밀글 설정 비밀번호").optional()
@@ -217,8 +217,8 @@ class InquiryControllerTest extends RestDocsTestSupport {
         String memberId = "member1";
         String accessToken = "Bearer accessToken";
         Inquiry inquiry = createInquiryForSave().updatePostIdx(1L);
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         MockMultipartFile inquiryPart = new MockMultipartFile("inquiry", "",
                 MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(inquiry));
@@ -226,7 +226,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/inquiries")
                                 .file(inquiryPart)
-                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                                .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                                 .contentType(MediaType.APPLICATION_JSON))
                         .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
@@ -234,7 +234,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParts(
                                 partWithName("inquiry").description("문의 게시글 정보")
@@ -261,8 +261,8 @@ class InquiryControllerTest extends RestDocsTestSupport {
         long postIdx = 1L;
         String memberId = "member1";
         String accessToken = "Bearer accessToken";
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         Inquiry updatedInquiry = Inquiry.builder()
                 .category(Category.SERVICE)
@@ -282,7 +282,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
                 mockMvc.perform(RestDocumentationRequestBuilders.multipart("/api/inquiries/{postIdx}", postIdx)
                                 .file(inquiryPart)
                                 .file(updateOptionPart)
-                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                                .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createInquiryForSave().updatePostIdx(postIdx)))
                                 .with(request -> {
@@ -295,7 +295,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParts(
                                 partWithName("inquiry").description("문의 게시글 정보"),
@@ -322,17 +322,17 @@ class InquiryControllerTest extends RestDocsTestSupport {
         String memberId = "member1";
         String accessToken = "Bearer accessToken";
 
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/inquiries/{postIdx}", postIdx)
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("삭제할 게시글 번호")

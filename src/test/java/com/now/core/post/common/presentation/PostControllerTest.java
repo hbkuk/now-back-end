@@ -6,7 +6,7 @@ import com.now.config.fixtures.post.InquiryFixture;
 import com.now.config.fixtures.post.NoticeFixture;
 import com.now.config.fixtures.post.PhotoFixture;
 import com.now.config.fixtures.post.dto.PostReactionFixture;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.PostReaction;
 import com.now.core.post.common.presentation.dto.PostReactionResponse;
@@ -195,20 +195,20 @@ class PostControllerTest extends RestDocsTestSupport {
         String accessToken = "Bearer accessToken";
         PostReactionResponse postReactionResponse = PostReactionFixture.createPostReactionResponse(100, 5, Reaction.DISLIKE);
 
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
         given(postService.getPostReaction(postIdx, memberId, true)).willReturn(postReactionResponse);
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.get("/api/posts/{postIdx}/reaction", postIdx)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                                .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                                 .param("isReactionDetails", "true"))
                         .andExpect(status().isOk());
 
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("원글 ID")
@@ -232,18 +232,18 @@ class PostControllerTest extends RestDocsTestSupport {
         String accessToken = "Bearer accessToken";
         PostReaction postReactionResponse = PostReactionFixture.createPostReaction(postIdx, memberId, Reaction.DISLIKE);
 
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.post("/api/posts/{postIdx}/reaction", postIdx)
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                                .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                                 .content(objectMapper.writeValueAsString(postReactionResponse)))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
 
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("원글 ID")

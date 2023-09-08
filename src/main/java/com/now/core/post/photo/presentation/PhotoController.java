@@ -1,6 +1,6 @@
 package com.now.core.post.photo.presentation;
 
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.presentation.AuthenticationPrincipal;
 import com.now.core.post.common.application.dto.AddNewAttachments;
 import com.now.core.post.common.application.dto.UpdateExistingAttachments;
@@ -63,7 +63,7 @@ public class PhotoController {
      */
     @GetMapping("/api/photos/{postIdx}/edit")
     public ResponseEntity<Photo> getEditPhoto(@PathVariable("postIdx") Long postIdx,
-                                              @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
+                                              @CookieValue(value = JwtTokenProvider.ACCESS_TOKEN_KEY, required = true) String accessToken) {
         return ResponseEntity.ok(photoIntegratedService.getEditPhoto(postIdx, accessToken));
     }
 

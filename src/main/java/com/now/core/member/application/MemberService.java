@@ -2,7 +2,7 @@ package com.now.core.member.application;
 
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.application.dto.Token;
 import com.now.core.authentication.application.dto.TokenClaims;
 import com.now.core.authentication.constants.Authority;
@@ -25,7 +25,7 @@ import java.util.Map;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final JwtTokenService jwtTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final PasswordSecurityManager passwordSecurityManager;
 
     /**
@@ -61,9 +61,9 @@ public class MemberService {
      */
     public Token generateAuthToken(Member member) {
         return Token.builder()
-                .accessToken(jwtTokenService.createAccessToken(TokenClaims.create(Map.of(
+                .accessToken(jwtTokenProvider.createAccessToken(TokenClaims.create(Map.of(
                         "id", member.getId(), "nickname", member.getNickname(), "role", Authority.MEMBER.getValue()))))
-                .refreshToken(jwtTokenService.createRefreshToken(TokenClaims.create(Map.of(
+                .refreshToken(jwtTokenProvider.createRefreshToken(TokenClaims.create(Map.of(
                         "id", member.getId(), "nickname", member.getNickname(), "role", Authority.MEMBER.getValue()))))
                 .build();
     }

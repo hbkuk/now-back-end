@@ -1,8 +1,7 @@
 package com.now.core.post.inquiry.presentation;
 
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.presentation.AuthenticationPrincipal;
-import com.now.core.post.common.domain.constants.UpdateOption;
 import com.now.core.post.inquiry.application.InquiryIntegratedService;
 import com.now.core.post.inquiry.domain.Inquiry;
 import com.now.core.post.common.domain.constants.PostValidationGroup;
@@ -63,7 +62,7 @@ public class InquiryController {
     @PostMapping("/api/inquiries/secret/{postIdx}")
     public ResponseEntity<Inquiry> getPrivateInquiry(@PathVariable("postIdx") Long postIdx,
                                                     @RequestParam(required = false) String password,
-                                                    @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = false) String accessToken) {
+                                                    @CookieValue(value = JwtTokenProvider.ACCESS_TOKEN_KEY, required = false) String accessToken) {
         return ResponseEntity.ok(inquiryIntegratedService.getPrivateInquiryAndIncrementViewCount(postIdx, accessToken, password));
     }
 
@@ -76,7 +75,7 @@ public class InquiryController {
      */
     @GetMapping("/api/inquiries/{postIdx}/edit")
     public ResponseEntity<Inquiry> getEditInquiry(@PathVariable("postIdx") Long postIdx,
-                                                  @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
+                                                  @CookieValue(value = JwtTokenProvider.ACCESS_TOKEN_KEY, required = true) String accessToken) {
         return ResponseEntity.ok(inquiryIntegratedService.getEditInquiry(postIdx, accessToken));
     }
 

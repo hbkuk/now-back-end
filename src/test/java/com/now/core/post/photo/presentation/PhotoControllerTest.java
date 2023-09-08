@@ -2,7 +2,7 @@ package com.now.core.post.photo.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
 import com.now.config.fixtures.post.PhotoFixture;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.photo.domain.Photo;
@@ -184,8 +184,8 @@ class PhotoControllerTest extends RestDocsTestSupport {
         String memberId = "tester1";
         String accessToken = "Bearer accessToken";
         Photo photo = createPhotoForSave().updatePostIdx(1L);
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         MockMultipartFile communityPart = new MockMultipartFile("photo", "",
                 MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(photo));
@@ -205,14 +205,14 @@ class PhotoControllerTest extends RestDocsTestSupport {
                         .file(fileB)
                         .file(fileC)
                         .accept(MediaType.APPLICATION_JSON)
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParts(
                                 partWithName("photo").description("사진 게시글 정보"),
@@ -240,8 +240,8 @@ class PhotoControllerTest extends RestDocsTestSupport {
         Long postIdx = 1L;
         String memberId = "tester1";
         String accessToken = "Bearer accessToken";
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         Photo updatedPhoto = Photo.builder()
                 .category(Category.ARTWORK)
@@ -262,7 +262,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
                         .param("thumbnailAttachmentIdx", "1")
                         .param("notDeletedIndexes", "1", "2")
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                         .with(request -> {
                             request.setMethod(String.valueOf(HttpMethod.PUT)); // PUT 메서드로 변경
                             return request;
@@ -273,7 +273,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParts(
                                 partWithName("updateOption").description("사진 게시글 수정 타입"),
@@ -302,8 +302,8 @@ class PhotoControllerTest extends RestDocsTestSupport {
         Long postIdx = 1L;
         String memberId = "tester1";
         String accessToken = "Bearer accessToken";
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         Photo updatedPhoto = Photo.builder()
                 .category(Category.ARTWORK)
@@ -334,7 +334,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
                         .file(fileB)
                         .file(fileC)
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                         .with(request -> {
                             request.setMethod(String.valueOf(HttpMethod.PUT)); // PUT 메서드로 변경
                             return request;
@@ -345,7 +345,7 @@ class PhotoControllerTest extends RestDocsTestSupport {
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParts(
                                 partWithName("updateOption").description("사진 게시글 수정 타입"),
@@ -372,17 +372,17 @@ class PhotoControllerTest extends RestDocsTestSupport {
         Long postIdx = 1L;
         String memberId = "tester1";
         String accessToken = "Bearer accessToken";
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/photos/{postIdx}", postIdx)
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("게시글 번호")

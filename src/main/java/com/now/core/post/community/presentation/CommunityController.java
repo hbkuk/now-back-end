@@ -1,6 +1,6 @@
 package com.now.core.post.community.presentation;
 
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.presentation.AuthenticationPrincipal;
 import com.now.core.post.common.application.dto.AddNewAttachments;
 import com.now.core.post.common.application.dto.UpdateExistingAttachments;
@@ -62,7 +62,7 @@ public class CommunityController {
      */
     @GetMapping("/api/communities/{postIdx}/edit")
     public ResponseEntity<Community> getEditCommunity(@PathVariable("postIdx") Long postIdx,
-                                                      @CookieValue(value = JwtTokenService.ACCESS_TOKEN_KEY, required = true) String accessToken) {
+                                                      @CookieValue(value = JwtTokenProvider.ACCESS_TOKEN_KEY, required = true) String accessToken) {
         return ResponseEntity.ok(communityIntegratedService.getEditCommunity(postIdx, accessToken));
     }
 

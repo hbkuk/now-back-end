@@ -1,6 +1,6 @@
-package com.now.core.report.config;
+package com.now.core.authentication.config;
 
-import com.now.core.report.presentation.SenderArgumentResolver;
+import com.now.core.authentication.presentation.client.ClientArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -13,9 +13,9 @@ import java.util.List;
  */
 @Configuration
 @RequiredArgsConstructor
-public class ReportConfig implements WebMvcConfigurer {
+public class ClientConfig implements WebMvcConfigurer {
 
-    private final SenderArgumentResolver senderArgumentResolver;
+    private final ClientArgumentResolver senderArgumentResolver;
 
     /**
      * 컨트롤러 메서드의 Argument Resolver 등록

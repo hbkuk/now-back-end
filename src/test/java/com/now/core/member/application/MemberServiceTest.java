@@ -3,7 +3,7 @@ package com.now.core.member.application;
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
 import com.now.config.annotations.ApplicationTest;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.application.dto.TokenClaims;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.member.domain.Member;
@@ -30,7 +30,7 @@ public class MemberServiceTest {
     @Autowired private MemberService memberService;
     @MockBean private MemberRepository memberRepository;
     @MockBean private PasswordSecurityManager passwordSecurityManager;
-    @MockBean private JwtTokenService jwtTokenService;
+    @MockBean private JwtTokenProvider jwtTokenProvider;
 
     Member memberA = null;
 
@@ -112,9 +112,9 @@ public class MemberServiceTest {
 
             memberService.generateAuthToken(memberA);
 
-            verify(jwtTokenService, times(1)).createAccessToken(TokenClaims.create(Map.of(
+            verify(jwtTokenProvider, times(1)).createAccessToken(TokenClaims.create(Map.of(
                     "id", memberA.getId(), "nickname", memberA.getNickname(), "role", Authority.MEMBER.getValue())));
-            verify(jwtTokenService, times(1)).createRefreshToken(TokenClaims.create(Map.of(
+            verify(jwtTokenProvider, times(1)).createRefreshToken(TokenClaims.create(Map.of(
                     "id", memberA.getId(), "nickname", memberA.getNickname(), "role", Authority.MEMBER.getValue())));
         }
     }

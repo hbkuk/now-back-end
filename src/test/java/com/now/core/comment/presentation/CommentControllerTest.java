@@ -2,7 +2,7 @@ package com.now.core.comment.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
 import com.now.config.fixtures.member.MemberFixture;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.comment.domain.Comment;
 import com.now.core.comment.presentation.dto.CommentsResponse;
@@ -77,12 +77,12 @@ class CommentControllerTest extends RestDocsTestSupport {
         String memberId = "member1";
         String accessToken = "Bearer accessToken";
 
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.post("/api/posts/{postIdx}/comments", postIdx)
-                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                                .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createCommentForSave())))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
@@ -90,7 +90,7 @@ class CommentControllerTest extends RestDocsTestSupport {
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("원글 ID")
@@ -112,12 +112,12 @@ class CommentControllerTest extends RestDocsTestSupport {
         String memberId = "member1";
         String accessToken = "Bearer accessToken";
 
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.put("/api/posts/{postIdx}/comments/{commentIdx}", postIdx, commentIdx)
-                                .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                                .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(createCommentForUpdate(commentIdx))))
                         .andExpect(MockMvcResultMatchers.status().isCreated());
@@ -125,7 +125,7 @@ class CommentControllerTest extends RestDocsTestSupport {
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("원글 ID"),
@@ -149,17 +149,17 @@ class CommentControllerTest extends RestDocsTestSupport {
         String memberId = "member1";
         String accessToken = "Bearer accessToken";
 
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/posts/{postIdx}/comments/{commentIdx}", postIdx, commentIdx)
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("원글 ID"),

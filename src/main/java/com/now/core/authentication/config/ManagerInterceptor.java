@@ -1,7 +1,7 @@
 package com.now.core.authentication.config;
 
 import com.now.common.exception.ErrorType;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.application.TokenBlackList;
 import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.authentication.constants.Authority;
@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 public class ManagerInterceptor implements HandlerInterceptor {
 
-    private final JwtTokenService jwtTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
     private final TokenBlackList tokenBlacklist;
 
     /**
@@ -47,30 +47,30 @@ public class ManagerInterceptor implements HandlerInterceptor {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
 
-        String accessToken = CookieUtil.getValue(cookies, JwtTokenService.ACCESS_TOKEN_KEY);
+        String accessToken = CookieUtil.getValue(cookies, JwtTokenProvider.ACCESS_TOKEN_KEY);
         if (accessToken == null) {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
-        if (jwtTokenService.isTokenExpired(accessToken)) {
+        if (jwtTokenProvider.isTokenExpired(accessToken)) {
             throw new InvalidTokenException(ErrorType.EXPIRED_ACCESS_TOKEN);
         }
 
         if (tokenBlacklist.isAccessTokenBlacklisted(accessToken)) {
             throw new InvalidTokenException(ErrorType.LOGGED_OUT_TOKEN);
         }
-        String refreshToken = CookieUtil.getValue(cookies, JwtTokenService.REFRESH_TOKEN_KEY);
+        String refreshToken = CookieUtil.getValue(cookies, JwtTokenProvider.REFRESH_TOKEN_KEY);
         if (tokenBlacklist.isRefreshTokenBlacklisted(refreshToken)) {
             throw new InvalidTokenException(ErrorType.LOGGED_OUT_TOKEN);
         }
 
         Authority authority =
-                Authority.valueOf((String) jwtTokenService.getClaim(accessToken, "role"));
+                Authority.valueOf((String) jwtTokenProvider.getClaim(accessToken, "role"));
         if(!Authority.isManager(authority)) {
             throw new InvalidAuthenticationException(ErrorType.FORBIDDEN);
         }
 
-        request.setAttribute("id", jwtTokenService.getClaim(accessToken, "id"));
-        request.setAttribute("role", jwtTokenService.getClaim(accessToken, "role"));
+        request.setAttribute("id", jwtTokenProvider.getClaim(accessToken, "id"));
+        request.setAttribute("role", jwtTokenProvider.getClaim(accessToken, "role"));
         return true;
     }
 }

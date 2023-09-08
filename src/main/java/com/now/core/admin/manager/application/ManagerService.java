@@ -3,7 +3,7 @@ package com.now.core.admin.manager.application;
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
 import com.now.core.admin.manager.exception.InvalidManagerException;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.application.dto.TokenClaims;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.authentication.exception.InvalidAuthenticationException;
@@ -25,7 +25,7 @@ public class ManagerService {
 
     private final ManagerRepository managerRepository;
     private final PasswordSecurityManager passwordSecurityManager;
-    private final JwtTokenService tokenProvider;
+    private final JwtTokenProvider tokenProvider;
 
     /**
      * 매니저의 인증을 처리하고 JWT 토큰을 생성하여 반환

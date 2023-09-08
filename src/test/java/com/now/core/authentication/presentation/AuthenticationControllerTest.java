@@ -2,7 +2,7 @@ package com.now.core.authentication.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
 import com.now.config.fixtures.member.MemberFixture;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.application.dto.Token;
 import com.now.core.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
@@ -86,8 +86,8 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
         String refreshToken = "RefreshToken";
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/log-out")
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
-                        .cookie(new Cookie(JwtTokenService.REFRESH_TOKEN_KEY, refreshToken)))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
+                        .cookie(new Cookie(JwtTokenProvider.REFRESH_TOKEN_KEY, refreshToken)))
                 .andExpect(cookie().maxAge("access_token", 0))
                 .andExpect(cookie().maxAge("refresh_token", 0))
                 .andExpect(status().isOk())
@@ -110,11 +110,11 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
                 .refreshToken(refreshToken)
                 .build();
 
-        given(jwtTokenService.refreshTokens(refreshToken)).willReturn(newToken);
+        given(jwtTokenProvider.refreshTokens(refreshToken)).willReturn(newToken);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/refresh")
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
-                        .cookie(new Cookie(JwtTokenService.REFRESH_TOKEN_KEY, refreshToken)))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
+                        .cookie(new Cookie(JwtTokenProvider.REFRESH_TOKEN_KEY, refreshToken)))
                 .andExpect(cookie().httpOnly("access_token", true))
                 .andExpect(cookie().httpOnly("refresh_token", true))
                 .andExpect(cookie().value("access_token", newToken.getAccessToken()))

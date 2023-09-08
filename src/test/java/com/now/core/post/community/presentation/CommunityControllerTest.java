@@ -1,7 +1,7 @@
 package com.now.core.post.community.presentation;
 
 import com.now.config.document.utils.RestDocsTestSupport;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.post.community.domain.Community;
@@ -178,8 +178,8 @@ class CommunityControllerTest extends RestDocsTestSupport {
         String memberId = "tester1";
         String accessToken = "Bearer accessToken";
         Community community = createCommunityForSave().updatePostIdx(1L);
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         MockMultipartFile communityPart = new MockMultipartFile("community", "",
                 MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(community));
@@ -195,14 +195,14 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         .file(fileA)
                         .file(fileB)
                         .accept(MediaType.APPLICATION_JSON)
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.header().exists(HttpHeaders.LOCATION))
                 .andExpect(MockMvcResultMatchers.status().isCreated());
 
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParts(
                                 partWithName("community").description("커뮤니티 게시글 정보"),
@@ -227,8 +227,8 @@ class CommunityControllerTest extends RestDocsTestSupport {
         Long postIdx = 1L;
         String memberId = "tester1";
         String accessToken = "Bearer accessToken";
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         Community updatedCommunity = Community.builder()
                 .category(Category.COMMUNITY_STUDY)
@@ -251,7 +251,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
                         .file(fileB)
                         .param("notDeletedIndexes", "1", "2", "3")
                         .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                         .with(request -> {
                             request.setMethod(String.valueOf(HttpMethod.PUT)); // PUT 메서드로 변경
                             return request;
@@ -262,7 +262,7 @@ class CommunityControllerTest extends RestDocsTestSupport {
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         requestParts(
                                 partWithName("community").description("커뮤니티 게시글 정보"),
@@ -290,17 +290,17 @@ class CommunityControllerTest extends RestDocsTestSupport {
         Long postIdx = 1L;
         String memberId = "tester1";
         String accessToken = "Bearer accessToken";
-        given(jwtTokenService.getClaim(accessToken, "id")).willReturn(memberId);
-        given(jwtTokenService.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
+        given(jwtTokenProvider.getClaim(accessToken, "id")).willReturn(memberId);
+        given(jwtTokenProvider.getClaim(accessToken, "role")).willReturn(Authority.MEMBER.getValue());
 
         ResultActions resultActions = mockMvc.perform(RestDocumentationRequestBuilders.delete("/api/communities/{postIdx}", postIdx)
-                        .cookie(new Cookie(JwtTokenService.ACCESS_TOKEN_KEY, accessToken)))
+                        .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         resultActions
                 .andDo(restDocs.document(
                         customRequestHeaderCookies(
-                                cookieWithName(JwtTokenService.ACCESS_TOKEN_KEY).description("액세스 토큰")
+                                cookieWithName(JwtTokenProvider.ACCESS_TOKEN_KEY).description("액세스 토큰")
                         ),
                         pathParameters(
                                 parameterWithName("postIdx").description("게시글 번호")

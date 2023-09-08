@@ -2,7 +2,6 @@ package com.now.core.admin.manager.presentation;
 
 import com.now.core.admin.manager.application.ManagerService;
 import com.now.core.admin.manager.domain.Manager;
-import com.now.core.authentication.application.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;

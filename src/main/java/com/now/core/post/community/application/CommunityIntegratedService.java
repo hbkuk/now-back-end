@@ -2,7 +2,7 @@ package com.now.core.post.community.application;
 
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.attachment.domain.constants.AttachmentType;
-import com.now.core.authentication.application.JwtTokenService;
+import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.comment.application.CommentService;
 import com.now.core.post.common.application.PostService;
 import com.now.core.post.common.application.dto.AddNewAttachments;
@@ -31,7 +31,7 @@ public class CommunityIntegratedService {
     private final CommunityService communityService;
     private final AttachmentService attachmentService;
     private final CommentService commentService;
-    private final JwtTokenService jwtTokenService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * 조건에 따라 페이지 정보와 함께 모든 커뮤니티 게시글 목록 반환
@@ -69,7 +69,7 @@ public class CommunityIntegratedService {
      */
     @Transactional(readOnly = true)
     public Community getEditCommunity(Long postIdx, String accessToken) {
-        return communityService.getEditCommunity(postIdx, (String) jwtTokenService.getClaim(accessToken, "id"));
+        return communityService.getEditCommunity(postIdx, (String) jwtTokenProvider.getClaim(accessToken, "id"));
     }
 
     /**
