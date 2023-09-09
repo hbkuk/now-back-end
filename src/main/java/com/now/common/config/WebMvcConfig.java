@@ -1,5 +1,6 @@
 package com.now.common.config;
 
+import com.now.common.config.infrastructure.RateLimitHeaders;
 import org.apache.http.HeaderElement;
 import org.apache.http.HeaderElementIterator;
 import org.apache.http.client.HttpClient;
@@ -42,7 +43,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         "https://web-new-now-front-fq2r52klluuyef5.sel3.cloudtype.app"
                 )
                 .allowedMethods(ALLOWED_METHOD_NAMES.split(","))
-                .exposedHeaders(HttpHeaders.LOCATION)
+                .exposedHeaders(HttpHeaders.LOCATION, RateLimitHeaders.RETRY_AFTER)
                 .allowCredentials(true);
     }
 
