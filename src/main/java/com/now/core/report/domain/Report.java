@@ -13,6 +13,7 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class Report {
 
+    @JsonIgnore
     private final Long reportIdx;
 
     @JsonIgnore

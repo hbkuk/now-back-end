@@ -516,6 +516,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Binary-Download">Binary-Download</a></li>
 </ul>
 </li>
+<li><a href="#Report-API">Report API</a>
+<ul class="sectlevel2">
+<li><a href="#Report-버그-제보">Report 버그 제보</a></li>
+<li><a href="#Report-피드백-저장">Report 피드백 저장</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -641,9 +647,9 @@ Host: my-host:80
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Set-Cookie: access_token=AccessToken; Secure; HttpOnly; SameSite=None
-Set-Cookie: refresh_token=RefreshToken; Path=/api/refresh; Secure; HttpOnly; SameSite=None
-Set-Cookie: refresh_token=RefreshToken; Path=/api/log-out; Secure; HttpOnly; SameSite=None
+Set-Cookie: access_token=Bearer+AccessToken; Secure; HttpOnly; SameSite=None
+Set-Cookie: refresh_token=Bearer+RefreshToken; Path=/api/refresh; Secure; HttpOnly; SameSite=None
+Set-Cookie: refresh_token=Bearer+RefreshToken; Path=/api/log-out; Secure; HttpOnly; SameSite=None
 Content-Type: application/json;charset=UTF-8
 Content-Length: 73
 
@@ -722,8 +728,8 @@ Content-Length: 73
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/log-out HTTP/1.1
 Host: my-host:80
-Cookie: access_token=AccessToken
-Cookie: refresh_token=RefreshToken</code></pre>
+Cookie: access_token=Bearer AccessToken
+Cookie: refresh_token=Bearer RefreshToken</code></pre>
 </div>
 </div>
 </div>
@@ -774,8 +780,8 @@ Set-Cookie: refresh_token=; Max-Age=0; Expires=Thu, 1 Jan 1970 00:00:00 GMT; Sec
 <div class="content">
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/refresh HTTP/1.1
 Host: my-host:80
-Cookie: access_token=AccessToken
-Cookie: refresh_token=RefreshToken</code></pre>
+Cookie: access_token=Bearer AccessToken
+Cookie: refresh_token=Bearer RefreshToken</code></pre>
 </div>
 </div>
 </div>
@@ -812,9 +818,9 @@ Cookie: refresh_token=RefreshToken</code></pre>
 Vary: Origin
 Vary: Access-Control-Request-Method
 Vary: Access-Control-Request-Headers
-Set-Cookie: access_token=newAccessToken; Secure; HttpOnly; SameSite=None
-Set-Cookie: refresh_token=RefreshToken; Path=/api/refresh; Secure; HttpOnly; SameSite=None
-Set-Cookie: refresh_token=RefreshToken; Path=/api/log-out; Secure; HttpOnly; SameSite=None</code></pre>
+Set-Cookie: access_token=Bearer+newAccessToken; Secure; HttpOnly; SameSite=None
+Set-Cookie: refresh_token=Bearer+RefreshToken; Path=/api/refresh; Secure; HttpOnly; SameSite=None
+Set-Cookie: refresh_token=Bearer+RefreshToken; Path=/api/log-out; Secure; HttpOnly; SameSite=None</code></pre>
 </div>
 </div>
 </div>
@@ -902,7 +908,7 @@ Content-Length: 6197
     "category" : "NEWS",
     "title" : "중요 공지사항",
     "content" : "안녕하세요. 중요한 공지사항입니다. 서비스 정책 변경으로 인해 모든 사용자는 반드시 비밀번호를 변경해야 합니다. 감사합니다.",
-    "regDate" : "2023-09-05 15:36:54",
+    "regDate" : "2023-09-10 22:37:35",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
@@ -912,7 +918,7 @@ Content-Length: 6197
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:36:54"
+      "regDate" : "2023-09-11 22:37:35"
     } ],
     "managerNickname" : "YullManager"
   }, {
@@ -921,7 +927,7 @@ Content-Length: 6197
     "category" : "NEWS",
     "title" : "서비스 이용 안내",
     "content" : "안녕하세요. 저희 서비스를 이용해 주셔서 감사합니다. 이용 중 궁금한 점이나 문제가 발생하면 언제든지 문의해주세요. 즐거운 하루 되세요!",
-    "regDate" : "2023-09-05 15:36:54",
+    "regDate" : "2023-09-10 22:37:35",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
@@ -931,7 +937,7 @@ Content-Length: 6197
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:36:54"
+      "regDate" : "2023-09-11 22:37:35"
     } ],
     "managerNickname" : "HoonManager"
   } ],
@@ -941,14 +947,14 @@ Content-Length: 6197
     "category" : "COMMUNITY_STUDY",
     "title" : "비전공자로 살아남기 1",
     "content" : "비전공자로서 살아남는 것은 전공자와는 다소 다른 도전이 있을 수 있지만, 아래의 조언들을 따라가면 도움이 될 수 있습니다",
-    "regDate" : "2023-09-05 15:36:54",
+    "regDate" : "2023-09-10 22:37:35",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
     "attachments" : [ {
       "attachmentIdx" : 1,
       "originalAttachmentName" : "sample1.png",
-      "savedAttachmentName" : "94602f1d-4c1b-4ad1-93d0-80a97df8fcae.png",
+      "savedAttachmentName" : "8f13ac44-6d4c-466f-9868-c77603eae231.png",
       "attachmentExtension" : "png",
       "attachmentSize" : 7777,
       "postIdx" : 1
@@ -958,7 +964,7 @@ Content-Length: 6197
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:36:54"
+      "regDate" : "2023-09-11 22:37:35"
     } ],
     "memberNickname" : "Bob"
   }, {
@@ -967,14 +973,14 @@ Content-Length: 6197
     "category" : "COMMUNITY_STUDY",
     "title" : "비전공자로 살아남기 1",
     "content" : "비전공자로서 살아남는 것은 전공자와는 다소 다른 도전이 있을 수 있지만, 아래의 조언들을 따라가면 도움이 될 수 있습니다",
-    "regDate" : "2023-09-05 15:36:54",
+    "regDate" : "2023-09-10 22:37:35",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
     "attachments" : [ {
       "attachmentIdx" : 1,
       "originalAttachmentName" : "sample1.png",
-      "savedAttachmentName" : "2f95c01d-443d-4914-8638-1c73814e5eb2.png",
+      "savedAttachmentName" : "9bce5c8c-a7a5-4154-9bf6-ef52ba68ab17.png",
       "attachmentExtension" : "png",
       "attachmentSize" : 7777,
       "postIdx" : 1
@@ -984,7 +990,7 @@ Content-Length: 6197
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:36:54"
+      "regDate" : "2023-09-11 22:37:35"
     } ],
     "memberNickname" : "Bob"
   } ],
@@ -994,14 +1000,14 @@ Content-Length: 6197
     "category" : "DAILY_LIFE",
     "title" : "순간을 담다: 사진으로 떠나는 여행",
     "content" : "여러분을 환영합니다! 이 사진 게시글에서는 우리의 시각적인 여정을 함께 합니다.",
-    "regDate" : "2023-09-05 15:36:54",
+    "regDate" : "2023-09-10 22:37:35",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
     "attachments" : [ {
       "attachmentIdx" : 1,
       "originalAttachmentName" : "sample1.png",
-      "savedAttachmentName" : "c61fd30d-568a-4674-999e-85c010cd2a18.png",
+      "savedAttachmentName" : "f3b0581b-4366-4a5d-a68a-bba82e9a40e7.png",
       "attachmentExtension" : "png",
       "attachmentSize" : 7777,
       "postIdx" : 1
@@ -1011,7 +1017,7 @@ Content-Length: 6197
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:36:54"
+      "regDate" : "2023-09-11 22:37:35"
     } ],
     "thumbnailAttachmentIdx" : 1,
     "memberNickname" : "Bob"
@@ -1021,14 +1027,14 @@ Content-Length: 6197
     "category" : "DAILY_LIFE",
     "title" : "순간을 담다: 사진으로 떠나는 여행",
     "content" : "여러분을 환영합니다! 이 사진 게시글에서는 우리의 시각적인 여정을 함께 합니다.",
-    "regDate" : "2023-09-05 15:36:54",
+    "regDate" : "2023-09-10 22:37:35",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
     "attachments" : [ {
       "attachmentIdx" : 1,
       "originalAttachmentName" : "sample1.png",
-      "savedAttachmentName" : "c28a4866-9410-46b1-8e2c-64dfb1c5b9ec.png",
+      "savedAttachmentName" : "08ec1d95-f67f-4c44-bf49-8fc5780ef852.png",
       "attachmentExtension" : "png",
       "attachmentSize" : 7777,
       "postIdx" : 1
@@ -1038,7 +1044,7 @@ Content-Length: 6197
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:36:54"
+      "regDate" : "2023-09-11 22:37:35"
     } ],
     "thumbnailAttachmentIdx" : 1,
     "memberNickname" : "Bob"
@@ -1048,7 +1054,7 @@ Content-Length: 6197
     "category" : "SERVICE",
     "title" : "문의 사항이 있어서 연락드립니다.",
     "content" : "해당 게시글에 대해 몇 가지 궁금한 점이 있어서 문의드립니다.",
-    "regDate" : "2023-09-05 15:36:54",
+    "regDate" : "2023-09-10 22:37:35",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
@@ -1061,7 +1067,7 @@ Content-Length: 6197
     "category" : "SERVICE",
     "title" : "문의 사항이 있어서 연락드립니다.",
     "content" : "해당 게시글에 대해 몇 가지 궁금한 점이 있어서 문의드립니다.",
-    "regDate" : "2023-09-05 15:36:54",
+    "regDate" : "2023-09-10 22:37:35",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
@@ -2026,7 +2032,7 @@ Content-Length: 879
 <h4 id="Notice-전체-조회_http_request"><a class="link" href="#Notice-전체-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/notices?startDate=2021-09-05&amp;endDate=2023-09-05&amp;category=NEWS&amp;keyword=input+Keyword...&amp;sort=LATEST&amp;maxNumberOfPosts=10&amp;pageNo=1 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/notices?startDate=2021-09-10&amp;endDate=2023-09-10&amp;category=NEWS&amp;keyword=input+Keyword...&amp;sort=LATEST&amp;maxNumberOfPosts=10&amp;pageNo=1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: my-host:80</code></pre>
 </div>
@@ -2102,7 +2108,7 @@ Content-Length: 1601
     "category" : "NEWS",
     "title" : "중요 공지사항",
     "content" : "안녕하세요. 중요한 공지사항입니다. 서비스 정책 변경으로 인해 모든 사용자는 반드시 비밀번호를 변경해야 합니다. 감사합니다.",
-    "regDate" : "2023-09-05 15:38:05",
+    "regDate" : "2023-09-10 22:38:02",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
@@ -2112,7 +2118,7 @@ Content-Length: 1601
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:38:05"
+      "regDate" : "2023-09-11 22:38:02"
     } ],
     "managerNickname" : "YullManager"
   }, {
@@ -2121,7 +2127,7 @@ Content-Length: 1601
     "category" : "NEWS",
     "title" : "서비스 이용 안내",
     "content" : "안녕하세요. 저희 서비스를 이용해 주셔서 감사합니다. 이용 중 궁금한 점이나 문제가 발생하면 언제든지 문의해주세요. 즐거운 하루 되세요!",
-    "regDate" : "2023-09-05 15:38:05",
+    "regDate" : "2023-09-10 22:38:02",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
@@ -2131,7 +2137,7 @@ Content-Length: 1601
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:38:05"
+      "regDate" : "2023-09-11 22:38:02"
     } ],
     "managerNickname" : "HoonManager"
   } ],
@@ -2381,7 +2387,7 @@ Content-Length: 668
   "category" : "NEWS",
   "title" : "서비스 이용 안내",
   "content" : "안녕하세요. 저희 서비스를 이용해 주셔서 감사합니다. 이용 중 궁금한 점이나 문제가 발생하면 언제든지 문의해주세요. 즐거운 하루 되세요!",
-  "regDate" : "2023-09-05 15:38:06",
+  "regDate" : "2023-09-10 22:38:03",
   "viewCount" : 1000,
   "likeCount" : 100,
   "dislikeCount" : 2,
@@ -2391,7 +2397,7 @@ Content-Length: 668
     "commentIdx" : 1,
     "memberNickname" : "Shark",
     "content" : "좋은 글 입니다.",
-    "regDate" : "2023-09-06 15:38:06"
+    "regDate" : "2023-09-11 22:38:03"
   } ],
   "managerNickname" : "HoonManager"
 }</code></pre>
@@ -2858,7 +2864,7 @@ Vary: Access-Control-Request-Headers</code></pre>
 <h4 id="Community-전체-조회_http_request"><a class="link" href="#Community-전체-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/communities?startDate=2021-09-05&amp;endDate=2023-09-05&amp;category=COMMUNITY_STUDY&amp;keyword=input+Keyword...&amp;sort=LATEST&amp;maxNumberOfPosts=10&amp;pageNo=1 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/communities?startDate=2021-09-10&amp;endDate=2023-09-10&amp;category=COMMUNITY_STUDY&amp;keyword=input+Keyword...&amp;sort=LATEST&amp;maxNumberOfPosts=10&amp;pageNo=1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: my-host:80</code></pre>
 </div>
@@ -2934,14 +2940,14 @@ Content-Length: 2197
     "category" : "COMMUNITY_STUDY",
     "title" : "비전공자로 살아남기 1",
     "content" : "비전공자로서 살아남는 것은 전공자와는 다소 다른 도전이 있을 수 있지만, 아래의 조언들을 따라가면 도움이 될 수 있습니다",
-    "regDate" : "2023-09-05 15:37:51",
+    "regDate" : "2023-09-10 22:37:46",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
     "attachments" : [ {
       "attachmentIdx" : 1,
       "originalAttachmentName" : "sample1.png",
-      "savedAttachmentName" : "1337e732-be9c-4dae-bfbe-9bcec0b6254a.png",
+      "savedAttachmentName" : "ef11b22a-89cb-4a4c-9f70-7bfd344d8ee7.png",
       "attachmentExtension" : "png",
       "attachmentSize" : 7777,
       "postIdx" : 1
@@ -2951,7 +2957,7 @@ Content-Length: 2197
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:37:51"
+      "regDate" : "2023-09-11 22:37:46"
     } ],
     "memberNickname" : "Bob"
   }, {
@@ -2960,14 +2966,14 @@ Content-Length: 2197
     "category" : "COMMUNITY_STUDY",
     "title" : "개인 프로젝트 및 포트폴리오 구축",
     "content" : "자신이 배운 것들을 실제로 활용할 수 있는 개인 프로젝트를 진행해보세요. 개인 프로젝트를 통해 자신의 능력을 증명할 수 있고, 포트폴리오를 구축하는 데 도움이 됩니다.",
-    "regDate" : "2023-09-05 15:37:51",
+    "regDate" : "2023-09-10 22:37:46",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
     "attachments" : [ {
       "attachmentIdx" : 1,
       "originalAttachmentName" : "sample1.png",
-      "savedAttachmentName" : "baa5cb11-91e8-4133-b8a8-03f0a0120052.png",
+      "savedAttachmentName" : "cd118606-1922-4ee5-ae96-6490699d9458.png",
       "attachmentExtension" : "png",
       "attachmentSize" : 7777,
       "postIdx" : 1
@@ -2977,7 +2983,7 @@ Content-Length: 2197
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:37:51"
+      "regDate" : "2023-09-11 22:37:46"
     } ],
     "memberNickname" : "Honi"
   } ],
@@ -3263,14 +3269,14 @@ Content-Length: 901
   "category" : "COMMUNITY_STUDY",
   "title" : "비전공자로 살아남기 1",
   "content" : "비전공자로서 살아남는 것은 전공자와는 다소 다른 도전이 있을 수 있지만, 아래의 조언들을 따라가면 도움이 될 수 있습니다",
-  "regDate" : "2023-09-05 15:37:51",
+  "regDate" : "2023-09-10 22:37:46",
   "viewCount" : 1000,
   "likeCount" : 100,
   "dislikeCount" : 2,
   "attachments" : [ {
     "attachmentIdx" : 1,
     "originalAttachmentName" : "sample1.png",
-    "savedAttachmentName" : "f1726b6c-6933-4b26-8d9a-819e2802e714.png",
+    "savedAttachmentName" : "a0f709fb-1082-42aa-b744-33304cb9d497.png",
     "attachmentExtension" : "png",
     "attachmentSize" : 7777,
     "postIdx" : 1
@@ -3280,7 +3286,7 @@ Content-Length: 901
     "commentIdx" : 1,
     "memberNickname" : "Shark",
     "content" : "좋은 글 입니다.",
-    "regDate" : "2023-09-06 15:37:51"
+    "regDate" : "2023-09-11 22:37:46"
   } ],
   "memberNickname" : "Bob"
 }</code></pre>
@@ -3836,7 +3842,7 @@ Vary: Access-Control-Request-Headers</code></pre>
 <h4 id="Photo-전체-조회_http_request"><a class="link" href="#Photo-전체-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/photos?startDate=2021-09-05&amp;endDate=2023-09-05&amp;category=DAILY_LIFE&amp;keyword=input+Keyword...&amp;sort=LATEST&amp;maxNumberOfPosts=10&amp;pageNo=1 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/photos?startDate=2021-09-10&amp;endDate=2023-09-10&amp;category=DAILY_LIFE&amp;keyword=input+Keyword...&amp;sort=LATEST&amp;maxNumberOfPosts=10&amp;pageNo=1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: my-host:80</code></pre>
 </div>
@@ -3912,14 +3918,14 @@ Content-Length: 2042
     "category" : "DAILY_LIFE",
     "title" : "순간을 담다: 사진으로 떠나는 여행",
     "content" : "여러분을 환영합니다! 이 사진 게시글에서는 우리의 시각적인 여정을 함께 합니다.",
-    "regDate" : "2023-09-05 15:38:13",
+    "regDate" : "2023-09-10 22:38:11",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
     "attachments" : [ {
       "attachmentIdx" : 1,
       "originalAttachmentName" : "sample1.png",
-      "savedAttachmentName" : "53aa1d10-5a09-4e47-8b85-913e48956dfc.png",
+      "savedAttachmentName" : "37545f7e-d8df-4ecd-a7e6-ad0a06b87756.png",
       "attachmentExtension" : "png",
       "attachmentSize" : 7777,
       "postIdx" : 1
@@ -3929,7 +3935,7 @@ Content-Length: 2042
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:38:13"
+      "regDate" : "2023-09-11 22:38:11"
     } ],
     "thumbnailAttachmentIdx" : 1,
     "memberNickname" : "Bob"
@@ -3939,14 +3945,14 @@ Content-Length: 2042
     "category" : "DAILY_LIFE",
     "title" : "렌즈를 통해 본 세상: 아름다움의 발견",
     "content" : "이곳은 사진들의 환상적인 세계로 초대합니다.",
-    "regDate" : "2023-09-05 15:38:13",
+    "regDate" : "2023-09-10 22:38:11",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
     "attachments" : [ {
       "attachmentIdx" : 1,
       "originalAttachmentName" : "sample1.png",
-      "savedAttachmentName" : "abd77bb7-fcd1-4a46-9299-edd9230282d6.png",
+      "savedAttachmentName" : "1bc0b45c-117c-4212-9e4e-837ea776889e.png",
       "attachmentExtension" : "png",
       "attachmentSize" : 7777,
       "postIdx" : 1
@@ -3956,7 +3962,7 @@ Content-Length: 2042
       "commentIdx" : 1,
       "memberNickname" : "Shark",
       "content" : "좋은 글 입니다.",
-      "regDate" : "2023-09-06 15:38:13"
+      "regDate" : "2023-09-11 22:38:11"
     } ],
     "thumbnailAttachmentIdx" : 1,
     "memberNickname" : "Honi"
@@ -4249,14 +4255,14 @@ Content-Length: 885
   "category" : "DAILY_LIFE",
   "title" : "순간을 담다: 사진으로 떠나는 여행",
   "content" : "여러분을 환영합니다! 이 사진 게시글에서는 우리의 시각적인 여정을 함께 합니다.",
-  "regDate" : "2023-09-05 15:38:13",
+  "regDate" : "2023-09-10 22:38:11",
   "viewCount" : 1000,
   "likeCount" : 100,
   "dislikeCount" : 2,
   "attachments" : [ {
     "attachmentIdx" : 1,
     "originalAttachmentName" : "sample1.png",
-    "savedAttachmentName" : "b603bcf3-debc-4189-afe0-7955df0ab9ab.png",
+    "savedAttachmentName" : "c65cb0e1-5fc3-4787-9321-079255607625.png",
     "attachmentExtension" : "png",
     "attachmentSize" : 7777,
     "postIdx" : 1
@@ -4266,7 +4272,7 @@ Content-Length: 885
     "commentIdx" : 1,
     "memberNickname" : "Shark",
     "content" : "좋은 글 입니다.",
-    "regDate" : "2023-09-06 15:38:13"
+    "regDate" : "2023-09-11 22:38:11"
   } ],
   "thumbnailAttachmentIdx" : 1,
   "memberNickname" : "Bob"
@@ -5005,7 +5011,7 @@ Vary: Access-Control-Request-Headers</code></pre>
 <h4 id="Inquiry-전체-조회_http_request"><a class="link" href="#Inquiry-전체-조회_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/inquiries?startDate=2021-09-05&amp;endDate=2023-09-05&amp;category=SERVICE&amp;keyword=input+Keyword...&amp;sort=LATEST&amp;maxNumberOfPosts=10&amp;pageNo=1 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/inquiries?startDate=2021-09-10&amp;endDate=2023-09-10&amp;category=SERVICE&amp;keyword=input+Keyword...&amp;sort=LATEST&amp;maxNumberOfPosts=10&amp;pageNo=1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: my-host:80</code></pre>
 </div>
@@ -5080,7 +5086,7 @@ Content-Length: 1109
     "category" : "SERVICE",
     "title" : "문의 사항이 있어서 연락드립니다.",
     "content" : "해당 게시글에 대해 몇 가지 궁금한 점이 있어서 문의드립니다.",
-    "regDate" : "2023-09-05 15:38:01",
+    "regDate" : "2023-09-10 22:37:58",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
@@ -5093,7 +5099,7 @@ Content-Length: 1109
     "category" : "SERVICE",
     "title" : "서비스 이용에 문의드립니다.",
     "content" : "게시글에 몇 가지 궁금한 점이 있어서 문의드립니다.",
-    "regDate" : "2023-09-05 15:38:01",
+    "regDate" : "2023-09-10 22:37:58",
     "viewCount" : 1000,
     "likeCount" : 100,
     "dislikeCount" : 2,
@@ -5359,7 +5365,7 @@ Content-Length: 434
   "category" : "SERVICE",
   "title" : "문의 사항이 있어서 연락드립니다.",
   "content" : "해당 게시글에 대해 몇 가지 궁금한 점이 있어서 문의드립니다.",
-  "regDate" : "2023-09-05 15:38:01",
+  "regDate" : "2023-09-10 22:37:58",
   "viewCount" : 1000,
   "likeCount" : 100,
   "dislikeCount" : 2,
@@ -5538,7 +5544,7 @@ Content-Length: 434
 <pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/inquiries/secret/1 HTTP/1.1
 Content-Type: application/json;charset=UTF-8
 Host: my-host:80
-Cookie: access_token=AccessToken
+Cookie: access_token=Bearer AccessToken
 
 password=password1%21</code></pre>
 </div>
@@ -5625,14 +5631,14 @@ Content-Length: 610
   "category" : "SERVICE",
   "title" : "문의 사항이 있어서 연락드립니다.",
   "content" : "해당 게시글에 대해 몇 가지 궁금한 점이 있어서 문의드립니다.",
-  "regDate" : "2023-09-05 15:38:01",
+  "regDate" : "2023-09-10 22:37:58",
   "viewCount" : 1000,
   "likeCount" : 100,
   "dislikeCount" : 2,
   "secret" : true,
   "answerManagerNickname" : "GangManager",
   "answerContent" : "안녕하세요. 답변드리도록 하겠습니다.....",
-  "answerRegDate" : "2023-09-07T15:38:01.254797900",
+  "answerRegDate" : "2023-09-12T22:37:58.454377500",
   "postIdx" : 1,
   "memberNickname" : "Yull",
   "inquiryStatus" : "COMPLETE"
@@ -6139,31 +6145,31 @@ Content-Length: 853
     "commentIdx" : 1,
     "memberNickname" : "MEMBER_NIC_1",
     "content" : "댓글 내용 1",
-    "regDate" : "2023-09-05 15:37:26"
+    "regDate" : "2023-09-10 22:37:19"
   }, {
     "postIdx" : 1,
     "commentIdx" : 2,
     "memberNickname" : "MEMBER_NIC_2",
     "content" : "댓글 내용 2",
-    "regDate" : "2023-09-05 15:37:26"
+    "regDate" : "2023-09-10 22:37:19"
   }, {
     "postIdx" : 1,
     "commentIdx" : 3,
     "memberNickname" : "MEMBER_NIC_3",
     "content" : "댓글 내용 3",
-    "regDate" : "2023-09-05 15:37:26"
+    "regDate" : "2023-09-10 22:37:19"
   }, {
     "postIdx" : 1,
     "commentIdx" : 4,
     "memberNickname" : "MEMBER_NIC_4",
     "content" : "댓글 내용 4",
-    "regDate" : "2023-09-05 15:37:26"
+    "regDate" : "2023-09-10 22:37:19"
   }, {
     "postIdx" : 1,
     "commentIdx" : 5,
     "memberNickname" : "MEMBER_NIC_5",
     "content" : "댓글 내용 5",
-    "regDate" : "2023-09-05 15:37:26"
+    "regDate" : "2023-09-10 22:37:19"
   } ]
 }</code></pre>
 </div>
@@ -6247,7 +6253,7 @@ Cookie: access_token=Bearer accessToken
   "postIdx" : 1,
   "memberNickname" : "Shark",
   "content" : "좋은 글 입니다.",
-  "regDate" : "2023-09-06 15:37:27"
+  "regDate" : "2023-09-11 22:37:19"
 }</code></pre>
 </div>
 </div>
@@ -6260,7 +6266,7 @@ Cookie: access_token=Bearer accessToken
   "postIdx" : 1,
   "memberNickname" : "Shark",
   "content" : "좋은 글 입니다.",
-  "regDate" : "2023-09-06 15:37:27"
+  "regDate" : "2023-09-11 22:37:19"
 }</code></pre>
 </div>
 </div>
@@ -6343,7 +6349,7 @@ Cookie: access_token=Bearer accessToken
   "commentIdx" : 100,
   "memberNickname" : "Shark",
   "content" : "수정된 글 입니다.",
-  "regDate" : "2023-09-10 15:37:27"
+  "regDate" : "2023-09-15 22:37:19"
 }</code></pre>
 </div>
 </div>
@@ -6378,7 +6384,7 @@ Cookie: access_token=Bearer accessToken
   "commentIdx" : 100,
   "memberNickname" : "Shark",
   "content" : "수정된 글 입니다.",
-  "regDate" : "2023-09-10 15:37:27"
+  "regDate" : "2023-09-15 22:37:19"
 }</code></pre>
 </div>
 </div>
@@ -6507,7 +6513,7 @@ Vary: Access-Control-Request-Headers</code></pre>
 <h4 id="Binary-Download_http_request"><a class="link" href="#Binary-Download_http_request">HTTP request</a></h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /attachments/1 HTTP/1.1
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">GET /api/attachments/1 HTTP/1.1
 Host: my-host:80</code></pre>
 </div>
 </div>
@@ -6515,7 +6521,7 @@ Host: my-host:80</code></pre>
 <div class="sect3">
 <h4 id="Binary-Download_path_parameters"><a class="link" href="#Binary-Download_path_parameters">Path parameters</a></h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. /attachments/{attachmentIdx}</caption>
+<caption class="title">Table 1. /api/attachments/{attachmentIdx}</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -6562,10 +6568,149 @@ Host: my-host:80</code></pre>
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="Report-API"><a class="link" href="#Report-API">Report API</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="Report-버그-제보"><a class="link" href="#Report-버그-제보">Report 버그 제보</a></h3>
+<div class="sect3">
+<h4 id="Report-버그-제보_http_request"><a class="link" href="#Report-버그-제보_http_request">HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/report/bug HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 61
+Host: my-host:80
+
+{
+  "content" : "버그 제보하겠습니다. 제가..."
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Report-버그-제보_request_body"><a class="link" href="#Report-버그-제보_request_body">Request body</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
+  "content" : "버그 제보하겠습니다. 제가..."
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Report-버그-제보_request_fields"><a class="link" href="#Report-버그-제보_request_fields">Request fields</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">필드명</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">타입</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">필수여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제약조건</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">설명</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">내용</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="Report-버그-제보_http_response"><a class="link" href="#Report-버그-제보_http_response">HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Report-피드백-저장"><a class="link" href="#Report-피드백-저장">Report 피드백 저장</a></h3>
+<div class="sect3">
+<h4 id="Report-피드백-저장_http_request"><a class="link" href="#Report-피드백-저장_http_request">HTTP request</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">POST /api/report/feedback HTTP/1.1
+Content-Type: application/json;charset=UTF-8
+Content-Length: 40
+Host: my-host:80
+
+{
+  "content" : "피드백은요..."
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Report-피드백-저장_request_body"><a class="link" href="#Report-피드백-저장_request_body">Request body</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-none hljs">{
+  "content" : "피드백은요..."
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Report-피드백-저장_request_fields"><a class="link" href="#Report-피드백-저장_request_fields">Request fields</a></h4>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">필드명</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">타입</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">필수여부</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">제약조건</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">설명</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>content</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>String</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">내용</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="Report-피드백-저장_http_response"><a class="link" href="#Report-피드백-저장_http_response">HTTP response</a></h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight nowrap"><code class="language-http hljs" data-lang="http">HTTP/1.1 201 Created
+Vary: Origin
+Vary: Access-Control-Request-Method
+Vary: Access-Control-Request-Headers</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2023-08-22 13:44:03 +0900
+Last updated 2023-09-10 22:35:48 +0900
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3/highlight.min.js"></script>

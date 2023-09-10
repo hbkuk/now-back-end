@@ -9,6 +9,7 @@ import io.github.bucket4j.Refill;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -19,6 +20,7 @@ import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+@ActiveProfiles("local")
 @DisplayName("Rate Limiting Interceptor는")
 class RateLimitingInterceptorTest extends ControllerTest {
 

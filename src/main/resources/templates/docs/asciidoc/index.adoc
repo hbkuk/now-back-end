@@ -26,3 +26,5 @@ include::Inquiry-API.adoc[]
 include::Comment-API.adoc[]
 
 include::Attachment-API.adoc[]
+
+include::Report-API.adoc[]

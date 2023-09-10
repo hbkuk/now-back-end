@@ -1,0 +1,10 @@
+[[Report-API]]
+== Report API
+
+[[Report-버그-제보]]
+=== Report 버그 제보
+operation::report-controller-test/save-bug[snippets='http-request,request-body,request-fields,http-response']
+
+[[Report-피드백-저장]]
+=== Report 피드백 저장
+operation::report-controller-test/save-feedback[snippets='http-request,request-body,request-fields,http-response']

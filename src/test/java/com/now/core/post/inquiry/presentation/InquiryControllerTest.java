@@ -167,7 +167,7 @@ class InquiryControllerTest extends RestDocsTestSupport {
         // given
         Long postIdx = 1L;
         String password = "password1!";
-        String accessToken = "AccessToken";
+        String accessToken = "Bearer AccessToken";
 
         given(inquiryIntegratedService.getPrivateInquiryAndIncrementViewCount(postIdx, accessToken, password))
                 .willReturn(createSecretInquiry(

@@ -2,6 +2,7 @@ package com.now.common.config.infrastructure;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 @RequiredArgsConstructor
+@Profile({"local", "dev", "prod"})
 public class RateLimitConfig implements WebMvcConfigurer {
 
     private final RateLimitingInterceptor rateLimitingInterceptor;

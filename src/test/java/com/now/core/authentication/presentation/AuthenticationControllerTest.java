@@ -14,6 +14,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.servlet.http.Cookie;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import static com.now.config.document.snippet.RequestCookiesSnippet.cookieWithName;
 import static com.now.config.document.snippet.RequestCookiesSnippet.customRequestHeaderCookies;
 import static com.now.config.fixtures.member.MemberFixture.createMember;
@@ -39,8 +42,8 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
         Member member = createMember(memberId, MemberFixture.SAMPLE_PASSWORD_1);
         Member memberProfile = createMemberProfile(memberId, nickname, name);
         Token token = Token.builder()
-                .accessToken("AccessToken")
-                .refreshToken("RefreshToken")
+                .accessToken("Bearer AccessToken")
+                .refreshToken("Bearer RefreshToken")
                 .build();
 
         given(memberService.validateCredentialsAndRetrieveMember(member)).willReturn(memberProfile);
@@ -52,10 +55,10 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
                                 .content(requestBody))
                         .andExpect(status().isOk())
 
-                        .andExpect(cookie().httpOnly("access_token", true))
-                        .andExpect(cookie().httpOnly("refresh_token", true))
-                        .andExpect(cookie().value("access_token", token.getAccessToken()))
-                        .andExpect(cookie().value("refresh_token", token.getRefreshToken()))
+                        .andExpect(cookie().httpOnly(JwtTokenProvider.ACCESS_TOKEN_KEY, true))
+                        .andExpect(cookie().httpOnly(JwtTokenProvider.REFRESH_TOKEN_KEY, true))
+                        .andExpect(cookie().value(JwtTokenProvider.ACCESS_TOKEN_KEY, URLEncoder.encode(token.getAccessToken(), StandardCharsets.UTF_8)))
+                        .andExpect(cookie().value(JwtTokenProvider.REFRESH_TOKEN_KEY, URLEncoder.encode(token.getRefreshToken(), StandardCharsets.UTF_8)))
 
                         .andExpect(jsonPath("$.id").value(memberId))
                         .andExpect(jsonPath("$.nickname").value(nickname))
@@ -82,8 +85,8 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
     @Test
     @DisplayName("토큰 정보가 담긴 쿠키의 만료 시간을 0으로 설정 후 해당 블랙리스트 등록")
     void logout() throws Exception {
-        String accessToken = "AccessToken";
-        String refreshToken = "RefreshToken";
+        String accessToken = "Bearer AccessToken";
+        String refreshToken = "Bearer RefreshToken";
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/log-out")
                         .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
@@ -103,10 +106,10 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
     @Test
     @DisplayName("토큰 확인 후 AccessToken 재발급 처리")
     void refresh() throws Exception {
-        String accessToken = "AccessToken";
-        String refreshToken = "RefreshToken";
+        String accessToken = "Bearer AccessToken";
+        String refreshToken = "Bearer RefreshToken";
         Token newToken = Token.builder()
-                .accessToken("newAccessToken")
+                .accessToken("Bearer newAccessToken")
                 .refreshToken(refreshToken)
                 .build();
 
@@ -115,10 +118,13 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
         mockMvc.perform(MockMvcRequestBuilders.post("/api/refresh")
                         .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
                         .cookie(new Cookie(JwtTokenProvider.REFRESH_TOKEN_KEY, refreshToken)))
-                .andExpect(cookie().httpOnly("access_token", true))
-                .andExpect(cookie().httpOnly("refresh_token", true))
-                .andExpect(cookie().value("access_token", newToken.getAccessToken()))
-                .andExpect(cookie().value("refresh_token", newToken.getRefreshToken()))
+
+                .andExpect(cookie().httpOnly(JwtTokenProvider.ACCESS_TOKEN_KEY, true))
+                .andExpect(cookie().httpOnly(JwtTokenProvider.REFRESH_TOKEN_KEY, true))
+
+                .andExpect(cookie().value(JwtTokenProvider.ACCESS_TOKEN_KEY, URLEncoder.encode(newToken.getAccessToken(), StandardCharsets.UTF_8)))
+                .andExpect(cookie().value(JwtTokenProvider.REFRESH_TOKEN_KEY, URLEncoder.encode(newToken.getRefreshToken(), StandardCharsets.UTF_8)))
+
                 .andExpect(status().isOk())
 
                 .andDo(restDocs.document(
