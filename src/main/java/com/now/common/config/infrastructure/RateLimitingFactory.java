@@ -19,12 +19,15 @@ public class RateLimitingFactory {
      * 주어진 최대 대역폭과 토큰 리필 지속 시간으로 버킷 생성
      *
      * @param maxBandwidth               최대 대역폭
+     * @param tokenRefillCount           토큰 리필 횟수
      * @param tokenRefillDurationMinutes 토큰 리필 지속 시간(분)
-     * @return 생성된 버킷 객체
+     * @return
      */
-    public Bucket generateSimpleBucket(int maxBandwidth, int tokenRefillDurationMinutes) {
+    public Bucket generateBucket(int maxBandwidth, int tokenRefillCount, int tokenRefillDurationMinutes) {
         return Bucket.builder()
-                .addLimit(getSimpleBandwidth(maxBandwidth, tokenRefillDurationMinutes))
+                .addLimit(
+                    getClassicBandwidth(maxBandwidth,
+                    getIntervalRefill(tokenRefillCount, Duration.ofMinutes(tokenRefillDurationMinutes))))
                 .build();
     }
 
@@ -67,12 +70,12 @@ public class RateLimitingFactory {
     /**
      * 주어진 토큰 리필 횟수와 토큰 리필 간격으로 Refill 객체 생성
      *
-     * @param tokenRefillCount        토큰 리필 횟수
-     * @param tokenRefillIntervalSeconds 토큰 리필 간격(초)
+     * @param tokenRefillCount 토큰 리필 횟수
+     * @param duration         토큰 리필 간격
      * @return 생성된 Refill 객체
      */
-    public Refill getIntervalRefill(int tokenRefillCount, int tokenRefillIntervalSeconds) {
-        return Refill.intervally(tokenRefillCount, Duration.ofSeconds(tokenRefillIntervalSeconds));
+    public Refill getIntervalRefill(int tokenRefillCount, Duration duration) {
+        return Refill.intervally(tokenRefillCount, duration);
     }
 
     /**

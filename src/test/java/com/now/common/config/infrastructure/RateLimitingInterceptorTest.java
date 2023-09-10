@@ -5,6 +5,7 @@ import com.now.core.post.common.presentation.dto.Condition;
 import com.now.core.post.common.presentation.dto.constants.Sort;
 import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
+import io.github.bucket4j.Refill;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -13,8 +14,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.Duration;
 
-import static com.now.common.config.infrastructure.RateLimitingProvider.MAX_BANDWIDTH;
-import static com.now.common.config.infrastructure.RateLimitingProvider.TOKEN_REFILL_DURATION_MINUTES;
+import static com.now.common.config.infrastructure.RateLimitingProvider.*;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -31,7 +31,9 @@ class RateLimitingInterceptorTest extends ControllerTest {
 
         // 테스트 전에 RateLimitingProvider를 설정, Bucket 생성
         Bucket bucket = Bucket.builder()
-                .addLimit(Bandwidth.simple(MAX_BANDWIDTH, Duration.ofMinutes(TOKEN_REFILL_DURATION_MINUTES)))
+                .addLimit(
+                        Bandwidth.classic(MAX_BANDWIDTH,
+                                Refill.intervally(TOKEN_REFILL_COUNT_AT_ONCE, Duration.ofMinutes(TOKEN_REFILL_DURATION_MINUTES))))
                 .build();
 
         given(rateLimitBucketMap.hasBucket(any())).willReturn(false);
@@ -62,7 +64,9 @@ class RateLimitingInterceptorTest extends ControllerTest {
 
         // 테스트 전에 RateLimitingProvider를 설정, Bucket 생성
         Bucket bucket = Bucket.builder()
-                .addLimit(Bandwidth.simple(MAX_BANDWIDTH, Duration.ofMinutes(TOKEN_REFILL_DURATION_MINUTES)))
+                .addLimit(
+                        Bandwidth.classic(MAX_BANDWIDTH,
+                        Refill.intervally(TOKEN_REFILL_COUNT_AT_ONCE, Duration.ofMinutes(TOKEN_REFILL_DURATION_MINUTES))))
                 .build();
 
         given(rateLimitBucketMap.hasBucket(any())).willReturn(false);
@@ -94,10 +98,12 @@ class RateLimitingInterceptorTest extends ControllerTest {
         }
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.get(endpointPath)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("maxNumberOfPosts", String.valueOf(condition.getMaxNumberOfPosts())))
-                .andExpect(MockMvcResultMatchers.status().isOk());
+        for (int i = 0; i < TOKEN_REFILL_COUNT_AT_ONCE; i++) {
+            mockMvc.perform(MockMvcRequestBuilders.get(endpointPath)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .param("maxNumberOfPosts", String.valueOf(condition.getMaxNumberOfPosts())))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+        }
     }
 
 }

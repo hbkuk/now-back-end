@@ -96,7 +96,7 @@ public class CommunityController {
     @PutMapping("/api/communities/{postIdx}")
     public ResponseEntity<Void> updateCommunity(@PathVariable("postIdx") Long postIdx,
                                                 @AuthenticationPrincipal String memberId,
-                                                @Validated(PostValidationGroup.saveNotice.class) @RequestPart(name = "community") Community updatedCommunity,
+                                                @Validated(PostValidationGroup.saveCommunity.class) @RequestPart(name = "community") Community updatedCommunity,
                                                 @RequestPart(name = "attachments", required = false) MultipartFile[] attachments,
                                                 @RequestParam(name = "notDeletedIndexes", required = false) List<Long> notDeletedIndexes) {
 

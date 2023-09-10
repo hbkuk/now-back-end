@@ -4,6 +4,7 @@ import com.now.common.exception.TooManyRequestsException;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.ConsumptionProbe;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -14,6 +15,7 @@ import java.util.Objects;
 /**
  * Rate Limiting을 적용하는 인터셉터
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class RateLimitingInterceptor implements HandlerInterceptor {
@@ -26,7 +28,7 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
         String ipAddress = request.getRemoteAddr();
 
         if (!rateLimitBucketMap.hasBucket(ipAddress)) { // IP 주소에 대한 버킷이 없을 경우, 새로운 버킷을 생성하고 저장
-            Bucket newBucket = rateLimitingProvider.generateSimpleBucket();
+            Bucket newBucket = rateLimitingProvider.generateBucket();
             rateLimitBucketMap.addBucket(ipAddress, newBucket);
         }
 
