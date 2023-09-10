@@ -24,7 +24,8 @@ public class RateLimitConfig implements WebMvcConfigurer {
         registry.addInterceptor(rateLimitingInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/api/refresh")
-                .excludePathPatterns("/api/member/me");
+                .excludePathPatterns("/api/member/me")
+                .excludePathPatterns("api/member/log-out");
     }
 }
 

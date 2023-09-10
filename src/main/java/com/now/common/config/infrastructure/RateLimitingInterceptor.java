@@ -5,6 +5,7 @@ import io.github.bucket4j.Bucket;
 import io.github.bucket4j.ConsumptionProbe;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -25,8 +26,11 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        String ipAddress = request.getRemoteAddr();
+        if (shouldSkipRequest(request.getMethod())) {
+            return true;
+        }
 
+        String ipAddress = request.getRemoteAddr();
         if (!rateLimitBucketMap.hasBucket(ipAddress)) { // IP 주소에 대한 버킷이 없을 경우, 새로운 버킷을 생성하고 저장
             Bucket newBucket = rateLimitingProvider.generateBucket();
             rateLimitBucketMap.addBucket(ipAddress, newBucket);
@@ -39,5 +43,25 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
             return true;
         }
         throw new TooManyRequestsException(probe.getNanosToWaitForRefill());
+    }
+
+    /**
+     * Skip 가능하다면 true 반환, 그렇지 않다면 false 반환(GET 및 OPTIONS 요청인 경우 true)
+     *
+     * @param httpMethod HTTP 요청 메서드
+     * @return Skip 가능하다면 true 반환, 그렇지 않다면 false 반환(GET 및 OPTIONS 요청인 경우 true)
+     */
+    private boolean shouldSkipRequest(String httpMethod) {
+        return isOptionMethod(httpMethod);
+    }
+
+    /**
+     * HTTP 요청 메서드가 OPTIONS인지 확인
+     *
+     * @param httpMethod 확인할 HTTP 요청 메서드
+     * @return HTTP 요청 메서드가 OPTIONS인 경우 true, 그렇지 않은 경우 false
+     */
+    private boolean isOptionMethod(String httpMethod) {
+        return HttpMethod.valueOf(httpMethod) == HttpMethod.OPTIONS;
     }
 }
