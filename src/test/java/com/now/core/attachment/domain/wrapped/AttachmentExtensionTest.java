@@ -18,14 +18,14 @@ public class AttachmentExtensionTest {
 
         @DisplayName("파일로 분류한 확장자일 경우에만 객체가 생성된다.")
         @ParameterizedTest
-        @ValueSource(strings = {"jpg", "gif", "png", "zip"})
+        @ValueSource(strings = {"jpg", "gif", "png", "jpeg", "psd", "tiff", "heif", "zip", "docx", "xlsx", "pptx"})
         void return_true_when_attachment_extension(String value) {
             AttachmentExtension extension = new AttachmentExtension(value, AttachmentType.FILE.getAllowedExtensions());
         }
 
         @DisplayName("파일로 분류한 확장자가 아닐 경우 예외를 던진다.")
         @ParameterizedTest
-        @ValueSource(strings = {"docs", "pptx", "jsp", "html"})
+        @ValueSource(strings = {"cell", "exe", "jsp", "html"})
         void return_true_when_not_attachment_extension(String value) {
             assertThatExceptionOfType(InvalidAttachmentException.class)
                     .isThrownBy(() -> {
@@ -41,7 +41,7 @@ public class AttachmentExtensionTest {
 
         @DisplayName("이미지로 분류한 확장자일 경우에만 객체가 생성된다.")
         @ParameterizedTest
-        @ValueSource(strings = {"jpg", "gif", "png"})
+        @ValueSource(strings = {"jpg", "gif", "png", "jpeg", "psd", "tiff", "heif"})
         void return_true_when_image_extension(String value) {
             AttachmentExtension extension = new AttachmentExtension(value, AttachmentType.IMAGE.getAllowedExtensions());
         }

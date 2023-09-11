@@ -9,8 +9,8 @@ import java.util.List;
  */
 @Getter
 public enum AttachmentType {
-    FILE(List.of("jpg", "gif", "png", "zip"), 2048000, 5),
-    IMAGE(List.of("jpg", "gif", "png"), 1024000, 20);
+    FILE(List.of("jpg", "gif", "png", "jpeg", "psd", "tiff", "heif", "zip", "docx", "xlsx", "pptx"), 2048000, 5),
+    IMAGE(List.of("jpg", "gif", "png", "jpeg", "psd", "tiff", "heif"), 2048000, 20);
 
     private final List<String> allowedExtensions;
     private final int maxUploadSize;

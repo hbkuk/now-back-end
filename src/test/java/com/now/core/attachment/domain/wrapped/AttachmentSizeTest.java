@@ -38,17 +38,17 @@ public class AttachmentSizeTest {
     class Image {
 
         @Test
-        @DisplayName("1MB 이하일 경우에만 객체가 생성된다.")
-        void must_be_within_1MB() {
-            AttachmentSize attachmentSize = new AttachmentSize(1024000, AttachmentType.IMAGE.getMaxUploadSize());
+        @DisplayName("2MB 이하일 경우에만 객체가 생성된다.")
+        void must_be_within_2MB() {
+            AttachmentSize attachmentSize = new AttachmentSize(2048000, AttachmentType.IMAGE.getMaxUploadSize());
         }
 
         @Test
-        @DisplayName("1MB를 초과할 경우 예외가 발생한다.")
+        @DisplayName("2MB를 초과할 경우 예외가 발생한다.")
         void throw_exception_when_exceeds_1MB() {
             assertThatExceptionOfType(InvalidAttachmentException.class)
                     .isThrownBy(() -> {
-                        new AttachmentSize(1024001, AttachmentType.IMAGE.getMaxUploadSize());
+                        new AttachmentSize(2048001, AttachmentType.IMAGE.getMaxUploadSize());
                     })
                     .withMessage("허용하지 않은 첨부 파일의 크기입니다.");
         }
