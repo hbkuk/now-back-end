@@ -9,6 +9,7 @@ import com.now.core.admin.post.notice.presentation.ManagerNoticeController;
 import com.now.core.attachment.application.AttachmentService;
 import com.now.core.attachment.application.StorageService;
 import com.now.core.attachment.presentation.AttachmentController;
+import com.now.core.authentication.application.AuthenticationIntegratedService;
 import com.now.core.authentication.application.AuthenticationService;
 import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.application.TokenBlackList;
@@ -78,6 +79,9 @@ public abstract class ControllerTest {
 
     @MockBean
     protected InquiryIntegratedService inquiryIntegratedService;
+
+    @MockBean
+    protected AuthenticationIntegratedService authenticationIntegratedService;
 
     @MockBean
     protected PostService postService;

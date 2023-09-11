@@ -24,7 +24,7 @@ class AuthenticationServiceTest {
         String refreshToken = "sampleRefreshToken";
 
         // When
-        authenticationService.logout(accessToken, refreshToken);
+        authenticationService.revokeTokens(accessToken, refreshToken);
 
         // Then
         verify(tokenBlacklist, times(1)).addToAccessTokenBlacklist(accessToken);

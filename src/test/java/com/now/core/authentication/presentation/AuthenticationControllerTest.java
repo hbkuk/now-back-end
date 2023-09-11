@@ -46,8 +46,8 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
                 .refreshToken("Bearer RefreshToken")
                 .build();
 
-        given(memberService.validateCredentialsAndRetrieveMember(member)).willReturn(memberProfile);
-        given(memberService.generateAuthToken(memberProfile)).willReturn(token);
+        given(authenticationIntegratedService.retrieveMember(member)).willReturn(memberProfile);
+        given(authenticationIntegratedService.generateAuthToken(memberProfile)).willReturn(token);
 
         ResultActions resultActions =
                 mockMvc.perform(RestDocumentationRequestBuilders.post("/api/sign-in")
@@ -113,7 +113,7 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
                 .refreshToken(refreshToken)
                 .build();
 
-        given(jwtTokenProvider.refreshTokens(refreshToken)).willReturn(newToken);
+        given(authenticationIntegratedService.refreshTokens(refreshToken)).willReturn(newToken);
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/refresh")
                         .cookie(new Cookie(JwtTokenProvider.ACCESS_TOKEN_KEY, accessToken))
