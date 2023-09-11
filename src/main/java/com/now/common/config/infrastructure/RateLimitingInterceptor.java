@@ -22,7 +22,7 @@ import java.util.Objects;
 public class RateLimitingInterceptor implements HandlerInterceptor {
 
     private final RateLimitBucketMap rateLimitBucketMap;
-    private final RateLimitingProvider rateLimitingProvider;
+    private final RateLimitingBucketProvider rateLimitingBucketProvider;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
@@ -31,8 +31,8 @@ public class RateLimitingInterceptor implements HandlerInterceptor {
         }
 
         String ipAddress = request.getRemoteAddr();
-        if (!rateLimitBucketMap.hasBucket(ipAddress)) { // IP 주소에 대한 버킷이 없을 경우, 새로운 버킷을 생성하고 저장
-            Bucket newBucket = rateLimitingProvider.generateBucket();
+        if (!rateLimitBucketMap.hasBucket(ipAddress)) {
+            Bucket newBucket = rateLimitingBucketProvider.generateBucket();
             rateLimitBucketMap.addBucket(ipAddress, newBucket);
         }
 

@@ -21,7 +21,7 @@ public class RateLimitingFactory {
      * @param maxBandwidth               최대 대역폭
      * @param tokenRefillCount           토큰 리필 횟수
      * @param tokenRefillDurationMinutes 토큰 리필 지속 시간(분)
-     * @return
+     * @return 생성된 버킷
      */
     public Bucket generateBucket(int maxBandwidth, int tokenRefillCount, int tokenRefillDurationMinutes) {
         return Bucket.builder()
@@ -29,6 +29,28 @@ public class RateLimitingFactory {
                     getClassicBandwidth(maxBandwidth,
                     getIntervalRefill(tokenRefillCount, Duration.ofMinutes(tokenRefillDurationMinutes))))
                 .build();
+    }
+
+    /**
+     * 주어진 최대 대역폭과 Refill 객체로 대역폭 생성
+     *
+     * @param maxBandwidth 최대 대역폭
+     * @param refill       Refill 객체
+     * @return 생성된 대역폭 객체
+     */
+    public Bandwidth getClassicBandwidth(int maxBandwidth, Refill refill) {
+        return Bandwidth.classic(maxBandwidth, refill);
+    }
+
+    /**
+     * 주어진 토큰 리필 횟수와 토큰 리필 간격으로 Refill 객체 생성
+     *
+     * @param tokenRefillCount 토큰 리필 횟수
+     * @param duration         토큰 리필 간격
+     * @return 생성된 Refill 객체
+     */
+    public Refill getIntervalRefill(int tokenRefillCount, Duration duration) {
+        return Refill.intervally(tokenRefillCount, duration);
     }
 
     /**
@@ -54,28 +76,6 @@ public class RateLimitingFactory {
      */
     public Bandwidth getSimpleBandwidth(int maxBandwidth, int tokenRefillDurationMinutes) {
         return Bandwidth.simple(maxBandwidth, Duration.ofMinutes(tokenRefillDurationMinutes));
-    }
-
-    /**
-     * 주어진 최대 대역폭과 Refill 객체로 대역폭 생성
-     *
-     * @param maxBandwidth 최대 대역폭
-     * @param refill       Refill 객체
-     * @return 생성된 대역폭 객체
-     */
-    public Bandwidth getClassicBandwidth(int maxBandwidth, Refill refill) {
-        return Bandwidth.classic(maxBandwidth, refill);
-    }
-
-    /**
-     * 주어진 토큰 리필 횟수와 토큰 리필 간격으로 Refill 객체 생성
-     *
-     * @param tokenRefillCount 토큰 리필 횟수
-     * @param duration         토큰 리필 간격
-     * @return 생성된 Refill 객체
-     */
-    public Refill getIntervalRefill(int tokenRefillCount, Duration duration) {
-        return Refill.intervally(tokenRefillCount, duration);
     }
 
     /**

@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.Duration;
 
-import static com.now.common.config.infrastructure.RateLimitingProvider.*;
+import static com.now.common.config.infrastructure.RateLimitingBucketProvider.*;
 import static com.now.config.fixtures.post.dto.ConditionFixture.createCondition;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -35,7 +35,7 @@ class RateLimitingInterceptorTest extends ControllerTest {
         Bucket bucket = Bucket.builder()
                 .addLimit(
                         Bandwidth.classic(MAX_BANDWIDTH,
-                                Refill.intervally(TOKEN_REFILL_COUNT_AT_ONCE, Duration.ofMinutes(TOKEN_REFILL_DURATION_MINUTES))))
+                        Refill.intervally(TOKEN_REFILL_COUNT_AT_ONCE, Duration.ofMinutes(TOKEN_REFILL_DURATION_MINUTES))))
                 .build();
 
         given(rateLimitBucketMap.hasBucket(any())).willReturn(false);
@@ -50,7 +50,7 @@ class RateLimitingInterceptorTest extends ControllerTest {
         }
 
         // then
-        mockMvc.perform(MockMvcRequestBuilders.get(endpointPath) // 더 많은 요청을 수행하면 예외가 발생
+        mockMvc.perform(MockMvcRequestBuilders.get(endpointPath)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("maxNumberOfPosts", String.valueOf(condition.getMaxNumberOfPosts())))
                 .andExpect(MockMvcResultMatchers.header().exists(RateLimitHeaders.RETRY_AFTER))

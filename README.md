@@ -23,6 +23,7 @@
 
 #### 기술적 도전
 
+- [Rate Limiting 인터셉터를 활용한 트래픽 관리](https://github.com/hbkuk/blog/tree/main/project/Rate%20Limiting%20%EC%9D%B8%ED%84%B0%EC%85%89%ED%84%B0%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%9C%20%ED%8A%B8%EB%9E%98%ED%94%BD%20%EA%B4%80%EB%A6%AC)
 - [Spring Cache(스프링 캐시) 적용](https://github.com/hbkuk/blog/tree/main/project/Spring%20Cache(%EC%8A%A4%ED%94%84%EB%A7%81%20%EC%BA%90%EC%8B%9C)%20%EC%A0%81%EC%9A%A9)
 - [격리된 테스트 환경 구성 후  Repository 객체에 대한 테스트 코드](https://github.com/hbkuk/blog/tree/main/project/%EA%B2%A9%EB%A6%AC%EB%90%9C%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20%ED%99%98%EA%B2%BD%20%EA%B5%AC%EC%84%B1%20%ED%9B%84%20%20Repository%20%EA%B0%9D%EC%B2%B4%EC%97%90%20%EB%8C%80%ED%95%9C%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EC%BD%94%EB%93%9C)
 - [Spring AOP로 Slack 알람 구현](https://github.com/hbkuk/blog/tree/main/project/Spring%20AOP%EB%A1%9C%20Slack%20%EC%95%8C%EB%9E%8C%20%EA%B5%AC%ED%98%84)

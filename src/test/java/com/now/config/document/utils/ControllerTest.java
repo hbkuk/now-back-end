@@ -2,7 +2,7 @@ package com.now.config.document.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.now.common.config.infrastructure.RateLimitBucketMap;
-import com.now.common.config.infrastructure.RateLimitingProvider;
+import com.now.common.config.infrastructure.RateLimitingBucketProvider;
 import com.now.common.mapper.EnumMapperFactory;
 import com.now.core.admin.post.notice.application.ManagerNoticeService;
 import com.now.core.admin.post.notice.presentation.ManagerNoticeController;
@@ -123,7 +123,7 @@ public abstract class ControllerTest {
     protected JwtTokenProvider jwtTokenProvider;
 
     @MockBean
-    protected RateLimitingProvider rateLimitingProvider;
+    protected RateLimitingBucketProvider rateLimitingProvider;
 
     @MockBean
     protected RateLimitBucketMap rateLimitBucketMap;
