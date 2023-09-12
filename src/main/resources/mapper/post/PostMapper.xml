@@ -6,7 +6,7 @@
 
     <!-- 모든 게시글 조회 쿼리 -->
     <select id="findAllPosts" parameterType="Condition" resultMap="posts">
-        SELECT * FROM (
+        (
         SELECT
         <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
         <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
@@ -26,17 +26,14 @@
         LEFT OUTER JOIN tb_member com ON co.member_idx = com.member_idx
         LEFT OUTER JOIN tb_manager coma ON co.manager_idx = coma.manager_idx
         LEFT OUTER JOIN tb_inquiry i ON i.post_idx = p.post_idx
-        LEFT OUTER JOIN tb_manager ima ON p.manager_idx = ima.manager_idx
+        LEFT OUTER JOIN tb_manager ima ON ima.manager_idx = i.answer_manager_idx
         WHERE p.post_group = 'NOTICE' AND p.pinned = false
         GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
-
-        ) AS notice_posts
-
-        UNION
-
-        SELECT * FROM (
+        )
+        UNION ALL
+        (
         SELECT
         <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
         <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
@@ -61,12 +58,9 @@
         GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
-
-        ) AS community_posts
-
-        UNION
-
-        SELECT * FROM (
+        )
+        UNION ALL
+        (
         SELECT
         <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
         <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
@@ -91,12 +85,9 @@
         GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
-
-        ) AS photo_posts
-
-        UNION
-
-        SELECT * FROM (
+        )
+        UNION ALL
+        (
         SELECT
         <include refid="CommonColumnMappings.postTableColumnWithoutContent"/>,
         <include refid="CommonColumnMappings.maxAttachmentTableColumn"/>,
@@ -121,8 +112,7 @@
         GROUP BY p.post_idx
         ORDER BY p.post_idx DESC
         <include refid="DynamicQueryMapper.maxNumberOfPosts"/>
-
-        ) AS inquiry_posts
+        );
     </select>
 
 
@@ -244,7 +234,6 @@
             FROM tb_post
         WHERE post_idx = #{postIdx}
     </select>
-
 
     <!-- Posts resultMap -->
     <resultMap id="posts" type="Posts">
