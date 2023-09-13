@@ -3,7 +3,13 @@
 ![home](https://github.com/hbkuk/now-back-end/assets/109803585/5e96cfb3-70b1-4273-8443-f2fd836185a8)
 
 - [NOW(https://www.nowtoday.net)](https://www.beta.nowtoday.net)는 **공지사항, 커뮤니티, 사진 및 문의 게시판을 통해 정보를 공유 및 소통하는 플랫폼**입니다.
-- 충분한 테스트 기간을 거쳐 정식 서비스를 시작할 계획이 있으며, 이 기간동안 사용자들의 피드백을 수집하고 기능을 개선하며 더 나은 사용자 경험을 제공하고자 합니다.
+- 충분한 테스트 기간을 거쳐 정식 서비스를 시작할 계획이 있으며, 이 기간동안 사용자들의 피드백을 수집하고 기능을 개선하며 더 나은 사용자 경험을 제공하고자 합니다.  
+
+## Architecture
+
+<p align="center">
+  <img src="https://github.com/hbkuk/now-back/assets/109803585/7504abb0-ba68-4970-982a-a20b6e86f8f7" alt="Architecture" width="number" />
+</p>
 
 ## ERD(Entity Relationship Diagram)
 
