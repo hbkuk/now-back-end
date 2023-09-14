@@ -46,7 +46,7 @@ public class AuthenticationController {
      * @param response 응답 객체
      * @return ResponseEntity 객체 (HTTP 응답)
      */
-    @PostMapping("/api/log-out") // TODO: Required Test Code In Interceptor..
+    @PostMapping("/api/log-out")
     public ResponseEntity<Void> logout(HttpServletResponse response,
                                        @CookieValue(value = JwtTokenProvider.ACCESS_TOKEN_KEY, required = true) String accessToken,
                                        @CookieValue(value = JwtTokenProvider.REFRESH_TOKEN_KEY, required = true) String refreshToken) {
