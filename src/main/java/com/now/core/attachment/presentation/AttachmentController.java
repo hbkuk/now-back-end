@@ -28,7 +28,7 @@ public class AttachmentController {
     private final AttachmentService attachmentService;
 
     /**
-     * 첨부파일 번호 해당하는 파일을 응답
+     * 첨부파일 번호에 해당하는 파일을 응답
      *
      * @param attachmentIdx 첨부파일 번호
      * @return 응답 결과
@@ -38,14 +38,24 @@ public class AttachmentController {
         AttachmentResponse attachment = attachmentService.getAttachment(attachmentIdx);
 
         byte[] attachmentContent = AttachmentUtils.convertByteArray(storageService.createStream(attachment.getSavedAttachmentName()));
+        return ResponseEntity.ok()
+                .headers(createDownloadAttachmentHeaders(attachment, attachmentContent))
+                .body(attachmentContent);
+    }
 
+    /**
+     * 첨부파일을 다운로드할 수 있는 HTTP 헤더를 생성 후 반환
+     *
+     * @param attachment        첨부파일
+     * @param attachmentContent 첨부파일 내용
+     * @return HTTP 헤더
+     */
+    private HttpHeaders createDownloadAttachmentHeaders(AttachmentResponse attachment, byte[] attachmentContent) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         headers.setContentDispositionFormData("attachment",
                 AttachmentUtils.generateEncodedName(attachment.getOriginalAttachmentName()));
         headers.setContentLength(Objects.requireNonNull(attachmentContent).length);
-
-        return ResponseEntity.ok().headers(headers).body(attachmentContent);
+        return headers;
     }
-
 }
