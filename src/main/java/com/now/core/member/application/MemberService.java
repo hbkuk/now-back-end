@@ -3,7 +3,7 @@ package com.now.core.member.application;
 import com.now.common.exception.ErrorType;
 import com.now.common.security.PasswordSecurityManager;
 import com.now.core.authentication.application.JwtTokenProvider;
-import com.now.core.authentication.application.dto.Token;
+import com.now.core.authentication.application.dto.jwtTokens;
 import com.now.core.authentication.application.dto.TokenClaims;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.member.domain.Member;
@@ -59,12 +59,10 @@ public class MemberService {
      * @param member 토큰을 생성할 회원 객체
      * @return 액세스 토큰과 리프레시 토큰을 담은 인증 토큰
      */
-    public Token generateAuthToken(Member member) {
-        return Token.builder()
-                .accessToken(jwtTokenProvider.createAccessToken(TokenClaims.create(Map.of(
-                        "id", member.getId(), "nickname", member.getNickname(), "role", Authority.MEMBER.getValue()))))
-                .refreshToken(jwtTokenProvider.createRefreshToken(TokenClaims.create(Map.of(
-                        "id", member.getId(), "nickname", member.getNickname(), "role", Authority.MEMBER.getValue()))))
+    public jwtTokens generateAuthToken(Member member) {
+        return jwtTokens.builder()
+                .accessToken(jwtTokenProvider.createAccessToken(generateTokenClaims(member)))
+                .refreshToken(jwtTokenProvider.createRefreshToken(generateTokenClaims(member)))
                 .build();
     }
 
@@ -76,10 +74,23 @@ public class MemberService {
      */
     public Member getMember(String memberId) {
         Member member = memberRepository.findById(memberId);
-        if(member == null) {
+        if (member == null) {
             throw new InvalidMemberException(ErrorType.NOT_FOUND_MEMBER);
         }
         return member;
+    }
+
+    /**
+     * 전달받은 회원 정보를 기반으로 클레임을 생성 후 반환
+     *
+     * @param member 회원 정보
+     * @return 클레임을 생성 후 반환
+     */
+    private TokenClaims generateTokenClaims(Member member) { // TODO: Claims의 key값인 id, nickname, role에 대해서 강제할 방법
+        return TokenClaims.create(
+                Map.of("id", member.getId(),
+                        "nickname", member.getNickname(),
+                        "role", Authority.MEMBER.getValue()));
     }
 
     /**

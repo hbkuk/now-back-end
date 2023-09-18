@@ -2,7 +2,7 @@ package com.now.core.authentication.presentation;
 
 import com.now.core.authentication.application.AuthenticationIntegratedService;
 import com.now.core.authentication.application.JwtTokenProvider;
-import com.now.core.authentication.application.dto.Token;
+import com.now.core.authentication.application.dto.jwtTokens;
 import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.member.domain.Member;
 import com.now.core.member.presentation.dto.MemberProfile;
@@ -88,7 +88,7 @@ public class AuthenticationController {
      * @param response 응답에 쿠키를 추가할 HttpServletResponse 객체
      * @param token    액세스 토큰과 리프레시 토큰 정보를 담은 토큰 객체
      */
-    private void setTokenCookiesInResponse(HttpServletResponse response, Token token) {
+    private void setTokenCookiesInResponse(HttpServletResponse response, jwtTokens token) {
         response.setHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithHttpOnly(JwtTokenProvider.ACCESS_TOKEN_KEY,
                 token.getAccessToken(), true).toString());
         response.addHeader(RESPONSE_COOKIE_NAME_IN_HEADERS, CookieUtil.createResponseCookieWithPathAndHttpOnly(JwtTokenProvider.REFRESH_TOKEN_KEY,

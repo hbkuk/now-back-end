@@ -3,7 +3,7 @@ package com.now.core.authentication.presentation;
 import com.now.config.document.utils.RestDocsTestSupport;
 import com.now.config.fixtures.member.MemberFixture;
 import com.now.core.authentication.application.JwtTokenProvider;
-import com.now.core.authentication.application.dto.Token;
+import com.now.core.authentication.application.dto.jwtTokens;
 import com.now.core.member.domain.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +41,7 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
         String requestBody = "{\"id\": \"" + memberId + "\", \"password\": \"" + password + "\"}";
         Member member = createMember(memberId, MemberFixture.SAMPLE_PASSWORD_1);
         Member memberProfile = createMemberProfile(memberId, nickname, name);
-        Token token = Token.builder()
+        jwtTokens token = jwtTokens.builder()
                 .accessToken("Bearer AccessToken")
                 .refreshToken("Bearer RefreshToken")
                 .build();
@@ -108,7 +108,7 @@ class AuthenticationControllerTest extends RestDocsTestSupport {
     void refresh() throws Exception {
         String accessToken = "Bearer AccessToken";
         String refreshToken = "Bearer RefreshToken";
-        Token newToken = Token.builder()
+        jwtTokens newToken = jwtTokens.builder()
                 .accessToken("Bearer newAccessToken")
                 .refreshToken(refreshToken)
                 .build();

@@ -1,7 +1,7 @@
 package com.now.core.authentication.application;
 
 import com.now.common.exception.ErrorType;
-import com.now.core.authentication.application.dto.Token;
+import com.now.core.authentication.application.dto.jwtTokens;
 import com.now.core.authentication.application.dto.TokenClaims;
 import com.now.core.authentication.exception.InvalidAuthenticationException;
 import com.now.core.authentication.exception.InvalidTokenException;
@@ -9,7 +9,6 @@ import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -188,8 +187,8 @@ public class JwtTokenProvider {
      * @param  accessToken 액세스 토큰
      * @return 새로 발급된 Access Token과 Refresh Token 정보를 담은 Token 객체
      */
-    public Token refreshTokens(String accessToken) {
-        return Token.builder()
+    public jwtTokens refreshTokens(String accessToken) {
+        return jwtTokens.builder()
                 .accessToken(createAccessToken(TokenClaims.create(getAllClaims(accessToken))))
                 .refreshToken(createRefreshToken(TokenClaims.create(getAllClaims(accessToken))))
                 .build();

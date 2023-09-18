@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-public class Token {
+public class jwtTokens {
     private final String accessToken;
     private final String refreshToken;
 }

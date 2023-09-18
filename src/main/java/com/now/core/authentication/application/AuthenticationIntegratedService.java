@@ -1,6 +1,6 @@
 package com.now.core.authentication.application;
 
-import com.now.core.authentication.application.dto.Token;
+import com.now.core.authentication.application.dto.jwtTokens;
 import com.now.core.member.application.MemberService;
 import com.now.core.member.domain.Member;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class AuthenticationIntegratedService {
      * @param member 인증 토큰을 생성할 회원 정보
      * @return 생성된 인증 토큰
      */
-    public Token generateAuthToken(Member member) {
+    public jwtTokens generateAuthToken(Member member) {
         return memberService.generateAuthToken(member);
     }
 
@@ -61,7 +61,7 @@ public class AuthenticationIntegratedService {
      * @param refreshToken 리프레시 토큰
      * @return 새로운 액세스 토큰
      */
-    public Token refreshTokens(String refreshToken) {
+    public jwtTokens refreshTokens(String refreshToken) {
         return jwtTokenProvider.refreshTokens(refreshToken);
     }
 
