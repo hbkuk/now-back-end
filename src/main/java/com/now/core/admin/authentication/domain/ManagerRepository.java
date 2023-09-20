@@ -1,6 +1,6 @@
-package com.now.core.admin.manager.domain;
+package com.now.core.admin.authentication.domain;
 
-import com.now.core.admin.manager.domain.mapper.ManagerMapper;
+import com.now.core.admin.authentication.domain.mapper.ManagerMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

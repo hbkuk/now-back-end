@@ -1,6 +1,6 @@
 package com.now.config.fixtures.manager;
 
-import com.now.core.admin.manager.domain.Manager;
+import com.now.core.admin.authentication.domain.Manager;
 
 public class ManagerFixture {
 

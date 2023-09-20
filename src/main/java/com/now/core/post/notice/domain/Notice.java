@@ -3,7 +3,7 @@ package com.now.core.post.notice.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.now.core.admin.manager.domain.Manager;
+import com.now.core.admin.authentication.domain.Manager;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.comment.domain.Comment;

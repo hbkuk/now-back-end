@@ -16,8 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthenticationConfig implements WebMvcConfigurer {
 
-    private final AuthenticationInterceptor jwtInterceptor;
-    private final ManagerInterceptor managerInterceptor;
+    private final AuthenticationInterceptor authenticationInterceptor;
     private final AuthenticationArgumentResolver authenticationArgumentResolver;
 
     /**
@@ -27,7 +26,7 @@ public class AuthenticationConfig implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor)
+        registry.addInterceptor(authenticationInterceptor)
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/manager/**")
                 .excludePathPatterns("/api/sign-up")
@@ -35,11 +34,6 @@ public class AuthenticationConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/api/refresh")
                 .excludePathPatterns("/api/inquiries/secret/**")
                 .excludePathPatterns("/api/report/**");
-
-
-        registry.addInterceptor(managerInterceptor)
-                .addPathPatterns("/api/manager/**")
-                .excludePathPatterns("/api/manager/login");
     }
 
     /**

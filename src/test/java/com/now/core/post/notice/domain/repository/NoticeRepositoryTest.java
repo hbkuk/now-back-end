@@ -1,8 +1,8 @@
 package com.now.core.post.notice.domain.repository;
 
 import com.now.config.annotations.RepositoryTest;
-import com.now.core.admin.manager.domain.Manager;
-import com.now.core.admin.manager.domain.ManagerRepository;
+import com.now.core.admin.authentication.domain.Manager;
+import com.now.core.admin.authentication.domain.ManagerRepository;
 import com.now.core.category.domain.constants.Category;
 import com.now.core.comment.domain.CommentRepository;
 import com.now.core.post.common.domain.repository.PostRepository;

@@ -1,4 +1,4 @@
-package com.now.core.admin.manager.domain;
+package com.now.core.admin.authentication.domain;
 
 import com.now.core.authentication.constants.Authority;
 import lombok.*;

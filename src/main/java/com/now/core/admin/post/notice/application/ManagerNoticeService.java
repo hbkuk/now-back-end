@@ -2,9 +2,9 @@ package com.now.core.admin.post.notice.application;
 
 import com.now.common.exception.ErrorType;
 import com.now.common.exception.ForbiddenException;
-import com.now.core.admin.manager.domain.Manager;
-import com.now.core.admin.manager.domain.ManagerRepository;
-import com.now.core.admin.manager.exception.InvalidManagerException;
+import com.now.core.admin.authentication.domain.Manager;
+import com.now.core.admin.authentication.domain.ManagerRepository;
+import com.now.core.admin.authentication.exception.InvalidManagerException;
 import com.now.core.category.domain.constants.PostGroup;
 import com.now.core.post.common.domain.repository.PostRepository;
 import com.now.core.post.notice.domain.Notice;

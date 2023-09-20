@@ -1,6 +1,6 @@
-package com.now.core.admin.manager.domain.mapper;
+package com.now.core.admin.authentication.domain.mapper;
 
-import com.now.core.admin.manager.domain.Manager;
+import com.now.core.admin.authentication.domain.Manager;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

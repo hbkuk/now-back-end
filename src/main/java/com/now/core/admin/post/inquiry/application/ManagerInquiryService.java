@@ -1,9 +1,9 @@
 package com.now.core.admin.post.inquiry.application;
 
 import com.now.common.exception.ErrorType;
-import com.now.core.admin.manager.domain.Manager;
-import com.now.core.admin.manager.domain.ManagerRepository;
-import com.now.core.admin.manager.exception.InvalidManagerException;
+import com.now.core.admin.authentication.domain.Manager;
+import com.now.core.admin.authentication.domain.ManagerRepository;
+import com.now.core.admin.authentication.exception.InvalidManagerException;
 import com.now.core.post.inquiry.domain.Inquiry;
 import com.now.core.post.inquiry.domain.repository.InquiryRepository;
 import com.now.core.post.common.exception.InvalidPostException;
