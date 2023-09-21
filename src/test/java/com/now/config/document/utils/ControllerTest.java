@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.now.common.config.infrastructure.RateLimitBucketMap;
 import com.now.common.config.infrastructure.RateLimitingBucketProvider;
 import com.now.common.mapper.EnumMapperFactory;
+import com.now.core.admin.authentication.application.ManagerAuthenticationService;
+import com.now.core.admin.authentication.presentation.ManagerAuthenticationController;
 import com.now.core.admin.post.notice.application.ManagerNoticeService;
 import com.now.core.admin.post.notice.presentation.ManagerNoticeController;
 import com.now.core.attachment.application.AttachmentService;
@@ -45,6 +47,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest({
+        ManagerAuthenticationController.class,
         ManagerNoticeController.class,
         AuthenticationController.class,
         MemberController.class,
@@ -67,6 +70,9 @@ public abstract class ControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;
+
+    @MockBean
+    protected  ManagerAuthenticationService managerAuthenticationService;
 
     @MockBean
     protected NoticeIntegratedService noticeIntegratedService;

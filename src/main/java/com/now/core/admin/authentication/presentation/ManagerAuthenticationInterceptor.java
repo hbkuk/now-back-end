@@ -21,14 +21,6 @@ import static com.now.core.authentication.application.JwtTokenProvider.ACCESS_TO
 import static com.now.core.authentication.application.JwtTokenProvider.BEARER_PREFIX;
 import static com.now.core.authentication.application.util.CookieUtil.REQUEST_COOKIE_NAME_IN_HEADER;
 
-/**
- * 매니저 권한 인터셉터
- * <p>
- * HandlerInterceptor 인터페이스를 구현하여 매니저 권한을 검사하는 인터셉터
- * JWT 토큰 서비스를 사용하여 토큰에서 권한 값을 추출하고, 매니저인지 확인
- * 매니저 권한이 아닌 경우에는 예외를 던지고 처리
- * HttpServletRequest의 속성에 사용자 ID와 권한을 설정합니다.
- */
 @Component
 @RequiredArgsConstructor
 public class ManagerAuthenticationInterceptor implements HandlerInterceptor {

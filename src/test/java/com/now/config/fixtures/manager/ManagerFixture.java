@@ -4,7 +4,6 @@ import com.now.core.admin.authentication.domain.Manager;
 
 public class ManagerFixture {
 
-    public static String SAMPLE_MEMBER_ID_1 = "honi132";
     public static String SAMPLE_PASSWORD_1 = "testPassword1!";
 
     public static String MANAGER1_ID = "MANAGER_ID_1";
@@ -29,18 +28,18 @@ public class ManagerFixture {
     public static String MANAGER6_NICKNAME = "MANAGER_NIC_6";
 
 
-    public static Manager createManager(String memberId) {
+    public static Manager createManager(String managerId) {
         return Manager.builder()
-                .id(memberId)
+                .id(managerId)
                 .password("testPassword")
                 .name("testName")
                 .nickname("testNickName")
                 .build();
     }
 
-    public static Manager createManager(String memberId, String name, String nickname) {
+    public static Manager createManager(String managerId, String name, String nickname) {
         return Manager.builder()
-                .id(memberId)
+                .id(managerId)
                 .name(name)
                 .nickname(nickname)
                 .password(SAMPLE_PASSWORD_1)
