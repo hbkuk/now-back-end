@@ -31,7 +31,7 @@ public class ManagerAuthenticationService {
      * @param manager 자격 증명을 확인할 매니저 객체
      * @return 유효한 매니저 정보를 담고 있는 객체
      */
-    public Manager retrieveMember(Manager manager) {
+    public Manager retrieveManager(Manager manager) {
         Manager savedManager = getManager(manager.getId());
 
         if (!passwordSecurityManager.matchesWithSalt(manager.getPassword(), savedManager.getPassword())) {

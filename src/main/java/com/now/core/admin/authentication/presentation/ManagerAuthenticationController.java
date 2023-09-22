@@ -45,7 +45,7 @@ public class ManagerAuthenticationController {
      */
     @PostMapping("/api/manager/sign-in")
     public ResponseEntity<ManagerProfile> signIn(@RequestBody Manager manager, HttpServletResponse response) {
-        Manager authenticatedManager = managerAuthenticationService.retrieveMember(manager);
+        Manager authenticatedManager = managerAuthenticationService.retrieveManager(manager);
         setTokenCookiesInResponse(response, managerAuthenticationService.generateAuthToken(authenticatedManager));
         return ResponseEntity.ok().body(ManagerProfile.from(authenticatedManager));
     }
