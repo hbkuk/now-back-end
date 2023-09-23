@@ -6,6 +6,7 @@ import com.now.core.admin.authentication.domain.Manager;
 import com.now.core.admin.authentication.domain.ManagerRepository;
 import com.now.core.admin.authentication.exception.InvalidManagerException;
 import com.now.core.category.domain.constants.PostGroup;
+import com.now.core.comment.domain.CommentRepository;
 import com.now.core.post.common.domain.repository.PostRepository;
 import com.now.core.post.notice.domain.Notice;
 import com.now.core.post.notice.domain.repository.NoticeRepository;
@@ -26,6 +27,7 @@ public class ManagerNoticeService {
     private final PostRepository postRepository;
     private final NoticeRepository noticeRepository;
     private final ManagerRepository managerRepository;
+    private final CommentRepository commentRepository;
 
     /**
      * 공지 게시글 등록
@@ -62,7 +64,7 @@ public class ManagerNoticeService {
             throw new CannotCreatePostException(ErrorType.NOT_FOUND_CATEGORY);
         }
 
-        noticeRepository.updateNotice(updatedNotice);
+        noticeRepository.updateNotice(updatedNotice.updateManagerIdx(manager.getManagerIdx()));
     }
 
     // TODO: 매니저별 권한 부여 -> Notice 도메인 객체에서 canDelete(Authority authority) 선언
@@ -81,6 +83,7 @@ public class ManagerNoticeService {
         }
 
         postRepository.deleteAllPostReactionByPostIdx(postIdx);
+        commentRepository.deleteAllByPostIdx(postIdx);
         noticeRepository.deleteNotice(postIdx);
     }
 

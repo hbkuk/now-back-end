@@ -3,16 +3,15 @@ package com.now.core.admin.authentication.presentation;
 import com.now.common.exception.ErrorType;
 import com.now.core.authentication.application.JwtTokenProvider;
 import com.now.core.authentication.application.TokenBlackList;
-import com.now.core.authentication.application.util.CookieUtil;
 import com.now.core.authentication.constants.Authority;
 import com.now.core.authentication.exception.InvalidAuthenticationException;
 import com.now.core.authentication.exception.InvalidTokenException;
+import com.now.core.authentication.presentation.AuthenticationContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
@@ -27,6 +26,7 @@ public class ManagerAuthenticationInterceptor implements HandlerInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final TokenBlackList tokenBlacklist;
+    private final AuthenticationContext authenticationContext;
 
     /**
      * 요청 처리 전에 실행되는 메서드
@@ -48,7 +48,7 @@ public class ManagerAuthenticationInterceptor implements HandlerInterceptor {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
 
-        String accessToken = Arrays.stream(cookieHeader.split("; "))
+        String extractedAccessToken = Arrays.stream(cookieHeader.split("; "))
                 .filter(cookieItem -> cookieItem.startsWith(ACCESS_TOKEN_KEY))
                 .map(cookieItem -> cookieItem.split("="))
                 .filter(keyValue -> keyValue.length == 2 && keyValue[0].equals(ACCESS_TOKEN_KEY))
@@ -57,19 +57,31 @@ public class ManagerAuthenticationInterceptor implements HandlerInterceptor {
                 .findFirst()
                 .orElse(null);
 
-        if (accessToken == null) {
+        if (extractedAccessToken == null) {
             throw new InvalidAuthenticationException(ErrorType.NOT_AUTHENTICATED);
         }
-        if (jwtTokenProvider.isTokenExpired(accessToken)) {
+        if (jwtTokenProvider.isTokenExpired(extractedAccessToken)) {
             throw new InvalidTokenException(ErrorType.EXPIRED_ACCESS_TOKEN);
         }
-        if (tokenBlacklist.isAccessTokenBlacklisted(accessToken)) {
+        if (tokenBlacklist.isAccessTokenBlacklisted(extractedAccessToken)) {
             throw new InvalidTokenException(ErrorType.LOGGED_OUT_TOKEN);
         }
-        if(Authority.valueOf((String) jwtTokenProvider.getClaim(accessToken, "role")) != Authority.MANAGER) {
+        if(Authority.valueOf((String) jwtTokenProvider.getClaim(extractedAccessToken, "role")) != Authority.MANAGER) {
             throw new InvalidAuthenticationException(ErrorType.FORBIDDEN);
         }
+
+        authenticationContext.setPrincipal(getManagerIdFromToken(extractedAccessToken));
         return true;
+    }
+
+    /**
+     * 토큰에서 매니저 ID 정보를 추출
+     *
+     * @param accessToken 추출할 토큰
+     * @return 토큰에서 추출한 매니저 ID 정보
+     */
+    private String getManagerIdFromToken(String accessToken) {
+        return (String) jwtTokenProvider.getClaim(accessToken, "id");
     }
 
     /**
