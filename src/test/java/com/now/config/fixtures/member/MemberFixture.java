@@ -67,4 +67,11 @@ public class MemberFixture {
                 .name(name)
                 .build();
     }
+
+    public static Member updateMember(String name, String nickname) {
+        return Member.builder()
+                .name(name)
+                .nickname(nickname)
+                .build();
+    }
 }

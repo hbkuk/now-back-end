@@ -39,6 +39,20 @@ public class MemberService {
     }
 
     /**
+     * 회원 정보를 수정하는 메서드
+     * 
+     * @param member 수정할 회원 정보
+     */
+    public void updateMember(Member member) {
+        boolean duplicateNickname = memberRepository.existsByNickname(member.getNickname());
+        if (duplicateNickname) {
+            throw new DuplicateMemberInfoException(ErrorType.DUPLICATE_MEMBER_INFO_ID_AND_NICKNAME);
+        }
+
+        memberRepository.updateMember(member);
+    }
+
+    /**
      * 회원의 자격 증명을 확인하고, 유효한 회원 정보를 반환
      *
      * @param member 자격 증명을 확인할 회원 객체
@@ -108,5 +122,4 @@ public class MemberService {
             throw new DuplicateMemberInfoException(errorType);
         }
     }
-
 }

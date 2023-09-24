@@ -3,14 +3,22 @@
 
 <mapper namespace="com.now.core.member.domain.mapper.MemberMapper">
 
-    <!-- 사용자 정보를 삽입하는 쿼리 -->
+    <!-- 회원 정보를 삽입하는 쿼리 -->
     <insert id="saveMember" parameterType="Member" useGeneratedKeys="true" keyProperty="memberIdx">
         INSERT INTO tb_member (id, password, name, nickname)
         VALUES (#{id}, #{password}, #{name}, #{nickname})
     </insert>
 
 
-    <!-- 사용자 확인 -->
+    <update id="updateMember" parameterType="Member">
+        UPDATE tb_member
+        SET name = #{name},
+            nickname  = #{nickname}
+        WHERE id = #{id}
+    </update>
+
+
+    <!-- 회원 확인 -->
     <select id="findById" parameterType="java.lang.String" resultType="Member">
         SELECT *
         FROM tb_member

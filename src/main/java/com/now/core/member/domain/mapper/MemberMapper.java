@@ -12,9 +12,16 @@ public interface MemberMapper {
     /**
      * 회원 정보를 저장
      *
-     * @param member 저장할 사용자 정보
+     * @param member 저장할 회원 정보
      */
     void saveMember(Member member);
+
+    /**
+     * 회원 정보 수정
+     * 
+     * @param member 수정할 회원 정보 
+     */
+    void updateMember(Member member);
 
     /**
      * 전달받은 아이디가 데이터베이스에 존재한다면 true 반환, 그렇지 않다면 false 반환

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.now.core.authentication.constants.Authority;
 import lombok.*;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -37,28 +39,47 @@ public class Member {
      * 회원의 아이디
      */
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotNull(groups = {MemberValidationGroup.signup.class}, message = "{field.notnull}")
     @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = ID_REGEX, message = "{member.id.pattern}")
     private final String id;
 
     /**
      * 회원의 닉네임
      */
+    @NotNull(groups = {MemberValidationGroup.signup.class, MemberValidationGroup.update.class}, message = "{field.notnull}")
     @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = NICKNAME_REGEX, message = "{member.nickname.pattern}")
+    @Pattern(groups = {MemberValidationGroup.update.class}, regexp = NICKNAME_REGEX, message = "{member.nickname.pattern}")
     private final String nickname;
 
     /**
      * 회원의 이름
      */
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotNull(groups = {MemberValidationGroup.signup.class, MemberValidationGroup.update.class}, message = "{field.notnull}")
     @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = NAME_REGEX, message = "{member.name.pattern}")
+    @Pattern(groups = {MemberValidationGroup.update.class}, regexp = NAME_REGEX, message = "{member.name.pattern}")
     private final String name;
 
     /**
      * 회원의 비밀번호
      */
+    @NotNull(groups = {MemberValidationGroup.signup.class}, message = "{field.notnull}")
     @Pattern(groups = {MemberValidationGroup.signup.class}, regexp = PASSWORD_REGEX, message = "{member.password.pattern}")
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    /**
+     * 불변객체 유지를 위한 회원 아이디를 업데이트 후 회원 객체 생성 후 반환
+     * @param memberId 회원 아이디
+     * @return 회원 객체
+     */
+    public Member updateMemberId(String memberId) {
+        return Member.builder()
+                .id(memberId)
+                .nickname(this.nickname)
+                .name(this.name)
+                .password(this.password)
+                .build();
+    }
 
     /**
      * 전달된 비밀번호로 현재 객체를 수정 후 반환
